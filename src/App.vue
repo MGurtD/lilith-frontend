@@ -10,7 +10,7 @@
         <Button icon="pi pi-times" class="p-button-danger" />
     </template>
 </Toolbar>
-  <MenuBar :model="items" />  
+  <MenuBar :model="items" class="navbar"/>  
 
   <RouterView />
 
@@ -48,11 +48,11 @@ export default {
           items: [
             {
               label:'Articles',
-              to:'/item'
+              to:'/config/item'
             },
             {
               label:'Categories d\'article',
-              to: '/category'
+              to: '/config/category'
             },
           ]
         },
@@ -61,6 +61,16 @@ export default {
           items: [
             {
               label:'Categories d\'operari',
+              to: '/config/employeecategory'
+            }
+          ]
+        },
+        {
+          label: 'Events',
+          items:[
+            {
+            label:'Estats',
+            to:'/config/eventstatus'
             }
           ]
         },
@@ -93,6 +103,9 @@ export default {
       color: #42b983;
     }
   }
+}
+.navbar {
+  margin-bottom: 10px;
 }
 .logo {
   max-width: 50px;

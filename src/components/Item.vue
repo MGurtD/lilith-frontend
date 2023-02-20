@@ -93,7 +93,7 @@
                     <span class="p-inputgroup-addon">
                         Categoria:
                     </span>
-                    <Dropdown v-model="currentCategory" :options="categories" optionLabel="description" optionValue="id" value="{{ currentItem.categoryId }}" dataKey="id" />
+                    <Dropdown v-model="currentCategory" :options="categories" optionLabel="description" optionValue="id" value="{{ currentItem.categoryDescription }}" dataKey="id" />
                 </div>
             </div>
             <div class="col-12 md:col-4">
@@ -161,34 +161,13 @@
     <ConfirmDialog />
 </template>
 <script>
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import itemService from '@/services/item.service';
 import categoryService from '@/services/category.service';
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog';
-import InputText from 'primevue/inputtext';
-import InputNumber from 'primevue/inputnumber';
-import Dropdown from 'primevue/dropdown';
-import Checkbox from 'primevue/checkbox';
-import Toast from 'primevue/toast'
-import ConfirmDialog from 'primevue/confirmdialog';
+
 //import FilterMatchMode from 'primevue/api';
 
 export default {
     name: "item-list",
-    components:{
-        Column,
-        DataTable,
-        Button,
-        Dialog,
-        InputText,
-        InputNumber,
-        Dropdown,
-        Checkbox,
-        Toast,
-        ConfirmDialog
-    },
     data() {
         return{
             ret: null,
@@ -265,18 +244,9 @@ export default {
                         this.$toast.add({severity:'error', summary: 'Error Message', detail:'Error al crear el registre: ' + this.ret.PromiseResult.statusText, life: 3000});    
                     }
                     if (response.status === 201){
-                        this.$toast.add({severity:'success', summary: 'Succes Message', detail:'Registre creat' , life: 3000});  
-                        this.fetchData()  
+                        this.$toast.add({severity:'success', summary: 'Succes Message', detail:'Registre creat' , life: 3000});                      
                     }
                 })
-                //console.log(this.ret)
-                /*if (this.ret.PromiseResult.status === 201){
-                    this.$toast.add({severity:'success', summary: 'Success Message', detail:'Registre creat', life: 3000});
-                }else{
-                    this.$toast.add({severity:'error', summary: 'Error Message', detail:'Error al crear el registre: ' + this.ret.PromiseResult.statusText, life: 3000});
-                }*/
-                //this.$toast.add({severity:'success', summary: 'Success Message', detail:'Order submitted', life: 3000});
-                
             }else{
                 itemService.update(this.currentItem)
                 .then(response => {
@@ -285,22 +255,16 @@ export default {
                     }
                     if (response.status === 201){
                         this.$toast.add({severity:'success', summary: 'Succes Message', detail:'Registre actualitzat' , life: 3000});  
-                        this.fetchData()  
                     }
                 })
-                /*console.log(this.ret)
-                if (this.ret.PromiseResult.status === 201){
-                    this.$toast.add({severity:'success', summary: 'Success Message', detail:'Registre actualitzat', life: 3000});
-                }else{
-                    this.$toast.add({severity:'error', summary: 'Error Message', detail:'Error a l\'actualitzar el registre: ' + this.ret.PromiseResult.statusText, life: 3000});
-                }*/
+
             }
             this.fetchData()
             this.closeDialog()
         },
         drop(id){       
             this.$confirm.require({
-                message: 'Are you sure you want to proceed?',
+                message: 'Vols esborrar el registre seleccionat?' + this.currentItem.code,
                 header: 'Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {

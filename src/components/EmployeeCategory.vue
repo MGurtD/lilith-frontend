@@ -7,10 +7,10 @@
         </div>
     </div>
     <div class="row">
-        <DataTable :value="categories" v-model:selection="currentCategory" 
+        <DataTable :value="employeecategories" v-model:selection="currentEmployeeCategory" 
         datakey="id" stripedRows responsiveLayout="scroll" 
-        :paginator="true"  showGridlines :rows="10" filterDisplay="menu" 
-        :globalFilterFields="['description']" @row-click="onRowSelect">    
+        :paginator="true"  showGridlines :rows="10"         
+        @row-click="onRowSelect">    
         <template #empty>
             No hi ha categories.
         </template>
@@ -21,13 +21,21 @@
 
         </Column>
         <Column field="description" header="Descripció">
-            <template #filter="{filterModel}">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name"/>
-            </template>
-        </Column>
-        <Column field="account" header="Codi" :sortable="true">
 
         </Column>
+        <Column field="account" header="Compte comptable" :sortable="true">
+
+        </Column>
+        <Column field="costPrice" header="Preu Cost" :sortable="true" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2">
+                <template #body="slotProps">
+                    {{formatCurrency(slotProps.data.costPrice)}}
+                </template>
+            </Column>
+            <Column field="salePrice" header="Preu Venta" :sortable="true" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2">
+                <template #body="slotProps">
+                    {{formatCurrency(slotProps.data.salePrice)}}
+                </template>
+            </Column>
         <Column field="active" header="Actiu" :sortable="true">
                 <template #body="slotProps">
                     <Checkbox v-model="slotProps.data.active" :binary="true"  disabled="true"/>
@@ -50,7 +58,7 @@
                             <span class="p-inputgroup-addon">
                                 Codi:
                             </span>
-                            <InputText placeholder="Codi" v-model="currentCategory.code" />
+                            <InputText placeholder="Codi" v-model="currentEmployeeCategory.code" />
                         </div>
                     </div>
                     <div class="col-12 md:col-8">
@@ -58,7 +66,7 @@
                             <span class="p-inputgroup-addon">
                             Descripció:
                             </span>
-                            <InputText placeholder="Descripció" v-model="currentCategory.description" />                    
+                            <InputText placeholder="Descripció" v-model="currentEmployeeCategory.description" />                    
                         </div>
                     </div>            
                     <div class="col-12 md:col-6">
@@ -66,17 +74,37 @@
                             <span class="p-inputgroup-addon">
                             Compte comptable:
                             </span>
-                            <InputText placeholder="Codi" v-model="currentCategory.account" />
+                            <InputText placeholder="Compte Comptable" v-model="currentEmployeeCategory.account" />
                         </div>
                     </div>
-                    <div class="col-12 md:col-">
+                    <div class="col-12 md:col-3">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        Preu de cost:
+                    </span>
+                    <InputNumber placeholder="Cost Price" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" v-model="currentEmployeeCategory.costPrice" currency="EUR" locale="es-ES"/>    
+                    <span class="p-inputgroup-addon">€</span>                
+                </div>
+            </div>
+            <div class="col-12 md:col-3">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        Preu de cost:
+                    </span>
+                    <InputNumber placeholder="Cost Price" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" v-model="currentEmployeeCategory.costPrice" currency="EUR" locale="es-ES"/>    
+                    <span class="p-inputgroup-addon">€</span>                
+                </div>
+            </div>
+            
+                    <div class="col-12 md:col-2">
                         <div class="p-inputgroup">
                             <span class="p-inputgroup-addon">                        
-                                <Checkbox v-model="currentCategory.active" :binary="true"/>
+                                <Checkbox v-model="currentEmployeeCategory.active" :binary="true"/>
                                 &nbsp;&nbsp;Activa
                             </span>                    
                         </div>
                     </div>
+                    <div class="col-12 md:col-10"></div>
                     <div class="col-12 md:col-8"></div>
                     <div class="col-12 md:col-2">
                         <Button label="Acceptar" @click="save()"/>
@@ -92,7 +120,7 @@
 </template>
 
 <script>
-import categoryService from '@/services/category.service';
+import employeeCategoryService from '@/services/employeecategory.service';
 
 
 
@@ -101,12 +129,14 @@ export default {
     data() {
         return {
             ret: null,
-            categories: [],
-            currentCategory: {
+            employeecategories: [],
+            currentEmployeeCategory: {
                 id:0,
                 code:'',
                 description:'',
                 account:'',
+                salePrice:0,
+                costPrice:0,
                 active: false,
             },
             currentIndex: -1,
@@ -115,20 +145,21 @@ export default {
     },
     methods:{
         fetchData(){
-            categoryService.getAll()
+            employeeCategoryService.getAll()
             .then(response => {
-                this.categories = response.data;
+                console.log(response.data)
+                this.employeecategories = response.data;
             })
             .catch(e => {
                 console.log(e)
             });
         },
         onRowSelect(event){
-            this.currentCategory = event.data;
+            this.currentEmployeeCategory = event.data;
         },
         openDialog(currentid){
             if (currentid !== 0) {                
-                this.currentCategory = this.categories.find(({id}) => id === currentid)
+                this.currentEmployeeCategory = this.employeecategories.find(({id}) => id === currentid)
                 this.display = true
             }else{   
                 this.resetData()    
@@ -141,15 +172,15 @@ export default {
             this.display = false
         },
         resetData(){
-            this.currentCategory.id = 0,
-            this.currentCategory.code = '',
-            this.currentCategory.description = '',
-            this.currentCategory.account = '',
-            this.currentCategory.active = false
+            this.currentEmployeeCategory.id = 0,
+            this.currentEmployeeCategory.code = '',
+            this.currentEmployeeCategory.description = '',
+            this.currentEmployeeCategory.account = '',
+            this.currentEmployeeCategory.active = false
         },
         save(){
-            if (this.currentCategory.id === 0) {
-                categoryService.set(this.currentCategory)
+            if (this.currentEmployeeCategory.id === 0) {
+                employeeCategoryService.set(this.currentEmployeeCategory)
                 .then(response => {
                     if (response.status === null){
                         this.$toast.add({severity:'error', summary: 'Error Message', detail:'Error al crear el registre: ' + this.ret.PromiseResult.statusText, life: 3000});    
@@ -160,7 +191,7 @@ export default {
                     }
                 })
             }else{
-                categoryService.update(this.currentCategory)
+                employeeCategoryService.update(this.currentEmployeeCategory)
                 .then(response => {
                     if (response.status === null){
                         this.$toast.add({severity:'error', summary: 'Error Message', detail:'Error a l\'actualitzar el registre: ' + this.ret.PromiseResult.statusText, life: 3000});    
@@ -175,13 +206,13 @@ export default {
             this.closeDialog()
         },
         drop(currentid){       
-            this.currentCategory = this.categories.find(({id}) => id === currentid)
+            this.currentEmployeeCategory = this.employeecategories.find(({id}) => id === currentid)
             this.$confirm.require({
-                message: 'Vols esborrar el registre seleccionat?' + this.currentCategory.code,
+                message: 'Vols esborrar el registre seleccionat?' + this.currentEmployeeCategory.code,
                 header: 'Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    categoryService.delete(currentid)
+                    employeeCategoryService.delete(currentid)
                     .then(response => {
                         if (response.status === 202){
                         this.$toast.add({severity:'success', summary: 'Succes Message', detail:'Registre eliminat correctament' , life: 3000});  
@@ -200,6 +231,9 @@ export default {
                 }
             });
             
+        },
+        formatCurrency(value) {
+            return value.toLocaleString('es-ES', {style: 'currency', currency: 'EUR'});
         },
     },
     mounted(){        

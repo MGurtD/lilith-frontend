@@ -4,6 +4,8 @@ import Home from "./components/Home.vue";
 
 const Item = () => import("./components/Item.vue");
 const Category = () => import("./components/Category.vue");
+const EmployeeCategory = () => import("./components/EmployeeCategory.vue");
+const EventStatus = () => import("./components/EventStatus.vue");
 
 const routes = [
     {
@@ -12,15 +14,25 @@ const routes = [
         component: Home,
     },
     {
-        path: "/item",
+        path: "/config/item",
         name: "item",
         component: Item,
     },
     {
-        path: "/category",
+        path: "/config/category",
         name: "category",
         component: Category,
     },
+    {
+        path: "/config/employeecategory",
+        name: "employeecategory",
+        component: EmployeeCategory,
+    },
+    {
+        path: "/config/eventstatus",
+        name: "eventstatus",
+        component: EventStatus
+    }
 ];
 
 const router = createRouter({

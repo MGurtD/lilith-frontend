@@ -8,6 +8,15 @@ import ConfirmationService from 'primevue/confirmationservice';
 import Button from 'primevue/button'
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
+import Dropdown from 'primevue/dropdown';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import Checkbox from 'primevue/checkbox';
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog';
 
 
 createApp(App)
@@ -19,4 +28,13 @@ createApp(App)
     .component('Button', Button)
     .component('Card', Card)
     .component('Chart', Chart)
+    .component("DataTable", DataTable)
+    .component("Column", Column)
+    .component("Dialog", Dialog)
+    .component("InputText", InputText)
+    .component("InputNumber", InputNumber)
+    .component("Checkbox", Checkbox)
+    .component("Toast", Toast)
+    .component("ConfirmDialog", ConfirmDialog)
+    .component("Dropdown", Dropdown)
     .mount('#app')
