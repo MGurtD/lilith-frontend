@@ -6,6 +6,7 @@ const Item = () => import("./components/Item.vue");
 const Category = () => import("./components/Category.vue");
 const EmployeeCategory = () => import("./components/EmployeeCategory.vue");
 const EventStatus = () => import("./components/EventStatus.vue");
+const Event = () => import("./components/Event.vue");
 
 const routes = [
     {
@@ -32,6 +33,11 @@ const routes = [
         path: "/config/eventstatus",
         name: "eventstatus",
         component: EventStatus
+    },
+    {
+        path: "/data/event",
+        name: "event",
+        component: Event
     }
 ];
 

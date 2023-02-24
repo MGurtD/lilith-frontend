@@ -17,6 +17,9 @@ import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import Calendar from 'primevue/calendar';
 
 
 createApp(App)
@@ -37,4 +40,7 @@ createApp(App)
     .component("Toast", Toast)
     .component("ConfirmDialog", ConfirmDialog)
     .component("Dropdown", Dropdown)
+    .component("TabView", TabView)
+    .component("TabPanel", TabPanel)
+    .component("Calendar", Calendar)
     .mount('#app')

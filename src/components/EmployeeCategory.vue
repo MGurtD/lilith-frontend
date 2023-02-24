@@ -122,8 +122,6 @@
 <script>
 import employeeCategoryService from '@/services/employeecategory.service';
 
-
-
 export default {
     name: "categroy-list",
     data() {

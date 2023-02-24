@@ -71,6 +71,10 @@ export default {
             {
             label:'Estats',
             to:'/config/eventstatus'
+            },
+            {
+              label:'Events',
+              to:'/data/event'
             }
           ]
         },
