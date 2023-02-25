@@ -13,10 +13,6 @@
   <MenuBar :model="items" class="navbar"/>  
 
   <RouterView />
-<<<<<<< HEAD
-
-=======
->>>>>>> e4ec87adf3aa975ac29516ec72be54ba3ade938d
 </template>
 
 <script>
