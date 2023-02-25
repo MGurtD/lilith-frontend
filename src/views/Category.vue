@@ -47,7 +47,7 @@
           />
         </template>
       </Column>
-      <Column field="id" header="">
+      <Column field="id" header="" style="text-align: right;">
         <template #body="slotProps">
           <Button
             label=""
