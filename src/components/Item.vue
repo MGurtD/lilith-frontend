@@ -38,23 +38,23 @@
             <Column field="categoryDescription" header="Categoria" :sortable="true"></Column>
             <Column field="forPurchase" header="Compra" :sortable="true">
                 <template #body="slotProps">
-                    <Checkbox v-model="slotProps.data.forPurchase" :binary="true"  disabled="true"/>                    
+                    <Checkbox v-model="slotProps.data.forPurchase" :binary="true" :disabled="true"/>                    
                 </template>
                 
             </Column>
             <Column field="forManufacture" header="Producció" :sortable="true">
                 <template #body="slotProps">
-                    <Checkbox v-model="slotProps.data.forManufacture" :binary="true"  disabled="true"/>                    
+                    <Checkbox v-model="slotProps.data.forManufacture" :binary="true" :disabled="true"/>                    
                 </template>
             </Column>
             <Column field="forSale" header="Venta" :sortable="true">
                 <template #body="slotProps">
-                    <Checkbox v-model="slotProps.data.forSale" :binary="true"  disabled="true"/>
+                    <Checkbox v-model="slotProps.data.forSale" :binary="true" :disabled="true"/>
                 </template>
             </Column>
             <Column field="active" header="Actiu" :sortable="true">
                 <template #body="slotProps">
-                    <Checkbox v-model="slotProps.data.active" :binary="true"  disabled="true"/>
+                    <Checkbox v-model="slotProps.data.active" :binary="true" :disabled="true"/>
                 </template>
             </Column>
             <Column field="id" header="">
@@ -93,7 +93,7 @@
                     <span class="p-inputgroup-addon">
                         Categoria:
                     </span>
-                    <Dropdown v-model="currentCategory" :options="categories" optionLabel="description" optionValue="id" value="{{ currentItem.categoryDescription }}" dataKey="id" />
+                    <Dropdown v-model="currentItem.categoryId" :options="categories" optionLabel="description" optionValue="id" dataKey="id" />
                 </div>
             </div>
             <div class="col-12 md:col-4">
@@ -179,7 +179,7 @@ export default {
                                 description: '',
                                 costPrice: 0.0,
                                 salePrice: 0.0,
-                                categoryid: 0,
+                                categoryId: 0,
                                 forPurchase: false,
                                 forManufacture: false,
                                 forSale: false,
@@ -236,7 +236,7 @@ export default {
         },
         save(){
             console.log(this.currentCategory)
-            this.currentItem.categoryid = this.currentCategory
+            this.currentItem.categoryId = this.currentCategory
             if (this.currentItem.id === 0) {
                 itemService.set(this.currentItem)
                 .then(response => {
@@ -294,7 +294,7 @@ export default {
             this.currentItem.description = ''
             this.currentItem.costPrice = 0.0
             this.currentItem.salePrice = 0.0
-            this.currentItem.categoryid = 0
+            this.currentItem.categoryId = 0
             this.currentItem.forPurchase = false
             this.currentItem.forManufacture = false
             this.currentItem.forSale = false
