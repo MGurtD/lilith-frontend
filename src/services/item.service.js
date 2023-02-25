@@ -1,6 +1,7 @@
 import axios from 'axios';
+import getEnvironment from '@/env';
 
-const API_URL = process.env.VUE_APP_API_URL + '/api';
+const API_URL = getEnvironment().apiBaseUrl + '/api';
 
 class ItemService {
     getAll(){

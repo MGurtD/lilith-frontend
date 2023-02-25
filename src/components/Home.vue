@@ -35,12 +35,14 @@
     
 </template>
 <script>
+import getEnvironment from '@/env';
+
 export default {
     name: "item-list",
 
     data() {
         return {
-            url: process.env.VUE_APP_API_URL,
+            url: getEnvironment().apiBaseUrl,
             chartData: {
                 datasets: [{
                     data: [11,16,7,3,14],
