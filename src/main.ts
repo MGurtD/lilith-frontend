@@ -29,9 +29,12 @@ import ConfirmDialog from "primevue/confirmdialog";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Calendar from "primevue/calendar";
+import ConfirmPopup from "primevue/confirmpopup";
+import ConfirmationService from "primevue/confirmationservice";
 
 app.use(PrimeVue);
 app.use(ToastService);
+app.use(ConfirmationService);
 
 app
   .component("Toast", Toast)
@@ -41,6 +44,7 @@ app
   .component("DataTable", DataTable)
   .component("Column", Column)
   .component("Dialog", Dialog)
+  .component("ConfirmPopup", ConfirmPopup)
   .component("InputText", InputText)
   .component("InputNumber", InputNumber)
   .component("Checkbox", Checkbox)

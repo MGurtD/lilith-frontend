@@ -68,6 +68,7 @@ const items = [
   <RouterView />
 
   <Toast position="top-center" />
+  <ConfirmDialog />
 </template>
 
 <style lang="scss">
