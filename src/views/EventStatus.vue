@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="grid p-fluid">
     <div class="col-12 md:col-11"></div>
     <div class="col-12 md:col-1">
@@ -12,32 +13,20 @@
   </div>
   <div class="row">
     <DataTable
-      :value="categories"
-      v-model:selection="currentCategory"
+      :value="eventStatuses"
+      v-model:selection="currentEventStatus"
       datakey="id"
       stripedRows
-      responsiveLayout="scroll"
+      responsiveLayouts="scroll"
       :paginator="true"
       showGridlines
       :rows="10"
-      filterDisplay="menu"
-      :globalFilterFields="['description']"
       @row-click="onRowSelect"
     >
-      <template #empty> No hi ha categories. </template>
-      <template #loading> Carregant categories, si us plau espereu. </template>
+      <template #empty> No hi ha estats. </template>
+      <template #loading> Carregant estats, si us plau espereu. </template>
       <Column field="code" header="Codi" :sortable="true"> </Column>
-      <Column field="description" header="Descripció">
-        <template #filter="{ filterModel }">
-          <InputText
-            type="text"
-            v-model="filterModel.value"
-            class="p-column-filter"
-            placeholder="Search by name"
-          />
-        </template>
-      </Column>
-      <Column field="account" header="Codi" :sortable="true"> </Column>
+      <Column field="description" header="Descripció"> </Column>
       <Column field="active" header="Actiu" :sortable="true">
         <template #body="slotProps">
           <Checkbox
@@ -47,7 +36,7 @@
           />
         </template>
       </Column>
-      <Column field="id" header="" style="text-align: right;">
+      <Column field="id" header="">
         <template #body="slotProps">
           <Button
             label=""
@@ -63,39 +52,33 @@
         </template>
       </Column>
     </DataTable>
-    <Dialog header="Categoria d'article" v-model:visible="display">
+    <Dialog header="Estats d'events" v-model:visible="display">
       <div>
         <div class="grid p-fluid">
           <div class="col-12 md:col-4">
             <div class="p-inputgroup">
               <span class="p-inputgroup-addon"> Codi: </span>
-              <InputText placeholder="Codi" v-model="currentCategory.code" />
+              <InputText placeholder="Codi" v-model="currentEventStatus.code" />
             </div>
           </div>
           <div class="col-12 md:col-8">
             <div class="p-inputgroup">
-              <span class="p-inputgroup-addon"> Descripció: </span>
+              <span class="p-inputgroup-addon"> Descripció </span>
               <InputText
                 placeholder="Descripció"
-                v-model="currentCategory.description"
+                v-model="currentEventStatus.description"
               />
             </div>
           </div>
-          <div class="col-12 md:col-6">
-            <div class="p-inputgroup">
-              <span class="p-inputgroup-addon"> Compte comptable: </span>
-              <InputText placeholder="Codi" v-model="currentCategory.account" />
-            </div>
-          </div>
-          <div class="col-12 md:col-">
+          <div class="col-12 md:col-2">
             <div class="p-inputgroup">
               <span class="p-inputgroup-addon">
-                <Checkbox v-model="currentCategory.active" :binary="true" />
-                &nbsp;&nbsp;Activa
+                <Checkbox v-model="currentEventStatus.active" :binary="true" />
+                &nbsp;&nbsp; Actiu
               </span>
             </div>
           </div>
-          <div class="col-12 md:col-8"></div>
+          <div class="col-12 md:col-6"></div>
           <div class="col-12 md:col-2">
             <Button label="Acceptar" @click="save()" />
           </div>
@@ -107,13 +90,12 @@
     </Dialog>
   </div>
 </template>
-
 <script lang="ts">
-import categoryService from "../api/category.service";
+import eventstatusService from "../api/eventstatus.service";
 import { useConfirm } from "primevue/useconfirm";
 
 export default {
-  name: "categroy-list",
+  name: "eventstatus-ist",
   setup() {
     const confirm = useConfirm();
 
@@ -123,13 +105,11 @@ export default {
   },
   data() {
     return {
-      ret: null,
-      categories: [],
-      currentCategory: {
+      eventStatuses: [],
+      currentEventStatus: {
         id: 0,
         code: "",
         description: "",
-        account: "",
         active: false,
       },
       currentIndex: -1,
@@ -138,21 +118,21 @@ export default {
   },
   methods: {
     fetchData() {
-      categoryService
+      eventstatusService
         .getAll()
         .then((response) => {
-          this.categories = response.data;
+          this.eventStatuses = response.data;
         })
         .catch((e) => {
           console.log(e);
         });
     },
     onRowSelect(event: any) {
-      this.currentCategory = event.data;
+      this.currentEventStatus = event.data;
     },
     openDialog(currentid: number) {
       if (currentid !== 0) {
-        this.currentCategory = this.categories.find(
+        this.currentEventStatus = this.eventStatuses.find(
           ({ id }) => id === currentid
         ) as any;
         this.display = true;
@@ -166,20 +146,19 @@ export default {
       this.display = false;
     },
     resetData() {
-      (this.currentCategory.id = 0),
-        (this.currentCategory.code = ""),
-        (this.currentCategory.description = ""),
-        (this.currentCategory.account = ""),
-        (this.currentCategory.active = false);
+      (this.currentEventStatus.id = 0),
+        (this.currentEventStatus.code = ""),
+        (this.currentEventStatus.description = ""),
+        (this.currentEventStatus.active = false);
     },
     save() {
-      if (this.currentCategory.id === 0) {
-        categoryService.set(this.currentCategory).then((response) => {
+      if (this.currentEventStatus.id === 0) {
+        eventstatusService.set(this.currentEventStatus).then((response) => {
           if (response.status === null) {
             this.$toast.add({
               severity: "error",
               summary: "Error Message",
-              detail: "Error al crear el registre: ", //+ this.ret?.PromiseResult?.statusText,
+              detail: "Error al crear el registre: ", //+ this.ret.PromiseResult.statusText,
               life: 3000,
             });
           }
@@ -194,12 +173,12 @@ export default {
           }
         });
       } else {
-        categoryService.update(this.currentCategory).then((response) => {
+        eventstatusService.update(this.currentEventStatus).then((response) => {
           if (response.status === null) {
             this.$toast.add({
               severity: "error",
               summary: "Error Message",
-              detail: "Error a l'actualitzar el registre: ", //this.ret.PromiseResult.statusText,
+              detail: "Error a l'actualitzar el registre: ", //+ this.ret.PromiseResult.statusText,
               life: 3000,
             });
           }
@@ -218,17 +197,17 @@ export default {
       this.closeDialog();
     },
     drop(currentid: number) {
-      this.currentCategory = this.categories.find(
+      this.currentEventStatus = this.eventStatuses.find(
         ({ id }) => id === currentid
       ) as any;
-
-      this.confirm.require({
+      this.$confirm.require({
         message:
-          "Vols esborrar el registre seleccionat?" + this.currentCategory.code,
+          "Vols esborrar el registre seleccionat?" +
+          this.currentEventStatus.code,
         header: "Confirmation",
         icon: "pi pi-exclamation-triangle",
         accept: () => {
-          categoryService.delete(currentid).then((response) => {
+          eventstatusService.delete(currentid).then((response) => {
             if (response.status === 202) {
               this.$toast.add({
                 severity: "success",
