@@ -54,29 +54,46 @@
                 <div class="col-12 md:col-4">
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon">
-                            Estat
+                            Estat:
                         </span>
-                        <Dropdown placeholder="Estat" v-model="currentEvent.eventstatusid" :options="eventStatus"/>
+                        <Dropdown v-model="currentEvent.eventstatusid" 
+                                :options="eventStatus" 
+                                optionLabel="description" 
+                                optionValue="id"  
+                                dataKey="id" />
                     </div>
                 </div>
-                <div class="col-12 md:col-4">
+                <div class="col-12 md:col-3">
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon">                            
-                            Data
+                            Data:
                         </span>                        
                         <Calendar v-model="currentEvent.eventdate" />
                     </div>
                 </div>
-                <div class="col-12 md:col-4">
+                <div class="col-12 md:col-3">
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon">
-                        Categoria:
+                        Temps real:
                     </span>
-                    <Dropdown v-model="currentEventStatus" 
-                                :options="eventStatus" 
-                                optionLabel="Estat:" 
-                                optionValue="id"  
-                                dataKey="id" />
+                    <InputNumber v-model="currentEvent.realtime" placeholder="Temps real:" :disabled="true"  />
+                    </div>
+                </div>
+                <div class="col-12 md:col-3">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        Cost real:
+                    </span>
+                    <InputNumber v-model="currentEvent.realcost" placeholder="Cost real:" :disabled="true" mode="currency" currency="EUR"  />
+                    </div>
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+                <div class="col-12 md:col-3">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        Preu de venta:
+                    </span>
+                    <InputNumber v-model="currentEvent.saleprice" placeholder="Preu de venta:" mode="currency" currency="EUR"  />
                     </div>
                 </div>
                 <div class="col-12 md:col-8"></div>
