@@ -13,7 +13,6 @@
   <MenuBar :model="items" class="navbar"/>  
 
   <RouterView />
-{{ process.env.VUE_APP_API_URL }}
 </template>
 
 <script>
