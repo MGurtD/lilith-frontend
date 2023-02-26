@@ -1,20 +1,13 @@
-import axios from "axios";
+import BaseService from "./base.service";
+import { EmployeeCategory } from "../types";
+import { GetResource, Modules, Resources } from "./api.resources";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/api";
-
-class EmployeeCategoryService {
-  getAll() {
-    return axios.get(API_URL + "/config/employeecategory");
-  }
-  update(employeecategory: any) {
-    return axios.put(API_URL + "/config/employeecategory", employeecategory);
-  }
-  set(employeecategory: any) {
-    return axios.post(API_URL + "/config/employeecategory", employeecategory);
-  }
-  delete(id: number) {
-    return axios.delete(API_URL + "/config/employeecategory/" + id);
+class EmployeeCategoryService extends BaseService<EmployeeCategory> {
+  constructor(resource: string) {
+    super(resource);
   }
 }
 
-export default new EmployeeCategoryService();
+export default new EmployeeCategoryService(
+  GetResource(Modules.Config, Resources.EmployeeCategory)
+);

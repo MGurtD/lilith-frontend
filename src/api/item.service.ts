@@ -1,20 +1,11 @@
-import axios from "axios";
+import BaseService from "./base.service";
+import { Item } from "../types";
+import { GetResource, Modules, Resources } from "./api.resources";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/api";
-
-class ItemService {
-  getAll() {
-    return axios.get(API_URL + "/config/item");
-  }
-  update(item: any) {
-    return axios.put(API_URL + "/config/item", item);
-  }
-  set(item: any) {
-    return axios.post(API_URL + "/config/item", item);
-  }
-  delete(id: number) {
-    return axios.delete(API_URL + "/config/item/" + id);
+class ItemService extends BaseService<Item> {
+  constructor(resource: string) {
+    super(resource);
   }
 }
 
-export default new ItemService();
+export default new ItemService(GetResource(Modules.Config, Resources.Item));

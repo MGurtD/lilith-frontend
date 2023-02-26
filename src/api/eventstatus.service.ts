@@ -1,20 +1,13 @@
-import axios from "axios";
+import BaseService from "./base.service";
+import { EventStatus } from "../types";
+import { GetResource, Modules, Resources } from "./api.resources";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/api";
-
-class EventStatusService {
-  getAll() {
-    return axios.get(API_URL + "/config/eventstatus");
-  }
-  update(eventstatus: any) {
-    return axios.put(API_URL + "/config/eventstatus", eventstatus);
-  }
-  set(eventstatus: any) {
-    return axios.post(API_URL + "/config/eventstatus", eventstatus);
-  }
-  delete(id: number) {
-    return axios.delete(API_URL + "/config/eventstatus/" + id);
+class EventStatusService extends BaseService<EventStatus> {
+  constructor(resource: string) {
+    super(resource);
   }
 }
 
-export default new EventStatusService();
+export default new EventStatusService(
+  GetResource(Modules.Config, Resources.EventStatus)
+);

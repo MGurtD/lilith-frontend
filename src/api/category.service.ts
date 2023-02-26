@@ -1,20 +1,13 @@
-import axios from "axios";
+import BaseService from "./base.service";
+import { Category } from "../types";
+import { GetResource, Modules, Resources } from "./api.resources";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/api";
-
-class CategoryService {
-  getAll() {
-    return axios.get(API_URL + "/config/category");
-  }
-  update(category: any) {
-    return axios.put(API_URL + "/config/category", category);
-  }
-  set(category: any) {
-    return axios.post(API_URL + "/config/category", category);
-  }
-  delete(id: number) {
-    return axios.delete(API_URL + "/config/category/" + id);
+class CategoryService extends BaseService<Category> {
+  constructor(resource: string) {
+    super(resource);
   }
 }
 
-export default new CategoryService();
+export default new CategoryService(
+  GetResource(Modules.Config, Resources.Category)
+);

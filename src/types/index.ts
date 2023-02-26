@@ -1,43 +1,40 @@
-export interface UserLogin {
-  username: string;
-  password: string;
-  enterprise: string;
+export interface Category {
+  id: number;
+  code: string;
+  description: string;
+  account: string;
+  active: boolean;
 }
 
-export interface Enterprise {
-  id: string;
-  name: string;
-  logo: string;
-  address: string;
-  phoneNumber: string;
-  createdOn: string;
-  updatedAt?: string;
+export interface EmployeeCategory {
+  id: number;
+  code: string;
+  description: string;
+  costPrice: number;
+  salePrice: number;
+  account: string;
+  active: boolean;
 }
 
-export interface User {
-  id: string;
-  username: string;
-  password: string;
-  name: string;
-  surnames: string;
-  identificationNumber: string;
-  phone: string;
-  photo: string;
-  role: {
-    name: string;
-    isSuperAdmin: boolean;
-  };
-  enterpriseId: string;
-  createdOn: string;
-  updatedAt: null;
+export interface Event {}
+
+export interface EventStatus {
+  id: number;
+  code: string;
+  description: string;
+  active: boolean;
 }
 
-export interface TimePeriod {
-  id?: string;
-  userId?: string;
-  createdOn?: string;
-  updatedAt?: string;
-  monthId?: string;
-  dayId?: string;
-  seconds?: number;
+export interface Item {
+  id: number;
+  code: string;
+  description: string;
+  costPrice: number;
+  salePrice: number;
+  categoryId: number;
+  categoryDescription: string;
+  forPurchase: boolean;
+  forManufacture: boolean;
+  forSale: boolean;
+  active: boolean;
 }

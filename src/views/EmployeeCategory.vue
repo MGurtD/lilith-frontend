@@ -1,5 +1,4 @@
 <template>
-  <Toast />
   <div class="grid p-fluid">
     <div class="col-12 md:col-11"></div>
     <div class="col-12 md:col-1">
@@ -234,7 +233,7 @@ export default {
     save() {
       if (this.currentEmployeeCategory.id === 0) {
         employeeCategoryService
-          .set(this.currentEmployeeCategory)
+          .create(this.currentEmployeeCategory)
           .then((response) => {
             if (response.status === null) {
               this.$toast.add({
