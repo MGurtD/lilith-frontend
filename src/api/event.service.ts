@@ -1,17 +1,15 @@
-import axios from "axios";
+import BaseService from "./base.service";
+import { Event } from "../types";
+import { GetResource, Modules, Resources } from "./api.resources";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/api";
-
-class EventService {
-  getAll() {
-    return axios.get(API_URL + "/data/event");
+class EventService extends BaseService<Event> {
+  constructor(resource: string) {
+    super(resource);
   }
+
   getDetailedById(id: number) {
-    return axios.get(API_URL + "/data/event/detail/" + id);
-  }
-  set(event: any) {
-    return axios.post(API_URL + "/data/event", event);
+    return this.apiClient.get(`${this.resource}/detail/${id}`);
   }
 }
 
-export default new EventService();
+export default new EventService(GetResource(Modules.Config, Resources.Event));

@@ -1,5 +1,4 @@
 <template>
-  <Toast />
   <div class="grid p-fluid">
     <div class="col-12 md:col-11"></div>
     <div class="col-12 md:col-1">
@@ -153,7 +152,7 @@ export default {
     },
     save() {
       if (this.currentEventStatus.id === 0) {
-        eventstatusService.set(this.currentEventStatus).then((response) => {
+        eventstatusService.create(this.currentEventStatus).then((response) => {
           if (response.status === null) {
             this.$toast.add({
               severity: "error",

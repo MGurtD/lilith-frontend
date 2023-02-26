@@ -1,5 +1,4 @@
 <template>
-  <Toast />
   <div class="grid p-fluid">
     <div class="col-12 md:col-11"></div>
     <div class="col-12 md:col-1">
@@ -211,7 +210,6 @@
       </div>
     </div>
   </Dialog>
-  <ConfirmDialog />
 </template>
 <script lang="ts">
 import itemService from "../api/item.service";
@@ -301,7 +299,7 @@ export default {
       console.log(this.currentCategory);
       //this.currentItem.categoryId = this.currentCategory;
       if (this.currentItem.id === 0) {
-        itemService.set(this.currentItem).then((response) => {
+        itemService.create(this.currentItem).then((response) => {
           if (response.status === null) {
             this.$toast.add({
               severity: "error",
@@ -317,6 +315,7 @@ export default {
               detail: "Registre creat",
               life: 3000,
             });
+            this.fetchData();
           }
         });
       } else {

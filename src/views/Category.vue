@@ -111,6 +111,7 @@
 <script lang="ts">
 import categoryService from "../api/category.service";
 import { useConfirm } from "primevue/useconfirm";
+import { Category } from "../types";
 
 export default {
   name: "categroy-list",
@@ -124,14 +125,14 @@ export default {
   data() {
     return {
       ret: null,
-      categories: [],
+      categories: [] as Array<Category>,
       currentCategory: {
         id: 0,
         code: "",
         description: "",
         account: "",
         active: false,
-      },
+      } as Category,
       currentIndex: -1,
       display: false,
     };
@@ -174,7 +175,7 @@ export default {
     },
     save() {
       if (this.currentCategory.id === 0) {
-        categoryService.set(this.currentCategory).then((response) => {
+        categoryService.create(this.currentCategory).then((response) => {
           if (response.status === null) {
             this.$toast.add({
               severity: "error",
