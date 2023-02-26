@@ -215,6 +215,7 @@
 import itemService from "../api/item.service";
 import categoryService from "../api/category.service";
 import { useConfirm } from "primevue/useconfirm";
+import { Item } from "../types";
 
 //import FilterMatchMode from 'primevue/api';
 
@@ -244,7 +245,7 @@ export default {
         forManufacture: false,
         forSale: false,
         active: false,
-      },
+      } as Item,
       currentIndex: -1,
       code: "",
       display: false,
