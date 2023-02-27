@@ -10,7 +10,13 @@ class EventService extends BaseService<Event> {
   getDetailedById(id: number) {
     return this.apiClient.get(`${this.resource}/detail/${id}`);
   }
-  
+  addItemEvent(item: any){
+    return this.apiClient.post(`${this.resource}/item`, item)
+  }
+  deleteItemEvent(id: number){
+    return this.apiClient.delete(`${this.resource}/item/${id}`)
+  }
+
 }
 
-export default new EventService(GetResource(Modules.Config, Resources.Event));
+export default new EventService(GetResource(Modules.Data, Resources.Event));

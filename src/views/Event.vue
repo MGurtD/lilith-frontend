@@ -29,12 +29,6 @@
             <template #body="slotProps">
                     <Button label="" icon="pi pi-pencil" @click="openDialog(slotProps.data.id)" aria-label="Modificar dades generals"/>
                     &nbsp;&nbsp;
-                    <!--<Button label="" icon="pi pi-cart-plus" @click="openItemsDialog(slotProps.data.id)" aria-label="Afegir items"/>
-                    &nbsp;&nbsp;
-                    <Button label="" icon="pi pi-users" @click="openEmployeesDialog(slotProps.data.id)"/>
-                    &nbsp;&nbsp;
-                    <Button label="" icon="pi pi-eye" @click="openGlobalDialog(slotProps.data.id)"/>
-                    &nbsp;&nbsp;-->
                     <Button label="" icon="pi pi-trash" @click="drop(slotProps.data.id)"/>
             </template>
                 
@@ -128,9 +122,10 @@
                 </div>
             </div>   
         </TabPanel>
-        <TabPanel header="Articles">
+        <TabPanel header="Articles" v-model:disabled="eventSaved">
             <div>
                 <div class="grid p-fluid">
+                    <div class="col-12 md:col-12"></div>
                     <div class="col-12 md:col-8">
                         <div class="p-inputgroup">
                         <span class="p-inputgroup-addon"> Items: </span>
@@ -153,6 +148,10 @@
                                 />
                         </div>
                     </div>
+                    <div class="col-12 md:col-1"></div>
+                    <div class="col-12 md:col-1">
+                    <Button label="Afegir" icon="pi pi-add" class="p-button-success" @click="addEventItem()"></Button>
+                    </div>
                 </div>
             </div>
             <DataTable
@@ -171,7 +170,7 @@
             >
                 <Column field="itemCode" header="Codi" :sortable="true" />
                 <Column field="itemDescription" header="Descripció" :sortable="true" />
-                <Column field="initialQuantity" header="Quantitat" :sortable="true" />
+                <Column field="initialquantity" header="Quantitat" :sortable="true" />
                 <Column field="costPrice" header="Preu de cost" :sortable="true" />
                 <Column field="salePrice" header="Preu de venda" :sortable="true" />
                 <Column field="id" header="" style="text-align: right;">
@@ -185,7 +184,7 @@
                 </Column>
             </DataTable>
         </TabPanel>
-        <TabPanel header="Persones">
+        <TabPanel header="Persones" :disabled="true">
 
         </TabPanel>
     </TabView>
@@ -228,13 +227,27 @@ export default {
                 costPrice: 0,
                 salePrice: 0
             },
+            newEventItem: {
+                id: 0,
+                eventid: 0,
+                itemid: 0,
+                itemCode: '',
+                itemDescription:'',
+                initialquantity: 0,
+                reloadquantity: 0,
+                wastequantity: 0,
+                rollbackquantity: 0,
+                costPrice: 0,
+                salePrice: 0
+            },
             items: [],
-            selectedItem: null,
+            selectedItem: 0,
             selectedItemQuantity: 0,
             currentEventEmployeeCategories: [],            
             eventStatus: [],
             currentEventStatus: null,
             display:false,
+            eventSaved: true
         };
     },
     methods: {
@@ -251,16 +264,7 @@ export default {
         },
         openDialog(currentid: number){            
             if (currentid !== 0) {
-                eventService.getDetailedById(currentid)
-                .then(response => {
-                    this.currentEvent = response.data.event                    
-                    this.eventItems = response.data.item
-                    this.currentEventEmployeeCategories = response.data.employeecategories
-                    console.log(this.eventItems)
-                })
-                .catch(e => {
-                    console.log(e)
-                });                        
+                this.getDetailed(currentid)                
                 this.display = true
             }else{
                 this.resetData()
@@ -273,7 +277,41 @@ export default {
             this.display = false
         },
         drop(currentid: number){
-            console.log(currentid)
+            this.$confirm.require({
+            message:
+            "Vols esborrar el registre seleccionat? " + this.currentEvent.description,
+            header: "Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                eventService.delete(currentid)
+                .then(response => {
+                    if (response.status === null) {
+                            this.$toast.add({
+                            severity: "error",
+                            summary: "Error Message",
+                            detail: "Error a l'esborrar el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                            life: 3000,
+                            });
+                        }
+                        if (response.status === 202) {
+                            this.$toast.add({
+                            severity: "success",
+                            summary: "Succes Message",
+                            detail: "Registre esborrat",
+                            life: 3000,
+                            });
+                            this.fetchData();
+                        }
+                })
+            },
+            reject: () => {
+            //callback to execute when user rejects the action
+            },
+            onHide: () => {
+            //callback to execute when dialog is hidden
+            },
+        });
+           
         },
         formatCurrency(value: any) {
             return value.toLocaleString('es-ES', {style: 'currency', currency: 'EUR'});
@@ -344,10 +382,72 @@ export default {
             })
         },
         dropItem(itemId: number){
-            console.log(itemId)
+            this.$confirm.require({
+            message:
+            "Vols esborrar el registre seleccionat? " + this.currentEventItems.itemCode,
+            header: "Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                eventService.deleteItemEvent(itemId)
+                .then(response => {
+                    if (response.status === null) {
+                            this.$toast.add({
+                            severity: "error",
+                            summary: "Error Message",
+                            detail: "Error a l'esborrar el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                            life: 3000,
+                            });
+                        }
+                        if (response.status === 202) {
+                            this.$toast.add({
+                            severity: "success",
+                            summary: "Succes Message",
+                            detail: "Registre esborrat",
+                            life: 3000,
+                            });
+                            this.getDetailed(this.currentEvent.id)
+                        }
+                })
+            },
+            reject: () => {
+            //callback to execute when user rejects the action
+            },
+            onHide: () => {
+            //callback to execute when dialog is hidden
+            },
+        });
+        },
+        addEventItem(){            
+            this.newEventItem.itemid = this.selectedItem
+            this.newEventItem.initialquantity = this.selectedItemQuantity
+            this.newEventItem.eventid = this.currentEvent.id
+            eventService.addItemEvent(this.newEventItem)
+            .then(response => {
+                this.getDetailed(this.currentEvent.id)
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        },
+        getDetailed(currentid: number){
+            eventService.getDetailedById(currentid)
+                .then(response => {
+                    this.currentEvent = response.data.event                    
+                    this.eventItems = response.data.item
+                    this.currentEventEmployeeCategories = response.data.employeecategories
+                    console.log(this.eventItems)
+                })
+                .catch(e => {
+                    console.log(e)
+                }); 
         }
     },
     mounted(){
+        if(this.currentEvent.id === 0){
+            this.eventSaved = false
+        }else{
+            this.eventSaved = true
+        }
         this.fetchData();
         this.getItems();
     }
