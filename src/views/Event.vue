@@ -1,5 +1,4 @@
-<template>
-    <Toast />
+<template>    
     <div class="grid p-fluid">
         <div class="col-12 md:col-11"></div>
         <div class="col-12 md:col-1">
@@ -34,7 +33,7 @@
                 
         </Column>
     </DataTable>
-    <Dialog header="Detall de l'event" v-model:visible="display">
+    <Dialog header="Detall de l'event" :breakpoints="{'960px': '95vw', '640px': '100vw'}" :style="{width: '95vw'}" v-model:visible="display" >
         <TabView>
             <TabPanel header="Generals">
             <div>
@@ -69,47 +68,42 @@
                     </div>
                     <div class="col-12 md:col-9"></div>
                     <br />
-                    <div class="col-12 md:col-3">
+                    <div class="col-12 md:col-4">
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon">
-                            Temps estimat:
-                        </span>
-                        <InputNumber v-model="currentEvent.estimatedtime" placeholder="Temps estimat:"  />
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            Cost estimat:
-                        </span>
-                        <InputNumber v-model="currentEvent.estimatedcost" placeholder="Cost estimat:" />
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-6"></div>
-                    <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            Temps real:
-                        </span>
-                        <InputNumber v-model="currentEvent.realtime" placeholder="Temps real:" :disabled="true"  />
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            Cost real:
+                            Cost:
                         </span>
                         <InputNumber v-model="currentEvent.realcost" placeholder="Cost real:" :disabled="true" mode="currency" currency="EUR"  />
                         </div>
                         
                     </div>
-                    <div class="col-12 md:col-3">
+                    <div class="col-12 md:col-4">
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon">
-                            Preu de venta:
+                            Preu:
                         </span>
-                        <InputNumber v-model="currentEvent.saleprice" placeholder="Preu de venta:" mode="currency" currency="EUR"  />
-                        <span class="p-inputgroup-addon"><i class="pi pi-exclamation-triangle"></i></span>
+                        <InputNumber v-model="currentEvent.saleprice" 
+                                    placeholder="Preu de venta:" 
+                                    mode="currency" 
+                                    @input="getMargins()"
+                                    @blur="getMargins()"
+                                    @focus="getMargins()"
+                                    currency="EUR"  />
+                        
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Marge:
+                        </span>
+                        <InputNumber :model-value="margin" 
+                                    placeholder="Marge:" 
+                                    suffix=" %" 
+                                    :minFractionDigits="2"
+                                    :maxFractionDigits="2"
+                                    :disabled="true" />
+                        <span class="p-inputgroup-addon" :visible="marginAlert"><i class="pi pi-exclamation-triangle"></i></span>
                         </div>
                     </div>
                     <div class="col-12 md:col-8"></div>
@@ -122,10 +116,9 @@
                 </div>
             </div>   
         </TabPanel>
-        <TabPanel header="Articles" v-model:disabled="eventSaved">
+        <TabPanel header="Articles" :disabled="currentEvent.id === 0 ? true : false">
             <div>
                 <div class="grid p-fluid">
-                    <div class="col-12 md:col-12"></div>
                     <div class="col-12 md:col-8">
                         <div class="p-inputgroup">
                         <span class="p-inputgroup-addon"> Items: </span>
@@ -162,7 +155,7 @@
                 responsiveLayout="scroll"
                 :paginator="true"
                 showGridlines
-                :rows="10"
+                :rows="6"
                 filterDisplay="menu"
                 :globalFilterFields="['itemDescription']"
                 @row-click="onItemRowSelect"
@@ -173,6 +166,24 @@
                 <Column field="initialquantity" header="Quantitat" :sortable="true" />
                 <Column field="costPrice" header="Preu de cost" :sortable="true" />
                 <Column field="salePrice" header="Preu de venda" :sortable="true" />
+                <Column field="totalCost" header="Cost linea" >
+                    <template #body="slotProps">
+                        {{ slotProps.data.costPrice * slotProps.data.initialquantity }}
+                    </template>
+                </Column>
+                <Column field="totalImport" header="Import linea" >
+                    <template #body="slotProps">
+                        {{ slotProps.data.salePrice * slotProps.data.initialquantity }}
+                    </template>
+                </Column>
+                <Column field="margin" header="Marge linea" >
+                    <template #body="slotProps">
+                        {{ 100 - 
+                                (((slotProps.data.costPrice * slotProps.data.initialquantity)/
+                                (slotProps.data.salePrice * slotProps.data.initialquantity))*100.0)
+                                 }}
+                    </template>
+                </Column>
                 <Column field="id" header="" style="text-align: right;">
                     <template #body="slotProps">
                     <Button
@@ -184,8 +195,92 @@
                 </Column>
             </DataTable>
         </TabPanel>
-        <TabPanel header="Persones" :disabled="true">
+        <TabPanel header="Persones" :disabled="currentEvent.id === 0 ? true : false">
+            <div>
+                <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                        <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"> Categories: </span>
+                        <Dropdown
+                            :options="categories"
+                            v-model="selectedCategory"
+                            optionLabel="description"
+                            optionValue="id"
+                            dataKey="id"
+                            :filter="true"
+                            ></Dropdown>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-2">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"> Quantitat: </span>
+                                <InputNumber
+                                placeholder="Quantitat"
+                                v-model="selectedEmployeeCategoryQuantity"
+                                />
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-2">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"> Temps: </span>
+                                <InputNumber
+                                placeholder="Temps"
+                                v-model="selectedEmployeeCategoryTime"
+                                />
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-1"></div>
+                    <div class="col-12 md:col-1">
+                    <Button label="Afegir" icon="pi pi-add" class="p-button-success" @click="addEventEmployeeCategory()"></Button>
+                    </div>
+                </div>
+            </div>
+            <!--currentEventEmployeeCategories-->
+            <DataTable
+                :value="currentEventEmployeeCategories"
+                v-model:selection="newEventEmployeeCategory"
+                datakey="id"
+                stripedRows
+                responsiveLayout="scroll"
+                :paginator="true"
+                showGridlines
+                :rows="6"                                
+                @row-click="onEmployeeCategoryRowSelect"
 
+            >
+            <Column field="employeecategorydescription" header="Descripció" :sortable="true" />
+            <Column field="initialquantity" header="Persones" />
+            <Column field="initialtime" header="Hores" />
+            <Column field="costPrice" header="P.C. hora/persona" />
+            <Column field="salePrice" header="P.V. hora/persona" />
+            <Column field="totalCost" header="Cost linea" >
+                    <template #body="slotProps">
+                        {{ slotProps.data.costPrice * slotProps.data.initialquantity * slotProps.data.initialtime }}
+                    </template>
+                </Column>
+                <Column field="totalImport" header="Import linea" >
+                    <template #body="slotProps">
+                        {{ slotProps.data.salePrice * slotProps.data.initialquantity * slotProps.data.initialtime }}
+                    </template>
+                </Column>
+                <Column field="margin" header="Marge linea" >
+                    <template #body="slotProps">
+                        {{ 100 - 
+                                (((slotProps.data.costPrice * slotProps.data.initialquantity * slotProps.data.initialtime)/
+                                (slotProps.data.salePrice * slotProps.data.initialquantity * slotProps.data.initialtime))*100.0)
+                                 }}
+                    </template>
+                </Column>
+                <Column field="id" header="" style="text-align: right;">
+                    <template #body="slotProps">
+                    <Button
+                        label=""
+                        icon="pi pi-trash"
+                        @click="dropEmployeeCategory(slotProps.data.id)"
+                    />
+                    </template>
+                </Column>
+            </DataTable>
         </TabPanel>
     </TabView>
     </Dialog>
@@ -195,14 +290,15 @@
 import eventService from '../api/event.service';
 import eventstatusService from '../api/eventstatus.service';
 import itemService from '../api/item.service';
-
+import employeecategoryService from '../api/employeecategory.service';
 
 export default {
     name: "event-list",
     data() {
+        //Dades
         return {
+            //Formulari principal
             events: [],
-            eventItems: [],
             currentEvent: {
                 id:0,
                 description:'',
@@ -214,6 +310,11 @@ export default {
                 realtime: 0,
                 saleprice: 0, 
             },
+            eventStatus: [],
+            currentEventStatus: null,            
+            //Pestanya general
+            display:false,
+            eventItems: [],            
             currentEventItems: {
                 id: 0,
                 eventid: 0,
@@ -227,6 +328,9 @@ export default {
                 costPrice: 0,
                 salePrice: 0
             },
+            margin: 0,
+            marginAlert: false,
+            //Pestanya articles
             newEventItem: {
                 id: 0,
                 eventid: 0,
@@ -244,36 +348,55 @@ export default {
             selectedItem: 0,
             selectedItemQuantity: 0,
             currentEventEmployeeCategories: [],            
-            eventStatus: [],
-            currentEventStatus: null,
-            display:false,
-            eventSaved: true
+            
+            eventSaved: true,
+            //Pestanya persones
+            categories: [],
+            selectedCategory: 0,
+            selectedEmployeeCategoryQuantity: 0,
+            selectedEmployeeCategoryTime: 0,
+            newEventEmployeeCategory: {
+                id: 0,
+                eventid: 0,
+                employeecategoryid: 0,
+                employeecategorycode: '',
+                employeecategorydescription: '',
+                initialquantity: 0,
+                realquantity:0,
+                initialtime:0,
+                realtime:0,
+                costPrice: 0,
+                salePrice: 0
+            },
+
         };
     },
     methods: {
+        //General / Events
         fetchData(){
             this.getEvent();
             this.getEventStatus();
             
         },
         onRowSelect(event: any){
-            this.events = event.data;
-        },
-        onItemRowSelect(event:any){
-            this.currentEventItems = event.data;
+            //this.events = event.data;
+            console.log(event.data)
         },
         openDialog(currentid: number){            
             if (currentid !== 0) {
-                this.getDetailed(currentid)                
+                this.getDetailed(currentid)     
+                this.getMargins()           
                 this.display = true
             }else{
                 this.resetData()
                 this.fetchData()
+                this.getMargins()
                 this.display = true
             }
             
         },
         closeDialog(){
+            this.fetchData();
             this.display = false
         },
         drop(currentid: number){
@@ -329,31 +452,7 @@ export default {
             this.eventItems = []
             this.currentEventEmployeeCategories = []
         },
-        save(){
-            if (this.currentEvent.id === 0){
-                eventService.create(this.currentEvent).then((response) => {
-                    if (response.status === null) {
-                        this.$toast.add({
-                        severity: "error",
-                        summary: "Error Message",
-                        detail: "Error al crear el registre: ", //+ this.ret?.PromiseResult?.statusText,
-                        life: 3000,
-                        });
-                    }
-                    if (response.status === 201) {
-                        this.$toast.add({
-                        severity: "success",
-                        summary: "Succes Message",
-                        detail: "Registre creat",
-                        life: 3000,
-                        });
-                        this.fetchData();
-                    }
-            });
-        }else{
-            console.log("update")
-        }
-    },
+        
         getEventStatus(){
             eventstatusService.getAll()
             .then(response => {
@@ -381,6 +480,65 @@ export default {
                 console.log(e)
             })
         },
+        getEmployeeCategories() {
+            employeecategoryService.getAll()
+            .then(response => {
+                this.categories = response.data
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        },
+        getMargins(){
+            this.margin = 100-((this.currentEvent.realcost/this.currentEvent.saleprice) * 100.0) 
+            if (this.margin < 30){
+                this.marginAlert = true
+            }else{
+                this.marginAlert = false
+            }
+        },
+        //Dialog / General    
+        save(){
+            if (this.currentEvent.id === 0){
+                eventService.create(this.currentEvent).then((response) => {
+                    if (response.status === null) {
+                        this.$toast.add({
+                        severity: "error",
+                        summary: "Error Message",
+                        detail: "Error al crear el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                        life: 3000,
+                        });
+                    }
+                    if (response.status === 201) {
+                        this.$toast.add({
+                        severity: "success",
+                        summary: "Succes Message",
+                        detail: "Registre creat",
+                        life: 3000,
+                        });
+                        this.fetchData();
+                    }
+            });
+        }else{
+            console.log(this.currentEvent)
+        }
+    },    
+        getDetailed(currentid: number){
+            eventService.getDetailedById(currentid)
+                .then(response => {
+                    this.currentEvent = response.data.event                    
+                    this.eventItems = response.data.item
+                    this.currentEventEmployeeCategories = response.data.employeecategory
+                    console.log(this.currentEventEmployeeCategories)
+                })
+                .catch(e => {
+                    console.log(e)
+                }); 
+        },
+        //Dialog / Articles
+        onItemRowSelect(event:any){
+            this.currentEventItems = event.data;
+        },
         dropItem(itemId: number){
             this.$confirm.require({
             message:
@@ -399,13 +557,31 @@ export default {
                             });
                         }
                         if (response.status === 202) {
-                            this.$toast.add({
-                            severity: "success",
-                            summary: "Succes Message",
-                            detail: "Registre esborrat",
-                            life: 3000,
-                            });
-                            this.getDetailed(this.currentEvent.id)
+                            eventService.economicCalculations(this.currentEvent.id)
+                            .then(response => {
+                                this.getDetailed(this.currentEvent.id)
+                                if (response.status === null) {
+                                        this.$toast.add({
+                                        severity: "error",
+                                        summary: "Error Message",
+                                        detail: "Error a l'afegir el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                                        life: 3000,
+                                        });
+                                    }
+                                    if (response.status === 201) {
+                                        this.$toast.add({
+                                        severity: "success",
+                                        summary: "Succes Message",
+                                        detail: "Registre afegit",
+                                        life: 3000,
+                                        });
+                                        this.getDetailed(this.currentEvent.id)
+                                        this.getMargins()
+                                    }
+                            })
+                            .catch(e =>{
+                                console.log(e)
+                            })
                         }
                 })
             },
@@ -422,34 +598,137 @@ export default {
             this.newEventItem.initialquantity = this.selectedItemQuantity
             this.newEventItem.eventid = this.currentEvent.id
             eventService.addItemEvent(this.newEventItem)
-            .then(response => {
-                this.getDetailed(this.currentEvent.id)
+            .then(response => {                
+                eventService.economicCalculations(this.currentEvent.id)
+                .then(response => {
+                    this.getDetailed(this.currentEvent.id)
+                    if (response.status === null) {
+                            this.$toast.add({
+                            severity: "error",
+                            summary: "Error Message",
+                            detail: "Error a l'afegir el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                            life: 3000,
+                            });
+                        }
+                        if (response.status === 201) {
+                            this.$toast.add({
+                            severity: "success",
+                            summary: "Succes Message",
+                            detail: "Registre afegit",
+                            life: 3000,
+                            });
+                            this.getDetailed(this.currentEvent.id)
+                            this.getMargins()
+                        }
+                })
+                .catch(e =>{
+                    console.log(e)
+                })
             })
             .catch(e => {
                 console.log(e)
             })
         },
-        getDetailed(currentid: number){
-            eventService.getDetailedById(currentid)
+        //EmployeeCategories tab
+        addEventEmployeeCategory(){
+            this.newEventEmployeeCategory.employeecategoryid = this.selectedCategory
+            this.newEventEmployeeCategory.initialquantity = this.selectedEmployeeCategoryQuantity
+            this.newEventEmployeeCategory.initialtime = this.selectedEmployeeCategoryTime
+            this.newEventEmployeeCategory.eventid = this.currentEvent.id
+            eventService.addEmployeeCategoryEvent(this.newEventEmployeeCategory)
+            .then(response => {                
+                eventService.economicCalculations(this.currentEvent.id)
                 .then(response => {
-                    this.currentEvent = response.data.event                    
-                    this.eventItems = response.data.item
-                    this.currentEventEmployeeCategories = response.data.employeecategories
-                    console.log(this.eventItems)
+                    this.getDetailed(this.currentEvent.id)
+                    if (response.status === null) {
+                            this.$toast.add({
+                            severity: "error",
+                            summary: "Error Message",
+                            detail: "Error a l'afegir el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                            life: 3000,
+                            });
+                        }
+                        if (response.status === 201) {
+                            this.$toast.add({
+                            severity: "success",
+                            summary: "Succes Message",
+                            detail: "Registre afegit",
+                            life: 3000,
+                            });
+                            this.getDetailed(this.currentEvent.id)
+                            this.getMargins()
+                        }
                 })
-                .catch(e => {
+                .catch(e =>{
                     console.log(e)
-                }); 
+                })
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        },
+        dropEmployeeCategory(employeecategoryId: number){
+            this.$confirm.require({
+            message:
+            "Vols esborrar el registre seleccionat? " + this.newEventEmployeeCategory.employeecategorycode,
+            header: "Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                eventService.deleteEmployeeCategoryEvent(employeecategoryId)                
+                .then(response => {
+                    if (response.status === null) {
+                            this.$toast.add({
+                            severity: "error",
+                            summary: "Error Message",
+                            detail: "Error a l'esborrar el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                            life: 3000,
+                            });
+                        }
+                        if (response.status === 202) {
+                            eventService.economicCalculations(this.currentEvent.id)
+                                .then(response => {
+                                    this.getDetailed(this.currentEvent.id)
+                                    if (response.status === null) {
+                                            this.$toast.add({
+                                            severity: "error",
+                                            summary: "Error Message",
+                                            detail: "Error a l'afegir el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                                            life: 3000,
+                                            });
+                                        }
+                                        if (response.status === 201) {
+                                            this.$toast.add({
+                                            severity: "success",
+                                            summary: "Succes Message",
+                                            detail: "Registre afegit",
+                                            life: 3000,
+                                            });
+                                            this.getDetailed(this.currentEvent.id)
+                                            this.getMargins()
+                                        }
+                                })
+                                .catch(e =>{
+                                    console.log(e)
+                                })
+                        }
+                })
+            },
+            reject: () => {
+            //callback to execute when user rejects the action
+            },
+            onHide: () => {
+            //callback to execute when dialog is hidden
+            },
+        });
+        },
+        onEmployeeCategoryRowSelect(event:any){
+            console.log(event.data)
         }
     },
     mounted(){
-        if(this.currentEvent.id === 0){
-            this.eventSaved = false
-        }else{
-            this.eventSaved = true
-        }
         this.fetchData();
         this.getItems();
+        this.getEmployeeCategories();
     }
 }
 </script>
