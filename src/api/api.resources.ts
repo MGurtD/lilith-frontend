@@ -9,6 +9,7 @@ export enum Resources {
   EmployeeCategory = "employeecategory",
   EventStatus = "eventstatus",
   Event = "event",
+  Statistics = "statistics"
 }
 
 export const GetResource = (Module: Modules, Resource: Resources): string => {

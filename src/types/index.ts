@@ -38,3 +38,10 @@ export interface Item {
   forSale: boolean;
   active: boolean;
 }
+
+export interface ImportsByAccount  {
+  account: string;
+  description: string;
+  costprice: number;
+  saleprice:number;
+}

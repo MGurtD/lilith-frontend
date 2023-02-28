@@ -1,6 +1,6 @@
 <template>
   <div class="grid p-fluid">
-    <div class="col-12 md:col-4">
+    <!--<div class="col-12 md:col-4">
       <Card style="width: 25rem; margin-bottom: 2em">
         <template #header> </template>
         <template #title> Grafo 1 </template>
@@ -19,18 +19,25 @@
         </template>
         <template #footer> </template>
       </Card>
-    </div>
+    </div>-->
   </div>
   <div class="container"></div>
 </template>
 <script lang="ts">
-export default {
-  name: "item-list",
+import eventService from '../api/event.service';
+import statisticsService from '../api/statistics.service';
 
+export default {
+
+  name: "statistics",    
   data() {
     return {
-      url: import.meta.env.apiBaseUrl,
-      chartData: {
+      importbyaccount: [],
+      labelsimportbyaccount: [],
+      costsimportsbyaccount: [],
+      salesimportsbyaccount: [],
+      //url: import.meta.env.apiBaseUrl,
+     /* chartData: {
         datasets: [
           {
             data: [11, 16, 7, 3, 14],
@@ -69,44 +76,22 @@ export default {
         },
       },
       chartData2: {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
-        datasets: [
-          {
-            type: "line",
-            label: "Dataset 1",
-            borderColor: "#42A5F5",
-            borderWidth: 2,
-            fill: false,
-            data: [50, 25, 12, 48, 56, 76, 42],
-          },
+        labels: this.labelsimportbyaccount,
+        datasets: [       
           {
             type: "bar",
-            label: "Dataset 2",
+            label: "Costs",
             backgroundColor: "#66BB6A",
-            data: [21, 84, 24, 75, 37, 65, 34],
+            data: this.costsimportsbyaccount,
             borderColor: "white",
             borderWidth: 2,
           },
           {
             type: "bar",
-            label: "Dataset 3",
+            label: "Imports amb descompte",
             backgroundColor: "#FFA726",
-            data: [41, 52, 24, 74, 23, 21, 32],
-          },
-          {
-            type: "bar",
-            label: "Dataset 4",
-            backgroundColor: "#BBA273",
-            data: [21, 33, 74, 37, 45, 12, 67],
-          },
+            data: this.salesimportsbyaccount,
+          },          
         ],
       },
       chartOptions2: {
@@ -135,11 +120,29 @@ export default {
             },
           },
         },
-      },
+      },*/
     };
   },
+  methods: {
+    fetchData(){
+      //statisticsService.getImportByAccount()
+      eventService.getAll()
+      .then(response =>{
+        this.importbyaccount = response.data
+        /*(Object.keys(this.importbyaccount) as (keyof typeof this.importbyaccount)[]).array.forEach(element => {
+          console.log(element)
+        });*/
+        console.log(this.importbyaccount)
+      })
+    }
+  },
   onMounted() {
-    console.log(this.url);
+    console.log("patata")
+    this.fetchData();
+    //console.log(this.url);
+  },
+  onBeforeMount(){
+    console.log("before")
   },
 };
 </script>

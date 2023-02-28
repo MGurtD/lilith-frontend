@@ -1,5 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
-import Home from "./views/Home.vue";
+//import Home from "./views/Home.vue";
+import Statistics from "./views/Statistics.vue"
 
 const Item = () => import("./views/Item.vue");
 const Category = () => import("./views/Category.vue");
@@ -10,7 +11,7 @@ const Event = () => import("./views/Event.vue");
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", name: "Home", component: Home },
+    { path: "/", name: "Home", component: Statistics },
     { path: "/config/category", name: "Category", component: Category },
     {
       path: "/config/employeecategory",
