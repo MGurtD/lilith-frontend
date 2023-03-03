@@ -1,4 +1,4 @@
-<template>
+<!--<template>
     <div class="container">
       <Bar v-if="loaded" :data="chartData" />
     </div>
@@ -36,4 +36,4 @@
       }
     }
   }
-  </script>
+  </script>-->
