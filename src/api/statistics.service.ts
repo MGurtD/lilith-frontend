@@ -9,6 +9,12 @@ class StatisticsService extends BaseService<ImportsByAccount> {
   getImportByAccount() {
     return this.apiClient.get(`${this.resource}/getimportbyaccount`)
   }
+  getBasicStatistics() {
+    return this.apiClient.get(`${this.resource}`)
+  }
+  getStatisticsList() {
+    return this.apiClient.get(`${this.resource}/list`)
+  }
 }
 
 export default new StatisticsService(GetResource(Modules.Data, Resources.Statistics));

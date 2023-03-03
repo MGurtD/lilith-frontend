@@ -124,13 +124,13 @@
           </div>
           <div class="col-12 md:col-3">
             <div class="p-inputgroup">
-              <span class="p-inputgroup-addon"> Preu de cost: </span>
+              <span class="p-inputgroup-addon"> Preu de venta: </span>
               <InputNumber
-                placeholder="Cost Price"
+                placeholder="Sale Price"
                 mode="decimal"
                 :minFractionDigits="2"
                 :maxFractionDigits="2"
-                v-model="currentEmployeeCategory.costPrice"
+                v-model="currentEmployeeCategory.salePrice"
                 currency="EUR"
                 locale="es-ES"
               />

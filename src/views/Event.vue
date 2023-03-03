@@ -16,10 +16,10 @@
         <template #loading>
             Carregant events, si us plau espereu.
         </template>          
-        <Column field="description" header="Descripció">
+        <Column field="description" header="Descripció" :sortable="true">
 
         </Column>
-        <Column field="eventdate" header="Data" ></Column>
+        <Column field="eventdate" header="Data"  :sortable="true"></Column>
         <Column field="saleprice" header="Preu de venta" >
             <template #body="slotProps">
                     {{formatCurrency(slotProps.data.saleprice)}}
@@ -34,7 +34,7 @@
         </Column>
     </DataTable>
     <Dialog header="Detall de l'event" :breakpoints="{'960px': '95vw', '640px': '100vw'}" :style="{width: '95vw'}" v-model:visible="display" >
-        <TabView>
+        <TabView lazy>
             <TabPanel header="Generals">
             <div>
                 <div class="grid p-fluid">
@@ -66,7 +66,78 @@
                             <Calendar v-model="currentEvent.eventdate" />
                         </div>
                     </div>
-                    <div class="col-12 md:col-9"></div>
+                    <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Descompte:
+                        </span>
+                        <InputNumber v-model="currentEvent.discount" 
+                                    placeholder="Descompte:" 
+                                    suffix=" %" 
+                                    :minFractionDigits="2"
+                                    :maxFractionDigits="2"
+                                     />
+                                     <span class="p-inputgroup-addon" @click="setDiscount()"><i class="pi pi-calculator"></i></span>
+                        
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Import:
+                        </span>
+                        <InputNumber v-model="currentEvent.grossprice" 
+                                    placeholder="Import brut:" 
+                                    mode="currency" 
+                                    currency="EUR"
+                                    :disabled="true"
+                                     />
+                        
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-3"></div>
+                    <br />
+                    <!-- Persones -->
+                    <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Persones:
+                        </span>
+                        <InputNumber v-model="currentEvent.participants" 
+                                    placeholder="Persones:"                                     
+                                     />
+                        
+                    </div>
+                    </div>
+                    <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Cost persona:
+                        </span>
+                        <InputNumber v-model="currentEvent.costparticipant" 
+                                    placeholder="Import brut:" 
+                                    mode="currency" 
+                                    currency="EUR"
+                                    :disabled="true"
+                                     />
+                        
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            Import persona:
+                        </span>
+                        <InputNumber v-model="currentEvent.priceparticipant" 
+                                    placeholder="Import brut:" 
+                                    mode="currency" 
+                                    currency="EUR"
+                                    :disabled="true"
+                                     />
+                        
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-3"></div>
                     <br />
                     <div class="col-12 md:col-4">
                     <div class="p-inputgroup">
@@ -292,6 +363,7 @@ import eventstatusService from '../api/eventstatus.service';
 import itemService from '../api/item.service';
 import employeecategoryService from '../api/employeecategory.service';
 
+
 export default {
     name: "event-list",
     data() {
@@ -302,13 +374,18 @@ export default {
             currentEvent: {
                 id:0,
                 description:'',
+                participants:0,
                 eventdate:'',
                 eventstatusid: 0,
                 estimatedcost: 0,
                 estimatedtime: 0,
                 realcost: 0,
                 realtime: 0,
+                grossprice:0,
                 saleprice: 0, 
+                discount: 0,
+                costparticipant:0,
+                priceparticipant:0,
             },
             eventStatus: [],
             currentEventStatus: null,            
@@ -380,9 +457,11 @@ export default {
         },
         onRowSelect(event: any){
             //this.events = event.data;
+            
             console.log(event.data)
         },
         openDialog(currentid: number){            
+            
             if (currentid !== 0) {
                 this.getDetailed(currentid)     
                 this.getMargins()           
@@ -489,13 +568,29 @@ export default {
                 console.log(e)
             })
         },
-        getMargins(){
+        getMargins(){            
             this.margin = 100-((this.currentEvent.realcost/this.currentEvent.saleprice) * 100.0) 
             if (this.margin < 30){
                 this.marginAlert = true
             }else{
                 this.marginAlert = false
             }
+        },
+        setDiscount(){                        
+            console.log(this.currentEvent.id)
+            /*let discount = this.currentEvent.discount
+            let grosprice = this.currentEvent.grossprice
+            let saleprice = this.currentEvent.saleprice
+            if (this.currentEvent.discount === 0){
+                this.currentEvent.saleprice = this.currentEvent.grossprice
+            }else{
+                this.currentEvent.saleprice = this.currentEvent.grossprice * (1-(this.currentEvent.discount/100))
+            }*/
+            console.log(this.currentEvent)
+            this.currentEvent.saleprice = this.currentEvent.grossprice * (1-(this.currentEvent.discount/100))
+            //console.log(saleprice, grosprice, )
+            //this.currentEvent.saleprice = saleprice
+            this.getMargins()
         },
         //Dialog / General    
         save(){
@@ -520,8 +615,29 @@ export default {
                     }
             });
         }else{
+            eventService.update(this.currentEvent).then((response) => {
+                if(response.status === null ){
+                        this.$toast.add({
+                        severity: "error",
+                        summary: "Error Message",
+                        detail: "Error al crear el registre: ", //+ this.ret?.PromiseResult?.statusText,
+                        life: 3000,
+                        });
+                    }
+                    if (response.status === 201) {
+                        this.$toast.add({
+                        severity: "success",
+                        summary: "Succes Message",
+                        detail: "Registre actualitzat",
+                        life: 3000,
+                        });
+                        this.fetchData();
+                    }
+            });
+
             console.log(this.currentEvent)
         }
+        this.closeDialog();
     },    
         getDetailed(currentid: number){
             eventService.getDetailedById(currentid)
@@ -729,6 +845,7 @@ export default {
         this.fetchData();
         this.getItems();
         this.getEmployeeCategories();
+        this.getMargins();
     }
 }
 </script>
