@@ -63,7 +63,7 @@
                             <span class="p-inputgroup-addon">                            
                                 Data:
                             </span>                        
-                            <Calendar v-model="currentEvent.eventdate" />
+                            <InputText v-model="currentEvent.eventdate" />
                         </div>
                     </div>
                     <div class="col-12 md:col-3">
@@ -375,7 +375,7 @@ export default {
                 id:0,
                 description:'',
                 participants:0,
-                eventdate:'',
+                eventdate:'2023-02-02',
                 eventstatusid: 0,
                 estimatedcost: 0,
                 estimatedtime: 0,
