@@ -30,7 +30,7 @@ import TabPanel from "primevue/tabpanel";
 import Calendar from "primevue/calendar";
 import ConfirmPopup from "primevue/confirmpopup";
 import ConfirmationService from "primevue/confirmationservice";
-import Badge from 'primevue/badge';
+import Badge from "primevue/badge";
 
 app.use(PrimeVue);
 app.use(ToastService);
