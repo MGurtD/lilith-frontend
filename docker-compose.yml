@@ -3,8 +3,8 @@ services:
   web:
     build:
       args:
-        - API_BASE_URL="http://51.75.123.239:8085/api"
-        - VITE_API_BASE_URL="http://51.75.123.239:8085/api"
+        - API_BASE_URL=http://51.75.123.239:8085/api
+        - VITE_API_BASE_URL=http://51.75.123.239:8085/api
     container_name: bacchusmvp-frontend
     restart: always
     ports:
