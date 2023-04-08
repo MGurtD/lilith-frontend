@@ -1,11 +1,24 @@
+<script setup lang="ts">
+import {
+  UserLogin,
+  AuthenticationService,
+} from "../api/services/authentications.service";
+import LoginForm from "../components/LoginForm.vue";
+
+const service = new AuthenticationService();
+
+const loginHandler = async (userLogin: UserLogin) => {
+  console.log(userLogin);
+
+  await service.Login(userLogin);
+};
+</script>
+
 <template>
   <div class="container">
-    <LoginForm class="login-form" />
+    <LoginForm class="login-form" @login="loginHandler" />
   </div>
 </template>
-<script setup lang="ts">
-  import LoginForm from '../components/LoginForm.vue'
-</script>
 
 <style scoped>
 .login-form {

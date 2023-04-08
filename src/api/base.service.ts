@@ -1,4 +1,4 @@
-import { Axios, AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import apiClient from "./api.client";
 
 export default abstract class BaseService<T> {
@@ -10,16 +10,16 @@ export default abstract class BaseService<T> {
   getAll() {
     return apiClient.get(this.resource);
   }
-  getById(id: number) {
+  getById(id: string) {
     return apiClient.get(`${this.resource}/${id}`);
   }
   create(model: T) {
     return apiClient.post(this.resource, model);
   }
-  update(model: T) {
-    return apiClient.put(this.resource, model);
+  update(id: string, model: T) {
+    return apiClient.put(`${this.resource}/${id}`, model);
   }
-  delete(id: number) {
+  delete(id: string) {
     return apiClient.delete(`${this.resource}/${id}`);
   }
 }

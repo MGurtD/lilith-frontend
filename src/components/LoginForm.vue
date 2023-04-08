@@ -1,7 +1,26 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { UserLogin } from "../api/services/authentications.service";
 
+const emits = defineEmits(["login"]);
 const checked = ref(false);
+
+const userLogin = ref({
+  username: "",
+  password: "",
+} as UserLogin);
+
+const login = () => {
+  if (
+    userLogin.value.username.length === 0 ||
+    userLogin.value.password.length === 0
+  ) {
+    alert("El nom d'usuari i la contrasenya són obligatoris");
+    return;
+  }
+
+  emits("login", userLogin.value);
+};
 </script>
 
 <template>
@@ -18,12 +37,22 @@ const checked = ref(false);
 
     <div>
       <label for="email1" class="block text-900 font-medium mb-2">Email</label>
-      <InputText id="email1" type="text" class="w-full mb-3" />
+      <InputText
+        id="email1"
+        type="text"
+        class="w-full mb-3"
+        v-model="userLogin.username"
+      />
 
       <label for="password1" class="block text-900 font-medium mb-2"
         >Password</label
       >
-      <InputText id="password1" type="password" class="w-full mb-3" />
+      <InputText
+        id="password1"
+        type="password"
+        class="w-full mb-3"
+        v-model="userLogin.password"
+      />
 
       <div class="flex align-items-center justify-content-between mb-6">
         <div class="flex align-items-center">
@@ -41,7 +70,12 @@ const checked = ref(false);
         >
       </div>
 
-      <Button label="Sign In" icon="pi pi-user" class="w-full"></Button>
+      <Button
+        label="Sign In"
+        icon="pi pi-user"
+        class="w-full"
+        @click="login"
+      ></Button>
     </div>
   </div>
 </template>
