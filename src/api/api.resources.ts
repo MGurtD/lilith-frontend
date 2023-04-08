@@ -4,12 +4,7 @@ export enum Modules {
 }
 
 export enum Resources {
-  Category = "category",
-  Item = "item",
-  EmployeeCategory = "employeecategory",
-  EventStatus = "eventstatus",
-  Event = "event",
-  Statistics = "statistics"
+  
 }
 
 export const GetResource = (Module: Modules, Resource: Resources): string => {

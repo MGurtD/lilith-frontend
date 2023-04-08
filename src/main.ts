@@ -7,7 +7,7 @@ const pinia = createPinia();
 const app: VueApp<Element> = createApp(App).use(router).use(pinia);
 
 import "primevue/resources/primevue.min.css";
-import "primevue/resources/themes/lara-light-indigo/theme.css";
+import "primevue/resources/themes/lara-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
@@ -27,10 +27,8 @@ import Checkbox from "primevue/checkbox";
 import ConfirmDialog from "primevue/confirmdialog";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
-import Calendar from "primevue/calendar";
 import ConfirmPopup from "primevue/confirmpopup";
 import ConfirmationService from "primevue/confirmationservice";
-import Badge from "primevue/badge";
 
 app.use(PrimeVue);
 app.use(ToastService);
@@ -52,7 +50,5 @@ app
   .component("Dropdown", Dropdown)
   .component("TabView", TabView)
   .component("TabPanel", TabPanel)
-  .component("Calendar", Calendar)
-  .component("Badge", Badge);
 
 app.mount("#app");
