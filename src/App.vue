@@ -1,22 +1,14 @@
 <script setup lang="ts">
-  import { onMounted } from 'vue';
-  import { useStore } from './store';
-  import { useRouter } from 'vue-router';
-  
-  const store = useStore()
-  const router = useRouter()
+import { useStore } from "./store";
+import Home from "./views/Home.vue";
+import Login from "./views/Login.vue";
 
-  onMounted(() => {
-    if (store.user) {
-      router.push("/")
-    } else {
-      router.push("/login")
-    }
-  })
+const store = useStore();
 </script>
 
 <template>
-  <RouterView />
+  <Home v-if="store.isLoggedIn" />
+  <Login v-else />
 
   <Toast position="top-center" />
   <ConfirmDialog />

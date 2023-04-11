@@ -4,13 +4,18 @@ import {
   AuthenticationService,
 } from "../api/services/authentications.service";
 import LoginForm from "../components/LoginForm.vue";
+import { useStore } from "../store";
 
 const service = new AuthenticationService();
 
 const loginHandler = async (userLogin: UserLogin) => {
   console.log(userLogin);
 
-  await service.Login(userLogin);
+  const decodedToken = await service.Login(userLogin);
+  console.log(decodedToken);
+
+  const store = useStore();
+  store.isLoggedIn = true;
 };
 </script>
 

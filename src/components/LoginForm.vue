@@ -36,7 +36,9 @@ const login = () => {
     </div>
 
     <div>
-      <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+      <label for="email1" class="block text-900 font-medium mb-2">{{
+        $t("login.username")
+      }}</label>
       <InputText
         id="email1"
         type="text"
@@ -44,9 +46,9 @@ const login = () => {
         v-model="userLogin.username"
       />
 
-      <label for="password1" class="block text-900 font-medium mb-2"
-        >Password</label
-      >
+      <label for="password1" class="block text-900 font-medium mb-2">{{
+        $t("login.password")
+      }}</label>
       <InputText
         id="password1"
         type="password"
@@ -62,16 +64,16 @@ const login = () => {
             v-model="checked"
             class="mr-2"
           ></Checkbox>
-          <label for="rememberme1">Remember me</label>
+          <label for="rememberme1">{{ $t("login.rememberMe") }}</label>
         </div>
         <a
           class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
-          >Forgot password?</a
+          >{{ $t("login.forgotPassword") }}</a
         >
       </div>
 
       <Button
-        label="Sign In"
+        :label="$t('login.btnSignIn')"
         icon="pi pi-user"
         class="w-full"
         @click="login"

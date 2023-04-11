@@ -21,6 +21,8 @@ export class AuthenticationService {
 
         const decodedToken = jwtDecode(response.data.token);
         console.log(decodedToken);
+
+        return decodedToken;
       }
     } catch (error) {}
   }

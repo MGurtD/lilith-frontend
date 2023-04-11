@@ -1,6 +1,8 @@
 import { App as VueApp, createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
+import { createI18n } from "vue-i18n";
+import messages from "./translations";
 import router from "./router";
 
 const pinia = createPinia();
@@ -49,6 +51,15 @@ app
   .component("ConfirmDialog", ConfirmDialog)
   .component("Dropdown", Dropdown)
   .component("TabView", TabView)
-  .component("TabPanel", TabPanel)
+  .component("TabPanel", TabPanel);
+
+const i18n = createI18n({
+  locale: "ca", // set locale
+  fallbackLocale: "es", // set fallback locale
+  messages, // set locale messages
+  // If you need to specify other options, you can set other options
+  // ...
+});
+app.use(i18n);
 
 app.mount("#app");
