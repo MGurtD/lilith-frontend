@@ -52,3 +52,8 @@ export interface UserLogin {
   username: string;
   password: string;
 }
+
+export interface Role {
+  id: string;
+  name: string;
+}
