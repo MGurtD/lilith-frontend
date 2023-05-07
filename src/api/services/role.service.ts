@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import apiClient from "../api.client";
 
-export class AuthenticationService {
+export class RoleService {
   public apiClient: AxiosInstance;
   private resource: string;
   constructor() {
@@ -29,6 +29,8 @@ export class AuthenticationService {
         console.log(role);
 
         return role;
+      } else {
+        console.log(response.data);
       }
     } catch (error) {}
   }

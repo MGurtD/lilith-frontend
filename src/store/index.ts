@@ -4,7 +4,11 @@ import { MenuItem } from "../types";
 export const useStore = defineStore("applicationStore", {
   state: () => {
     return {
-      isLoggedIn: true,
+      isLoggedIn: false,
+      authorization: {
+        token: "",
+        refreshToken: "",
+      },
       currentMenuItem: {
         text: "",
         icon: "",

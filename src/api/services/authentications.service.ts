@@ -16,14 +16,8 @@ export class AuthenticationService {
         `${this.resource}/Login`,
         UserLogin
       );
-      if (response.status === 200) {
-        console.log(response.data);
 
-        const decodedToken = jwtDecode(response.data.token);
-        console.log(decodedToken);
-
-        return decodedToken;
-      }
+      return response.data;
     } catch (error) {}
   }
 
@@ -33,19 +27,21 @@ export class AuthenticationService {
         `${this.resource}/Register`,
         UserRegister
       );
-      if (response.status === 200) {
-        console.log(response.data);
-      }
-    } catch (error) {}
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
 export interface UserRegister {
-  name: string;
-  email: string;
   username: string;
   password: string;
-  phoneNumber: string;
+  repeatPassword: string;
+  firstName: string;
+  lastName: string;
+  mail: string;
 }
 
 export interface UserLogin {
