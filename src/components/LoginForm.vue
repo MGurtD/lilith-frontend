@@ -2,8 +2,7 @@
 import { ref } from "vue";
 import { UserLogin } from "../api/services/authentications.service";
 
-const emits = defineEmits(["login"]);
-const checked = ref(false);
+const emits = defineEmits(["login", "registerClick"]);
 
 const userLogin = ref({
   username: "",
@@ -21,6 +20,10 @@ const login = () => {
 
   emits("login", userLogin.value);
 };
+
+const registerClick = () => {
+  emits("registerClick");
+};
 </script>
 
 <template>
@@ -29,55 +32,58 @@ const login = () => {
       <img
         src="../assets/images/logo.png"
         alt="Image"
-        height="100"
+        height="50"
         class="mb-3"
       />
-      <div class="text-900 text-3xl font-medium mb-3">Temges</div>
+      <div class="text-blue-700 text-3xl font-medium mb-6">
+        {{ $t("login.loginTitle") }}
+      </div>
     </div>
 
     <div>
       <label for="email1" class="block text-900 font-medium mb-2">{{
         $t("login.username")
       }}</label>
-      <InputText
-        id="email1"
-        type="text"
-        class="w-full mb-3"
-        v-model="userLogin.username"
-      />
+      <span class="p-input-icon-left w-full mb-3">
+        <i class="pi pi-user" />
+        <InputText
+          id="username"
+          type="text"
+          class="w-full"
+          v-model="userLogin.username"
+        />
+      </span>
 
       <label for="password1" class="block text-900 font-medium mb-2">{{
         $t("login.password")
       }}</label>
-      <InputText
-        id="password1"
-        type="password"
-        class="w-full mb-3"
-        v-model="userLogin.password"
-      />
+      <span class="p-input-icon-left w-full mb-3">
+        <i class="pi pi-key" />
+        <InputText
+          id="password1"
+          type="password"
+          class="w-full"
+          v-model="userLogin.password"
+        />
+      </span>
 
-      <div class="flex align-items-center justify-content-between mb-6">
-        <div class="flex align-items-center">
-          <Checkbox
-            id="rememberme1"
-            :binary="true"
-            v-model="checked"
-            class="mr-2"
-          ></Checkbox>
-          <label for="rememberme1">{{ $t("login.rememberMe") }}</label>
-        </div>
+      <Button
+        :label="$t('login.btnSignIn')"
+        class="w-full"
+        @click="login"
+      ></Button>
+
+      <div class="flex align-items-center justify-content-between mb-4 mt-4">
+        <a
+          class="links-section font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
+          @click="registerClick"
+          >Registra't</a
+        >
         <a
           class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
           >{{ $t("login.forgotPassword") }}</a
         >
       </div>
-
-      <Button
-        :label="$t('login.btnSignIn')"
-        icon="pi pi-user"
-        class="w-full"
-        @click="login"
-      ></Button>
     </div>
   </div>
 </template>

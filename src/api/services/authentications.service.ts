@@ -41,11 +41,12 @@ export class AuthenticationService {
 }
 
 export interface UserRegister {
-  name: string;
-  email: string;
   username: string;
   password: string;
-  phoneNumber: string;
+  repeatPassword: string;
+  firstName: string;
+  lastName: string;
+  mail: string;
 }
 
 export interface UserLogin {
