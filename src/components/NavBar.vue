@@ -48,7 +48,7 @@ const isCollapsed = ref(false);
   left: 0;
   bottom: 0;
   width: 250px;
-  background-color: #2c3e50; /* Cambiar a azul */
+  background-color: var(--blue-900); /* Cambiar a azul */
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 }

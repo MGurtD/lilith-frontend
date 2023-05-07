@@ -8,25 +8,40 @@ import {
 import LoginForm from "../components/LoginForm.vue";
 import RegisterForm from "../components/RegisterForm.vue";
 import { useStore } from "../store";
+import { useToast } from "primevue/usetoast";
+import { ToastSeverity } from "primevue/api";
+import { useRouter } from "vue-router";
 
 const service = new AuthenticationService();
+const store = useStore();
+const toast = useToast();
 const showLogin = ref(true);
 
 const loginHandler = async (userLogin: UserLogin) => {
-  const decodedToken = await service.Login(userLogin);
-  console.log(decodedToken);
-
-  const store = useStore();
-  store.isLoggedIn = true;
+  const response = await service.Login(userLogin);
+  manageAuthorizationResponse(response);
 };
 
 const registerHandler = async (userRegister: UserRegister) => {
-  console.log(userRegister);
+  const response = await service.Register(userRegister);
+  manageAuthorizationResponse(response);
+};
 
-  const decodedToken = await service.Register(userRegister);
-  console.log(decodedToken);
+const manageAuthorizationResponse = (response: any) => {
+  if (response.errors) {
+    toast.add({
+      severity: ToastSeverity.ERROR,
+      summary: response.errors[0],
+    });
+    return;
+  } else {
+    store.isLoggedIn = true;
+    store.authorization.token = (response as any).token;
+    store.authorization.refreshToken = (response as any).refreshToken;
 
-  //showLogin.value = true;
+    const router = useRouter();
+    router.push({ name: "Home" });
+  }
 };
 
 const navigateToRegister = () => (showLogin.value = false);
