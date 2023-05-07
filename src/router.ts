@@ -4,6 +4,7 @@ const Home = () => import("./views/Home.vue");
 const Register = () => import("./views/Register.vue");
 const Suppliers = () => import("./views/Suppliers.vue");
 const Customers = () => import("./views/Customers.vue");
+const Users = () => import("./views/Users.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: "/register", name: "Register", component: Register },
     { path: "/customers", name: "Customers", component: Customers },
     { path: "/suppliers", name: "Suppliers", component: Suppliers },
+    { path: "/users", name: "Users", component: Users },
   ],
 });
 
