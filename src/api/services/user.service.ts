@@ -1,45 +1,45 @@
 import { AxiosInstance } from "axios";
-import apiClient from "../api.client";
+import apiClient, { logException } from "../api.client";
 
 export class UserService {
   public apiClient: AxiosInstance;
   private resource: string;
   constructor() {
     this.apiClient = apiClient;
-    this.resource = "/user";
+    this.resource = "/User";
   }
 
   public async GetAll() {
     try {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
-        const users = response.data as Array<User>;
-        console.log(users);
+        const models = response.data as Array<User>;
+        console.log(models);
 
-        return users;
+        return models;
       }
     } catch (error) {}
   }
 
-  public async GetById(id: string) {
+  public async GetById(id: string): Promise<User | null> {
     try {
       let response = await this.apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) {
-        const user = response.data as User;
-        console.log(user);
-
-        return user;
+        return response.data as User;
+      } else {
+        return null;
       }
-    } catch (error) {}
+    } catch (error) {
+      logException(error);
+      return null;
+    }
   }
 }
 
 export interface User {
   id: string;
   username: string;
-  email: string;
-  password: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   disabled: boolean;
 }

@@ -11,10 +11,13 @@ import { useStore } from "../store";
 import { useToast } from "primevue/usetoast";
 import { ToastSeverity } from "primevue/api";
 import { useRouter } from "vue-router";
+import { AuthenticationResponse } from "../types";
 
 const service = new AuthenticationService();
 const store = useStore();
+const router = useRouter();
 const toast = useToast();
+
 const showLogin = ref(true);
 
 const loginHandler = async (userLogin: UserLogin) => {
@@ -27,8 +30,8 @@ const registerHandler = async (userRegister: UserRegister) => {
   manageAuthorizationResponse(response);
 };
 
-const manageAuthorizationResponse = (response: any) => {
-  if (response.errors) {
+const manageAuthorizationResponse = (response: AuthenticationResponse) => {
+  if (!response.result) {
     toast.add({
       severity: ToastSeverity.ERROR,
       summary: response.errors[0],
@@ -36,11 +39,9 @@ const manageAuthorizationResponse = (response: any) => {
     return;
   } else {
     store.isLoggedIn = true;
-    store.authorization.token = (response as any).token;
-    store.authorization.refreshToken = (response as any).refreshToken;
+    store.setAuthorization(response);
 
-    const router = useRouter();
-    router.push({ name: "Home" });
+    router.push("/");
   }
 };
 
