@@ -13,7 +13,7 @@ export class UserService {
     try {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
-        const users = response.data as Array<user>;
+        const users = response.data as Array<User>;
         console.log(users);
 
         return users;
@@ -25,7 +25,7 @@ export class UserService {
     try {
       let response = await this.apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) {
-        const user = response.data as user;
+        const user = response.data as User;
         console.log(user);
 
         return user;
@@ -34,7 +34,7 @@ export class UserService {
   }
 }
 
-export interface user {
+export interface User {
   id: string;
   username: string;
   email: string;
