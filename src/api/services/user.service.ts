@@ -9,16 +9,19 @@ export class UserService {
     this.resource = "/User";
   }
 
-  public async GetAll() {
+  public async GetAll(): Promise<User[] | undefined>  {
     try {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
+        //const res:AxiosResponse<User[]> = response.data;
         const models = response.data as Array<User>;
-        console.log(models);
-
+        console.log(models);        
         return models;
+        //return res;
       }
-    } catch (error) {}
+    } catch (error) {
+      logException(error);      
+    }
   }
 
   public async GetById(id: string): Promise<User | undefined> {
