@@ -1,60 +1,54 @@
 <template>
-  <div class="side-menu" :class="{ collapsed: isCollapsed }">
-    <div class="side-menu-header">
-      <button @click="isCollapsed = !isCollapsed" class="toggle-button">
+  <navbar class="side-menu" :class="{ collapsed: store.menuCollapsed }">
+    <header class="side-menu-header">
+      <button @click="store.menuCollapsed = !store.menuCollapsed" class="toggle-button">
         <i class="pi pi-list"></i>
       </button>
-      <h2 :class="{ hide: isCollapsed }">TEMGES</h2>
-    </div>
+      <h2 :class="{ hide: store.menuCollapsed }">TEMGES</h2>
+    </header>
 
     <ul class="side-menu-list">
       <NavBarMenuItem
         v-for="menuItem in menuItems"
         :key="menuItem.text"
         :item="menuItem"
-        :is-collapsed="isCollapsed"
+        :is-collapsed="store.menuCollapsed"
         @on-item-click="navigateToRoute"
       />
     </ul>
-
-    <footer class="side-menu-footer">
-      <h1>{{ store.user?.username }}</h1>
-      <i class="pi pi-times"></i>
-    </footer>
-  </div>
+  </navbar>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import NavBarMenuItem from "./NavBarMenuItem.vue";
 import { PrimeIcons } from "primevue/api";
 import { MenuItem } from "../types";
-import { useStore } from "../store";
 import { useRouter } from "vue-router";
+import { useStore } from "../store";
 
 const menuItems = [
   {
     icon: PrimeIcons.HOME,
-    text: "general.menu.home",
+    text: "Inici",
     route: "/",
   },
   {
     icon: PrimeIcons.CART_PLUS,
-    text: "general.menu.suppliers",
+    text: "Proveïdors",
     route: "/suppliers",
   },
   {
     icon: PrimeIcons.WALLET,
-    text: "general.menu.customers",
+    text: "Clients",
     route: "/customers",
   },
 ] as Array<MenuItem>;
 
-const isCollapsed = ref(false);
-
 const store = useStore();
+
 const router = useRouter();
 const navigateToRoute = (item: MenuItem) => {
+  store.setMenuItem(item);
   router.push(item.route);
 };
 </script>
@@ -79,6 +73,7 @@ const navigateToRoute = (item: MenuItem) => {
   display: grid;
   grid-template-columns: 50px calc(100% - 50px);
   color: #fff;
+  height: 5rem;
 }
 
 .hide {

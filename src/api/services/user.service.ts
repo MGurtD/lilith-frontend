@@ -21,17 +21,14 @@ export class UserService {
     } catch (error) {}
   }
 
-  public async GetById(id: string): Promise<User | null> {
+  public async GetById(id: string): Promise<User | undefined> {
     try {
       let response = await this.apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) {
         return response.data as User;
-      } else {
-        return null;
       }
     } catch (error) {
       logException(error);
-      return null;
     }
   }
 }

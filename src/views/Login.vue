@@ -38,9 +38,7 @@ const manageAuthorizationResponse = (response: AuthenticationResponse) => {
     });
     return;
   } else {
-    store.isLoggedIn = true;
     store.setAuthorization(response);
-
     router.push("/");
   }
 };
