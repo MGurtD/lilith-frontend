@@ -31,11 +31,12 @@ const onItemClick = () => emits("onItemClick", props.item);
 .menu-item a {
   display: block;
   padding: 10px;
-  color: #fff; /* Cambiar a blanco */
+  color: var(--bluegray-200);
   text-decoration: none;
 }
 
 .menu-item a:hover {
   background-color: #34495e; /* Cambiar a un tono de azul más oscuro */
+  color: #fff;
 }
 </style>

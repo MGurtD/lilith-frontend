@@ -2,35 +2,33 @@ import { defineStore } from "pinia";
 import { AuthenticationResponse, MenuItem } from "../types";
 import jwtDecode from "jwt-decode";
 import { UserService, User } from "../api/services/user.service";
+import { PrimeIcons } from "primevue/api";
 
 const localStorageAuthKey = "temges.authorization";
 
 export const useStore = defineStore("applicationStore", {
   state: () => {
     return {
-      isLoggedIn: true,
-      authorization: null as AuthenticationResponse | null,
-      user: null as User | null,
+      authorization: undefined as AuthenticationResponse | undefined,
+      user: undefined as User | undefined,
       currentMenuItem: {
-        text: "",
-        icon: "",
+        text: "Home",
+        icon: PrimeIcons.HOME,
       } as MenuItem,
+      menuCollapsed: false,
     };
   },
   actions: {
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
     },
-    getAuthorization() {
-      if (this.authorization === null) {
-        const lsValue = localStorage.getItem(localStorageAuthKey);
-        if (lsValue === null) {
-          return null;
-        } else {
-          this.authorization = JSON.parse(lsValue);
-          return this.authorization;
-        }
-      } else {
+    async getAuthorization() {
+      if (this.authorization !== undefined) {
+        return this.authorization;
+      }
+      const lsValue = localStorage.getItem(localStorageAuthKey);
+      if (lsValue !== null) {
+        await this.setAuthorization(JSON.parse(lsValue));
         return this.authorization;
       }
     },
@@ -43,6 +41,10 @@ export const useStore = defineStore("applicationStore", {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
       }
+    },
+    removeAuthorization() {
+      this.authorization = undefined;
+      localStorage.removeItem(localStorageAuthKey);
     },
   },
 });

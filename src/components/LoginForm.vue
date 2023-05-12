@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { UserLogin } from "../api/services/authentications.service";
+import { useToast } from "primevue/usetoast";
+import { ToastSeverity } from "primevue/api";
 
 const emits = defineEmits(["login", "registerClick"]);
 
@@ -9,12 +11,17 @@ const userLogin = ref({
   password: "",
 } as UserLogin);
 
+const toast = useToast();
 const login = () => {
   if (
     userLogin.value.username.length === 0 ||
     userLogin.value.password.length === 0
   ) {
-    alert("El nom d'usuari i la contrasenya són obligatoris");
+    toast.add({
+      severity: ToastSeverity.ERROR,
+      summary: "Login incorrecte",
+      detail: "El nom d'usuari i la contrasenya són obligatoris",
+    });
     return;
   }
 
@@ -51,6 +58,7 @@ const registerClick = () => {
           type="text"
           class="w-full"
           v-model="userLogin.username"
+          @keyup.enter="login"
         />
       </span>
 
@@ -64,6 +72,7 @@ const registerClick = () => {
           type="password"
           class="w-full"
           v-model="userLogin.password"
+          @keyup.enter="login"
         />
       </span>
 

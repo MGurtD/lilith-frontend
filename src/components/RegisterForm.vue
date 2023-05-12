@@ -80,6 +80,7 @@ const loginClick = () => emits("loginClick");
               class="w-full"
               :class="{ 'p-invalid': v$.firstName.$errors.length > 0 }"
               v-model="state.firstName"
+              @keyup.enter="register"
             />
           </span>
         </div>
@@ -96,6 +97,7 @@ const loginClick = () => emits("loginClick");
               class="w-full"
               v-model="state.lastName"
               :class="{ 'p-invalid': v$.lastName.$errors.length > 0 }"
+              @keyup.enter="register"
             />
           </span>
         </div>
@@ -114,6 +116,7 @@ const loginClick = () => emits("loginClick");
               class="w-full"
               v-model="state.username"
               :class="{ 'p-invalid': v$.username.$errors.length > 0 }"
+              @keyup.enter="register"
             />
           </span>
         </div>
@@ -129,6 +132,7 @@ const loginClick = () => emits("loginClick");
               type="text"
               class="w-full"
               v-model="state.mail"
+              @keyup.enter="register"
             />
           </span>
         </div>
@@ -148,6 +152,7 @@ const loginClick = () => emits("loginClick");
               class="w-full"
               v-model="state.password"
               :class="{ 'p-invalid': !arePasswordsEqual }"
+              @keyup.enter="register"
             />
           </span>
         </div>
@@ -163,6 +168,7 @@ const loginClick = () => emits("loginClick");
               class="w-full"
               v-model="state.repeatPassword"
               :class="{ 'p-invalid': !arePasswordsEqual }"
+              @keyup.enter="register"
             />
           </span>
         </div>
