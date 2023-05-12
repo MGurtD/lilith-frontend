@@ -14,6 +14,8 @@ const apiClient = axios.create({
   },
 });
 
+export const fileUploadUrl = `${baseUrl}/File`;
+
 export function logException(error: any) {
   if (error.response) {
     // The request was made and the server responded with a status code

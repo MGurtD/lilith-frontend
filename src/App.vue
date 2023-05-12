@@ -21,7 +21,9 @@ const logout = () => {
   <div v-if="store.authorization">
     <TitleBar @logout-click="logout" />
     <NavBar />
-    <RouterView />
+    <main class="app__view" :class="{ collapsed: store.menuCollapsed }">
+      <RouterView />
+    </main>
   </div>
   <Login v-else />
 
@@ -31,4 +33,19 @@ const logout = () => {
 
 <style lang="scss">
 @import "./assets/styles.scss";
+
+.app__view {
+  position: fixed;
+  color: var(--bluegray-200);
+  top: 5rem;
+  left: 250px;
+  padding: 1rem;
+  width: calc(100vw - 250px);
+  transition: all 0.3s ease-in-out;
+}
+
+.collapsed {
+  left: 50px;
+  width: calc(100vw - 50px);
+}
 </style>

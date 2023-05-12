@@ -1,7 +1,7 @@
 <template>
   <div class="title-bar" :class="{ collapsed: store.menuCollapsed }">
     <div class="title-bar__page">
-      <i class="title-bar__page__icon" :class="store.currentMenuItem.icon"></i>
+      <!-- <i class="title-bar__page__icon" :class="store.currentMenuItem.icon"></i> -->
       <span class="title-bar__page__text">{{
         store.currentMenuItem.text
       }}</span>
@@ -72,7 +72,7 @@ const logoutClick = () => emits("logoutClick");
 }
 
 .title-bar__page__icon {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .title-bar__user {
