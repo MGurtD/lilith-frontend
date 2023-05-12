@@ -8,7 +8,7 @@ const localStorageAuthKey = "temges.authorization";
 export const useStore = defineStore("applicationStore", {
   state: () => {
     return {
-      isLoggedIn: false,
+      isLoggedIn: true,
       authorization: null as AuthenticationResponse | null,
       user: null as User | null,
       currentMenuItem: {
