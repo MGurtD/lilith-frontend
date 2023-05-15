@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import apiClient from "./api.client";
+import apiClient, { logException } from "./api.client";
 
 export default abstract class BaseService<T> {
   public apiClient: AxiosInstance;
@@ -7,19 +7,70 @@ export default abstract class BaseService<T> {
     this.apiClient = apiClient;
   }
 
-  getAll() {
-    return apiClient.get(this.resource);
+  async getAll(): Promise<Array<T> | undefined> {
+    try {
+      const response = await apiClient.get(this.resource);
+      if (response.status === 200) {
+        return response.data as Array<T>;
+      } else {
+        // TODO: Toast amb error
+      }
+    } catch (err) {
+      logException(err);
+    }
   }
-  getById(id: string) {
-    return apiClient.get(`${this.resource}/${id}`);
+  async getById(id: string): Promise<T | undefined> {
+    try {
+      const response = await apiClient.get(`${this.resource}/${id}`);
+      if (response.status === 200) {
+        return response.data as T;
+      } else {
+        // TODO: Toast amb error
+      }
+    } catch (err) {
+      logException(err);
+    }
   }
-  create(model: T) {
-    return apiClient.post(this.resource, model);
+  async create(model: T): Promise<boolean> {
+    let result: boolean = false;
+    try {
+      const response = await apiClient.post(`${this.resource}`, model);
+      if (response.status === 200 || response.status === 201) {
+        result = true;
+      } else {
+        // TODO: Toast amb error
+      }
+    } catch (err) {
+      logException(err);
+    }
+    return result;
   }
-  update(id: string, model: T) {
-    return apiClient.put(`${this.resource}/${id}`, model);
+  async update(id: string, model: T) {
+    let result: boolean = false;
+    try {
+      const response = await apiClient.put(`${this.resource}/${id}`, model);
+      if (response.status === 200 || response.status === 201) {
+        result = true;
+      } else {
+        // TODO: Toast amb error
+      }
+    } catch (err) {
+      logException(err);
+    }
+    return result;
   }
-  delete(id: string) {
-    return apiClient.delete(`${this.resource}/${id}`);
+  async delete(id: string) {
+    let result: boolean = false;
+    try {
+      const response = await apiClient.delete(`${this.resource}/${id}`);
+      if (response.status === 200 || response.status === 201) {
+        result = true;
+      } else {
+        // TODO: Toast amb error
+      }
+    } catch (err) {
+      logException(err);
+    }
+    return result;
   }
 }
