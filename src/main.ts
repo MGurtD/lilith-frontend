@@ -29,6 +29,7 @@ import Checkbox from "primevue/checkbox";
 import ConfirmDialog from "primevue/confirmdialog";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
+import Textarea from "primevue/textarea";
 import ConfirmPopup from "primevue/confirmpopup";
 import ConfirmationService from "primevue/confirmationservice";
 
@@ -51,7 +52,8 @@ app
   .component("ConfirmDialog", ConfirmDialog)
   .component("Dropdown", Dropdown)
   .component("TabView", TabView)
-  .component("TabPanel", TabPanel);
+  .component("TabPanel", TabPanel)
+  .component("Textarea", Textarea);
 
 const i18n = createI18n({
   locale: "ca", // set locale

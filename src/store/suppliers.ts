@@ -26,12 +26,15 @@ export const useSuppliersStore = defineStore({
     },
     async createSupplier(supplier: Supplier) {
       const result = await service.create(supplier);
+      if (result) await this.fetchSuppliers();
     },
     async updateSupplier(id: string, supplier: Supplier) {
       const result = await service.update(id, supplier);
+      if (result) await this.fetchSuppliers();
     },
     async deleteSupplier(id: string) {
       const result = await service.delete(id);
+      if (result) await this.fetchSuppliers();
     },
 
     async fetchSupplierTypes() {

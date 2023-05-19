@@ -24,6 +24,7 @@ export interface Supplier {
   cif: string;
   country: string;
   region: string;
+  city: string;
   postalCode: string;
   address: string;
   phone: string;
@@ -42,6 +43,7 @@ export interface SupplierContact {
   phoneExtension: string;
   observations: string;
   disabled: boolean;
+  default: boolean;
   supplierId: string;
   id: string;
 }

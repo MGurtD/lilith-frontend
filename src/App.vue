@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useStore } from "./store";
+import { useSpanishGeography } from "./store/geography";
 import TitleBar from "./components/TitleBar.vue";
 import NavBar from "./components/NavBar.vue";
 import Login from "./views/Login.vue";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import ScrollPanel from "primevue/scrollpanel";
 
 const store = useStore();
+const spanishGeography = useSpanishGeography();
 const router = useRouter();
 
-onMounted(() => store.getAuthorization());
+onMounted(() => {
+  store.getAuthorization();
+  spanishGeography.fetch();
+});
 
 const logout = () => {
   store.removeAuthorization();
@@ -22,7 +28,9 @@ const logout = () => {
     <TitleBar @logout-click="logout" />
     <NavBar />
     <main class="app__view" :class="{ collapsed: store.menuCollapsed }">
-      <RouterView />
+      <ScrollPanel style="height: calc(100vh - 5rem)">
+        <RouterView />
+      </ScrollPanel>
     </main>
   </div>
   <Login v-else />

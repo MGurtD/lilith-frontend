@@ -14,6 +14,20 @@ export const useSpanishGeography = defineStore({
       return (region: Region) =>
         state.towns?.filter((town) => town.id.startsWith(region.id));
     },
+    getTownsByRegionId: (state) => {
+      return (regionId: string) =>
+        state.towns?.filter((town) => town.id.startsWith(regionId));
+    },
+    getTownsByRegionName: (state) => {
+      return (regionName: string) => {
+        var region = state.regions?.find((r) => r.nm === regionName);
+        if (region) {
+          return state.towns?.filter((town) =>
+            town.id.startsWith((region as Region).id)
+          );
+        }
+      };
+    },
   },
   actions: {
     async fetch() {

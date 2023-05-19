@@ -1,7 +1,10 @@
 <template>
   <navbar class="side-menu" :class="{ collapsed: store.menuCollapsed }">
     <header class="side-menu-header">
-      <button @click="store.menuCollapsed = !store.menuCollapsed" class="toggle-button">
+      <button
+        @click="store.menuCollapsed = !store.menuCollapsed"
+        class="toggle-button"
+      >
         <i class="pi pi-list"></i>
       </button>
       <h2 :class="{ hide: store.menuCollapsed }">TEMGES</h2>
@@ -63,6 +66,7 @@ const navigateToRoute = (item: MenuItem) => {
   background-color: var(--blue-900); /* Cambiar a azul */
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+  text-align: center;
 }
 
 .collapsed {

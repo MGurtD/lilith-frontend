@@ -67,8 +67,7 @@ const logoutClick = () => emits("logoutClick");
 }
 
 .title-bar__page__text {
-  margin-left: 1vw;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .title-bar__page__icon {
