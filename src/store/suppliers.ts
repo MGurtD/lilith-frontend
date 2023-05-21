@@ -18,6 +18,22 @@ export const useSuppliersStore = defineStore({
   }),
   getters: {},
   actions: {
+    setNewSupplier(id: string) {
+      this.supplier = {
+        id: id,
+        comercialName: "",
+        taxName: "",
+        address: "",
+        cif: "",
+        city: "",
+        country: "Espanya",
+        disabled: false,
+        observations: "",
+        phone: "",
+        postalCode: "",
+        region: "",
+      } as Supplier;
+    },
     async fetchSuppliers() {
       this.suppliers = await service.getAll();
     },
@@ -27,16 +43,26 @@ export const useSuppliersStore = defineStore({
     async createSupplier(supplier: Supplier) {
       const result = await service.create(supplier);
       if (result) await this.fetchSuppliers();
+      return result;
     },
     async updateSupplier(id: string, supplier: Supplier) {
       const result = await service.update(id, supplier);
       if (result) await this.fetchSuppliers();
+      return result;
     },
     async deleteSupplier(id: string) {
       const result = await service.delete(id);
       if (result) await this.fetchSuppliers();
+      return result;
     },
 
+    setNewSupplierType(id: string) {
+      this.supplierType = {
+        id: id,
+        name: "",
+        description: "",
+      } as SupplierType;
+    },
     async fetchSupplierTypes() {
       this.supplierTypes = await typeService.getAll();
     },
@@ -45,12 +71,18 @@ export const useSuppliersStore = defineStore({
     },
     async createSupplierType(supplierType: SupplierType) {
       const result = await typeService.create(supplierType);
+      if (result) await this.fetchSupplierTypes();
+      return result;
     },
     async updateSupplierType(id: string, supplierType: SupplierType) {
       const result = await typeService.update(id, supplierType);
+      if (result) await this.fetchSupplierTypes();
+      return result;
     },
     async deleteSupplierType(id: string) {
       const result = await typeService.delete(id);
+      if (result) await this.fetchSupplierTypes();
+      return result;
     },
   },
 });

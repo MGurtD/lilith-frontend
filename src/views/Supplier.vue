@@ -5,143 +5,83 @@
         <i :class="PrimeIcons.BUILDING" class="mr-2"></i>
         <span>Proveïdor</span>
       </template>
-      <form v-if="supplier">
-        <section class="three-columns">
-          <BaseInput
-            class="mb-2"
-            label="Nom Comercial"
-            id="comercialName"
-            v-model="supplier.comercialName"
-          ></BaseInput>
-          <BaseInput
-            class="mb-2"
-            label="Nom Fiscal"
-            id="taxName"
-            v-model="supplier.taxName"
-          ></BaseInput>
-          <div>
-            <label class="block text-900 mb-2">Tipus Proveïdor</label>
-            <Dropdown
-              v-model="supplier.supplierTypeId"
-              editable
-              :options="supplierStore.supplierTypes"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-            />
-          </div>
-        </section>
-
-        <section class="three-columns mb-2">
-          <div>
-            <label class="block text-900 mb-2">País</label>
-            <Dropdown
-              v-model="supplier.country"
-              editable
-              :options="['Espanya']"
-              class="w-full"
-            />
-          </div>
-          <div>
-            <label class="block text-900 mb-2">Província</label>
-            <Dropdown
-              v-model="supplier.region"
-              editable
-              :options="spanishGeo.regions"
-              optionValue="nm"
-              optionLabel="nm"
-              class="w-full"
-              @change="onRegionChanged"
-            />
-          </div>
-          <div>
-            <label class="block text-900 mb-2">Municipi</label>
-            <Dropdown
-              v-model="supplier.city"
-              editable
-              :options="spanishGeo.getTownsByRegionName(supplier.region)"
-              optionValue="nm"
-              optionLabel="nm"
-              class="w-full"
-            />
-          </div>
-        </section>
-        <section class="three-columns mb-2">
-          <BaseInput
-            class="mb-2"
-            label="Codi Postal"
-            id="postalCode"
-            v-model="supplier.postalCode"
-          ></BaseInput>
-          <BaseInput
-            class="mb-2"
-            label="Direcció"
-            id="address"
-            v-model="supplier.address"
-          ></BaseInput>
-          <BaseInput
-            class="mb-2"
-            label="Telèfon"
-            id="phone"
-            v-model="supplier.phone"
-          ></BaseInput>
-        </section>
-        <div>
-          <label class="block text-900 mb-2">Observacions</label>
-          <Textarea v-model="supplier.observations" class="w-full" />
-        </div>
-
-        <div class="mt-2">
-          <Button label="Guardar" class="mr-2" @click="submitForm" />
-        </div>
-      </form>
+      <SupplierForm @submit="submitForm" />
     </TabPanel>
-    <TabPanel>
+    <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
       </template>
-      <pre>
-        {{ supplierStore.supplier?.contacts }}
-      </pre>
     </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useSuppliersStore } from "../store/suppliers";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons, ToastSeverity } from "primevue/api";
 
-import BaseInput from "../components/BaseInput.vue";
+import SupplierForm from "../components/forms/SupplierForm.vue";
 import { storeToRefs } from "pinia";
-import { useSpanishGeography } from "../store/geography";
 import { Supplier } from "../types";
 import { useStore } from "../store";
 
+import { useToast } from "primevue/usetoast";
+import { FormActionMode } from "../types/component";
+
+const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
-const spanishGeo = useSpanishGeography();
 const supplierStore = useSuppliersStore();
 const { supplier } = storeToRefs(supplierStore);
 
-onMounted(async () => {
+const loadView = async () => {
   await supplierStore.fetchSupplier(route.params.id as string);
   supplierStore.fetchSupplierTypes();
+
+  // Comprovar existencia del proveïdor
+  let pageTitle = "";
+  if (!supplier.value) {
+    formMode.value = FormActionMode.CREATE;
+    supplierStore.setNewSupplier(route.params.id as string);
+    pageTitle = "Alta de proveïdor";
+  } else {
+    formMode.value = FormActionMode.EDIT;
+    pageTitle = `Proveïdor ${supplier.value.comercialName}`;
+  }
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     route: "",
-    text: `Proveïdor ${supplier.value?.comercialName}`,
+    text: pageTitle,
   });
-});
-
-const onRegionChanged = () => {
-  (supplier.value as Supplier).address = "";
 };
 
+onMounted(async () => {
+  await loadView();
+});
+
+const toast = useToast();
 const submitForm = async () => {
   const data = supplier.value as Supplier;
-  await supplierStore.updateSupplier(data.id, data);
+  let result = false;
+  let message = "";
+
+  if (formMode.value === FormActionMode.CREATE) {
+    result = await supplierStore.createSupplier(data);
+    message = "Proveïdor creat correctament";
+  } else {
+    result = await supplierStore.updateSupplier(data.id, data);
+    message = "Proveïdor actualizat correctament";
+  }
+
+  if (result) {
+    toast.add({
+      severity: ToastSeverity.SUCCESS,
+      summary: message,
+      life: 5000,
+    });
+    await loadView();
+  }
 };
 </script>

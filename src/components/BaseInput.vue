@@ -27,6 +27,7 @@ const emit = defineEmits<{
         v-if="!type || type === BaseInputType.TEXT"
         :id="id"
         class="w-full"
+        v-bind="$attrs"
         v-bind:model-value="modelValue"
         @input="
           emit('update:modelValue', ($event.target as HTMLInputElement).value)

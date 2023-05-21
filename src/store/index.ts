@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { AuthenticationResponse, MenuItem } from "../types";
+import { AuthenticationResponse } from "../types";
+import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService, User } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";

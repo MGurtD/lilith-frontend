@@ -46,7 +46,7 @@ const logoutClick = () => emits("logoutClick");
   color: var(--bluegray-200);
   top: 0;
   left: 250px;
-  height: 5rem;
+  height: var(--top-panel-height);
   display: grid;
   grid-template-columns: 0.7fr 0.3fr;
   padding-top: 1rem;

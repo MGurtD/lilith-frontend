@@ -1,4 +1,9 @@
 <template>
+  <Button
+    class="grid_action_button"
+    :icon="PrimeIcons.PLUS"
+    @click="createSupplier"
+  />
   <TabView>
     <TabPanel>
       <template #header>
@@ -8,7 +13,7 @@
       <DataTable
         :value="supplierStore.suppliers"
         tableStyle="min-width: calc(100vw - 300px)"
-        @row-click="navigateToSupplier"
+        @row-click="editSupplier"
       >
         <Column field="comercialName" header="Nom Comercial"></Column>
         <Column field="taxName" header="Nom Fiscal"></Column>
@@ -19,6 +24,15 @@
             <span>{{
               getSupplierTypeName(slotProps.data.supplierTypeId)
             }}</span>
+          </template>
+        </Column>
+        <Column>
+          <template #body="slotProps">
+            <i
+              :class="PrimeIcons.TIMES"
+              class="grid_column_button"
+              @click="deleteSupplier($event, slotProps.data)"
+            />
           </template>
         </Column>
       </DataTable>
@@ -43,12 +57,18 @@
   </TabView>
 </template>
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { v4 as uuidv4 } from "uuid";
+import { PrimeIcons, ToastSeverity } from "primevue/api";
+import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 import { useSuppliersStore } from "../store/suppliers";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
+import { Supplier, SupplierType } from "../types";
 
+const toast = useToast();
+const confirm = useConfirm();
 const router = useRouter();
 const supplierStore = useSuppliersStore();
 
@@ -64,7 +84,49 @@ const getSupplierTypeName = (id: string) => {
   }
 };
 
-const navigateToSupplier = (row: DataTableRowClickEvent) => {
-  router.push({ path: `/suppliers/${row.data.id}` });
+const createSupplier = () => {
+  router.push({ path: `/suppliers/${uuidv4()}` });
+};
+
+const editSupplier = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes("grid_column_button")
+  ) {
+    router.push({ path: `/suppliers/${row.data.id}` });
+  }
+};
+
+const deleteSupplier = (event: any, supplier: Supplier) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Está segur que vol eliminar el proveïdor ${supplier.comercialName}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await supplierStore.deleteSupplier(supplier.id);
+
+      if (deleted) {
+        toast.add({
+          severity: ToastSeverity.SUCCESS,
+          summary: "Eliminat",
+          detail: "Proveïdor eliminat correctament",
+          life: 3000,
+        });
+        await supplierStore.fetchSuppliers();
+      }
+    },
+  });
 };
 </script>
+<style>
+.grid_action_button {
+  position: fixed;
+  right: 1rem;
+  z-index: 1;
+}
+.grid_column_button {
+  color: var(--red-600);
+  cursor: pointer;
+}
+</style>

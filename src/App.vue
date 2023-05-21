@@ -4,7 +4,7 @@ import { useSpanishGeography } from "./store/geography";
 import TitleBar from "./components/TitleBar.vue";
 import NavBar from "./components/NavBar.vue";
 import Login from "./views/Login.vue";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ScrollPanel from "primevue/scrollpanel";
 

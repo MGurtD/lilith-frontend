@@ -1,24 +1,20 @@
 <template>
   <li class="menu-item">
-    <a href="#" @click="onItemClick">
+    <router-link :to="item.route">
       <span v-if="!isCollapsed">{{ $t(item.text) }}</span>
       <i v-else :class="item.icon" />
-    </a>
+    </router-link>
   </li>
 </template>
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { MenuItem } from "../types";
+import { MenuItem } from "../types/component";
 
-const emits = defineEmits(["onItemClick"]);
-
-const props = defineProps({
+defineProps({
   item: { type: Object as PropType<MenuItem>, required: true },
   isCollapsed: Boolean,
 });
-
-const onItemClick = () => emits("onItemClick", props.item);
 </script>
 
 <style scoped>

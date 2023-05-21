@@ -25,11 +25,12 @@
 <script setup lang="ts">
 import NavBarMenuItem from "./NavBarMenuItem.vue";
 import { PrimeIcons } from "primevue/api";
-import { MenuItem } from "../types";
+import { MenuItem } from "../types/component";
 import { useRouter } from "vue-router";
 import { useStore } from "../store";
+import { ref } from "vue";
 
-const menuItems = [
+const menuItems = ref([
   {
     icon: PrimeIcons.HOME,
     text: "Inici",
@@ -45,14 +46,14 @@ const menuItems = [
     text: "Clients",
     route: "/customers",
   },
-] as Array<MenuItem>;
+] as Array<MenuItem>);
 
 const store = useStore();
-
 const router = useRouter();
+
 const navigateToRoute = (item: MenuItem) => {
   store.setMenuItem(item);
-  router.push(item.route);
+  router.push({ path: item.route });
 };
 </script>
 
