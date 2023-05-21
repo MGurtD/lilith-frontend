@@ -176,7 +176,7 @@ const submitForm = async () => {
       errors += `${e[1].map((e) => e)}.   `;
     });
     toast.add({
-      severity: ToastSeverity.WARN,
+      severity: "warn",
       summary: "Formulari inválid",
       detail: errors,
       life: 5000,

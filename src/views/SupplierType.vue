@@ -1,5 +1,5 @@
 <template>
-  <SupplierTypeForm @submit="submitForm" />
+  <FormSupplierType @submit="submitForm" />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -7,7 +7,7 @@ import { useRoute } from "vue-router";
 import { useSuppliersStore } from "../store/suppliers";
 import { PrimeIcons, ToastSeverity } from "primevue/api";
 
-import SupplierTypeForm from "../components/forms/SupplierTypeForm.vue";
+import FormSupplierType from "../components/forms/FormSupplierType.vue";
 import { storeToRefs } from "pinia";
 import { SupplierType } from "../types";
 import { useStore } from "../store";
@@ -38,7 +38,7 @@ const loadView = async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    route: "",
+    backButtonVisible: true,
     text: pageTitle,
   });
 };
@@ -63,7 +63,7 @@ const submitForm = async () => {
 
   if (result) {
     toast.add({
-      severity: ToastSeverity.SUCCESS,
+      severity: "success",
       summary: message,
       life: 5000,
     });

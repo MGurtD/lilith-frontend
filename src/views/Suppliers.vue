@@ -1,9 +1,11 @@
 <template>
   <Button
-    class="grid_action_button"
     :icon="PrimeIcons.PLUS"
-    @click="createSupplier"
+    class="grid_add_row_button"
+    rounded
+    @click="createButtonClick"
   />
+
   <TabView v-model:activeIndex="selectedTabIndex">
     <TabPanel>
       <template #header>
@@ -12,14 +14,18 @@
       </template>
       <DataTable
         :value="supplierStore.suppliers"
-        tableStyle="min-width: calc(100vw - 300px)"
+        tableStyle="min-width: 100%"
         @row-click="editSupplier"
       >
-        <Column field="comercialName" header="Nom Comercial"></Column>
-        <Column field="taxName" header="Nom Fiscal"></Column>
-        <Column field="cif" header="CIF"></Column>
-        <Column field="phone" header="Telèfon"></Column>
-        <Column header="Tipus">
+        <Column
+          field="comercialName"
+          header="Nom Comercial"
+          style="width: 20%"
+        ></Column>
+        <Column field="taxName" header="Nom Fiscal" style="width: 20%"></Column>
+        <Column field="cif" header="CIF" style="width: 20%"></Column>
+        <Column field="phone" header="Telèfon" style="width: 20%"></Column>
+        <Column header="Tipus" style="width: 20%">
           <template #body="slotProps">
             <span>{{
               getSupplierTypeName(slotProps.data.supplierTypeId)
@@ -30,7 +36,7 @@
           <template #body="slotProps">
             <i
               :class="PrimeIcons.TIMES"
-              class="grid_column_button"
+              class="grid_delete_column_button"
               @click="deleteSupplier($event, slotProps.data)"
             />
           </template>
@@ -44,7 +50,7 @@
       </template>
       <DataTable
         :value="supplierStore.supplierTypes"
-        tableStyle="min-width: calc(100vw - 300px)"
+        tableStyle="min-width: 100%"
         @row-click="editSupplierType"
       >
         <Column field="name" header="Nom" style="width: 50%"></Column>
@@ -57,7 +63,7 @@
           <template #body="slotProps">
             <i
               :class="PrimeIcons.TIMES"
-              class="grid_column_button"
+              class="grid_delete_column_button"
               @click="deleteSupplierType($event, slotProps.data)"
             />
           </template>
@@ -92,7 +98,6 @@ onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.HASHTAG,
     text: "Gestió de proveïdors",
-    route: "",
   });
 });
 
@@ -103,7 +108,7 @@ const getSupplierTypeName = (id: string) => {
   }
 };
 
-const createSupplier = () => {
+const createButtonClick = () => {
   if (selectedTabIndex.value === 0) {
     router.push({ path: `/suppliers/${uuidv4()}` });
   } else {
@@ -113,7 +118,9 @@ const createSupplier = () => {
 
 const editSupplier = (row: DataTableRowClickEvent) => {
   if (
-    !(row.originalEvent.target as any).className.includes("grid_column_button")
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
   ) {
     router.push({ path: `/suppliers/${row.data.id}` });
   }
@@ -121,7 +128,9 @@ const editSupplier = (row: DataTableRowClickEvent) => {
 
 const editSupplierType = (row: DataTableRowClickEvent) => {
   if (
-    !(row.originalEvent.target as any).className.includes("grid_column_button")
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
   ) {
     router.push({ path: `/supplier-types/${row.data.id}` });
   }
@@ -139,7 +148,7 @@ const deleteSupplier = (event: any, supplier: Supplier) => {
 
       if (deleted) {
         toast.add({
-          severity: ToastSeverity.SUCCESS,
+          severity: "success",
           summary: "Eliminat",
           life: 3000,
         });
@@ -161,7 +170,7 @@ const deleteSupplierType = (event: any, supplierType: SupplierType) => {
 
       if (deleted) {
         toast.add({
-          severity: ToastSeverity.SUCCESS,
+          severity: "success",
           summary: "Eliminat",
           life: 3000,
         });
@@ -171,14 +180,3 @@ const deleteSupplierType = (event: any, supplierType: SupplierType) => {
   });
 };
 </script>
-<style>
-.grid_action_button {
-  position: fixed;
-  right: 1rem;
-  z-index: 1;
-}
-.grid_column_button {
-  color: var(--red-600);
-  cursor: pointer;
-}
-</style>

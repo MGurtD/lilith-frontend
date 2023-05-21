@@ -11,5 +11,6 @@ export enum FormActionMode {
 export interface MenuItem {
   icon: string;
   text: string;
-  route: string;
+  route?: string;
+  backButtonVisible?: boolean;
 }

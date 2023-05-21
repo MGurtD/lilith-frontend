@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Supplier, SupplierType } from "../types";
+import { Supplier, SupplierContact, SupplierType } from "../types";
 import {
   SupplierService,
   SupplierTypeService,
@@ -82,6 +82,22 @@ export const useSuppliersStore = defineStore({
     async deleteSupplierType(id: string) {
       const result = await typeService.delete(id);
       if (result) await this.fetchSupplierTypes();
+      return result;
+    },
+
+    async addContactToSupplier(contact: SupplierContact) {
+      const result = await service.addContact(contact);
+      if (result) await this.fetchSupplier(contact.supplierId);
+      return result;
+    },
+    async updateContactFromSupplier(contact: SupplierContact) {
+      const result = await service.updateContact(contact);
+      if (result) await this.fetchSupplier(contact.supplierId);
+      return result;
+    },
+    async removeContactFromSupplier(contact: SupplierContact) {
+      const result = await service.removeContact(contact.id);
+      if (result) await this.fetchSupplier(contact.supplierId);
       return result;
     },
   },

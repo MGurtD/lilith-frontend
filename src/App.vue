@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useStore } from "./store";
 import { useSpanishGeography } from "./store/geography";
-import TitleBar from "./components/TitleBar.vue";
-import NavBar from "./components/NavBar.vue";
+import Header from "./components/TheHeader.vue";
+import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -25,8 +25,8 @@ const logout = () => {
 
 <template>
   <div v-if="store.authorization">
-    <TitleBar @logout-click="logout" />
-    <NavBar />
+    <Header @logout-click="logout" />
+    <SideBar />
     <main class="app__view" :class="{ collapsed: store.menuCollapsed }">
       <ScrollPanel style="height: calc(100vh - 5rem)">
         <RouterView />

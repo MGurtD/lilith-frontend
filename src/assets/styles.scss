@@ -17,3 +17,13 @@ body {
 :root {
   --top-panel-height: 5rem;
 }
+
+.grid_add_row_button {
+  position: fixed !important;
+  right: 2rem !important;
+  z-index: 1 !important;
+}
+.grid_delete_column_button {
+  color: var(--red-600);
+  cursor: pointer;
+}

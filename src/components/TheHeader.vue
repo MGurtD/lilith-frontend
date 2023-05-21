@@ -1,7 +1,12 @@
 <template>
   <div class="title-bar" :class="{ collapsed: store.menuCollapsed }">
     <div class="title-bar__page">
-      <!-- <i class="title-bar__page__icon" :class="store.currentMenuItem.icon"></i> -->
+      <i
+        v-if="store.currentMenuItem.backButtonVisible"
+        class="title-bar__back"
+        :class="PrimeIcons.ARROW_LEFT"
+        @click="goBack"
+      ></i>
       <span class="title-bar__page__text">{{
         store.currentMenuItem.text
       }}</span>
@@ -29,14 +34,20 @@ import { ref } from "vue";
 import { useStore } from "../store";
 import Avatar from "primevue/avatar";
 import OverlayPanel from "primevue/overlaypanel";
+import { PrimeIcons } from "primevue/api";
+import { useRouter } from "vue-router";
 
 const emits = defineEmits(["logoutClick"]);
+
 const store = useStore();
 const op = ref();
 const showOverlayPanel = (event: any) => {
   op.value.toggle(event);
 };
 const logoutClick = () => emits("logoutClick");
+
+const router = useRouter();
+const goBack = () => router.back();
 </script>
 
 <style scoped>
@@ -70,8 +81,14 @@ const logoutClick = () => emits("logoutClick");
   font-size: 1.5rem;
 }
 
-.title-bar__page__icon {
+.title-bar__back {
   font-size: 1.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.title-bar__back:hover {
+  color: #fff;
 }
 
 .title-bar__user {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive } from "vue";
-import { UserRegister } from "../api/services/authentications.service";
+import { UserRegister } from "../../api/services/authentications.service";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useToast } from "primevue/usetoast";
@@ -40,7 +40,7 @@ const v$ = useVuelidate(rules, state);
 const register = () => {
   if (!arePasswordsEqual) {
     toast.add({
-      severity: ToastSeverity.ERROR,
+      severity: "error",
       summary: "Les contrasenyes introduïdes no coincideixen",
     });
     return;
@@ -56,7 +56,7 @@ const loginClick = () => emits("loginClick");
   <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
     <div class="text-center mb-5">
       <img
-        src="../assets/images/logo.png"
+        src="../../assets/images/logo.png"
         alt="Image"
         height="50"
         class="mb-3"

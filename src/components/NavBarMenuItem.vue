@@ -1,6 +1,6 @@
 <template>
   <li class="menu-item">
-    <router-link :to="item.route">
+    <router-link :to="(item.route as string)">
       <span v-if="!isCollapsed">{{ $t(item.text) }}</span>
       <i v-else :class="item.icon" />
     </router-link>

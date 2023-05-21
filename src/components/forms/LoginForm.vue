@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { UserLogin } from "../api/services/authentications.service";
+import { UserLogin } from "../../api/services/authentications.service";
 import { useToast } from "primevue/usetoast";
 import { ToastSeverity } from "primevue/api";
 
@@ -18,7 +18,7 @@ const login = () => {
     userLogin.value.password.length === 0
   ) {
     toast.add({
-      severity: ToastSeverity.ERROR,
+      severity: "error",
       summary: "Login incorrecte",
       detail: "El nom d'usuari i la contrasenya són obligatoris",
     });
@@ -37,7 +37,7 @@ const registerClick = () => {
   <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
     <div class="text-center mb-5">
       <img
-        src="../assets/images/logo.png"
+        src="../../assets/images/logo.png"
         alt="Image"
         height="50"
         class="mb-3"

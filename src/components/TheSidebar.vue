@@ -16,7 +16,6 @@
         :key="menuItem.text"
         :item="menuItem"
         :is-collapsed="store.menuCollapsed"
-        @on-item-click="navigateToRoute"
       />
     </ul>
   </navbar>
@@ -26,7 +25,6 @@
 import NavBarMenuItem from "./NavBarMenuItem.vue";
 import { PrimeIcons } from "primevue/api";
 import { MenuItem } from "../types/component";
-import { useRouter } from "vue-router";
 import { useStore } from "../store";
 import { ref } from "vue";
 
@@ -49,12 +47,6 @@ const menuItems = ref([
 ] as Array<MenuItem>);
 
 const store = useStore();
-const router = useRouter();
-
-const navigateToRoute = (item: MenuItem) => {
-  store.setMenuItem(item);
-  router.push({ path: item.route });
-};
 </script>
 
 <style scoped>

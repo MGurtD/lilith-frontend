@@ -5,13 +5,18 @@
         <i :class="PrimeIcons.BUILDING" class="mr-2"></i>
         <span>Proveïdor</span>
       </template>
-      <SupplierForm @submit="submitForm" />
+      <FormSupplier @submit="submitForm" />
     </TabPanel>
     <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
       </template>
+      <SupplierContacts
+        @create="addContact"
+        @update="editContact"
+        @delete="removeContact"
+      />
     </TabPanel>
   </TabView>
 </template>
@@ -21,13 +26,14 @@ import { useRoute } from "vue-router";
 import { useSuppliersStore } from "../store/suppliers";
 import { PrimeIcons, ToastSeverity } from "primevue/api";
 
-import SupplierForm from "../components/forms/SupplierForm.vue";
+import FormSupplier from "../components/forms/FormSupplier.vue";
 import { storeToRefs } from "pinia";
-import { Supplier } from "../types";
+import { Supplier, SupplierContact } from "../types";
 import { useStore } from "../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../types/component";
+import SupplierContacts from "../components/tables/SupplierContacts.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
@@ -52,8 +58,8 @@ const loadView = async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    route: "",
     text: pageTitle,
+    backButtonVisible: true,
   });
 };
 
@@ -77,11 +83,44 @@ const submitForm = async () => {
 
   if (result) {
     toast.add({
-      severity: ToastSeverity.SUCCESS,
+      severity: "success",
       summary: message,
       life: 5000,
     });
     await loadView();
+  }
+};
+
+const addContact = async (contact: SupplierContact) => {
+  const result = await supplierStore.addContactToSupplier(contact);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Contacte afegit",
+      life: 5000,
+    });
+  }
+};
+
+const editContact = async (contact: SupplierContact) => {
+  const result = await supplierStore.updateContactFromSupplier(contact);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Contacte actualizat",
+      life: 5000,
+    });
+  }
+};
+
+const removeContact = async (contact: SupplierContact) => {
+  const result = await supplierStore.removeContactFromSupplier(contact);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Contacte eliminat",
+      life: 5000,
+    });
   }
 };
 </script>
