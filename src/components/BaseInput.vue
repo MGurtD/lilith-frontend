@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BaseInputType } from "../types/component";
+import Password from "primevue/password";
 
 defineProps<{
   type?: BaseInputType;
@@ -25,6 +26,16 @@ const emit = defineEmits<{
       <i v-if="icon" :class="icon" />
       <InputText
         v-if="!type || type === BaseInputType.TEXT"
+        :id="id"
+        class="w-full"
+        v-bind="$attrs"
+        v-bind:model-value="modelValue"
+        @input="
+          emit('update:modelValue', ($event.target as HTMLInputElement).value)
+        "
+      />
+      <Password
+        v-else-if="type === BaseInputType.PASSWORD"
         :id="id"
         class="w-full"
         v-bind="$attrs"

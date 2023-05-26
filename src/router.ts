@@ -4,6 +4,7 @@ const Home = () => import("./views/Home.vue");
 const Suppliers = () => import("./views/Suppliers.vue");
 const Customers = () => import("./views/Customers.vue");
 const Users = () => import("./views/Users.vue");
+const User = () => import("./views/User.vue");
 const Supplier = () => import("./views/Supplier.vue");
 const SupplierType = () => import("./views/SupplierType.vue");
 
@@ -13,6 +14,8 @@ const router = createRouter({
     { path: "/", name: "Home", component: Home },
     { path: "/customers", name: "Customers", component: Customers },
     { path: "/suppliers", name: "Suppliers", component: Suppliers },
+    { path: "/users", name: "Users", component: Users },
+    { path: "/user/:id", name: "User", component: User },
     {
       path: "/suppliers/:id",
       name: "Supplier",

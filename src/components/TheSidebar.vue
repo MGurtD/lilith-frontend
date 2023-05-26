@@ -44,6 +44,11 @@ const menuItems = ref([
     text: "Clients",
     route: "/customers",
   },
+  {
+    icon: PrimeIcons.USERS,
+    text: "Usuaris",
+    route: "/users",
+  },
 ] as Array<MenuItem>);
 
 const store = useStore();

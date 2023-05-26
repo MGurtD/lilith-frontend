@@ -26,7 +26,7 @@ const messages = {
   es: {
     general: {
       menu: {
-        home: "Inici",
+        home: "Inicio",
         suppliers: "Proveïdors",
         customers: "Clients",
       },

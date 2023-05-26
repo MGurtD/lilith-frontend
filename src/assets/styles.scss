@@ -27,3 +27,7 @@ body {
   color: var(--red-600);
   cursor: pointer;
 }
+
+.p-password > input {
+  width: 100% !important;
+}

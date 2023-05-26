@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import apiClient from "../api.client";
+import apiClient, { logException } from "../api.client";
 import jwtDecode from "jwt-decode";
 
 export class AuthenticationService {
@@ -19,6 +19,19 @@ export class AuthenticationService {
 
       return response.data;
     } catch (error) {}
+  }
+
+  public async ChangePassword(UserLogin: UserLogin): Promise<boolean> {
+    try {
+      let response = await this.apiClient.post(
+        `${this.resource}/ChangePassword`,
+        UserLogin
+      );
+      return response.status === 200;
+    } catch (err) {
+      logException(err);
+    }
+    return false;
   }
 
   public async Register(UserRegister: UserRegister) {

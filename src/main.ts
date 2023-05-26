@@ -6,7 +6,14 @@ import messages from "./translations";
 import router from "./router";
 
 const pinia = createPinia();
-const app: VueApp<Element> = createApp(App).use(router).use(pinia);
+const i18n = createI18n({
+  locale: "ca", // set locale
+  fallbackLocale: "es", // set fallback locale
+  messages, // set locale messages
+  // If you need to specify other options, you can set other options
+  // ...
+});
+const app: VueApp<Element> = createApp(App).use(router).use(pinia).use(i18n);
 
 import "primevue/resources/primevue.min.css";
 import "primevue/resources/themes/lara-light-blue/theme.css";
@@ -31,9 +38,14 @@ import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Textarea from "primevue/textarea";
 import ConfirmPopup from "primevue/confirmpopup";
+import BaseInput from "./components/BaseInput.vue";
+import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
+import catalan from "./i18n/catalan";
 
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  locale: catalan,
+});
 app.use(ToastService);
 app.use(ConfirmationService);
 
@@ -53,15 +65,8 @@ app
   .component("Dropdown", Dropdown)
   .component("TabView", TabView)
   .component("TabPanel", TabPanel)
-  .component("Textarea", Textarea);
-
-const i18n = createI18n({
-  locale: "ca", // set locale
-  fallbackLocale: "es", // set fallback locale
-  messages, // set locale messages
-  // If you need to specify other options, you can set other options
-  // ...
-});
-app.use(i18n);
+  .component("Textarea", Textarea)
+  .component("BaseInput", BaseInput)
+  .component("BooleanColumn", BooleanColumn);
 
 app.mount("#app");

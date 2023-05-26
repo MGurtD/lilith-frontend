@@ -9,18 +9,18 @@ export class UserService {
     this.resource = "/User";
   }
 
-  public async GetAll(): Promise<User[] | undefined>  {
+  public async GetAll(): Promise<User[] | undefined> {
     try {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
         //const res:AxiosResponse<User[]> = response.data;
         const models = response.data as Array<User>;
-        console.log(models);        
+        console.log(models);
         return models;
         //return res;
       }
     } catch (error) {
-      logException(error);      
+      logException(error);
     }
   }
 
@@ -33,6 +33,21 @@ export class UserService {
     } catch (error) {
       logException(error);
     }
+  }
+
+  public async Update(user: User): Promise<boolean> {
+    try {
+      let response = await this.apiClient.put(
+        `${this.resource}/${user.id}`,
+        user
+      );
+      if (response.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      logException(error);
+    }
+    return false;
   }
 }
 

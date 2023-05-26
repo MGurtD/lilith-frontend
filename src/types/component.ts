@@ -1,6 +1,7 @@
 export enum BaseInputType {
   NUMERIC,
   TEXT,
+  PASSWORD,
 }
 
 export enum FormActionMode {

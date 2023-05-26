@@ -80,7 +80,6 @@ import {
   FormValidationResult,
 } from "../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { ToastSeverity } from "primevue/api";
 
 const props = defineProps<{
   contact: SupplierContact;
