@@ -4,6 +4,7 @@ import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService, User } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
+import { bool } from "yup";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -17,6 +18,8 @@ export const useStore = defineStore("applicationStore", {
         icon: PrimeIcons.HOME,
       } as MenuItem,
       menuCollapsed: false,
+
+      isWaiting: false,
     };
   },
   actions: {
@@ -54,4 +57,9 @@ export interface JwtDecoded {
   jti: string;
   id: string;
   sub: string;
+}
+
+export interface Backend {
+  isWaitingResponse: boolean;
+  isOnError: boolean;
 }

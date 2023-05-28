@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { UserLogin } from "../../api/services/authentications.service";
 import { useToast } from "primevue/usetoast";
-import { ToastSeverity } from "primevue/api";
 
 const emits = defineEmits(["login", "registerClick"]);
 
@@ -37,14 +36,11 @@ const registerClick = () => {
   <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
     <div class="text-center mb-5">
       <img
-        src="../../assets/images/logo.png"
+        src="../../assets/images/logo.jpg"
         alt="Image"
-        height="50"
+        height="100"
         class="mb-3"
       />
-      <div class="text-blue-700 text-3xl font-medium mb-6">
-        {{ $t("login.loginTitle") }}
-      </div>
     </div>
 
     <div>
@@ -83,7 +79,7 @@ const registerClick = () => {
       ></Button>
 
       <div class="flex align-items-center justify-content-between mb-4 mt-4">
-        <a
+        <!--<a
           class="links-section font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
           @click="registerClick"
           >Registra't</a
@@ -91,7 +87,7 @@ const registerClick = () => {
         <a
           class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
           >{{ $t("login.forgotPassword") }}</a
-        >
+        >-->
       </div>
     </div>
   </div>

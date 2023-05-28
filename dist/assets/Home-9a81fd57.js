@@ -1,1 +1,0 @@
-import{d as t,u as o,o as n,c as s,a}from"./index-97eeca01.js";const c={class:"container"},i=t({__name:"Home",setup(r){const e=o();return n(()=>{e.setMenuItem({text:"",icon:""})}),(_,m)=>(a(),s("div",c))}});export{i as default};

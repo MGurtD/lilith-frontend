@@ -1,8 +1,8 @@
 <template>
   <li class="menu-item">
     <router-link :to="(item.route as string)">
-      <span v-if="!isCollapsed">{{ item.text }}</span>
-      <i v-else :class="item.icon" />
+      <i :class="item.icon" />
+      <span v-if="!isCollapsed">&nbsp;&nbsp;{{ item.text }}</span>
     </router-link>
   </li>
 </template>
@@ -22,6 +22,8 @@ defineProps({
   margin: 0;
   padding: 0;
   border-bottom: 1px solid #34495e; /* Cambiar a un tono de azul más oscuro */
+  font-size: 1rem;
+  text-align: left;
 }
 
 .menu-item a {

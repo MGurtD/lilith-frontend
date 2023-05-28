@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useApiStore } from "../store/backend";
+import { useToast } from "primevue/usetoast";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -13,6 +15,47 @@ const apiClient = axios.create({
     return status < 500; // Resolve only if the status code is less than 500
   },
 });
+
+// Add a request interceptor
+apiClient.interceptors.request.use(
+  function (config) {
+    const store = useApiStore();
+    store.isWaiting = true;
+
+    // Do something before request is sent
+    console.log("apiClient.interceptors.request", config);
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+apiClient.interceptors.response.use(
+  function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    console.log("apiClient.interceptors.response", response);
+
+    const store = useApiStore();
+    store.isWaiting = false;
+
+    return response;
+  },
+  function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+
+    const store = useApiStore();
+    store.isWaiting = false;
+    store.setError();
+
+    logException(error);
+    return Promise.reject(error);
+  }
+);
 
 export function logException(error: any) {
   if (error.response) {
@@ -30,7 +73,7 @@ export function logException(error: any) {
     // Something happened in setting up the request that triggered an Error
     console.log("Error", error.message);
   }
-  console.log(error.config);
+  console.log(error);
 }
 
 export default apiClient;
