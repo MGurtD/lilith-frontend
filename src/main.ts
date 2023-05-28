@@ -2,7 +2,7 @@ import { App as VueApp, createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import { createI18n } from "vue-i18n";
-import messages from "./translations";
+import messages from "./i18n/translations";
 import router from "./router";
 
 const pinia = createPinia();
