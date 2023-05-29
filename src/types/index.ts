@@ -24,7 +24,7 @@ export interface CustomerContact {
 
 export interface Customer {
   id: string;
-  code:string;
+  code: string;
   comercialName: string;
   taxName: string;
   vatNumber: string;
@@ -38,9 +38,9 @@ export interface Customer {
 export interface CustomerAddress {
   id: string;
   name: string;
-  mainAddress: boolean;
+  default: boolean;
   address: string;
-  addressExtraInfo: string;
+  observations: string;
   country: string;
   region: string;
   city: string;
@@ -58,7 +58,7 @@ export interface Supplier {
   id: string;
   comercialName: string;
   taxName: string;
-  cif: string;
+  vatNumber: string;
   country: string;
   region: string;
   city: string;

@@ -144,6 +144,9 @@ const schema = Yup.object().shape({
   comercialName: Yup.string()
     .required("El nom comercial és obligatori")
     .max(250, "El nom comercial no pot superar els 250 carácters"),
+  vatNumber: Yup.string()
+    .required("El CIF és obligatori")
+    .max(15, "El CIF no pot superar els 15 carácters"),
   taxName: Yup.string().required("El nom fiscal és obligatori"),
   region: Yup.string().required("La província és obligatoria"),
   city: Yup.string().required("El municipi és obligatori"),

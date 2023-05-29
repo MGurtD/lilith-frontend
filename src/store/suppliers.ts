@@ -24,7 +24,7 @@ export const useSuppliersStore = defineStore({
         comercialName: "",
         taxName: "",
         address: "",
-        cif: "",
+        vatNumber: "",
         city: "",
         country: "Espanya",
         disabled: false,

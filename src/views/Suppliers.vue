@@ -23,7 +23,7 @@
           style="width: 20%"
         ></Column>
         <Column field="taxName" header="Nom Fiscal" style="width: 20%"></Column>
-        <Column field="cif" header="CIF" style="width: 20%"></Column>
+        <Column field="vatNumber" header="CIF" style="width: 20%"></Column>
         <Column field="phone" header="Telèfon" style="width: 20%"></Column>
         <Column header="Tipus" style="width: 20%">
           <template #body="slotProps">
