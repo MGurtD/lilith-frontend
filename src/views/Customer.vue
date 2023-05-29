@@ -5,58 +5,57 @@
         <i :class="PrimeIcons.WALLET" class="mr-2"></i>
         <span>Client</span>
       </template>
-      <FormSupplier @submit="submitForm" />
+      <FormCustomer @submit="submitForm" />
     </TabPanel>
     <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
       </template>
-      <pre></pre>
+      <pre>{{ customer?.contacts }}</pre>
     </TabPanel>
     <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
         <i :class="PrimeIcons.ENVELOPE" class="mr-2"></i>
         <span>Adreces</span>
       </template>
-      <pre></pre>
+      <pre>{{ customer?.addresses }}</pre>
     </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useSuppliersStore } from "../store/suppliers";
-import { PrimeIcons, ToastSeverity } from "primevue/api";
+import { useCustomersStore } from "../store/customers";
+import { PrimeIcons } from "primevue/api";
 
-import FormSupplier from "../components/forms/FormSupplier.vue";
+import FormCustomer from "../components/forms/FormCustomer.vue";
 import { storeToRefs } from "pinia";
-import { Supplier, SupplierContact } from "../types";
+import { Customer, CustomerContact } from "../types";
 import { useStore } from "../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../types/component";
-import SupplierContacts from "../components/tables/SupplierContacts.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
-const supplierStore = useSuppliersStore();
-const { supplier } = storeToRefs(supplierStore);
+const customerStore = useCustomersStore();
+const { customer } = storeToRefs(customerStore);
 
 const loadView = async () => {
-  await supplierStore.fetchSupplier(route.params.id as string);
-  supplierStore.fetchSupplierTypes();
+  await customerStore.fetchCustomer(route.params.id as string);
+  customerStore.fetchCustomerTypes();
 
   // Comprovar existencia del proveïdor
   let pageTitle = "";
-  if (!supplier.value) {
+  if (!customer.value) {
     formMode.value = FormActionMode.CREATE;
-    supplierStore.setNewSupplier(route.params.id as string);
-    pageTitle = "Alta de proveïdor";
+    customerStore.setNewCustomer(route.params.id as string);
+    pageTitle = "Alta de client";
   } else {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Proveïdor ${supplier.value.comercialName}`;
+    pageTitle = `Client ${customer.value.comercialName}`;
   }
 
   store.setMenuItem({
@@ -72,16 +71,16 @@ onMounted(async () => {
 
 const toast = useToast();
 const submitForm = async () => {
-  const data = supplier.value as Supplier;
+  const data = customer.value as Customer;
   let result = false;
   let message = "";
 
   if (formMode.value === FormActionMode.CREATE) {
-    result = await supplierStore.createSupplier(data);
-    message = "Proveïdor creat correctament";
+    result = await customerStore.createCustomer(data);
+    message = "Client creat correctament";
   } else {
-    result = await supplierStore.updateSupplier(data.id, data);
-    message = "Proveïdor actualizat correctament";
+    result = await customerStore.updateCustomer(data.id, data);
+    message = "Client actualizat correctament";
   }
 
   if (result) {
@@ -94,8 +93,8 @@ const submitForm = async () => {
   }
 };
 
-const addContact = async (contact: SupplierContact) => {
-  const result = await supplierStore.addContactToSupplier(contact);
+const addContact = async (contact: CustomerContact) => {
+  const result = await customerStore.addContactToCustomer(contact);
   if (result) {
     toast.add({
       severity: "success",
@@ -105,8 +104,8 @@ const addContact = async (contact: SupplierContact) => {
   }
 };
 
-const editContact = async (contact: SupplierContact) => {
-  const result = await supplierStore.updateContactFromSupplier(contact);
+const editContact = async (contact: CustomerContact) => {
+  const result = await customerStore.updateContactFromCustomer(contact);
   if (result) {
     toast.add({
       severity: "success",
@@ -116,8 +115,8 @@ const editContact = async (contact: SupplierContact) => {
   }
 };
 
-const removeContact = async (contact: SupplierContact) => {
-  const result = await supplierStore.removeContactFromSupplier(contact);
+const removeContact = async (contact: CustomerContact) => {
+  const result = await customerStore.removeContactFromCustomer(contact);
   if (result) {
     toast.add({
       severity: "success",

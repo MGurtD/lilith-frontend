@@ -59,6 +59,13 @@ export const useCustomersStore = defineStore({
     },
 
     // Customer Types
+    setNewCustomerType(id: string) {
+      this.customerType = {
+        id: id,
+        name: "",
+        description: "",
+      } as CustomerType;
+    },
     async fetchCustomerTypes() {
       this.customerTypes = await typeService.getAll();
     },

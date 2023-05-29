@@ -8,6 +8,7 @@ export interface AuthenticationResponse {
 export interface CustomerType {
   id: string;
   name: string;
+  description: string;
   disabled: boolean;
 }
 
