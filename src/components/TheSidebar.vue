@@ -60,7 +60,7 @@ const store = useStore();
   top: 0;
   left: 0;
   bottom: 0;
-  width: 250px;
+  width: var(--side-bar-width);
   background-color: var(--blue-900); /* Cambiar a azul */
   overflow: hidden;
   transition: all 0.3s ease-in-out;
@@ -68,7 +68,7 @@ const store = useStore();
 }
 
 .collapsed {
-  width: 50px;
+  width: var(--side-bar-collapsed-width);
 }
 
 .side-menu-header {
@@ -102,6 +102,6 @@ const store = useStore();
   left: 1rem;
   bottom: 1rem;
   border: 1px solid white;
-  width: calc(250px - 2rem);
+  width: calc(var(--side-bar-width) - 2rem);
 }
 </style>

@@ -26,6 +26,10 @@ defineProps({
   text-align: left;
 }
 
+.menu-item i {
+  padding-left: 5px;
+}
+
 .menu-item a {
   display: block;
   padding: 10px;

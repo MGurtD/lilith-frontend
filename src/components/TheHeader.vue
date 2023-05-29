@@ -56,19 +56,19 @@ const goBack = () => router.back();
   background-color: var(--blue-900);
   color: var(--bluegray-200);
   top: 0;
-  left: 250px;
+  left: var(--side-bar-width);
   height: var(--top-panel-height);
   display: grid;
   grid-template-columns: 0.7fr 0.3fr;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  width: calc(100vw - 250px);
+  width: calc(100vw - var(--side-bar-width));
   transition: all 0.3s ease-in-out;
 }
 
 .collapsed {
   left: 50px;
-  width: calc(100vw - 50px);
+  width: calc(100vw - var(--side-bar-width));
 }
 
 .title-bar__page {
