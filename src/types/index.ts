@@ -11,17 +11,6 @@ export interface CustomerType {
   disabled: boolean;
 }
 
-export interface CustomerContact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  charge: string;
-  email: string;
-  phoneNumber: string;
-  disabled: boolean;
-  mainContact: boolean;
-}
-
 export interface Customer {
   id: string;
   code: string;
@@ -35,17 +24,30 @@ export interface Customer {
   addresses: Array<CustomerAddress>;
 }
 
+export interface CustomerContact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  charge: string;
+  email: string;
+  phoneNumber: string;
+  disabled: boolean;
+  mainContact: boolean;
+  customerId: string;
+}
+
 export interface CustomerAddress {
   id: string;
   name: string;
-  default: boolean;
   address: string;
   observations: string;
   country: string;
   region: string;
   city: string;
   postalCode: string;
+  default: boolean;
   disabled: boolean;
+  customerId: string;
 }
 
 export interface SupplierType {

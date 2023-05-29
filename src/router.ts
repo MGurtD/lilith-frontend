@@ -3,6 +3,7 @@ import { createWebHistory, createRouter } from "vue-router";
 const Home = () => import("./views/Home.vue");
 const Suppliers = () => import("./views/Suppliers.vue");
 const Customers = () => import("./views/Customers.vue");
+const Customer = () => import("./views/Customer.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
 const Supplier = () => import("./views/Supplier.vue");
@@ -13,9 +14,15 @@ const router = createRouter({
   routes: [
     { path: "/", name: "Home", component: Home },
     { path: "/customers", name: "Customers", component: Customers },
-    { path: "/suppliers", name: "Suppliers", component: Suppliers },
+    {
+      path: "/customers/:id",
+      name: "Customer",
+      component: Customer,
+      props: true,
+    },
     { path: "/users", name: "Users", component: Users },
     { path: "/user/:id", name: "User", component: User },
+    { path: "/suppliers", name: "Suppliers", component: Suppliers },
     {
       path: "/suppliers/:id",
       name: "Supplier",
@@ -28,7 +35,6 @@ const router = createRouter({
       component: SupplierType,
       props: true,
     },
-    { path: "/users", name: "Users", component: Users },
   ],
 });
 

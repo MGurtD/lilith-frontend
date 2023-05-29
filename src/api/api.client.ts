@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useApiStore } from "../store/backend";
-import { useToast } from "primevue/usetoast";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -23,7 +22,6 @@ apiClient.interceptors.request.use(
     store.isWaiting = true;
 
     // Do something before request is sent
-    console.log("apiClient.interceptors.request", config);
     return config;
   },
   function (error) {
@@ -37,8 +35,6 @@ apiClient.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    console.log("apiClient.interceptors.response", response);
-
     const store = useApiStore();
     store.isWaiting = false;
 
@@ -47,7 +43,6 @@ apiClient.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-
     const store = useApiStore();
     store.isWaiting = false;
     store.setError();

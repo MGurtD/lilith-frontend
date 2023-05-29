@@ -6,14 +6,13 @@
     @click="createButtonClick"
   />
 
-<TabView v-model:activeIndex="selectedTabIndex">
-</TabView>
-
-
+  <TabView v-model:activeIndex="selectedTabIndex">
+    <TabPanel></TabPanel>
+  </TabView>
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { PrimeIcons, ToastSeverity } from "primevue/api";
+import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useCustomersStore } from "../store/customers";
