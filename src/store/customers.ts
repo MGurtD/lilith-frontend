@@ -11,7 +11,7 @@ import {
 } from "../api/services/customer.service";
 
 const service = new CustomerService("/customer");
-const typeService = new CustomerTypeService("/customertype");
+const typeService = new CustomerTypeService("/CustomerType");
 
 export const useCustomersStore = defineStore({
   id: "customers",
