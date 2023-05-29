@@ -24,7 +24,7 @@
         sortable
         style="width: 20%"
       ></Column>
-      <Column header="Activo" sortable style="width: 20%">
+      <Column header="Actiu" sortable style="width: 20%">
         <template #body="slotProps">
           <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
         </template>

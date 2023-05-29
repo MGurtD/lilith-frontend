@@ -7,7 +7,69 @@
   />
 
   <TabView v-model:activeIndex="selectedTabIndex">
-    <TabPanel></TabPanel>
+    <TabPanel>
+      <template #header>
+        <i :class="PrimeIcons.LINK" class="mr-2"></i>
+        <span>Clients</span>
+      </template>
+      <DataTable
+      :value="customerStore.customers"
+      tableStyle="min-width: 100%"
+      @row-click="editCustomer"
+      >
+      <Column field="comercialName" header="Nom comercial" sortable style="width: 20%"></Column>
+      <Column field="taxName" header="Nom Fiscal" style="width: 20%"></Column>
+      <Column field="vatNumber" header="CIF" style="width: 20%"></Column>
+      <Column header="Tipus" style="width: 20%">
+          <template #body="slotProps">
+            <span>{{
+              getCustomerTypeName(slotProps.data.customerTypeId)
+            }}</span>
+          </template>
+        </Column>
+      <Column header="Actiu" sortable style="width: 20%">
+        <template #body="slotProps">
+          <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
+        </template>
+      </Column>
+      <Column>
+          <template #body="slotProps">
+            <i
+              :class="PrimeIcons.TIMES"
+              class="grid_delete_column_button"
+              @click="deleteCustomer($event, slotProps.data)"
+            />
+          </template>
+        </Column>
+    </DataTable>
+    </TabPanel>
+    <TabPanel>
+      <template #header>
+        <i :class="PrimeIcons.HASHTAG" class="mr-2"></i>
+        <span>Tipus de client</span>
+      </template>
+      <DataTable
+        :value="customerStore.customerTypes"
+        tableStyle="min-width: 100%"
+        @row-click="editCustomerType"
+      >
+        <Column field="name" header="Nom" style="width: 50%"></Column>
+        <Column header="Actiu" sortable style="width: 50%">
+        <template #body="slotProps">
+          <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
+        </template>
+      </Column>
+        <Column>
+          <template #body="slotProps">
+            <i
+              :class="PrimeIcons.TIMES"
+              class="grid_delete_column_button"
+              @click="deleteCustomerType($event, slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+    </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
@@ -31,11 +93,21 @@ const customerStore = useCustomersStore();
 
 onMounted(async () => {
   await customerStore.fetchCustomers();
+  await customerStore.fetchCustomerTypes();
+
   store.setMenuItem({
     text: "Gestió de clients",
     icon: PrimeIcons.HASHTAG,
   });
 });
+
+
+const getCustomerTypeName = (id: string) => {
+  const customerType = customerStore.customerTypes?.find((st) => st.id === id);
+  if (customerType) {
+    return customerType.name;
+  }
+}
 
 const deleteCustomer = (event: any, customer: Customer) => {
   confirm.require({
@@ -59,9 +131,29 @@ const deleteCustomer = (event: any, customer: Customer) => {
   });
 };
 
+const editCustomer = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
+  ) {
+    router.push({ path: `/customers/${row.data.id}` });
+  }
+}
+
+const editCustomerType = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
+  ) {
+    router.push({ path: `/customer-types/${row.data.id}` });
+  }
+}
+
 const createButtonClick = () => {
   if (selectedTabIndex.value === 0) {
-    router.push({ path: `/customer/${uuidv4()}` });
+    router.push({ path: `/customers/${uuidv4()}` });
   } else {
     router.push({ path: `/customer-types/${uuidv4()}` });
   }
