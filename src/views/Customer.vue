@@ -12,7 +12,11 @@
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
       </template>
-      <pre>{{ customer?.contacts }}</pre>
+      <CustomerContacts
+        @create="addContact"
+        @update="editContact"
+        @delete="removeContact"
+      />
     </TabPanel>
     <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
@@ -36,6 +40,7 @@ import { useStore } from "../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../types/component";
+import CustomerContacts from "../components/tables/CustomerContacts.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
