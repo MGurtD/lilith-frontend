@@ -1,5 +1,25 @@
 <template>
   <form v-if="address">
+    <section class="three-columns">
+      <BaseInput
+        id="name"
+        class="mb-2"
+        label="Nom"
+        v-model="address.name"
+        :class="{
+          'p-invalid': validation.errors.name,
+        }"
+      ></BaseInput>
+      <div>
+        <label class="block text-900 mb-2">Principal</label>
+        <Checkbox v-model="address.default" class="w-full" :binary="true" />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Desactivada</label>
+        <Checkbox v-model="address.disabled" class="w-full" :binary="true" />
+      </div>
+    </section>
+
     <section class="three-columns mb-2">
       <div>
         <label class="block text-900 mb-2">País</label>
@@ -44,26 +64,6 @@
       </div>
     </section>
 
-    <section class="two-columns">
-      <BaseInput
-        id="name"
-        class="mb-2"
-        label="Nom"
-        v-model="address.name"
-        :class="{
-          'p-invalid': validation.errors.name,
-        }"
-      ></BaseInput>
-      <div>
-        <label class="block text-900 mb-2">Predeterminat</label>
-        <Checkbox v-model="address.default" class="w-full" :binary="true" />
-      </div>
-      <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox v-model="address.disabled" class="w-full" :binary="true" />
-      </div>
-    </section>
-
     <section class="three-columns mb-2">
       <BaseInput
         label="Codi Postal"
@@ -97,7 +97,6 @@
 import { ref } from "vue";
 import BaseInput from "../../components/BaseInput.vue";
 import { useSpanishGeography } from "../../store/geography";
-import { Supplier, SupplierContact } from "../../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -122,16 +121,13 @@ const schema = Yup.object().shape({
   name: Yup.string()
     .required("El nom és obligatori")
     .max(250, "El nom no pot superar els 250 carácters"),
-  vatNumber: Yup.string()
-    .required("El CIF és obligatori")
-    .max(15, "El CIF no pot superar els 15 carácters"),
-  taxName: Yup.string().required("El nom fiscal és obligatori"),
+  country: Yup.string().required("El país és obligatori"),
   region: Yup.string().required("La província és obligatoria"),
   city: Yup.string().required("El municipi és obligatori"),
   postalCode: Yup.string().required("El codi postal és obligatori"),
   address: Yup.string().required("La direcció és obligatoria"),
-  phone: Yup.string().required("El telèfon és obligatori"),
-  supplierTypeId: Yup.string().required("El tipus de proveïdor és obligatori"),
+  default: Yup.boolean().required(),
+  disabled: Yup.boolean().required(),
 });
 const validation = ref({
   result: false,

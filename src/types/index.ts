@@ -22,7 +22,7 @@ export interface Customer {
   disabled: boolean;
   customerTypeId: string;
   contacts: Array<CustomerContact>;
-  addresses: Array<CustomerAddress>;
+  address: Array<CustomerAddress>;
 }
 
 export interface CustomerContact {
