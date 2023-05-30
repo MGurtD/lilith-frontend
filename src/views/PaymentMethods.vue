@@ -1,0 +1,94 @@
+<template>
+  <Button
+    :icon="PrimeIcons.PLUS"
+    class="grid_add_row_button"
+    rounded
+    @click="createButtonClick"
+  />
+  <DataTable
+    :value="paymentMethodStore.paymentMethods"
+    tableStyle="min-width: 100%"
+    @row-click="editPaymentMethod"
+  >
+    <Column field="name" header="Nom" style="width: 20%"></Column>
+    <Column field="description" header="Descripció" style="width: 20%"></Column>
+    <Column field="daysToAdd" header="Dies +" style="width: 20%"></Column>
+    <Column header="Actiu" style="width: 20%">
+      <template #body="slotProps">
+        <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
+      </template>
+    </Column>
+    <Column>
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deletePaymentMethod($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+  </DataTable>
+</template>
+<script setup lang="ts">
+import { v4 as uuidv4 } from "uuid";
+import { PrimeIcons } from "primevue/api";
+import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { DataTableRowClickEvent } from "primevue/datatable";
+import { PaymentMethod } from "../types";
+import { useStore } from "../store";
+import { usePaymentMethodStore } from "../store/paymentMethod";
+
+const toast = useToast();
+const confirm = useConfirm();
+const router = useRouter();
+const store = useStore();
+const paymentMethodStore = usePaymentMethodStore();
+
+onMounted(async () => {
+  await paymentMethodStore.fetchAll();
+
+  store.setMenuItem({
+    icon: PrimeIcons.HASHTAG,
+    text: "Formes de pagament",
+  });
+});
+
+const createButtonClick = () => {
+  router.push({ path: `/payment-methods/${uuidv4()}` });
+};
+
+const editPaymentMethod = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
+  ) {
+    router.push({ path: `/payment-methods/${row.data.id}` });
+  }
+};
+
+const deletePaymentMethod = (event: any, model: PaymentMethod) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Está segur que vol eliminar la forma de pagament ${model.name}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await paymentMethodStore.delete(model.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+      }
+
+      await paymentMethodStore.fetchAll();
+    },
+  });
+};
+</script>

@@ -35,6 +35,11 @@ const menuItems = ref([
     route: "/",
   },
   {
+    icon: PrimeIcons.PAYPAL,
+    text: "Formes de pagament",
+    route: "/payment-methods",
+  },
+  {
     icon: PrimeIcons.CART_PLUS,
     text: "Proveïdors",
     route: "/suppliers",

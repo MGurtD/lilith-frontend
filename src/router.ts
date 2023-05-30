@@ -1,13 +1,15 @@
 import { createWebHistory, createRouter } from "vue-router";
 
 const Home = () => import("./views/Home.vue");
+const PaymentMethods = () => import("./views/PaymentMethods.vue");
+const PaymentMethod = () => import("./views/PaymentMethod.vue");
 const Suppliers = () => import("./views/Suppliers.vue");
+const Supplier = () => import("./views/Supplier.vue");
 const Customers = () => import("./views/Customers.vue");
 const Customer = () => import("./views/Customer.vue");
 const CustomerType = () => import("./views/CustomerType.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
-const Supplier = () => import("./views/Supplier.vue");
 const SupplierType = () => import("./views/SupplierType.vue");
 
 const router = createRouter({
@@ -23,6 +25,17 @@ const router = createRouter({
     },
     { path: "/users", name: "Users", component: Users },
     { path: "/user/:id", name: "User", component: User },
+    {
+      path: "/payment-methods",
+      name: "PaymentMethods",
+      component: PaymentMethods,
+    },
+    {
+      path: "/payment-methods/:id",
+      name: "PaymentMethod",
+      component: PaymentMethod,
+      props: true,
+    },
     { path: "/suppliers", name: "Suppliers", component: Suppliers },
     {
       path: "/suppliers/:id",

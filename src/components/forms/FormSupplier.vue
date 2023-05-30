@@ -20,20 +20,14 @@
           'p-invalid': validation.errors.taxName,
         }"
       ></BaseInput>
-      <div>
-        <label class="block text-900 mb-2">Tipus Proveïdor</label>
-        <Dropdown
-          v-model="supplier.supplierTypeId"
-          editable
-          :options="supplierStore.supplierTypes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.supplierTypeId,
-          }"
-        />
-      </div>
+      <BaseInput
+        label="CIF"
+        id="vatNumber"
+        v-model="supplier.vatNumber"
+        :class="{
+          'p-invalid': validation.errors.vatNumber,
+        }"
+      ></BaseInput>
     </section>
 
     <section class="three-columns mb-2">
@@ -105,6 +99,38 @@
         }"
       ></BaseInput>
     </section>
+
+    <section class="two-columns">
+      <div>
+        <label class="block text-900 mb-2">Forma de pagament</label>
+        <Dropdown
+          v-model="supplier.paymentMethodId"
+          editable
+          :options="paymentMethodStore.paymentMethods"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.paymentMethodId,
+          }"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Tipus Proveïdor</label>
+        <Dropdown
+          v-model="supplier.supplierTypeId"
+          editable
+          :options="supplierStore.supplierTypes"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.supplierTypeId,
+          }"
+        />
+      </div>
+    </section>
+
     <div>
       <label class="block text-900 mb-2">Observacions</label>
       <Textarea v-model="supplier.observations" class="w-full" />
@@ -117,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import BaseInput from "../../components/BaseInput.vue";
 import { useSuppliersStore } from "../../store/suppliers";
 import { useSpanishGeography } from "../../store/geography";
@@ -129,7 +155,7 @@ import {
   FormValidationResult,
 } from "../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { ToastSeverity } from "primevue/api";
+import { usePaymentMethodStore } from "../../store/paymentMethod";
 
 const emit = defineEmits<{
   (e: "submit", supplier: Supplier): void;
@@ -137,8 +163,13 @@ const emit = defineEmits<{
 
 const spanishGeo = useSpanishGeography();
 const supplierStore = useSuppliersStore();
+const paymentMethodStore = usePaymentMethodStore();
 const { supplier } = storeToRefs(supplierStore);
 const toast = useToast();
+
+onMounted(async () => {
+  await paymentMethodStore.fetchAll();
+});
 
 const schema = Yup.object().shape({
   comercialName: Yup.string()
@@ -154,6 +185,7 @@ const schema = Yup.object().shape({
   address: Yup.string().required("La direcció és obligatoria"),
   phone: Yup.string().required("El telèfon és obligatori"),
   supplierTypeId: Yup.string().required("El tipus de proveïdor és obligatori"),
+  paymentMethodId: Yup.string().required("La forma de pagament és obligatoria"),
 });
 const validation = ref({
   result: false,

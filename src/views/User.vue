@@ -1,5 +1,6 @@
 <template>
   <FormUser
+    :roles="roles"
     :user="user"
     @change-password="changePassword"
     @submit="submitForm"
@@ -15,17 +16,22 @@ import { useStore } from "../store";
 
 import { useToast } from "primevue/usetoast";
 import { User, UserService } from "../api/services/user.service";
-import { UserLogin } from "../api/services/authentications.service";
+import { Role, UserLogin } from "../api/services/authentications.service";
 import { AuthenticationService } from "../api/services/authentications.service";
+import { RoleService } from "../api/services/role.service";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const user = ref(undefined as undefined | User);
+const roles = ref<Role[]>();
+
+const roleService = new RoleService();
 const service = new UserService();
 
 const loadView = async () => {
   user.value = await service.GetById(route.params.id as string);
+  roles.value = await roleService.GetAll();
 
   if (user.value) {
     store.setMenuItem({

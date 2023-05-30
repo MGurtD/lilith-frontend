@@ -21,6 +21,7 @@ export interface Customer {
   web: string;
   disabled: boolean;
   customerTypeId: string;
+  paymentMethodId: string;
   contacts: Array<CustomerContact>;
   address: Array<CustomerAddress>;
 }
@@ -71,6 +72,7 @@ export interface Supplier {
   observations: string;
   disabled: boolean;
   supplierTypeId: string;
+  paymentMethodId: string;
   contacts: Array<SupplierContact>;
 }
 
@@ -91,4 +93,12 @@ export interface SupplierContact {
 export interface Region {
   id: string;
   nm: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  description: string;
+  disabled: boolean;
+  daysToAdd: number;
 }

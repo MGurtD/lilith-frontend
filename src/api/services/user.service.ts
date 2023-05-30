@@ -57,4 +57,5 @@ export interface User {
   firstName: string;
   lastName: string;
   disabled: boolean;
+  roleId: string;
 }

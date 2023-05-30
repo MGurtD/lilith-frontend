@@ -1,15 +1,33 @@
 <template>
   <form v-if="user" @submit.prevent="submit">
-    <BaseInput
-      id="username"
-      class="mb-2"
-      label="Nom d'usuari"
-      v-model="user.username"
-      disabled="true"
-      :class="{
-        'p-invalid': validation.errors.email,
-      }"
-    ></BaseInput>
+    <section class="two-columns">
+      <BaseInput
+        id="username"
+        class="mb-2"
+        label="Nom d'usuari"
+        v-model="user.username"
+        disabled="true"
+        :class="{
+          'p-invalid': validation.errors.email,
+        }"
+      ></BaseInput>
+
+      <div>
+        <label class="block text-900 mb-2">Rol</label>
+        <Dropdown
+          v-model="user.roleId"
+          editable
+          :options="roles"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.city,
+          }"
+        />
+      </div>
+    </section>
+
     <section class="two-columns">
       <BaseInput
         id="firstName"
@@ -93,9 +111,10 @@ import {
 import { useToast } from "primevue/usetoast";
 import { User } from "../../api/services/user.service";
 import { BaseInputType } from "../../types/component";
-import { UserLogin } from "../../api/services/authentications.service";
+import { Role, UserLogin } from "../../api/services/authentications.service";
 
 const props = defineProps<{
+  roles: Role[] | undefined;
   user: User | undefined;
 }>();
 const passwordChangeModeOn = ref(false);
