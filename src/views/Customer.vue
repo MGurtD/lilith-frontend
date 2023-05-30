@@ -23,23 +23,26 @@
         <i :class="PrimeIcons.ENVELOPE" class="mr-2"></i>
         <span>Adreces</span>
       </template>
-      <pre>{{ customer?.addresses }}</pre>
+      <CustomerAddresses
+        @create="addAddress"
+        @update="editAddress"
+        @delete="removeAddress"
+      />
     </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import { Customer, CustomerAddress, CustomerContact } from "../types";
+import { storeToRefs } from "pinia";
+import { useStore } from "../store";
 import { useCustomersStore } from "../store/customers";
 import { PrimeIcons } from "primevue/api";
-
-import FormCustomer from "../components/forms/FormCustomer.vue";
-import { storeToRefs } from "pinia";
-import { Customer, CustomerContact } from "../types";
-import { useStore } from "../store";
-
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../types/component";
+import FormCustomer from "../components/forms/FormCustomer.vue";
+import CustomerAddresses from "../components/tables/CustomerAddresses.vue";
 import CustomerContacts from "../components/tables/CustomerContacts.vue";
 
 const formMode = ref(FormActionMode.EDIT);
@@ -50,7 +53,7 @@ const { customer } = storeToRefs(customerStore);
 
 const loadView = async () => {
   await customerStore.fetchCustomer(route.params.id as string);
-  customerStore.fetchCustomerTypes();
+  await customerStore.fetchCustomerTypes();
 
   // Comprovar existencia del proveïdor
   let pageTitle = "";
@@ -126,6 +129,39 @@ const removeContact = async (contact: CustomerContact) => {
     toast.add({
       severity: "success",
       summary: "Contacte eliminat",
+      life: 5000,
+    });
+  }
+};
+
+const addAddress = async (address: CustomerAddress) => {
+  const result = await customerStore.addAddressToCustomer(address);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Adreça afegida",
+      life: 5000,
+    });
+  }
+};
+
+const editAddress = async (address: CustomerAddress) => {
+  const result = await customerStore.updateAddressFromCustomer(address);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Adreça actualizada",
+      life: 5000,
+    });
+  }
+};
+
+const removeAddress = async (address: CustomerAddress) => {
+  const result = await customerStore.removeAddressFromCustomer(address);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Adreça eliminada",
       life: 5000,
     });
   }

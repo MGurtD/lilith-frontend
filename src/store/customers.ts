@@ -10,7 +10,7 @@ import {
   CustomerTypeService,
 } from "../api/services/customer.service";
 
-const service = new CustomerService("/customer");
+const service = new CustomerService("/Customer");
 const typeService = new CustomerTypeService("/CustomerType");
 
 export const useCustomersStore = defineStore({
