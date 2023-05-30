@@ -22,6 +22,8 @@ export interface Customer {
   disabled: boolean;
   customerTypeId: string;
   paymentMethodId: string;
+  accountNumber: string;
+  observations: string;
   contacts: Array<CustomerContact>;
   address: Array<CustomerAddress>;
 }

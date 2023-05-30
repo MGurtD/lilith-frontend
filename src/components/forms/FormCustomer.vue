@@ -58,6 +58,36 @@
         }"
       ></BaseInput>
     </section>
+    <section class="two-columns mb-2">
+      <BaseInput
+        name="accountNumber"
+        class="mb-2"
+        label="Número de compte"
+        id="accountNumber"
+        v-model="customer.accountNumber"
+        :class="{
+          'p-invalid': validation.errors.accountNumber,
+        }"
+      ></BaseInput>
+      <div>
+        <label class="block text-900 mb-2">Forma de pagament</label>
+        <Dropdown
+          v-model="customer.paymentMethodId"
+          editable
+          :options="paymentMethodStore.paymentMethods"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.paymentMethodId,
+          }"
+        />
+      </div>
+    </section>
+    <div>
+      <label class="block text-900 mb-2">Observacions</label>
+      <Textarea v-model="customer.observations" class="w-full" />
+    </div>
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>
@@ -76,13 +106,16 @@ import {
   FormValidationResult,
 } from "../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
+import { usePaymentMethodStore } from "../../store/paymentMethod";
 
 const emit = defineEmits<{
   (e: "submit", customer: Customer): void;
 }>();
 
 const customerStore = useCustomersStore();
+const paymentMethodStore = usePaymentMethodStore();
 const { customer } = storeToRefs(customerStore);
+const { paymentMethod } = storeToRefs(paymentMethodStore);
 const toast = useToast();
 
 const schema = Yup.object().shape({
@@ -91,6 +124,7 @@ const schema = Yup.object().shape({
     .max(250, "El nom comercial no pot superar els 250 carácters"),
   taxName: Yup.string().required("El nom fiscal és obligatori"),
   vatNumber: Yup.string().required("El CIF és obligatori"),
+  accountNumber: Yup.string().required("El número de compte es obligatori"),
 });
 const validation = ref({
   result: false,
