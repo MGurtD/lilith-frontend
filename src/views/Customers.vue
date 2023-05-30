@@ -131,6 +131,28 @@ const deleteCustomer = (event: any, customer: Customer) => {
   });
 };
 
+const deleteCustomerType = (event: any, customerType: CustomerType) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Está segur que vol eliminar el tipus de client ${customerType.name}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await customerStore.deleteCustomerType(customerType.id);
+
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+        await customerStore.fetchCustomerTypes();
+      }
+    },
+  });
+};
+
 const editCustomer = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(

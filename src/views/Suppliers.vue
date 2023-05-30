@@ -161,7 +161,7 @@ const deleteSupplier = (event: any, supplier: Supplier) => {
 const deleteSupplierType = (event: any, supplierType: SupplierType) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Está segur que vol eliminar el proveïdor ${supplierType.name}?`,
+    message: `Está segur que vol eliminar el tipus de proveïdor ${supplierType.name}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",

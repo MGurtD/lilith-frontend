@@ -22,94 +22,42 @@
         ></BaseInput>
         <div>
           <label class="block text-900 mb-2">Tipus Client</label>
-          <!--<Dropdown
-            v-model="supplier.supplierTypeId"
+          <Dropdown
+            v-model="customer.customerTypeId"
             editable
-            :options="supplierStore.supplierTypes"
+            :options="customerStore.customerTypes"
             optionValue="id"
             optionLabel="name"
             class="w-full"
             :class="{
               'p-invalid': validation.errors.supplierTypeId,
             }"
-          />-->
+          />
         </div>
       </section>
   
-    <!--  <section class="three-columns mb-2">
-        <div>
-          <label class="block text-900 mb-2">País</label>
-          <Dropdown
-            v-model="customer.country"
-            editable
-            :options="['Espanya']"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.country,
-            }"
-          />
-        </div>
-        <div>
-          <label class="block text-900 mb-2">Província</label>
-          <Dropdown
-            v-model="supplier.region"
-            editable
-            :options="spanishGeo.regions"
-            optionValue="nm"
-            optionLabel="nm"
-            @change="onRegionChanged"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.region,
-            }"
-          />
-        </div>
-        <div>
-          <label class="block text-900 mb-2">Municipi</label>
-          <Dropdown
-            v-model="supplier.city"
-            editable
-            :options="spanishGeo.getTownsByRegionName(supplier.region)"
-            optionValue="nm"
-            optionLabel="nm"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.city,
-            }"
-          />
-        </div>
-      </section>
-      <section class="three-columns mb-2">
+      <section class="two-columns mb-2">
         <BaseInput
-          label="Codi Postal"
-          id="postalCode"
-          v-model="supplier.postalCode"
+          name="vatNumber"
+          class="mb-2"
+          label="CIF"
+          id="vatNumber"
+          v-model="customer.vatNumber"
           :class="{
-            'p-invalid': validation.errors.postalCode,
+            'p-invalid': validation.errors.vatNumber,
           }"
         ></BaseInput>
         <BaseInput
-          label="Direcció"
-          id="address"
-          v-model="supplier.address"
+          name="web"
+          class="mb-2"
+          label="Web"
+          id="web"
+          v-model="customer.web"
           :class="{
-            'p-invalid': validation.errors.address,
+            'p-invalid': validation.errors.web,
           }"
-        ></BaseInput>
-        <BaseInput
-          label="Telèfon"
-          id="phone"
-          v-model="supplier.phone"
-          :class="{
-            'p-invalid': validation.errors.phone,
-          }"
-        ></BaseInput>
+        ></BaseInput>       
       </section> 
-      <div>
-        <label class="block text-900 mb-2">Observacions</label>
-        <Textarea v-model=".observations" class="w-full" />
-      </div>-->
-  
       <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
       </div>
