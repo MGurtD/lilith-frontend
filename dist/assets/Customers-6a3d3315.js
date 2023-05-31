@@ -1,1 +1,0 @@
-import{d as t,u as s,o as n,c as o,a}from"./index-7ccc629f.js";const m=t({__name:"Customers",setup(c){const e=s();return n(()=>{e.setMenuItem({text:"Gestió de clients",icon:""})}),(r,u)=>(a(),o("h2",null,"Clients"))}});export{m as default};
