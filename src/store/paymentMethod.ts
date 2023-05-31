@@ -26,7 +26,7 @@ export const usePaymentMethodStore = defineStore({
 
       if (this.paymentMethods) {
         this.paymentMethods = this.paymentMethods.filter(
-          (p) => (p.disabled = false)
+          (p) => p.disabled === false
         );
       }
     },
