@@ -13,26 +13,34 @@
         <span>Clients</span>
       </template>
       <DataTable
-      :value="customerStore.customers"
-      tableStyle="min-width: 100%"
-      @row-click="editCustomer"
+        :value="customerStore.customers"
+        tableStyle="min-width: 100%"
+        @row-click="editCustomer"
       >
-      <Column field="comercialName" header="Nom comercial" sortable style="width: 20%"></Column>
-      <Column field="taxName" header="Nom Fiscal" style="width: 20%"></Column>
-      <Column field="vatNumber" header="CIF" style="width: 20%"></Column>
-      <Column header="Tipus" style="width: 20%">
+        <Column
+          field="comercialName"
+          header="Nom comercial"
+          sortable
+          style="width: 20%"
+        ></Column>
+        <Column field="taxName" header="Nom Fiscal" style="width: 20%"></Column>
+        <Column field="vatNumber" header="CIF" style="width: 20%"></Column>
+        <Column header="Tipus" style="width: 20%">
           <template #body="slotProps">
             <span>{{
               getCustomerTypeName(slotProps.data.customerTypeId)
             }}</span>
           </template>
         </Column>
-      <Column header="Actiu" sortable style="width: 20%">
-        <template #body="slotProps">
-          <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
-        </template>
-      </Column>
-      <Column>
+        <Column header="Actiu" sortable style="width: 20%">
+          <template #body="slotProps">
+            <BooleanColumn
+              :value="!slotProps.data.disabled"
+              :showColor="true"
+            />
+          </template>
+        </Column>
+        <Column>
           <template #body="slotProps">
             <i
               :class="PrimeIcons.TIMES"
@@ -41,7 +49,7 @@
             />
           </template>
         </Column>
-    </DataTable>
+      </DataTable>
     </TabPanel>
     <TabPanel>
       <template #header>
@@ -55,10 +63,13 @@
       >
         <Column field="name" header="Nom" style="width: 50%"></Column>
         <Column header="Actiu" sortable style="width: 50%">
-        <template #body="slotProps">
-          <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
-        </template>
-      </Column>
+          <template #body="slotProps">
+            <BooleanColumn
+              :value="!slotProps.data.disabled"
+              :showColor="true"
+            />
+          </template>
+        </Column>
         <Column>
           <template #body="slotProps">
             <i
@@ -96,18 +107,17 @@ onMounted(async () => {
   await customerStore.fetchCustomerTypes();
 
   store.setMenuItem({
-    text: "Gestió de clients",
+    text: "Clients",
     icon: PrimeIcons.HASHTAG,
   });
 });
-
 
 const getCustomerTypeName = (id: string) => {
   const customerType = customerStore.customerTypes?.find((st) => st.id === id);
   if (customerType) {
     return customerType.name;
   }
-}
+};
 
 const deleteCustomer = (event: any, customer: Customer) => {
   confirm.require({
@@ -161,7 +171,7 @@ const editCustomer = (row: DataTableRowClickEvent) => {
   ) {
     router.push({ path: `/customers/${row.data.id}` });
   }
-}
+};
 
 const editCustomerType = (row: DataTableRowClickEvent) => {
   if (
@@ -171,7 +181,7 @@ const editCustomerType = (row: DataTableRowClickEvent) => {
   ) {
     router.push({ path: `/customer-types/${row.data.id}` });
   }
-}
+};
 
 const createButtonClick = () => {
   if (selectedTabIndex.value === 0) {

@@ -58,7 +58,7 @@ const openUser = (row: DataTableRowClickEvent) => {
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.USERS,
-    text: "Gestió d'usuaris",
+    text: "Usuaris",
   });
 
   await fetchUsers();

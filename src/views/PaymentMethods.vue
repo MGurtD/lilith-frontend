@@ -18,7 +18,7 @@
         <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
       </template>
     </Column>
-    <Column>
+    <!-- <Column>
       <template #body="slotProps">
         <i
           :class="PrimeIcons.TIMES"
@@ -26,7 +26,7 @@
           @click="deletePaymentMethod($event, slotProps.data)"
         />
       </template>
-    </Column>
+    </Column> -->
   </DataTable>
 </template>
 <script setup lang="ts">

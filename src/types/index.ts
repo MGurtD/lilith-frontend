@@ -71,6 +71,7 @@ export interface Supplier {
   postalCode: string;
   address: string;
   phone: string;
+  accountNumber: string;
   observations: string;
   disabled: boolean;
   supplierTypeId: string;

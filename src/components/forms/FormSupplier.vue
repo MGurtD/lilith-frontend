@@ -100,7 +100,7 @@
       ></BaseInput>
     </section>
 
-    <section class="two-columns">
+    <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Forma de pagament</label>
         <Dropdown
@@ -115,6 +115,14 @@
           }"
         />
       </div>
+      <BaseInput
+        label="Número de compte"
+        id="accountNumber"
+        v-model="supplier.accountNumber"
+        :class="{
+          'p-invalid': validation.errors.accountNumber,
+        }"
+      ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Tipus Proveïdor</label>
         <Dropdown
@@ -184,6 +192,9 @@ const schema = Yup.object().shape({
   postalCode: Yup.string().required("El codi postal és obligatori"),
   address: Yup.string().required("La direcció és obligatoria"),
   phone: Yup.string().required("El telèfon és obligatori"),
+  accountNumber: Yup.string()
+    .required("El número de compte és obligatori")
+    .max(35, "El número de compte no pot superar el 35 dígits"),
   supplierTypeId: Yup.string().required("El tipus de proveïdor és obligatori"),
   paymentMethodId: Yup.string().required("La forma de pagament és obligatoria"),
 });

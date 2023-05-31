@@ -1,36 +1,39 @@
 <template>
   <form v-if="paymentMethod">
-    <BaseInput
-      class="mb-2"
-      label="Nom"
-      id="name"
-      v-model="paymentMethod.name"
-      :class="{
-        'p-invalid': validation.errors.name,
-      }"
-    ></BaseInput>
-    <BaseInput
-      class="mb-2"
-      label="Descripció"
-      id="description"
-      v-model="paymentMethod.description"
-      :class="{
-        'p-invalid': validation.errors.description,
-      }"
-    ></BaseInput>
-    <div>
-      <label class="block text-900 mb-2">Dies +</label>
-      <InputNumber v-model="paymentMethod.daysToAdd" class="w-full" />
+    <div class="two-columns">
+      <BaseInput
+        class="mb-2"
+        label="Nom"
+        id="name"
+        v-model="paymentMethod.name"
+        :class="{
+          'p-invalid': validation.errors.name,
+        }"
+      ></BaseInput>
+      <BaseInput
+        class="mb-2"
+        label="Descripció"
+        id="description"
+        v-model="paymentMethod.description"
+        :class="{
+          'p-invalid': validation.errors.description,
+        }"
+      ></BaseInput>
     </div>
-    <div>
-      <label class="block text-900 mb-2">Deshabilitat</label>
-      <Checkbox
-        v-model="paymentMethod.disabled"
-        class="w-full"
-        :binary="true"
-      />
+    <div class="two-columns">
+      <div>
+        <label class="block text-900 mb-2">Dies +</label>
+        <InputNumber v-model="paymentMethod.daysToAdd" class="w-full" />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Desactivat</label>
+        <Checkbox
+          v-model="paymentMethod.disabled"
+          class="w-full"
+          :binary="true"
+        />
+      </div>
     </div>
-
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>

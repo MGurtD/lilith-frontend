@@ -23,6 +23,12 @@ export const usePaymentMethodStore = defineStore({
     },
     async fetchAll() {
       this.paymentMethods = await service.getAll();
+
+      if (this.paymentMethods) {
+        this.paymentMethods = this.paymentMethods.filter(
+          (p) => (p.disabled = false)
+        );
+      }
     },
     async fetchOne(id: string) {
       this.paymentMethod = await service.getById(id);
