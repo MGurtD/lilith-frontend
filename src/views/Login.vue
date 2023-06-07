@@ -72,7 +72,7 @@ body {
 }
 .container {
   height: calc(100vh - 16px);
-  background-color: var(--blue-100);
+  background-color: var(--blue-900);
 }
 .login-form {
   position: absolute;
