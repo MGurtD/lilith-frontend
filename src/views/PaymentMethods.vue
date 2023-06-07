@@ -12,10 +12,15 @@
   >
     <Column field="name" header="Nom" style="width: 20%"></Column>
     <Column field="description" header="Descripció" style="width: 20%"></Column>
-    <Column field="daysToAdd" header="Dies +" style="width: 20%"></Column>
-    <Column header="Actiu" style="width: 20%">
+    <Column field="dueDays" header="Dies venciment" style="width: 20%"></Column>
+    <Column
+      field="paymentDay"
+      header="Dia pagament"
+      style="width: 20%"
+    ></Column>
+    <Column header="Desactivada" style="width: 20%">
       <template #body="slotProps">
-        <BooleanColumn :value="!slotProps.data.disabled" :showColor="true" />
+        <BooleanColumn :value="slotProps.data.disabled" />
       </template>
     </Column>
     <!-- <Column>

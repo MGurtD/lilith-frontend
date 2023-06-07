@@ -61,13 +61,15 @@
         tableStyle="min-width: 100%"
         @row-click="editCustomerType"
       >
-        <Column field="name" header="Nom" style="width: 50%"></Column>
-        <Column header="Actiu" sortable style="width: 50%">
+        <Column field="name" header="Nom" style="width: 33%"></Column>
+        <Column
+          field="description"
+          header="Descripció"
+          style="width: 33%"
+        ></Column>
+        <Column header="Desactivat" style="width: 33%">
           <template #body="slotProps">
-            <BooleanColumn
-              :value="!slotProps.data.disabled"
-              :showColor="true"
-            />
+            <BooleanColumn :value="slotProps.data.disabled" />
           </template>
         </Column>
         <Column>

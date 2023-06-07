@@ -18,17 +18,20 @@ export const usePaymentMethodStore = defineStore({
         name: "",
         description: "",
         disabled: false,
-        daysToAdd: 0,
+        dueDays: 0,
+        paymentDay: 1,
+        numberOfPayments: 1,
+        frequency: 1,
       } as PaymentMethod;
     },
     async fetchAll() {
       this.paymentMethods = await service.getAll();
 
-      if (this.paymentMethods) {
-        this.paymentMethods = this.paymentMethods.filter(
-          (p) => p.disabled === false
-        );
-      }
+      // if (this.paymentMethods) {
+      //   this.paymentMethods = this.paymentMethods.filter(
+      //     (p) => p.disabled === false
+      //   );
+      // }
     },
     async fetchOne(id: string) {
       this.paymentMethod = await service.getById(id);

@@ -50,7 +50,7 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Predeterminat</label>
-        <Checkbox v-model="contact.mainContact" class="w-full" :binary="true" />
+        <Checkbox v-model="contact.main" class="w-full" :binary="true" />
       </div>
     </section>
 
@@ -103,7 +103,7 @@ const schema = Yup.object().shape({
     .required("El telèfon és obligatori")
     .max(15, "Ha superat la longitud màxima del telèfon"),
   disabled: Yup.boolean().required(),
-  mainContact: Yup.boolean().required(),
+  main: Yup.boolean().required(),
 });
 const validation = ref({
   result: false,

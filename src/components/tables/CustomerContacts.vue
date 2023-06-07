@@ -74,7 +74,7 @@ const createButtonClick = () => {
     firstName: "",
     lastName: "",
     disabled: false,
-    mainContact: false,
+    main: false,
     phoneNumber: "",
   } as CustomerContact;
   formMode.value = FormActionMode.CREATE;

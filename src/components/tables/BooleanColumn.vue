@@ -4,8 +4,8 @@
     :class="{
       'true-icon': showColor && value,
       'false-icon': showColor && !value,
-      'pi-check-circle': value,
-      'pi-times-circle': !value,
+      'pi-circle-fill': value,
+      'pi-circle': !value,
     }"
   ></i>
 </template>

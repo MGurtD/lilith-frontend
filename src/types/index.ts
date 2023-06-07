@@ -36,7 +36,7 @@ export interface CustomerContact {
   email: string;
   phoneNumber: string;
   disabled: boolean;
-  mainContact: boolean;
+  main: boolean;
   customerId: string;
 }
 
@@ -44,13 +44,13 @@ export interface CustomerAddress {
   id: string;
   name: string;
   address: string;
-  observations: string;
   country: string;
   region: string;
   city: string;
   postalCode: string;
-  default: boolean;
+  main: boolean;
   disabled: boolean;
+  observations: string;
   customerId: string;
 }
 
@@ -58,6 +58,7 @@ export interface SupplierType {
   id: string;
   name: string;
   description: string;
+  disabled: boolean;
 }
 
 export interface Supplier {
@@ -103,5 +104,8 @@ export interface PaymentMethod {
   name: string;
   description: string;
   disabled: boolean;
-  daysToAdd: number;
+  dueDays: number;
+  paymentDay: number;
+  numberOfPayments: number;
+  frequency: number;
 }

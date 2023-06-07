@@ -22,11 +22,32 @@
     </div>
     <div class="two-columns">
       <div>
-        <label class="block text-900 mb-2">Dies +</label>
-        <InputNumber v-model="paymentMethod.daysToAdd" class="w-full" />
+        <label class="block text-900 mb-2">Dies venciment</label>
+        <InputNumber v-model="paymentMethod.dueDays" class="w-full mb-2" />
       </div>
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
+        <label class="block text-900 mb-2">Dia de pagament</label>
+        <InputNumber v-model="paymentMethod.paymentDay" class="w-full mb-2" />
+      </div>
+    </div>
+
+    <div class="two-columns">
+      <div>
+        <label class="block text-900 mb-2">Número de pagaments</label>
+        <InputNumber
+          v-model="paymentMethod.numberOfPayments"
+          class="w-full mb-2"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Freqüència</label>
+        <InputNumber v-model="paymentMethod.frequency" class="w-full mb-2" />
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <label class="block text-900 mb-2">Desactivada</label>
         <Checkbox
           v-model="paymentMethod.disabled"
           class="w-full"
@@ -34,6 +55,7 @@
         />
       </div>
     </div>
+
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>
@@ -69,7 +91,12 @@ const schema = Yup.object().shape({
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció no pot superar els 250 carácters"),
-  daysToAdd: Yup.number().required("El dies + són obligatoris"),
+  dueDays: Yup.number().required("Els dies de venciment són obligatoris"),
+  paymentDay: Yup.number().required("El dia de pagament és obligatori"),
+  numberOfPayments: Yup.number().required(
+    "El número de pagaments és obligatori"
+  ),
+  frequency: Yup.number().required("La freqüència és obligatoria"),
 });
 const validation = ref({
   result: false,

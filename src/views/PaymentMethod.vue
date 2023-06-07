@@ -59,10 +59,10 @@ const submitForm = async () => {
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await paymentMethodStore.create(data);
-    message = "Forma de pagament creat correctament";
+    message = "Forma de pagament creada correctament";
   } else {
     result = await paymentMethodStore.update(data.id, data);
-    message = "Forma de pagament actualizat correctament";
+    message = "Forma de pagament actualizada correctament";
   }
 
   if (result) {
