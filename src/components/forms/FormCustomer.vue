@@ -121,7 +121,7 @@ const toast = useToast();
 const schema = Yup.object().shape({
   comercialName: Yup.string()
     .required("El nom comercial és obligatori")
-    .max(250, "El nom comercial no pot superar els 250 carácters"),
+    .max(250, "El nom comercial no pot superar els 250 caràcters"),
   taxName: Yup.string().required("El nom fiscal és obligatori"),
   vatNumber: Yup.string().required("El CIF és obligatori"),
   accountNumber: Yup.string().required("El número de compte es obligatori"),

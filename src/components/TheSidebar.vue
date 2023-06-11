@@ -45,6 +45,11 @@ const menuItems = ref([
     route: "/suppliers",
   },
   {
+    icon: PrimeIcons.CART_PLUS,
+    text: "Sèries de factures de compra",
+    route: "/purchaseinvoiceserie",
+  },
+  {
     icon: PrimeIcons.WALLET,
     text: "Clients",
     route: "/customers",

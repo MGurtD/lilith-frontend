@@ -11,6 +11,8 @@ const CustomerType = () => import("./views/CustomerType.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
 const SupplierType = () => import("./views/SupplierType.vue");
+const PurchaseInvoiceSeries = () => import("./modules/purchase/views/PurchaseInvoiceSeries.vue");
+const PurchaseInvoiceSerie = () => import("./modules/purchase/views/PurchaseInvoiceSerie.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -53,6 +55,18 @@ const router = createRouter({
       path: "/customer-types/:id",
       name: "CustomerType",
       component: CustomerType,
+      props: true,
+    },
+    {
+      path: "/purchaseinvoiceserie",
+      name: "PurchaseInvoiceSeries",
+      component: PurchaseInvoiceSeries,
+      props: true,
+    },
+    {
+      path: "/purchaseinvoiceserie/:id",
+      name: "PurchaseInvoiceSerie",
+      component: PurchaseInvoiceSerie,
       props: true,
     },
   ],
