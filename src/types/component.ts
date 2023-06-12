@@ -14,4 +14,6 @@ export interface MenuItem {
   text: string;
   route?: string;
   backButtonVisible?: boolean;
+  children?: Array<MenuItem>;
+  childrenVisible: boolean;
 }

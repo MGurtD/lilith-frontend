@@ -1,9 +1,9 @@
 <template>
-    <FormPurchaseInvoiceSerie
+  <FormPurchaseInvoiceSerie
     v-if="purchaseInvoiceSerie"
     :purchaseInvoiceSerie="purchaseInvoiceSerie"
     @submit="submitForm"
-    />
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -15,7 +15,7 @@ import { usePurchaseStore } from "../store/invoices";
 import { storeToRefs } from "pinia";
 
 import { useToast } from "primevue/usetoast";
-import { FormActionMode } from '../../../types/component';
+import { FormActionMode } from "../../../types/component";
 import router from "../../../router";
 import FormPurchaseInvoiceSerie from "../components/FormPurchaseInvoiceSerie.vue";
 import { PurchaseInvoiceSerie } from "../types";
@@ -24,32 +24,35 @@ const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
 const purchaseInvoiceSerieStore = usePurchaseStore();
-const { purchaseInvoiceSerie }= storeToRefs(purchaseInvoiceSerieStore);
+const { purchaseInvoiceSerie } = storeToRefs(purchaseInvoiceSerieStore);
 
 const loadView = async () => {
-    await purchaseInvoiceSerieStore.fetchPurchaseInvoiceSerie(route.params.id as string);
+  await purchaseInvoiceSerieStore.fetchPurchaseInvoiceSerie(
+    route.params.id as string
+  );
 
-    let pageTitle = "";
-    if(!purchaseInvoiceSerie.value) {
-        formMode.value = FormActionMode.CREATE;
-        purchaseInvoiceSerieStore.setNewPurchaseInvoiceSerie(route.params.id as string);
-        pageTitle = "Alta de sèrie de facturació";
-    }else{
-        formMode.value = FormActionMode.EDIT;
-        pageTitle = `Sèrie de facturacióo: ${purchaseInvoiceSerie.value.name}`;
-    }
+  let pageTitle = "";
+  if (!purchaseInvoiceSerie.value) {
+    formMode.value = FormActionMode.CREATE;
+    purchaseInvoiceSerieStore.setNewPurchaseInvoiceSerie(
+      route.params.id as string
+    );
+    pageTitle = "Alta de sèrie de facturació";
+  } else {
+    formMode.value = FormActionMode.EDIT;
+    pageTitle = `Sèrie de facturació: ${purchaseInvoiceSerie.value.name}`;
+  }
 
-    store.setMenuItem({
-        icon: PrimeIcons.POUND,
-        backButtonVisible: true,
-        text: pageTitle,
-    });
-
-    onMounted(async () => {
-      console.log("mounted")
-        await loadView();
-    });
+  store.setMenuItem({
+    icon: PrimeIcons.POUND,
+    backButtonVisible: true,
+    text: pageTitle,
+  });
 };
+
+onMounted(async () => {
+  await loadView();
+});
 
 const toast = useToast();
 const submitForm = async () => {
@@ -58,10 +61,13 @@ const submitForm = async () => {
   let message = "";
 
   if (formMode.value === FormActionMode.CREATE) {
-    result = await purchaseInvoiceSerieStore.createPurchaseInvoiceSerie(data)
+    result = await purchaseInvoiceSerieStore.createPurchaseInvoiceSerie(data);
     message = "Sèrie de facturació creada correctament";
   } else {
-    result = await purchaseInvoiceSerieStore.updatePurchaseInvoiceSerie(data.id, data);
+    result = await purchaseInvoiceSerieStore.updatePurchaseInvoiceSerie(
+      data.id,
+      data
+    );
     message = "Sèrie de facturació actualizada correctament";
   }
 
@@ -74,5 +80,4 @@ const submitForm = async () => {
     router.back();
   }
 };
-
 </script>
