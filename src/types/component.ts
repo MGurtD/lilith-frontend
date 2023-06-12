@@ -15,5 +15,4 @@ export interface MenuItem {
   route?: string;
   backButtonVisible?: boolean;
   children?: Array<MenuItem>;
-  childrenVisible: boolean;
 }
