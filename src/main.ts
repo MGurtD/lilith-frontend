@@ -42,6 +42,7 @@ import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import catalan from "./i18n/catalan";
+import Calendar from "primevue/calendar";
 
 app.use(PrimeVue, {
   locale: catalan,
@@ -54,6 +55,7 @@ app
   .component("Button", Button)
   .component("Card", Card)
   .component("Chart", Chart)
+  .component("Calendar", Calendar)
   .component("DataTable", DataTable)
   .component("Column", Column)
   .component("Dialog", Dialog)

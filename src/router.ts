@@ -15,6 +15,10 @@ const PurchaseInvoiceSeries = () =>
   import("./modules/purchase/views/PurchaseInvoiceSeries.vue");
 const PurchaseInvoiceSerie = () =>
   import("./modules/purchase/views/PurchaseInvoiceSerie.vue");
+const PurchaseInvoiceStatuses = () =>
+  import("./modules/purchase/views/PurchaseInvoiceStatuses.vue");
+const PurchaseInvoiceStatus = () =>
+  import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -69,6 +73,18 @@ const router = createRouter({
       path: "/purchaseinvoiceserie/:id",
       name: "PurchaseInvoiceSerie",
       component: PurchaseInvoiceSerie,
+      props: true,
+    },
+    {
+      path: "/purchaseinvoicestatus",
+      name: "PurchaseInvoiceStatuses",
+      component: PurchaseInvoiceStatuses,
+      props: true,
+    },
+    {
+      path: "/purchaseinvoicestatus/:id",
+      name: "PurchaseInvoiceStatus",
+      component: PurchaseInvoiceStatus,
       props: true,
     },
   ],

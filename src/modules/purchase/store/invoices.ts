@@ -1,17 +1,23 @@
 import { defineStore } from "pinia";
-import { PurchaseInvoiceSerieService } from "../services/purchase.service";
-import { PurchaseInvoiceSerie } from "../types";
+import { PurchaseInvoiceSerieService, PurchaseInvoiceStatusService } from "../services/purchase.service";
+import { PurchaseInvoiceSerie, PurchaseInvoiceStatus } from "../types";
 
 const purchaseInvoiceSerieService = new PurchaseInvoiceSerieService("/purchaseinvoiceserie");
+const purchaseInvoiceStatusService = new PurchaseInvoiceStatusService("/purchaseinvoicestatus");
 
 export const usePurchaseStore = defineStore({
     id: "purchases",
     state: () => ({
+        //Series
         purchaseInvoiceSerie: undefined as PurchaseInvoiceSerie | undefined,
         purchaseInvoiceSeries: undefined as Array<PurchaseInvoiceSerie> | undefined,
+        //Status
+        purchaseInvoiceStatus: undefined as PurchaseInvoiceStatus | undefined,
+        purchaseInvoiceStatuses: undefined as Array<PurchaseInvoiceStatus> | undefined,
     }),
     getters: {},
     actions: {
+        //Series
         setNewPurchaseInvoiceSerie(id:string){
             this.purchaseInvoiceSerie = {
                 id: id,
@@ -46,5 +52,45 @@ export const usePurchaseStore = defineStore({
             if (result) await this.fetchPurchaseInvoiceSeries();
             return result;
         },
+
+        //Status
+        setNewPurchaseInvoiceStatus(id:string){
+            this.purchaseInvoiceStatus = {
+                id: id,
+                name: "",
+                description: "",
+                disabled: false,
+            } as PurchaseInvoiceStatus;
+        },
+
+        async fetchPurchaseInvoiceStatuses() {
+            this.purchaseInvoiceStatuses = await purchaseInvoiceStatusService.getAll();
+        },
+
+        async fetchPurchaseInvoiceStatus(id: string) {
+            this.purchaseInvoiceStatus = await purchaseInvoiceStatusService.getById(id);
+        },
+
+        async createPurchaseInvoiceStatus(purchaseInvoiceStatus: PurchaseInvoiceStatus){
+            const result = await purchaseInvoiceStatusService.create(purchaseInvoiceStatus);
+            if (result) await this.fetchPurchaseInvoiceStatuses();
+            return result;
+        },
+
+        async updatePurchaseInvoiceStatus(id: string, purchaseInvoiceStatus: PurchaseInvoiceStatus){
+            const result = await purchaseInvoiceStatusService.update(id, purchaseInvoiceStatus);
+            if (result) await this.fetchPurchaseInvoiceStatuses();
+            return result;
+        },
+
+        async deletePurchaseInvoiceStatus(id: string){
+            const result = await purchaseInvoiceStatusService.delete(id);
+            if (result) await this.fetchPurchaseInvoiceStatuses();
+            return result;
+        },
     }
 });
+
+
+
+    

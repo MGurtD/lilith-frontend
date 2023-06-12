@@ -38,7 +38,7 @@ export interface SupplierContact {
   id: string;
 }
 
-export interface PurhcaseInvoiceStatus {
+export interface PurchaseInvoiceStatus {
   id: string;
   name: string;
   description: string;
