@@ -4,6 +4,12 @@
     :purchaseInvoiceStatus="purchaseInvoiceStatus"
     @submit="submitForm"
   />
+  <br />
+  <TablePurchaseInvoiceStatusTransitions
+    :purchaseInvoiceStatus="purchaseInvoiceStatus"
+    @add="addTransition"
+    @delete="deleteTransition"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -17,8 +23,9 @@ import { storeToRefs } from "pinia";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import router from "../../../router";
+import TablePurchaseInvoiceStatusTransitions from "../components/TablePurchaseInvoiceStatusTransitions.vue";
 import FormPurchaseInvoiceStatus from "../components/FormPurchaseInvoiceStatus.vue";
-import { PurchaseInvoiceStatus } from "../types";
+import { PurchaseInvoiceStatus, PurchaseInvoiceTransition } from "../types";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
@@ -78,6 +85,32 @@ const submitForm = async () => {
       life: 5000,
     });
     router.back();
+  }
+};
+
+const addTransition = async (transition: PurchaseInvoiceTransition) => {
+  console.log(transition);
+  const result =
+    await purchaseInvoiceStatusStore.createPurchaseInvoiceStatusTransition(
+      transition
+    );
+  if (!result) {
+    toast.add({
+      severity: "error",
+      detail: "Error al crear la transició",
+    });
+  }
+};
+const deleteTransition = async (transition: PurchaseInvoiceTransition) => {
+  const result =
+    await purchaseInvoiceStatusStore.deletePurchaseInvoiceStatusTransition(
+      transition
+    );
+  if (!result) {
+    toast.add({
+      severity: "error",
+      detail: "Error al eliminar la transició",
+    });
   }
 };
 </script>

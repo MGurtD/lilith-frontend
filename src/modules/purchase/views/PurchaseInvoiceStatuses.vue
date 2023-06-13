@@ -1,5 +1,5 @@
 <template>
-      <Button
+  <Button
     :icon="PrimeIcons.PLUS"
     class="grid_add_row_button"
     rounded
@@ -8,25 +8,25 @@
   <DataTable
     :value="purchaseStore.purchaseInvoiceStatuses"
     tableStyle="min-width: 100%"
-        @row-click="editPurchaseInvoiceStatus"
-    >
-    <Column field="name" header="Nom" style="width:20%"></Column>
-    <Column field="description" header="Descripció" style="width:50%"></Column>
+    @row-click="editPurchaseInvoiceStatus"
+  >
+    <Column field="name" header="Nom" style="width: 20%"></Column>
+    <Column field="description" header="Descripció" style="width: 50%"></Column>
     <Column header="Desactivada" style="width: 20%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
+        <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
       </template>
     </Column>
     <Column>
-          <template #body="slotProps">
-            <i
-              :class="PrimeIcons.TIMES"
-              class="grid_delete_column_button"
-              @click="deletePurchaseInvoiceStatus($event, slotProps.data)"
-            />
-          </template>
-        </Column>
-    </DataTable>
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deletePurchaseInvoiceStatus($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+  </DataTable>
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
@@ -47,19 +47,19 @@ const store = useStore();
 const purchaseStore = usePurchaseStore();
 
 onMounted(async () => {
-    await purchaseStore.fetchPurchaseInvoiceStatuses();
-    store.setMenuItem({
-        icon: PrimeIcons.SERVER,
-        text: "Sèries Factures de Compra",
-    });
+  await purchaseStore.fetchPurchaseInvoiceStatuses();
+  store.setMenuItem({
+    icon: PrimeIcons.SERVER,
+    text: "Sèries Factures de Compra",
+  });
 });
 const createButtonClick = () => {
-  console.log("create")
-    router.push({ path: `/purchaseinvoicestatus/${uuidv4()}` });
+  console.log("create");
+  router.push({ path: `/purchaseinvoicestatus/${uuidv4()}` });
 };
 
 const editPurchaseInvoiceStatus = (row: DataTableRowClickEvent) => {
-  console.log("edit")
+  console.log("edit");
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
@@ -69,7 +69,10 @@ const editPurchaseInvoiceStatus = (row: DataTableRowClickEvent) => {
   }
 };
 
-const deletePurchaseInvoiceStatus = (event: any, purchaseInvoiceStatus: PurchaseInvoiceStatus) => {
+const deletePurchaseInvoiceStatus = (
+  event: any,
+  purchaseInvoiceStatus: PurchaseInvoiceStatus
+) => {
   confirm.require({
     target: event.currentTarget,
     message: `Está segur que vol eliminar la sèrie de factures de compra ${purchaseInvoiceStatus.name}?`,
@@ -77,7 +80,9 @@ const deletePurchaseInvoiceStatus = (event: any, purchaseInvoiceStatus: Purchase
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await purchaseStore.deletePurchaseInvoiceStatus(purchaseInvoiceStatus.id);
+      const deleted = await purchaseStore.deletePurchaseInvoiceStatus(
+        purchaseInvoiceStatus.id
+      );
 
       if (deleted) {
         toast.add({
