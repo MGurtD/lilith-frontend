@@ -20,3 +20,13 @@ export interface PaymentMethod {
   numberOfPayments: number;
   frequency: number;
 }
+
+export interface Exercise {
+  id: string;
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  purchaseInvoiceCounter: number;
+  disabled: boolean;
+}
