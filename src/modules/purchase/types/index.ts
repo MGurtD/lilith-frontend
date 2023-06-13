@@ -38,11 +38,18 @@ export interface SupplierContact {
   id: string;
 }
 
+export interface PurchaseInvoiceTransition {
+  id: string;
+  fromStatusId: string;
+  toStatusId: string;
+}
+
 export interface PurchaseInvoiceStatus {
   id: string;
   name: string;
   description: string;
   disabled: boolean;
+  transitions?: Array<PurchaseInvoiceStatus>;
 }
 
 export interface PurchaseInvoiceSerie {

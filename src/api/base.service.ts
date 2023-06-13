@@ -12,8 +12,6 @@ export default abstract class BaseService<T> {
       const response = await apiClient.get(this.resource);
       if (response.status === 200) {
         return response.data as Array<T>;
-      } else {
-        // TODO: Toast amb error
       }
     } catch (err) {
       logException(err);
@@ -24,8 +22,6 @@ export default abstract class BaseService<T> {
       const response = await apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) {
         return response.data as T;
-      } else {
-        // TODO: Toast amb error
       }
     } catch (err) {
       logException(err);
@@ -37,8 +33,6 @@ export default abstract class BaseService<T> {
       const response = await apiClient.post(`${this.resource}`, model);
       if (response.status === 200 || response.status === 201) {
         result = true;
-      } else {
-        // TODO: Toast amb error
       }
     } catch (err) {
       logException(err);
@@ -51,8 +45,6 @@ export default abstract class BaseService<T> {
       const response = await apiClient.put(`${this.resource}/${id}`, model);
       if (response.status === 200 || response.status === 201) {
         result = true;
-      } else {
-        // TODO: Toast amb error
       }
     } catch (err) {
       logException(err);
@@ -65,8 +57,6 @@ export default abstract class BaseService<T> {
       const response = await apiClient.delete(`${this.resource}/${id}`);
       if (response.status === 200 || response.status === 201) {
         result = true;
-      } else {
-        // TODO: Toast amb error
       }
     } catch (err) {
       logException(err);
