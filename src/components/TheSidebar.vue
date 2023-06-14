@@ -50,13 +50,13 @@ const menuItems = ref([
     route: "/suppliers",
   },
   {
-    icon: PrimeIcons.CART_PLUS,
-    text: "Sèries de factures de compra",
+    icon: PrimeIcons.SORT_NUMERIC_DOWN,
+    text: "Sèries de factures",
     route: "/purchaseinvoiceserie",
   },
   {
-    icon: PrimeIcons.CART_PLUS,
-    text: "Estats de factures de compra",
+    icon: PrimeIcons.FLAG,
+    text: "Estats de factures",
     route: "/purchaseinvoicestatus",
   },
   {

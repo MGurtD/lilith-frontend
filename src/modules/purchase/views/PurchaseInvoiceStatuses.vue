@@ -30,11 +30,11 @@
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { PrimeIcons, ToastSeverity } from "primevue/api";
+import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePurchaseStore } from "../store/invoices";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { PurchaseInvoiceStatus } from "../types";
@@ -50,16 +50,14 @@ onMounted(async () => {
   await purchaseStore.fetchPurchaseInvoiceStatuses();
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Sèries Factures de Compra",
+    text: "Estats de Factures de Compra",
   });
 });
 const createButtonClick = () => {
-  console.log("create");
   router.push({ path: `/purchaseinvoicestatus/${uuidv4()}` });
 };
 
 const editPurchaseInvoiceStatus = (row: DataTableRowClickEvent) => {
-  console.log("edit");
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
