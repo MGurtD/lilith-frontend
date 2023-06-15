@@ -11,9 +11,10 @@
         <span class="text-xl text-900 font-bold">Transicions</span>
         <div>
           <Dropdown
+            class="status-selector"
             v-model="selectedTransition"
-            :options="purchaseInvoiceStatuses"
-            placeholder="Selecciona un estat"
+            :options="availableStatuses"
+            placeholder="Selecc. un estat"
             optionLabel="name"
           />
           <Button
@@ -39,7 +40,7 @@
   </DataTable>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { PurchaseInvoiceTransition } from "../types";
 import { storeToRefs } from "pinia";
@@ -52,6 +53,19 @@ const confirm = useConfirm();
 
 const purchaseInvoiceStatusStore = usePurchaseStore();
 const { purchaseInvoiceStatuses } = storeToRefs(purchaseInvoiceStatusStore);
+
+const availableStatuses = computed(() => {
+  let statuses: Array<PurchaseInvoiceStatus> = [];
+
+  purchaseInvoiceStatuses.value?.forEach((s) => {
+    let exists = props.purchaseInvoiceStatus?.transitions?.find(
+      (t) => t.id === s.id
+    );
+    if (!exists && s.id !== props.purchaseInvoiceStatus?.id) statuses.push(s);
+  });
+
+  return statuses;
+});
 
 const props = defineProps<{
   purchaseInvoiceStatus: PurchaseInvoiceStatus | undefined;
@@ -96,3 +110,10 @@ const deleteButtonClick = (
   });
 };
 </script>
+
+<style scoped>
+.status-selector {
+  margin-right: 2rem;
+  width: 12vw;
+}
+</style>
