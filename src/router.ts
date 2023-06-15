@@ -1,15 +1,22 @@
 import { createWebHistory, createRouter } from "vue-router";
 
 const Home = () => import("./views/Home.vue");
+const Users = () => import("./views/Users.vue");
+const User = () => import("./views/User.vue");
+
 const PaymentMethods = () => import("./views/PaymentMethods.vue");
 const PaymentMethod = () => import("./views/PaymentMethod.vue");
-const Suppliers = () => import("./modules/purchase/views/Suppliers.vue");
-const Supplier = () => import("./modules/purchase/views/Supplier.vue");
+const Exercise = () => import("./views/Exercise.vue");
+const Exercises = () => import("./views/Exercises.vue");
+const Taxes = () => import("./views/Taxes.vue");
+const Tax = () => import("./views/Tax.vue");
+
 const Customers = () => import("./modules/sales/views/Customers.vue");
 const Customer = () => import("./modules/sales/views/Customer.vue");
 const CustomerType = () => import("./modules/sales/views/CustomerType.vue");
-const Users = () => import("./views/Users.vue");
-const User = () => import("./views/User.vue");
+
+const Suppliers = () => import("./modules/purchase/views/Suppliers.vue");
+const Supplier = () => import("./modules/purchase/views/Supplier.vue");
 const SupplierType = () => import("./modules/purchase/views/SupplierType.vue");
 const PurchaseInvoiceSeries = () =>
   import("./modules/purchase/views/PurchaseInvoiceSeries.vue");
@@ -19,8 +26,6 @@ const PurchaseInvoiceStatuses = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatuses.vue");
 const PurchaseInvoiceStatus = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
-const Exercise = () => import("./views/Exercise.vue");
-const Exercises = () => import("./views/Exercises.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -69,7 +74,6 @@ const router = createRouter({
       path: "/purchaseinvoiceserie",
       name: "PurchaseInvoiceSeries",
       component: PurchaseInvoiceSeries,
-      props: true,
     },
     {
       path: "/purchaseinvoiceserie/:id",
@@ -81,7 +85,6 @@ const router = createRouter({
       path: "/purchaseinvoicestatus",
       name: "PurchaseInvoiceStatuses",
       component: PurchaseInvoiceStatuses,
-      props: true,
     },
     {
       path: "/purchaseinvoicestatus/:id",
@@ -93,12 +96,22 @@ const router = createRouter({
       path: "/exercise",
       name: "Exercises",
       component: Exercises,
-      props: true,
     },
     {
       path: "/exercise/:id",
       name: "Exercise",
       component: Exercise,
+      props: true,
+    },
+    {
+      path: "/taxes",
+      name: "Taxes",
+      component: Taxes,
+    },
+    {
+      path: "/tax/:id",
+      name: "Tax",
+      component: Tax,
       props: true,
     },
   ],

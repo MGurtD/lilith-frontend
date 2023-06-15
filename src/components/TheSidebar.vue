@@ -40,6 +40,11 @@ const menuItems = ref([
     route: "/exercise",
   },
   {
+    icon: PrimeIcons.PERCENTAGE,
+    text: "Impostos",
+    route: "/taxes",
+  },
+  {
     icon: PrimeIcons.PAYPAL,
     text: "Formes de pagament",
     route: "/payment-methods",

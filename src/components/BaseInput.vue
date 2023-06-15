@@ -7,7 +7,7 @@ defineProps<{
   id?: string;
   label?: string;
   icon?: string;
-  modelValue: string;
+  modelValue: string | number;
 }>();
 
 const emit = defineEmits<{
@@ -29,17 +29,25 @@ const emit = defineEmits<{
         :id="id"
         class="w-full"
         v-bind="$attrs"
-        v-bind:model-value="modelValue"
+        v-bind:model-value="(modelValue as string)"
         @input="
           emit('update:modelValue', ($event.target as HTMLInputElement).value)
         "
+      />
+      <InputNumber
+        v-else-if="type === BaseInputType.NUMERIC"
+        :id="id"
+        class="w-full"
+        v-bind="$attrs"
+        v-bind:model-value="(modelValue as number)"
+        @input="emit('update:modelValue', $event.value)"
       />
       <Password
         v-else-if="type === BaseInputType.PASSWORD"
         :id="id"
         class="w-full"
         v-bind="$attrs"
-        v-bind:model-value="modelValue"
+        v-bind:model-value="(modelValue as string)"
         @input="
           emit('update:modelValue', ($event.target as HTMLInputElement).value)
         "

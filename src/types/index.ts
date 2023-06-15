@@ -30,3 +30,10 @@ export interface Exercise {
   purchaseInvoiceCounter: number;
   disabled: boolean;
 }
+
+export interface Tax {
+  id: string;
+  name: string;
+  percentatge: number;
+  disabled: boolean;
+}
