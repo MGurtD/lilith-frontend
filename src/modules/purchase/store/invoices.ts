@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 import {
+  
   PurchaseInvoiceSerieService,
+  PurchaseInvoiceService,
   PurchaseInvoiceStatusService,
 } from "../services/purchase.service";
 import {
+  PurchaseInvoice,
   PurchaseInvoiceSerie,
   PurchaseInvoiceStatus,
   PurchaseInvoiceTransition as PurchaseInvoiceStatusTransition,
@@ -14,6 +17,10 @@ const purchaseInvoiceSerieService = new PurchaseInvoiceSerieService(
 );
 const purchaseInvoiceStatusService = new PurchaseInvoiceStatusService(
   "/purchaseinvoicestatus"
+);
+
+const purchaseInvoiceService = new PurchaseInvoiceService(
+  "/purchaseinvoice"
 );
 
 export const usePurchaseStore = defineStore({
@@ -27,6 +34,9 @@ export const usePurchaseStore = defineStore({
     purchaseInvoiceStatuses: undefined as
       | Array<PurchaseInvoiceStatus>
       | undefined,
+    //Invoice
+    purchaseInvoice: undefined as PurchaseInvoice | undefined,
+    purchaseInvoices: undefined as Array<PurchaseInvoice> | undefined,
   }),
   getters: {},
   actions: {
@@ -145,5 +155,41 @@ export const usePurchaseStore = defineStore({
         );
       return result;
     },
+    //Invoices
+    setNewPurchaseInvoice() {
+      this.purchaseInvoice = {
+        number: 0,
+        supplierNumber: 0,
+        purchaseInvoiceDate: new Date(),
+        baseAmount: 0.0,
+        transportAmount: 0.0,
+        subtotal: 0.0,
+        taxAmount: 0.0,
+        grossAmount: 0.0,
+        netAmount: 0.0,
+        discountPercentage: 0.0,
+        discountAmount: 0.0,
+        supplierId: "",
+        taxId: "",
+        exerciseId: "",
+        purchaseInvoiceSerieId: "",
+        paymentMethodId: "",
+        purchaseInvoiceStatusId: "",
+        //purchaseInvoiceDueDates: undefined,
+      }
+    },
+    async createPurchaseInvoice(purchaseInvoice: PurchaseInvoice) {
+      const result = await purchaseInvoiceService.create(purchaseInvoice)
+      if(result)
+        return result;
+            /*const result = await purchaseInvoiceService(
+        purchaseInvoiceStatusTrans
+      );
+      if (result)
+        await this.fetchPurchaseInvoiceStatus(
+          purchaseInvoiceStatusTrans.fromStatusId
+        );
+      return result;*/
+    }
   },
 });
