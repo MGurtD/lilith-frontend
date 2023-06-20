@@ -1,11 +1,17 @@
 <template>
   <main class="home">
-    <img src="../assets/images/logo.jpg" alt="Logo Temges" class="home__logo" />
+    <!--<img src="../assets/images/logo.jpg" alt="Logo Temges" class="home__logo" />-->
   </main>
+
+  <FileEntityPicker
+    entity="PurchaseInvoice"
+    id="99dbce5c-0623-4921-8af4-442d626aa013"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useStore } from "../store";
+import FileEntityPicker from "../components/FileEntityPicker.vue";
 
 const store = useStore();
 

@@ -37,3 +37,15 @@ export interface Tax {
   percentatge: number;
   disabled: boolean;
 }
+
+export interface File {
+  entity: string;
+  entityId: string;
+  type: number;
+  size: number;
+  path: string;
+  id: string;
+  createdOn: string;
+  updatedOn: string;
+  disabled: boolean;
+}
