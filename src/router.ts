@@ -27,6 +27,8 @@ const PurchaseInvoiceStatuses = () =>
 const PurchaseInvoiceStatus = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
 
+const PurchaseInvoice = () => import("./modules/purchase/views/PurchaseInvoice.vue")
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -90,6 +92,12 @@ const router = createRouter({
       path: "/purchaseinvoicestatus/:id",
       name: "PurchaseInvoiceStatus",
       component: PurchaseInvoiceStatus,
+      props: true,
+    },
+    {
+      path: "/purchaseinvoice",
+      name: "PurchaseInvoice",
+      component: PurchaseInvoice,
       props: true,
     },
     {

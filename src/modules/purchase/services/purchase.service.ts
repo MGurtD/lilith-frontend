@@ -1,6 +1,7 @@
 import { logException } from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
 import {
+  PurchaseInvoice,
   PurchaseInvoiceSerie,
   PurchaseInvoiceStatus,
   PurchaseInvoiceTransition,
@@ -39,3 +40,6 @@ export class PurchaseInvoiceStatusService extends BaseService<PurchaseInvoiceSta
     return result;
   }
 }
+
+export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {}
+

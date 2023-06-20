@@ -65,6 +65,11 @@ const menuItems = ref([
     route: "/purchaseinvoicestatus",
   },
   {
+    icon: PrimeIcons.MONEY_BILL,
+    text: "Factures de compra",
+    route: "/purchaseinvoice"
+  },
+  {
     icon: PrimeIcons.WALLET,
     text: "Clients",
     route: "/customers",
