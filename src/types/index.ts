@@ -43,6 +43,7 @@ export interface File {
   entityId: string;
   type: number;
   size: number;
+  originalName: string;
   path: string;
   id: string;
   createdOn: string;

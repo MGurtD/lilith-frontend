@@ -7,13 +7,9 @@ import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
+  title: string;
   entity: string;
   id: string;
-}>();
-
-const emit = defineEmits<{
-  (event: "fileAdd", payload: string): void;
-  (event: "fileDelete", payload: string): void;
 }>();
 
 const toast = useToast();
@@ -30,18 +26,17 @@ onMounted(async () => {
 });
 
 const uploadFile = async () => {
-  var input = document.createElement("input");
+  const input = document.createElement("input");
   input.type = "file";
 
   input.onchange = async (e: any) => {
-    // getting a hold of the file reference
-    var file = e.target.files[0];
+    const file = e.target.files[0];
 
     const uploaded = await service.Upload(file, props.entity, props.id);
     if (!uploaded) {
       toast.add({
         severity: "error",
-        detail: "Error al pujar l'arxiu",
+        detail: "Error al carregar l'arxiu",
       });
       return;
     }
@@ -58,7 +53,7 @@ const downloadFile = async (file: File) => {
   const link = document.createElement("a");
 
   link.href = url;
-  link.setAttribute("download", "test.pdf");
+  link.setAttribute("download", file.originalName);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -79,11 +74,14 @@ const deleteFile = async (file: File) => {
 <template>
   <div class="base_input">
     <Toolbar>
+      <template #start>
+        <h4>{{ title }}</h4>
+      </template>
       <template #end>
         <Button
           size="small"
-          label="Upload"
-          icon="pi pi-upload"
+          rounded
+          :icon="PrimeIcons.UPLOAD"
           @click="uploadFile"
         />
       </template>
@@ -99,8 +97,11 @@ const deleteFile = async (file: File) => {
           <i
             v-if="file.type === 1"
             :class="PrimeIcons.IMAGE"
-            style="font-size: 1rem"
+            style="font-size: 3.5rem"
           />
+          <p>
+            {{ file.originalName.substring(0, 20) }}
+          </p>
         </div>
         <div class="file-viewer-item-actions">
           <div
@@ -130,9 +131,8 @@ const deleteFile = async (file: File) => {
 }
 
 .file-viewer-item {
-  border: 1px solid gray;
+  border: 1px solid var(--blue-800);
   font-size: 0.8rem;
-
   display: grid;
   grid-template-rows: 0.8fr 0.2fr;
 }
@@ -148,15 +148,16 @@ const deleteFile = async (file: File) => {
 }
 
 .file-viewer-item-action {
-  border: 1px solid black;
   width: 100%;
   height: 100%;
-  padding-top: 5px;
+  padding-top: 6px;
   text-align: center;
+  opacity: 0.9;
 }
 
 .file-viewer-item-action:hover {
   cursor: pointer;
+  opacity: 0.6;
 }
 
 .file-viewer-item-action-delete {
