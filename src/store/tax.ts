@@ -2,10 +2,10 @@ import { defineStore } from "pinia";
 import { TaxService } from "../api/services/tax.service";
 import { Tax } from "../types";
 
-const service = new TaxService("/Taxes");
+const service = new TaxService("/Tax");
 
 export const useTaxesStore = defineStore({
-  id: "exercise",
+  id: "tax",
   state: () => ({
     tax: undefined as Tax | undefined,
     taxes: undefined as Array<Tax> | undefined,

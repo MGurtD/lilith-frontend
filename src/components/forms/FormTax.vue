@@ -29,7 +29,7 @@
     </div>
 
     <div class="mt-2">
-      <Button label="Guardar" class="mr-2" @click="submitForm" />
+      <Button label="Guardar" @click="submitForm" />
     </div>
   </form>
 </template>
