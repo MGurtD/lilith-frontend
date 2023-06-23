@@ -40,3 +40,28 @@ export const formatMillisecondsToFriendlyTime = (ms: number) => {
       : "");
   return differenceStr.toLowerCase().includes("nan") ? "" : differenceStr;
 };
+
+export const formatDate = (date: string) => {
+  const formatter = new Intl.DateTimeFormat("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Europe/Madrid",
+  });
+
+  return formatter.format(new Date(date));
+};
+
+export const formatDateTime = (dateTime: string) => {
+  const formatter = new Intl.DateTimeFormat("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZone: "Europe/Madrid",
+  });
+
+  return formatter.format(new Date(dateTime));
+};

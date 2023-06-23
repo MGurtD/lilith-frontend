@@ -42,4 +42,3 @@ export class PurchaseInvoiceStatusService extends BaseService<PurchaseInvoiceSta
 }
 
 export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {}
-

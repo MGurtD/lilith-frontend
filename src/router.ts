@@ -26,6 +26,7 @@ const PurchaseInvoiceStatuses = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatuses.vue");
 const PurchaseInvoiceStatus = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
+const PurchaseInvoicesByDates = () => import("./modules/purchase/views/PurchaseInvoicesByDates.vue");
 
 const PurchaseInvoice = () => import("./modules/purchase/views/PurchaseInvoice.vue")
 
@@ -122,6 +123,11 @@ const router = createRouter({
       component: Tax,
       props: true,
     },
+    {
+      path:"/purchaseinvoices-by-period",
+      name: "PurchaseInvoicesByDates",
+      component: PurchaseInvoicesByDates
+    }
   ],
 });
 

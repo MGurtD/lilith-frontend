@@ -42,6 +42,7 @@ import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useStore } from "../store";
 import { useExerciseStore } from "../store/exercise";
+import { formatDate } from "../utils/functions";
 
 const router = useRouter();
 const store = useStore();
@@ -68,33 +69,5 @@ const editExercise = (row: DataTableRowClickEvent) => {
   ) {
     router.push({ path: `/exercise/${row.data.id}` });
   }
-};
-
-const formatDate = (date: string) => {
-  const formatter = new Intl.DateTimeFormat("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    timeZone: "Europe/Madrid",
-  });
-
-  return formatter.format(new Date(date));
-};
-
-const formatDateTime = (dateTime: string) => {
-  const formatter = new Intl.DateTimeFormat("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    timeZone: "Europe/Madrid",
-  });
-
-  return formatter.format(new Date(dateTime));
 };
 </script>

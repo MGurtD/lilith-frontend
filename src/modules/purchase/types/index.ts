@@ -84,5 +84,5 @@ export interface PurchaseInvoice {
   purchaseInvoiceSerieId: string;
   paymentMethodId: string;
   purchaseInvoiceStatusId: string;
-  //purchaseInvoiceDueDates: Array<PurchasInvoiceDueDate>;
+  purchaseInvoiceDueDates: Array<PurchasInvoiceDueDate>;
 }
