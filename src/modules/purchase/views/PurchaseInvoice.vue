@@ -20,12 +20,35 @@
   import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
 
   import { usePurchaseStore } from "../store/invoices";
+
   const formMode = ref(FormActionMode.EDIT);
   const route = useRoute();
   const store = useStore();
   const purchaseStore = usePurchaseStore();
   const { purchaseInvoice } = storeToRefs(purchaseStore);
 
+const loadView = async () => {
+    //await exerciseStore.fetchOne(route.params.id as string);
+  
+    let pageTitle = "";
+    //if (!exercise.value) {
+      formMode.value = FormActionMode.CREATE;
+      purchaseStore.setNewPurchaseInvoice()
+      pageTitle = "Alta de factura de compra";
+    /*} else {
+      formMode.value = FormActionMode.EDIT;
+      pageTitle = `Exercici ${exercise.value.name}`;
+    }*/
+  
+    store.setMenuItem({
+      icon: PrimeIcons.MONEY_BILL,
+      backButtonVisible: true,
+      text: pageTitle,
+    });
+    };
+    onMounted(async () => {
+    await loadView();
+    });
 
   const toast = useToast();
   const submitForm = async () => {

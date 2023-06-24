@@ -182,14 +182,11 @@ export const usePurchaseStore = defineStore({
       const result = await purchaseInvoiceService.create(purchaseInvoice)
       if(result)
         return result;
-            /*const result = await purchaseInvoiceService(
-        purchaseInvoiceStatusTrans
-      );
-      if (result)
-        await this.fetchPurchaseInvoiceStatus(
-          purchaseInvoiceStatusTrans.fromStatusId
-        );
-      return result;*/
+    },
+    async getPurchaseInvoiceBetweenDates(startDate:Date, endDate:Date){
+      const result = purchaseInvoiceService.getBetweenDates(startDate, endDate)
+      if(result)
+        return result;
     }
   },
 });

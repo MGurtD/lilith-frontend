@@ -1,4 +1,4 @@
-import { logException } from "../../../api/api.client";
+import apiClient, { logException } from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
 import {
   PurchaseInvoice,
@@ -41,5 +41,16 @@ export class PurchaseInvoiceStatusService extends BaseService<PurchaseInvoiceSta
   }
 }
 
-export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {}
+export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
+  async getBetweenDates(startDate: Date, endDate: Date): Promise<Array<PurchaseInvoice> | undefined> {
+    try{
+      const response = await apiClient.post(`${this.resource}/GetBetweenDates`, {startDate, endDate});
+      if (response.status === 200) {
+        return response.data as Array<PurchaseInvoice>;
+      }
+    }catch (err) {
+      logException(err);
+    }
+  }
+}
 
