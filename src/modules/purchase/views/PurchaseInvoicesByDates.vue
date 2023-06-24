@@ -92,7 +92,7 @@ onMounted(async () => {
   purchaseInvoices.value = await service.getAll();
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Gestió de factures",
+    text: "Comptabilització de factures",
   });
 });
 const createButtonClick = () => {

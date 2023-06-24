@@ -1,3 +1,5 @@
+import { Exercise, PaymentMethod, Tax } from "../../../types";
+
 export interface SupplierType {
   id: string;
   name: string;
@@ -85,4 +87,13 @@ export interface PurchaseInvoice {
   paymentMethodId: string;
   purchaseInvoiceStatusId: string;
   purchaseInvoiceDueDates: Array<PurchasInvoiceDueDate>;
+}
+
+export interface PurchaseMasterData {
+  exercises: Array<Exercise> | undefined;
+  suppliers: Array<Supplier> | undefined;
+  taxes: Array<Tax> | undefined;
+  paymentMethods: Array<PaymentMethod> | undefined;
+  statuses: Array<PurchaseInvoiceStatus> | undefined;
+  series: Array<PurchaseInvoiceSerie> | undefined;
 }

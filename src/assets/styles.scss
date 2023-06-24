@@ -22,11 +22,7 @@ body {
 
 .five-columns {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: repeat(5, 1fr);
-=======
-  grid-template-columns: repeat(6, 1fr);
->>>>>>> 9208e0720804329c06c96a1e377699d35c0b2c67
   gap: 1rem;
 }
 

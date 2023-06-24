@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import {
-  
   PurchaseInvoiceSerieService,
   PurchaseInvoiceService,
   PurchaseInvoiceStatusService,
@@ -19,9 +18,7 @@ const purchaseInvoiceStatusService = new PurchaseInvoiceStatusService(
   "/purchaseinvoicestatus"
 );
 
-const purchaseInvoiceService = new PurchaseInvoiceService(
-  "/purchaseinvoice"
-);
+const purchaseInvoiceService = new PurchaseInvoiceService("/purchaseinvoice");
 
 export const usePurchaseStore = defineStore({
   id: "purchases",
@@ -175,18 +172,16 @@ export const usePurchaseStore = defineStore({
         purchaseInvoiceSerieId: "",
         paymentMethodId: "",
         purchaseInvoiceStatusId: "",
-        //purchaseInvoiceDueDates: undefined,
-      }
+        purchaseInvoiceDueDates: [],
+      };
     },
     async createPurchaseInvoice(purchaseInvoice: PurchaseInvoice) {
-      const result = await purchaseInvoiceService.create(purchaseInvoice)
-      if(result)
-        return result;
+      const result = await purchaseInvoiceService.create(purchaseInvoice);
+      if (result) return result;
     },
-    async getPurchaseInvoiceBetweenDates(startDate:Date, endDate:Date){
-      const result = purchaseInvoiceService.getBetweenDates(startDate, endDate)
-      if(result)
-        return result;
-    }
+    async getPurchaseInvoiceBetweenDates(startDate: Date, endDate: Date) {
+      const result = purchaseInvoiceService.getBetweenDates(startDate, endDate);
+      if (result) return result;
+    },
   },
 });
