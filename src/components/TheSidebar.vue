@@ -67,7 +67,12 @@ const menuItems = ref([
   {
     icon: PrimeIcons.MONEY_BILL,
     text: "Factures de compra",
-    route: "/purchaseinvoice"
+    route: "/purchaseinvoice",
+  },
+  {
+    icon: PrimeIcons.MONEY_BILL,
+    text: "Gestió de factures",
+    route: "/purchaseinvoices-by-period",
   },
   {
     icon: PrimeIcons.WALLET,

@@ -69,7 +69,7 @@
             </div>
         </section>
         <section class="four-columns">
-          <BaseInput label="Base" id="grossAmount" v-model="purchaseInvoice.grossAmount"  />
+          <BaseInput label="Base" id="baseAmount" v-model="purchaseInvoice.baseAmount"  />
           <BaseInput label="Ports" id="transportAmount" v-model="purchaseInvoice.transportAmount"  />
           <div>
           <label class="block text-900 mb-1">IVA</label>
@@ -157,7 +157,27 @@ const submitForm = async () => {
     });
   }
 };
-const showValues = async () => {
+const showValues = () => {
   console.log(purchaseInvoice)
+};
+const calcAmounts = async () => {
+  let base: number;
+  let transport: number;
+  base = checkValue(purchaseInvoice.value?.baseAmount);
+  
+  if(purchaseInvoice.value?.transportAmount) {
+    transport = purchaseInvoice.value.transportAmount
+  }else{
+    transport = 0;
+  }
+  let subtotal = base + transport;
+};
+
+const checkValue = (val:number|undefined): number => {
+  if(val){
+    return val;
+  }else{
+    return 0;
+  }
 }
 </script>
