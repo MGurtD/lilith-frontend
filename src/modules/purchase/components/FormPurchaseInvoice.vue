@@ -46,7 +46,7 @@
             </div>
               </section>
 
-              <section class="three-columns">
+              <section class="two-columns">
         <div>
           <label class="block text-900 mb-1">Proveïdor</label>
                 <Dropdown
@@ -58,24 +58,50 @@
                 class="w-full"
                 :class="{
                     'p-invalid': validation.errors.supplierId,
-                }"
-                @change="showValues"
+                }"                
             />
             </div>
             <BaseInput label="Num. Fra. Proveïdor" id="supplierNumber" v-model="purchaseInvoice.supplierNumber"  />
-            <div>
-              <label class="block text-900 mb-2">Comptabilitzada</label>
-              
-            </div>
         </section>
         <section class="four-columns">
-          <BaseInput label="Base" id="baseAmount" v-model="purchaseInvoice.baseAmount"  />
-          <BaseInput label="Ports" id="transportAmount" v-model="purchaseInvoice.transportAmount"  />
+          <BaseInput label="Base" id="baseAmount" v-model="purchaseInvoice.baseAmount" @update:modelValue="calcAmounts()"/>
+          <BaseInput label="Ports" id="transportAmount" v-model="purchaseInvoice.transportAmount" @update:modelValue="calcAmounts()" />
           <div>
           <label class="block text-900 mb-1">IVA</label>
-                
+          <Dropdown
+                v-model="purchaseInvoice.taxId"
+                editable
+                :options="taxesStore.taxes"
+                optionValue="id"
+                optionLabel="name"
+                class="w-full"
+                :class="{
+                    'p-invalid': validation.errors.tax,
+                }"         
+                @update:modelValue="calcAmounts()"       
+            />
             </div>
-          <BaseInput label="Dto." id="discountPercentage" v-model="purchaseInvoice.discountPercentage"  />
+          <BaseInput label="% Dto." id="discountPercentage" 
+                    v-model="purchaseInvoice.discountPercentage" 
+                    
+                    @update:modelValue="calcAmounts()" />
+        </section>
+        <section class="two-columns">
+          <div>
+          <label class="block text-900 mb-1">Forma de pagament</label>
+          <Dropdown
+                v-model="purchaseInvoice.paymentMethodId"
+                editable
+                :options="paymentMethodStore.paymentMethods"
+                optionValue="id"
+                optionLabel="name"
+                class="w-full"
+                :class="{
+                    'p-invalid': validation.errors.paymentmethod,
+                }"                
+            />
+            </div>
+            <BaseInput label="Total" id="netAmount" v-model="purchaseInvoice.netAmount" disabled  />
         </section>
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
@@ -86,6 +112,7 @@
 import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { usePaymentMethodStore } from "../../../store/paymentMethod";
+import { useTaxesStore } from "../../../store/tax";
 import { useExerciseStore } from "../../../store/exercise";
 import { useSuppliersStore } from "../store/suppliers";
 import { usePurchaseStore } from "../store/invoices";
@@ -111,12 +138,14 @@ const exerciseStore = useExerciseStore();
 const purchaseStore = usePurchaseStore();
 const supplierStore = useSuppliersStore();
 const paymentMethodStore = usePaymentMethodStore();
+const taxesStore = useTaxesStore();
 const { purchaseInvoice } = storeToRefs(purchaseStore);
 const toast = useToast();
 
 onMounted(async () => {
     await exerciseStore.fetchAll();
     await paymentMethodStore.fetchAll();
+    await taxesStore.fetchAll();
     await supplierStore.fetchSuppliers();
     await purchaseStore.fetchPurchaseInvoiceSeries();
     await purchaseStore.fetchPurchaseInvoiceStatuses();
@@ -128,8 +157,8 @@ const validation = ref({
   } as FormValidationResult);
   
   const schema = Yup.object().shape({
-    //exercise: Yup.string()
-     //       .required("L'exercici es obligatori"),
+    exercise: Yup.string()
+            .required("L'exercici es obligatori"),
     supplierId: Yup.string()
             .required("El proveïdor es obligatori"),
 
@@ -157,20 +186,29 @@ const submitForm = async () => {
     });
   }
 };
-const showValues = () => {
-  console.log(purchaseInvoice)
-};
+
 const calcAmounts = async () => {
   let base: number;
   let transport: number;
-  base = checkValue(purchaseInvoice.value?.baseAmount);
-  
-  if(purchaseInvoice.value?.transportAmount) {
-    transport = purchaseInvoice.value.transportAmount
-  }else{
-    transport = 0;
-  }
-  let subtotal = base + transport;
+  let taxPercentage: number;
+  let taxAmount: number;
+  let netAmount: number;
+  let discountAmount: number;
+  let grossAmount: number;
+
+  base = checkValue(purchaseInvoice.value?.baseAmount);  
+  transport = checkValue(purchaseInvoice.value?.transportAmount);
+  var tax = taxesStore.taxes?.find(item => purchaseInvoice.value?.taxId === purchaseInvoice.value?.taxId);
+  taxPercentage = checkValue(tax?.percentatge);
+  taxAmount = ((base*1 + transport*1)*(taxPercentage/100));
+  purchaseInvoice.value!.taxAmount = taxAmount;
+  grossAmount = (base*1 + transport*1)+(taxAmount*1);
+  purchaseInvoice.value!.grossAmount = grossAmount;
+  discountAmount = ((grossAmount*(1*checkValue(purchaseInvoice.value?.discountPercentage)))/100);
+  purchaseInvoice.value!.discountAmount = discountAmount;
+  netAmount = grossAmount-discountAmount
+  purchaseInvoice.value!.netAmount = parseFloat(netAmount.toFixed(2));
+  console.log(purchaseInvoice.value)
 };
 
 const checkValue = (val:number|undefined): number => {

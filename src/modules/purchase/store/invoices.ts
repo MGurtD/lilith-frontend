@@ -175,7 +175,7 @@ export const usePurchaseStore = defineStore({
         purchaseInvoiceSerieId: "",
         paymentMethodId: "",
         purchaseInvoiceStatusId: "",
-        //purchaseInvoiceDueDates: undefined,
+        purchaseInvoiceDueDates: [],
       }
     },
     async createPurchaseInvoice(purchaseInvoice: PurchaseInvoice) {
