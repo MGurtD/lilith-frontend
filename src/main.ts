@@ -41,8 +41,9 @@ import ConfirmPopup from "primevue/confirmpopup";
 import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
-import catalan from "./i18n/catalan";
 import Calendar from "primevue/calendar";
+import ContextMenu from "primevue/contextmenu";
+import catalan from "./i18n/catalan";
 
 app.use(PrimeVue, {
   locale: catalan,

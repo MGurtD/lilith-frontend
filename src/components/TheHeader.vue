@@ -68,7 +68,7 @@ const goBack = () => router.back();
 
 .collapsed {
   left: 50px;
-  width: calc(100vw - var(--side-bar-width));
+  width: calc(100vw - var(--side-bar-collapsed-width));
 }
 
 .title-bar__page {

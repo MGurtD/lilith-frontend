@@ -69,6 +69,7 @@ export interface PurchasInvoiceDueDate {
 }
 
 export interface PurchaseInvoice {
+  id: string;
   number: number;
   supplierNumber: number;
   purchaseInvoiceDate: Date;
@@ -96,4 +97,9 @@ export interface PurchaseMasterData {
   paymentMethods: Array<PaymentMethod> | undefined;
   statuses: Array<PurchaseInvoiceStatus> | undefined;
   series: Array<PurchaseInvoiceSerie> | undefined;
+}
+
+export interface PurchaseInvoiceUpdateStatues {
+  ids: Array<string>;
+  statusToId: string;
 }
