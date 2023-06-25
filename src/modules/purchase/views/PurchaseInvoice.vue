@@ -31,14 +31,14 @@ const loadView = async () => {
     //await exerciseStore.fetchOne(route.params.id as string);
   
     let pageTitle = "";
-    //if (!exercise.value) {
+    if (!purchaseInvoice.value) {
       formMode.value = FormActionMode.CREATE;
-      purchaseStore.setNewPurchaseInvoice()
+      purchaseStore.setNewPurchaseInvoice(route.params.id as string)
       pageTitle = "Alta de factura de compra";
-    /*} else {
+    } else {
       formMode.value = FormActionMode.EDIT;
-      pageTitle = `Exercici ${exercise.value.name}`;
-    }*/
+      pageTitle = `Exercici ${purchaseInvoice.value.number}`;
+    }
   
     store.setMenuItem({
       icon: PrimeIcons.MONEY_BILL,
@@ -56,6 +56,18 @@ const loadView = async () => {
     let result = false;
     let message = "";
   
+    if (formMode.value === FormActionMode.CREATE){
+      let res = await purchaseStore.create(data);
+      if (res) {
+        result = true;
+      } else {
+        result = false;
+      }
+
+      message = "Factura creada correctament";
+    } else {
+      message = "Pendent d'actualitzar";
+    }
  
     if (result) {
       toast.add({

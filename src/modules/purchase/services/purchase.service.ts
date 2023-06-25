@@ -1,6 +1,7 @@
 import apiClient, { logException } from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
 import {
+  PurchaseInvoiceDueDate,
   PurchaseInvoice,
   PurchaseInvoiceSerie,
   PurchaseInvoiceStatus,
@@ -44,9 +45,19 @@ export class PurchaseInvoiceStatusService extends BaseService<PurchaseInvoiceSta
 export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
   async getBetweenDates(startDate: Date, endDate: Date): Promise<Array<PurchaseInvoice> | undefined> {
     try{
-      const response = await apiClient.post(`${this.resource}/GetBetweenDates`, {startDate, endDate});
+      const response = await apiClient.get(`${this.resource}?startTime=${startDate.toISOString().split('T')[0]}&endTime=${endDate.toISOString().split('T')[0]}`);
       if (response.status === 200) {
         return response.data as Array<PurchaseInvoice>;
+      }
+    }catch (err) {
+      logException(err);
+    }
+  }
+  async getDueDates(purchaseInvoice: PurchaseInvoice): Promise<Array<PurchaseInvoiceDueDate> | undefined> {
+    try{
+      const response = await apiClient.post(`${this.resource}/DueDates`, purchaseInvoice)
+      if (response.status === 200) {
+        return response.data as Array<PurchaseInvoiceDueDate>;
       }
     }catch (err) {
       logException(err);

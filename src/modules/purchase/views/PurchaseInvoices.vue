@@ -1,10 +1,13 @@
 <template>
-  <section class="our-columns mb-2">
-    <div>
-        <label for="start-date">Des de:</label>&nbsp;
-        <Calendar id="start-date" v-model="startDate" dateformat="dd/mm/yyyy" />&nbsp;
-        <label for="end-date">Fins a:</label>&nbsp;
-        <Calendar id="end-date" v-model="endDate" dateformat="dd/mm/yyyy" />&nbsp;
+  <section class="three-columns mb-2">
+
+      
+      <label class="block text-900 mb-1">Desde:&nbsp;  
+        <Calendar id="start-date" v-model="startDate" dateformat="yyyy-MM-dd" />&nbsp;      
+      </label>
+        <label class="block text-900 mb-1">Fins a:&nbsp;  
+        <Calendar id="end-date" v-model="endDate" dateformat="yyyy-MM-dd" />&nbsp;
+      </label>
         <Button
             :icon="PrimeIcons.SEARCH"
             
@@ -17,14 +20,17 @@
             rounded
             @click="createButtonClick"
         />
-    </div>     
+
   </section>
   <DataTable
     :value="purchaseInvoiceStore.purchaseInvoices"
     tableStyle="min-width: 100%"
     @row-click="editPurchaseInvoice"
   >
-  <Column field="supplierNumber" header="Num. Fra. Proveïdor"></Column>
+  <Column field="supplierId" header="Proveïdor" style="width: 25%"></Column>
+  <Column field="supplierNumber" header="Num. Fra. Proveïdor" style="width: 25%"></Column>
+  <Column field="purchaseInvoiceDate" header="Data Factura" style="width: 25%"></Column>
+  <Column field="netAmount" header="Import Total" style="width: 25%"></Column>
   </DataTable>
   
   </template>
@@ -38,6 +44,7 @@
   import { DataTableRowClickEvent } from "primevue/datatable";
   import { useStore } from "../../../store/index";
   import { usePurchaseStore } from "../store/invoices";
+  import { PurchaseInvoice } from "../types";
 
   
   const toast = useToast();
@@ -50,11 +57,10 @@
   const endDate = ref();
 
   onMounted(async () => {
-    //await exerciseStore.fetchAll();    
-    
+    //purchaseInvoiceStore.getPurchaseInvoiceBetweenDates(startDate.value, endDate.value);
     store.setMenuItem({
-      icon: PrimeIcons.HASHTAG,
-      text: "Exercicis",
+      icon: PrimeIcons.MONEY_BILL,
+      text: "Factures de compra",
     });
   });
   
@@ -63,11 +69,8 @@
   };
 
   const searchButtonClick = () => {
-    console.log(startDate.value)
-    console.log(endDate.value)
-    console.log("search")
-    
-    purchaseInvoiceStore.getPurchaseInvoiceBetweenDates(startDate.value, endDate.value)
+    console.log("search button click");
+    purchaseInvoiceStore.getPurchaseInvoiceBetweenDates(startDate.value, endDate.value);  
   };
   
   const editPurchaseInvoice = (row: DataTableRowClickEvent) => {

@@ -11,7 +11,7 @@
                     optionLabel="name"
                     class="w-full"
                     :class="{
-                        'p-invalid': validation.errors.exercise,
+                        'p-invalid': validation.errors.exerciseId,
                     }"
                 />
               </div>                
@@ -25,7 +25,7 @@
                 optionLabel="name"
                 class="w-full"
                 :class="{
-                    'p-invalid': validation.errors.purchaseinvoiceserie,
+                    'p-invalid': validation.errors.purchaseInvoiceSerieId,
                 }"
             />    
             </div>        
@@ -40,13 +40,13 @@
                 optionLabel="name"
                 class="w-full"
                 :class="{
-                    'p-invalid': validation.errors.purchaseinvoicestatus,
+                    'p-invalid': validation.errors.purchaseInvoiceStatusId,
                 }"
             />   
             </div>
               </section>
 
-              <section class="two-columns">
+              <section class="three-columns">
         <div>
           <label class="block text-900 mb-1">Proveïdor</label>
                 <Dropdown
@@ -62,7 +62,10 @@
             />
             </div>
             <BaseInput label="Num. Fra. Proveïdor" id="supplierNumber" v-model="purchaseInvoice.supplierNumber"  />
-        </section>
+            <label  class="block text-900 mb-1">Data Factura:
+            <Calendar id="purchaseInvoiceDate" v-model="purchaseInvoice.purchaseInvoiceDate" />
+          </label>
+          </section>
         <section class="four-columns">
           <BaseInput label="Base" id="baseAmount" v-model="purchaseInvoice.baseAmount" @update:modelValue="calcAmounts()"/>
           <BaseInput label="Ports" id="transportAmount" v-model="purchaseInvoice.transportAmount" @update:modelValue="calcAmounts()" />
@@ -76,7 +79,7 @@
                 optionLabel="name"
                 class="w-full"
                 :class="{
-                    'p-invalid': validation.errors.tax,
+                    'p-invalid': validation.errors.taxId,
                 }"         
                 @update:modelValue="calcAmounts()"       
             />
@@ -98,11 +101,15 @@
                 class="w-full"
                 :class="{
                     'p-invalid': validation.errors.paymentmethod,
-                }"                
+                }"     
+                @update:modelValue="calcAmounts()"           
             />
             </div>
             <BaseInput label="Total" id="netAmount" v-model="purchaseInvoice.netAmount" disabled  />
         </section>
+        <ul v-if = "purchaseInvoice.purchaseInvoiceDueDates">
+          <li>{{ purchaseInvoice.purchaseInvoiceDueDates }}</li>
+        </ul>
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
         </div>
@@ -116,7 +123,7 @@ import { useTaxesStore } from "../../../store/tax";
 import { useExerciseStore } from "../../../store/exercise";
 import { useSuppliersStore } from "../store/suppliers";
 import { usePurchaseStore } from "../store/invoices";
-import { PurchaseInvoice } from '../types';
+import { PurchaseInvoice, PurchaseInvoiceDueDate } from '../types';
 import * as Yup from "yup";
 import {
     FormValidation,
@@ -124,6 +131,7 @@ import {
   } from "../../../utils/form-validator";
   import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
+import PurchaseInvoicesByDates from "../views/PurchaseInvoicesByDates.vue";
 
 const props = defineProps<{
     purchaseInvoice: PurchaseInvoice;
@@ -148,7 +156,7 @@ onMounted(async () => {
     await taxesStore.fetchAll();
     await supplierStore.fetchSuppliers();
     await purchaseStore.fetchPurchaseInvoiceSeries();
-    await purchaseStore.fetchPurchaseInvoiceStatuses();
+    await purchaseStore.fetchPurchaseInvoiceStatuses();    
 });
 
 const validation = ref({
@@ -157,7 +165,7 @@ const validation = ref({
   } as FormValidationResult);
   
   const schema = Yup.object().shape({
-    exercise: Yup.string()
+    exerciseId: Yup.string()
             .required("L'exercici es obligatori"),
     supplierId: Yup.string()
             .required("El proveïdor es obligatori"),
@@ -195,6 +203,7 @@ const calcAmounts = async () => {
   let netAmount: number;
   let discountAmount: number;
   let grossAmount: number;
+  let DueDates: Array<PurchaseInvoiceDueDate> | undefined;
 
   base = checkValue(purchaseInvoice.value?.baseAmount);  
   transport = checkValue(purchaseInvoice.value?.transportAmount);
@@ -208,6 +217,9 @@ const calcAmounts = async () => {
   purchaseInvoice.value!.discountAmount = discountAmount;
   netAmount = grossAmount-discountAmount
   purchaseInvoice.value!.netAmount = parseFloat(netAmount.toFixed(2));
+  console.log(purchaseInvoice.value)
+  DueDates = await purchaseStore.getDueDates(purchaseInvoice.value!)
+  purchaseInvoice.value!.purchaseInvoiceDueDates = DueDates!;
   console.log(purchaseInvoice.value)
 };
 

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import {
-  
   PurchaseInvoiceSerieService,
   PurchaseInvoiceService,
   PurchaseInvoiceStatusService,
@@ -19,9 +18,7 @@ const purchaseInvoiceStatusService = new PurchaseInvoiceStatusService(
   "/purchaseinvoicestatus"
 );
 
-const purchaseInvoiceService = new PurchaseInvoiceService(
-  "/purchaseinvoice"
-);
+const purchaseInvoiceService = new PurchaseInvoiceService("/purchaseinvoice");
 
 export const usePurchaseStore = defineStore({
   id: "purchases",
@@ -156,8 +153,9 @@ export const usePurchaseStore = defineStore({
       return result;
     },
     //Invoices
-    setNewPurchaseInvoice() {
+    setNewPurchaseInvoice(id: string) {
       this.purchaseInvoice = {
+        id: id, 
         number: 0,
         supplierNumber: 0,
         purchaseInvoiceDate: new Date(),
@@ -176,17 +174,22 @@ export const usePurchaseStore = defineStore({
         paymentMethodId: "",
         purchaseInvoiceStatusId: "",
         purchaseInvoiceDueDates: [],
-      }
+      } as PurchaseInvoice;
     },
-    async createPurchaseInvoice(purchaseInvoice: PurchaseInvoice) {
-      const result = await purchaseInvoiceService.create(purchaseInvoice)
-      if(result)
-        return result;
+    async create(purchaseInvoice: PurchaseInvoice) {
+      const result = await purchaseInvoiceService.create(purchaseInvoice);
+      if (result) return result;
     },
-    async getPurchaseInvoiceBetweenDates(startDate:Date, endDate:Date){
-      const result = purchaseInvoiceService.getBetweenDates(startDate, endDate)
-      if(result)
-        return result;
+    async getPurchaseInvoiceBetweenDates(startDate: Date, endDate: Date) {
+      console.log("get function");
+      /*const result = await purchaseInvoiceService.getBetweenDates(startDate, endDate);
+      if (result) return result;*/
+      this.purchaseInvoices = await purchaseInvoiceService.getBetweenDates(startDate, endDate);
+      console.log("log: ", this.purchaseInvoices)
+    },
+    async getDueDates(purchaseInvoice: PurchaseInvoice){
+      const result = await purchaseInvoiceService.getDueDates(purchaseInvoice);
+      if (result) return result;
     }
   },
 });

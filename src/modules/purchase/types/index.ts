@@ -1,3 +1,5 @@
+import { Exercise, PaymentMethod, Tax } from "../../../types";
+
 export interface SupplierType {
   id: string;
   name: string;
@@ -59,7 +61,7 @@ export interface PurchaseInvoiceSerie {
   disabled: boolean;
 }
 
-export interface PurchasInvoiceDueDate {
+export interface PurchaseInvoiceDueDate {
   id: string;
   dueDate: Date;
   amount: number;
@@ -67,6 +69,7 @@ export interface PurchasInvoiceDueDate {
 }
 
 export interface PurchaseInvoice {
+  id: string;
   number: number;
   supplierNumber: number;
   purchaseInvoiceDate: Date;
@@ -84,5 +87,14 @@ export interface PurchaseInvoice {
   purchaseInvoiceSerieId: string;
   paymentMethodId: string;
   purchaseInvoiceStatusId: string;
-  purchaseInvoiceDueDates: Array<PurchasInvoiceDueDate>;
+  purchaseInvoiceDueDates: Array<PurchaseInvoiceDueDate>;
+}
+
+export interface PurchaseMasterData {
+  exercises: Array<Exercise> | undefined;
+  suppliers: Array<Supplier> | undefined;
+  taxes: Array<Tax> | undefined;
+  paymentMethods: Array<PaymentMethod> | undefined;
+  statuses: Array<PurchaseInvoiceStatus> | undefined;
+  series: Array<PurchaseInvoiceSerie> | undefined;
 }
