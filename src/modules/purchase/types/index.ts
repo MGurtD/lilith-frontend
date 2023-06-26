@@ -98,3 +98,8 @@ export interface PurchaseMasterData {
   statuses: Array<PurchaseInvoiceStatus> | undefined;
   series: Array<PurchaseInvoiceSerie> | undefined;
 }
+
+export interface PurchaseInvoiceUpdateStatues {
+  ids: Array<string>;
+  statusToId: string;
+}

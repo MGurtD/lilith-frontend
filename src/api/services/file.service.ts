@@ -13,7 +13,7 @@ export class FileService {
   public async GetEntityFiles(
     entity: string,
     id: string
-  ): Promise<any | Array<File>> {
+  ): Promise<undefined | Array<File>> {
     let response = await this.apiClient.get(
       `${this.resource}?entity=${entity}&entityId=${id}`
     );

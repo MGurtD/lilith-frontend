@@ -5,6 +5,7 @@ import { File } from "../types";
 import Toolbar from "primevue/toolbar";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
+import { createBlobAndDownloadFile } from "../utils/functions";
 
 const props = defineProps<{
   title: string;
@@ -48,15 +49,7 @@ const uploadFile = async () => {
 
 const downloadFile = async (file: File) => {
   const response = await service.Download(file);
-
-  const url = window.URL.createObjectURL(new Blob([response]));
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.setAttribute("download", file.originalName);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  createBlobAndDownloadFile(file.originalName, response);
 };
 
 const deleteFile = async (file: File) => {

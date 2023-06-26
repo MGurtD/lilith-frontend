@@ -1,3 +1,5 @@
+import { ScatterDataPoint } from "chart.js";
+
 /**
  * Use Date.getTime
  */
@@ -41,7 +43,7 @@ export const formatMillisecondsToFriendlyTime = (ms: number) => {
   return differenceStr.toLowerCase().includes("nan") ? "" : differenceStr;
 };
 
-export const formatDate = (date: string) => {
+export const formatDate = (date: string | Date) => {
   const formatter = new Intl.DateTimeFormat("es-ES", {
     year: "numeric",
     month: "2-digit",
@@ -64,4 +66,15 @@ export const formatDateTime = (dateTime: string) => {
   });
 
   return formatter.format(new Date(dateTime));
+};
+
+export const createBlobAndDownloadFile = (name: string, data: any) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.setAttribute("download", name);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };

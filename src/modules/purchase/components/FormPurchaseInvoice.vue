@@ -107,9 +107,26 @@
             </div>
             <BaseInput label="Total" id="netAmount" v-model="purchaseInvoice.netAmount" disabled  />
         </section>
-        <ul v-if = "purchaseInvoice.purchaseInvoiceDueDates">
-          <li>{{ purchaseInvoice.purchaseInvoiceDueDates }}</li>
-        </ul>
+        &nbsp;
+        <TabView>
+          <TabPanel header="Venciments">
+            <DataTable 
+              :value="purchaseInvoice.purchaseInvoiceDueDates"
+              tableStyle="min-width: 100%"
+            >
+            <Column field="dueDate" header="Venciment" style="width:50%"></Column>
+            <Column field="amount" header="Import" style="width:50%"></Column>
+          </DataTable>
+          </TabPanel>
+          <TabPanel header="Fitxers">
+            <FileEntityPicker
+              title="Factures"
+              entity="PurchaseInvoice"
+              :id="purchaseInvoice.id"
+            />
+          </TabPanel>
+        </TabView>
+        
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
         </div>
@@ -132,6 +149,7 @@ import {
   import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import PurchaseInvoicesByDates from "../views/PurchaseInvoicesByDates.vue";
+import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 
 const props = defineProps<{
     purchaseInvoice: PurchaseInvoice;
