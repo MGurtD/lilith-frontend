@@ -33,7 +33,7 @@ import { v4 as uuidv4 } from "uuid";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
-import { usePurchaseStore } from "../store/invoices";
+import { usePurchaseInvoiceStatusStore } from "../store/purchaseInvoiceStatus";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -44,7 +44,7 @@ const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
-const purchaseStore = usePurchaseStore();
+const purchaseStore = usePurchaseInvoiceStatusStore();
 
 onMounted(async () => {
   await purchaseStore.fetchPurchaseInvoiceStatuses();

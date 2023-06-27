@@ -39,52 +39,6 @@ export const usePurchaseMasterDataStore = defineStore({
       this.masterData.exercises = await SharedServices.Exercice.getAll();
       this.masterData.taxes = await SharedServices.Tax.getAll();
     },
-    async getPurchaseInvoices(
-      startDate: string,
-      endDate: string,
-      statusId?: string,
-      excludeStatusId?: string,
-      supplierId?: string,
-      exerciseId?: string
-    ) {
-      if (statusId) {
-        this.purchaseInvoices =
-          await PurchaseServices.PurchaseInvoice.GetBetweenDatesAndStatus(
-            startDate,
-            endDate,
-            statusId
-          );
-      } else if (excludeStatusId) {
-        this.purchaseInvoices =
-          await PurchaseServices.PurchaseInvoice.GetBetweenDatesAndExcludeStatus(
-            startDate,
-            endDate,
-            excludeStatusId
-          );
-      } else if (supplierId) {
-        this.purchaseInvoices =
-          await PurchaseServices.PurchaseInvoice.GetBetweenDatesAndSupplier(
-            startDate,
-            endDate,
-            supplierId
-          );
-      } else {
-        this.purchaseInvoices =
-          await PurchaseServices.PurchaseInvoice.GetBetweenDates(
-            startDate,
-            endDate
-          );
-      }
-    },
-
-    async UpdateInvoicesStatus(
-      request: PurchaseInvoiceUpdateStatues
-    ): Promise<boolean> {
-      const updated = await PurchaseServices.PurchaseInvoice.UpdateStatuses(
-        request
-      );
-      console.log("purchaseMasterData.UpdateInvoicesStatus", updated);
-      return updated;
-    },
+    
   },
 });

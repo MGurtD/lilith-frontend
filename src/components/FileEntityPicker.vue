@@ -146,6 +146,7 @@ const deleteFile = async (file: File) => {
   padding-top: 6px;
   text-align: center;
   opacity: 0.9;
+  color: #fff;
 }
 
 .file-viewer-item-action:hover {

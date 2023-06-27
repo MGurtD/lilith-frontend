@@ -6,7 +6,7 @@
       scrollable
       scrollHeight="70vh"
       sortMode="multiple"
-      :value="purchaseStore.purchaseInvoices"
+      :value="purchaseInvoiceStore.purchaseInvoices"
       v-model:selection="selectedInvoices"
     >
       <template #header>
@@ -63,7 +63,11 @@
           {{ getSupplierNameById(slotProps.data.supplierId) }}
         </template>
       </Column>
-      <Column header="Num Fra. Proveïdor" style="width:12%" field="supplierNumber"></Column>
+      <Column
+        header="Num Fra. Proveïdor"
+        style="width: 12%"
+        field="supplierNumber"
+      ></Column>
       <Column header="Estat" style="width: 15%">
         <template #body="slotProps">
           <span
@@ -115,16 +119,19 @@ import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { usePurchaseMasterDataStore } from "../store/purchase";
+import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
 import SharedServices from "../../../api/services";
 import {
   createBlobAndDownloadFile,
   formatDate,
+  formatDateForQueryParameter,
 } from "../../../utils/functions";
 
 const toast = useToast();
 const store = useStore();
 const purchaseStore = usePurchaseMasterDataStore();
+const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
@@ -186,11 +193,15 @@ const filterInvoices = async () => {
       );
     }
 
-    await purchaseStore.getPurchaseInvoices(
-      filter.value.dates[0].toISOString().split("T")[0],
-      filter.value.dates[1].toISOString().split("T")[0],
+    const startTime = formatDateForQueryParameter(filter.value.dates[0]);
+    const endTime = formatDateForQueryParameter(filter.value.dates[1]);
+    const statusId = managedStatus ? managedStatus.id : undefined;
+
+    await purchaseInvoiceStore.GetFiltered(
+      startTime,
+      endTime,
       undefined,
-      managedStatus ? managedStatus.id : undefined
+      statusId
     );
   } else {
     toast.add({
@@ -213,7 +224,7 @@ const updateSelectedInvoiceStatusToManaged = async () => {
       statusToId: statusTo.id,
     } as PurchaseInvoiceUpdateStatues;
 
-    const updated = await purchaseStore.UpdateInvoicesStatus(request);
+    const updated = await purchaseInvoiceStore.UpdateInvoicesStatus(request);
     console.log("UpdateInvoicesStatus", updated);
     if (updated) {
       toast.add({

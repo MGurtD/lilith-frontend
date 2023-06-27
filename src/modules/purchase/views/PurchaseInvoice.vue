@@ -1,47 +1,40 @@
 <template>
-    <FormPurchaseInvoice 
+  <FormPurchaseInvoice
     v-if="purchaseInvoice"
     :purchaseInvoice="purchaseInvoice"
     @submit="submitForm"
-    />
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { PrimeIcons } from "primevue/api";
-
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { usePurchaseStore } from "../store/invoices";
+import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { storeToRefs } from "pinia";
-
+import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-import { FormActionMode } from "../../../types/component";
-import router from "../../../router";
-import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
-
 import { PurchaseInvoice } from "../types";
+import { FormActionMode } from "../../../types/component";
+import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
+const router = useRouter();
 const store = useStore();
-const purchaseInvoiceStore = usePurchaseStore();
+const purchaseInvoiceStore = usePurchaseInvoiceStore();
 const { purchaseInvoice } = storeToRefs(purchaseInvoiceStore);
 
 const loadView = async () => {
-  //await purchaseInvoiceStore(
-  //  route.params.id as string
-  //);
+  await purchaseInvoiceStore.GetById(route.params.id as string);
 
   let pageTitle = "";
   if (!purchaseInvoice.value) {
     formMode.value = FormActionMode.CREATE;
-    purchaseInvoiceStore.setNewPurchaseInvoice(
-      route.params.id as string
-    );
+    purchaseInvoiceStore.setNewPurchaseInvoice(route.params.id as string);
     pageTitle = "Alta de factures de compra";
   } else {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Factura de compra: ${purchaseInvoice.value!.supplierNumber}`;
+    pageTitle = `Factura de compra: ${purchaseInvoice.value.number}`;
   }
 
   store.setMenuItem({
@@ -62,18 +55,17 @@ const submitForm = async () => {
   let message = "";
 
   if (formMode.value === FormActionMode.CREATE) {
-    let res = await purchaseInvoiceStore.create(data);
-    if(res === true){
-        result = true;
+    let res = await purchaseInvoiceStore.Create(data);
+    if (res === true) {
+      result = true;
+      message = "Factura creada correctament";
     }
-    //result = await purchaseInvoiceSerieStore.createPurchaseInvoiceSerie(data);
-    message = "Factura creada correctament";
   } else {
-    /*result = await purchaseInvoiceSerieStore.updatePurchaseInvoiceSerie(
-      data.id,
-      data
-    );
-    message = "Sèrie de facturació actualizada correctament";*/
+    let res = await purchaseInvoiceStore.Update(data);
+    if (res === true) {
+      result = true;
+      message = "Factura actualizada correctament";
+    }
   }
 
   if (result) {
@@ -85,6 +77,4 @@ const submitForm = async () => {
     router.back();
   }
 };
-
-
 </script>

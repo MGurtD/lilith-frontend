@@ -22,7 +22,7 @@ const emit = defineEmits<{
       class="base_input__label block text-900 mb-2"
       >{{ label }}</label
     >
-    <span :class="{ 'p-input-icon-left': icon !== undefined }" class="mb-3">
+    <span :class="{ 'p-input-icon-left': icon !== undefined }" class="mb-2">
       <i v-if="icon" :class="icon" />
       <InputText
         v-if="!type || type === BaseInputType.TEXT"

@@ -1,3 +1,4 @@
+<!--
 <template>    
 <FormPurchaseInvoice
     v-if="purchaseInvoice"
@@ -79,3 +80,4 @@ const loadView = async () => {
     }
   };
 </script>
+-->

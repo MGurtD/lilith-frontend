@@ -26,10 +26,13 @@ const PurchaseInvoiceStatuses = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatuses.vue");
 const PurchaseInvoiceStatus = () =>
   import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
-const PurchaseInvoicesByDates = () => import("./modules/purchase/views/PurchaseInvoicesByDates.vue");
+const PurchaseInvoicesByDates = () =>
+  import("./modules/purchase/views/PurchaseInvoicesByDates.vue");
 
-const PurchaseInvoice = () => import("./modules/purchase/views/PurchaseInvoice.vue")
-const PurchaseInvoices = () => import("./modules/purchase/views/PurchaseInvoices.vue")
+const PurchaseInvoices = () =>
+  import("./modules/purchase/views/PurchaseInvoices.vue");
+const PurchaseInvoice = () =>
+  import("./modules/purchase/views/PurchaseInvoice.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -131,10 +134,10 @@ const router = createRouter({
       props: true,
     },
     {
-      path:"/purchaseinvoices-by-period",
+      path: "/purchaseinvoices-by-period",
       name: "PurchaseInvoicesByDates",
-      component: PurchaseInvoicesByDates
-    }
+      component: PurchaseInvoicesByDates,
+    },
   ],
 });
 

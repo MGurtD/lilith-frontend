@@ -1,3 +1,4 @@
+<!--
 <template>
   <div>
     <DataTable
@@ -236,10 +237,7 @@ const downloadInvoices = async (invoice: PurchaseInvoice) => {
 }
 </style>
 
-
-
-
-
+-->
 
 <!--
 

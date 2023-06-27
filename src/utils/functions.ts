@@ -68,6 +68,10 @@ export const formatDateTime = (dateTime: string) => {
   return formatter.format(new Date(dateTime));
 };
 
+export const formatDateForQueryParameter = (date: Date): string => {
+  return date.toISOString().split("T")[0];
+};
+
 export const createBlobAndDownloadFile = (name: string, data: any) => {
   const url = window.URL.createObjectURL(new Blob([data]));
   const link = document.createElement("a");

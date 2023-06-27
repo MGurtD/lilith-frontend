@@ -46,12 +46,12 @@ import { PurchaseInvoiceTransition } from "../types";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { useConfirm } from "primevue/useconfirm";
-import { usePurchaseStore } from "../store/invoices";
+import { usePurchaseInvoiceStatusStore } from "../store/purchaseInvoiceStatus";
 import { PurchaseInvoiceStatus } from "../types";
 
 const confirm = useConfirm();
 
-const purchaseInvoiceStatusStore = usePurchaseStore();
+const purchaseInvoiceStatusStore = usePurchaseInvoiceStatusStore();
 const { purchaseInvoiceStatuses } = storeToRefs(purchaseInvoiceStatusStore);
 
 const availableStatuses = computed(() => {

@@ -7,23 +7,22 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { useStore } from "../../../store";
-import { usePurchaseStore } from "../store/invoices";
 import { storeToRefs } from "pinia";
-
+import { usePurchaseInvoiceSeries } from "../store/purchaseInvoiceSeries";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
-import router from "../../../router";
 import FormPurchaseInvoiceSerie from "../components/FormPurchaseInvoiceSerie.vue";
 import { PurchaseInvoiceSerie } from "../types";
 
 const formMode = ref(FormActionMode.EDIT);
+const router = useRouter();
 const route = useRoute();
 const store = useStore();
-const purchaseInvoiceSerieStore = usePurchaseStore();
+const purchaseInvoiceSerieStore = usePurchaseInvoiceSeries();
 const { purchaseInvoiceSerie } = storeToRefs(purchaseInvoiceSerieStore);
 
 const loadView = async () => {

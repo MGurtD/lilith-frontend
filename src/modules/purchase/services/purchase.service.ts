@@ -91,38 +91,33 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     }
   }
 
+  async GetDueDates(
+    purchaseInvoice: PurchaseInvoice
+  ): Promise<Array<PurchaseInvoiceDueDate> | undefined> {
+    const response = await apiClient.post(
+      `${this.resource}/DueDates`,
+      purchaseInvoice
+    );
+    if (response.status === 200) {
+      return response.data as Array<PurchaseInvoiceDueDate>;
+    }
+  }
+
+  async RecreateDueDates(
+    purchaseInvoice: PurchaseInvoice
+  ): Promise<boolean | undefined> {
+    const response = await apiClient.post(
+      `${this.resource}/RecreateDueDates`,
+      purchaseInvoice
+    );
+    return response.status === 200;
+  }
+
   async UpdateStatuses(
     request: PurchaseInvoiceUpdateStatues
   ): Promise<boolean> {
     const endpoint = `${this.resource}/UpdateStatuses`;
     const response = await apiClient.post(endpoint, request);
     return response.status === 200;
-  }
-
-  async getBetweenDates(
-    startDate: Date,
-    endDate: Date
-  ): Promise<Array<PurchaseInvoice> | undefined> {
-    try {
-      const response = await apiClient.post(
-        `${this.resource}/GetBetweenDates`,
-        { startDate, endDate }
-      );
-      if (response.status === 200) {
-        return response.data as Array<PurchaseInvoice>;
-      }
-    } catch (err) {
-      logException(err);
-    }
-  }
-  async getDueDates(purchaseInvoice: PurchaseInvoice): Promise<Array<PurchaseInvoiceDueDate> | undefined> {
-    try{
-      const response = await apiClient.post(`${this.resource}/DueDates`, purchaseInvoice)
-      if (response.status === 200) {
-        return response.data as Array<PurchaseInvoiceDueDate>;
-      }
-    }catch (err) {
-      logException(err);
-    }
   }
 }

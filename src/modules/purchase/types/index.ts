@@ -83,7 +83,7 @@ export interface PurchaseInvoice {
   discountAmount: number;
   supplierId: string;
   taxId: string;
-  exerciseId: string;
+  exerciceId: string;
   purchaseInvoiceSerieId: string;
   paymentMethodId: string;
   purchaseInvoiceStatusId: string;

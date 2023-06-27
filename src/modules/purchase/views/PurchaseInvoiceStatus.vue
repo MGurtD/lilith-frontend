@@ -17,7 +17,7 @@ import { useRoute } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { useStore } from "../../../store";
-import { usePurchaseStore } from "../store/invoices";
+import { usePurchaseInvoiceStatusStore } from "../store/purchaseInvoiceStatus";
 import { storeToRefs } from "pinia";
 
 import { useToast } from "primevue/usetoast";
@@ -30,7 +30,7 @@ import { PurchaseInvoiceStatus, PurchaseInvoiceTransition } from "../types";
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
-const purchaseInvoiceStatusStore = usePurchaseStore();
+const purchaseInvoiceStatusStore = usePurchaseInvoiceStatusStore();
 const { purchaseInvoiceStatus } = storeToRefs(purchaseInvoiceStatusStore);
 
 const loadView = async () => {
