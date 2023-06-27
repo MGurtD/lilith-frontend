@@ -12,7 +12,7 @@
 
     <ul class="side-menu-list">
       <NavBarMenuItem
-        v-for="menuItem in menuItems"
+        v-for="menuItem in store.menus"
         :key="menuItem.text"
         :item="menuItem"
         :is-collapsed="store.menuCollapsed"
@@ -22,69 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import NavBarMenuItem from "./NavBarMenuItem.vue";
-import { PrimeIcons } from "primevue/api";
-import { MenuItem } from "../types/component";
 import { useStore } from "../store";
-import { ref } from "vue";
-
-const menuItems = ref([
-  {
-    icon: PrimeIcons.HOME,
-    text: "Inici",
-    route: "/",
-  },
-  {
-    icon: PrimeIcons.CALENDAR,
-    text: "Exercicis",
-    route: "/exercise",
-  },
-  {
-    icon: PrimeIcons.PERCENTAGE,
-    text: "Impostos",
-    route: "/taxes",
-  },
-  {
-    icon: PrimeIcons.PAYPAL,
-    text: "Formes de pagament",
-    route: "/payment-methods",
-  },
-  {
-    icon: PrimeIcons.CART_PLUS,
-    text: "Proveïdors",
-    route: "/suppliers",
-  },
-  {
-    icon: PrimeIcons.SORT_NUMERIC_DOWN,
-    text: "Sèries de factures",
-    route: "/purchaseinvoiceserie",
-  },
-  {
-    icon: PrimeIcons.FLAG,
-    text: "Estats de factures",
-    route: "/purchaseinvoicestatus",
-  },
-  {
-    icon: PrimeIcons.MONEY_BILL,
-    text: "Factures de compra",
-    route: "/purchaseinvoice",
-  },
-  {
-    icon: PrimeIcons.MONEY_BILL,
-    text: "Gestió de factures",
-    route: "/purchaseinvoices-by-period",
-  },
-  {
-    icon: PrimeIcons.WALLET,
-    text: "Clients",
-    route: "/customers",
-  },
-  {
-    icon: PrimeIcons.USERS,
-    text: "Usuaris",
-    route: "/users",
-  },
-] as Array<MenuItem>);
+import NavBarMenuItem from "./NavBarMenuItem.vue";
 
 const store = useStore();
 </script>

@@ -87,6 +87,7 @@
         <section class="four-columns">
           <div class="mt-2">
             <BaseInput
+              :type="BaseInputType.NUMERIC"
               label="Base"
               id="baseAmount"
               v-model="purchaseInvoice.baseAmount"
@@ -95,6 +96,7 @@
           </div>
           <div class="mt-2">
             <BaseInput
+              :type="BaseInputType.NUMERIC"
               label="Ports"
               id="transportAmount"
               v-model="purchaseInvoice.transportAmount"
@@ -118,6 +120,7 @@
           </div>
           <div class="mt-2">
             <BaseInput
+              :type="BaseInputType.NUMERIC"
               label="% Dto."
               id="discountPercentage"
               v-model="purchaseInvoice.discountPercentage"
@@ -144,6 +147,7 @@
           </div>
           <div class="mt-2">
             <BaseInput
+              :type="BaseInputType.NUMERIC"
               label="Total"
               id="netAmount"
               v-model="purchaseInvoice.netAmount"
@@ -193,6 +197,7 @@ import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { formatDate } from "../../../utils/functions";
+import { BaseInputType } from "../../../types/component";
 
 const props = defineProps<{
   purchaseInvoice: PurchaseInvoice;
@@ -250,43 +255,56 @@ const submitForm = async () => {
 const calcAmounts = async () => {
   if (!hasBeenMounted) return;
 
-  let base: number;
-  let transport: number;
-  let taxPercentage: number;
-  let taxAmount: number;
-  let netAmount: number;
-  let discountAmount: number;
-  let grossAmount: number;
-  let DueDates: Array<PurchaseInvoiceDueDate> | undefined;
-
-  base = checkValue(purchaseInvoice.value?.baseAmount);
-  transport = checkValue(purchaseInvoice.value?.transportAmount);
   var tax = purchaseMasterData.masterData.taxes?.find(
-    (item) => purchaseInvoice.value?.taxId === purchaseInvoice.value?.taxId
+    (item) => item.id === purchaseInvoice.value?.taxId
   );
-  taxPercentage = checkValue(tax?.percentatge);
-  taxAmount = (base * 1 + transport * 1) * (taxPercentage / 100);
-  purchaseInvoice.value!.taxAmount = taxAmount;
-  grossAmount = base * 1 + transport * 1 + taxAmount * 1;
-  purchaseInvoice.value!.grossAmount = grossAmount;
-  discountAmount =
-    (grossAmount *
-      (1 * checkValue(purchaseInvoice.value?.discountPercentage))) /
-    100;
-  purchaseInvoice.value!.discountAmount = discountAmount;
-  netAmount = grossAmount - discountAmount;
-  purchaseInvoice.value!.netAmount = parseFloat(netAmount.toFixed(2));
-  console.log(purchaseInvoice.value);
-  DueDates = await purchaseStore.GetDueDates(purchaseInvoice.value!);
-  purchaseInvoice.value!.purchaseInvoiceDueDates = DueDates!;
-  console.log(purchaseInvoice.value);
-};
 
-const checkValue = (val: number | undefined): number => {
-  if (val) {
-    return val;
-  } else {
-    return 0;
+  let baseAmount: number = 0;
+  let transportAmount: number = 0;
+  let taxPercentage: number = 0;
+  let taxAmount: number = 0;
+  let netAmount: number = 0;
+  let discountAmount: number = 0;
+  let discountPercentage: number = 0;
+  let grossAmount: number = 0;
+
+  if (purchaseInvoice.value) {
+    if (purchaseInvoice.value.baseAmount) {
+      baseAmount = parseFloat(purchaseInvoice.value.baseAmount.toFixed(2));
+    }
+    if (purchaseInvoice.value.transportAmount) {
+      transportAmount = parseFloat(
+        purchaseInvoice.value.transportAmount.toFixed(2)
+      );
+    }
+    if (purchaseInvoice.value.discountPercentage) {
+      discountPercentage = parseFloat(
+        purchaseInvoice.value.discountPercentage.toFixed(2)
+      );
+    }
+    if (tax) {
+      taxPercentage = parseFloat(tax.percentatge.toFixed(2));
+    }
   }
+
+  taxAmount = (baseAmount * 1 + transportAmount * 1) * (taxPercentage / 100);
+  grossAmount = baseAmount * 1 + transportAmount * 1 + taxAmount * 1;
+  discountAmount = (grossAmount * (1 * discountPercentage)) / 100;
+  netAmount = grossAmount - discountAmount;
+
+  purchaseInvoice.value!.baseAmount = baseAmount;
+  purchaseInvoice.value!.transportAmount = transportAmount;
+  // subtotal
+  purchaseInvoice.value!.taxAmount = taxAmount;
+  purchaseInvoice.value!.grossAmount = grossAmount;
+  purchaseInvoice.value!.netAmount = netAmount;
+  purchaseInvoice.value!.discountPercentage = discountPercentage;
+  purchaseInvoice.value!.discountAmount = discountAmount;
+
+  // Calcular venciments
+  purchaseInvoice.value!.purchaseInvoiceDueDates =
+    (await purchaseStore.GetDueDates(
+      purchaseInvoice.value as PurchaseInvoice
+    )) as Array<PurchaseInvoiceDueDate>;
 };
 </script>

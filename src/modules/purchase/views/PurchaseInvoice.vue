@@ -35,6 +35,10 @@ const loadView = async () => {
   } else {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Factura de compra: ${purchaseInvoice.value.number}`;
+
+    purchaseInvoice.value.purchaseInvoiceDate = new Date(
+      purchaseInvoice.value.purchaseInvoiceDate
+    );
   }
 
   store.setMenuItem({

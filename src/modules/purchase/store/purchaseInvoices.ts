@@ -46,7 +46,7 @@ export const usePurchaseInvoiceStore = defineStore({
       );
       const dueDatesRecreated =
         await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
-      if (updated && dueDatesRecreated) return updated;
+      return updated && dueDatesRecreated;
     },
     async GetById(id: string) {
       this.purchaseInvoice = await PurchaseService.PurchaseInvoice.getById(id);
