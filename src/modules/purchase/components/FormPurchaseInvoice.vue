@@ -3,6 +3,12 @@
     <TabPanel header="Factura">
       <form v-if="purchaseInvoice">
         <section class="four-columns">
+          <BaseInput
+            label="Num. Fra. Intern"
+            id="number"
+            v-model="purchaseInvoice.number"
+            disabled
+          />
           <div>
             <label class="block text-900 mb-2">Exercici</label>
             <Dropdown
@@ -31,12 +37,6 @@
               }"
             />
           </div>
-          <BaseInput
-            label="Num. Fra. Intern"
-            id="number"
-            v-model="purchaseInvoice.number"
-            disabled
-          />
           <div>
             <label class="block text-900 mb-2">Estat</label>
             <Dropdown
@@ -62,6 +62,7 @@
               :options="purchaseMasterData.masterData.suppliers"
               optionValue="id"
               optionLabel="comercialName"
+              @change="setSupplierPaymentMethod"
               class="w-full"
               :class="{
                 'p-invalid': validation.errors.supplierId,
@@ -249,6 +250,15 @@ const submitForm = async () => {
       detail: errors,
       life: 5000,
     });
+  }
+};
+
+const setSupplierPaymentMethod = () => {
+  const supplier = purchaseMasterData.masterData.suppliers?.find(
+    (s) => purchaseInvoice.value?.supplierId
+  );
+  if (supplier) {
+    purchaseInvoice.value!.paymentMethodId = supplier.paymentMethodId;
   }
 };
 

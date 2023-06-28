@@ -32,11 +32,11 @@
             }}</span>
           </template>
         </Column>
-        <Column header="Actiu" sortable style="width: 20%">
+        <Column header="Desactivat" sortable style="width: 20%">
           <template #body="slotProps">
             <BooleanColumn
-              :value="!slotProps.data.disabled"
-              :showColor="true"
+              :value="slotProps.data.disabled"
+              :showColor="false"
             />
           </template>
         </Column>

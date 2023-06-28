@@ -16,11 +16,13 @@ import { useToast } from "primevue/usetoast";
 import { PurchaseInvoice } from "../types";
 import { FormActionMode } from "../../../types/component";
 import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
+import { usePurchaseMasterDataStore } from "../store/purchase";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const purchaseMasterDataStore = usePurchaseMasterDataStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
 const { purchaseInvoice } = storeToRefs(purchaseInvoiceStore);
 
@@ -32,6 +34,8 @@ const loadView = async () => {
     formMode.value = FormActionMode.CREATE;
     purchaseInvoiceStore.setNewPurchaseInvoice(route.params.id as string);
     pageTitle = "Alta de factures de compra";
+
+    setDefaultValues();
   } else {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Factura de compra: ${purchaseInvoice.value.number}`;
@@ -46,6 +50,30 @@ const loadView = async () => {
     backButtonVisible: true,
     text: pageTitle,
   });
+};
+
+const setDefaultValues = () => {
+  if (purchaseInvoice.value) {
+    const currentExercice = purchaseMasterDataStore.masterData.exercises?.find(
+      (e) => e.name === new Date().getFullYear().toString()
+    );
+    if (currentExercice) purchaseInvoice.value.exerciceId = currentExercice.id;
+
+    const serie = purchaseMasterDataStore.masterData.series?.find(
+      (s) => s.name === "Nacional"
+    );
+    if (serie) purchaseInvoice.value.purchaseInvoiceSerieId = serie.id;
+
+    const status = purchaseMasterDataStore.masterData.statuses?.find(
+      (s) => s.name === "Nova"
+    );
+    if (status) purchaseInvoice.value.purchaseInvoiceStatusId = status.id;
+
+    const tax = purchaseMasterDataStore.masterData.taxes?.find(
+      (t) => t.name === "IVA 21%"
+    );
+    if (tax) purchaseInvoice.value.taxId = tax.id;
+  }
 };
 
 onMounted(async () => {

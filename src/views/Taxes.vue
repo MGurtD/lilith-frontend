@@ -1,15 +1,22 @@
 <template>
-  <Button
-    :icon="PrimeIcons.PLUS"
-    class="grid_add_row_button"
-    rounded
-    @click="createButtonClick"
-  />
   <DataTable
     :value="taxStore.taxes"
     tableStyle="min-width: 100%"
     @row-click="edit"
   >
+    <template #header>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <span class="text-xl text-900 font-bold">Impostos</span>
+        <Button
+          :icon="PrimeIcons.PLUS"
+          rounded
+          raised
+          @click="createButtonClick"
+        />
+      </div>
+    </template>
     <Column field="name" header="Nom" style="width: 33%"></Column>
     <Column
       field="percentatge"

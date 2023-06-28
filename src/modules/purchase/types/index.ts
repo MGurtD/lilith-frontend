@@ -71,7 +71,7 @@ export interface PurchaseInvoiceDueDate {
 export interface PurchaseInvoice {
   id: string;
   number: number;
-  supplierNumber: number;
+  supplierNumber: string;
   purchaseInvoiceDate: Date;
   baseAmount: number;
   transportAmount: number;

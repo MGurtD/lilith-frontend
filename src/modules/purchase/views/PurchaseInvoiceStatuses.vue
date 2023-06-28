@@ -1,15 +1,22 @@
 <template>
-  <Button
-    :icon="PrimeIcons.PLUS"
-    class="grid_add_row_button"
-    rounded
-    @click="createButtonClick"
-  />
   <DataTable
     :value="purchaseStore.purchaseInvoiceStatuses"
     tableStyle="min-width: 100%"
     @row-click="editPurchaseInvoiceStatus"
   >
+    <template #header>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <span class="text-xl text-900 font-bold">Estats</span>
+        <Button
+          :icon="PrimeIcons.PLUS"
+          rounded
+          raised
+          @click="createButtonClick"
+        />
+      </div>
+    </template>
     <Column field="name" header="Nom" style="width: 20%"></Column>
     <Column field="description" header="Descripció" style="width: 50%"></Column>
     <Column header="Desactivada" style="width: 20%">
