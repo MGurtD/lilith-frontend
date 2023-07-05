@@ -7,6 +7,7 @@ defineProps<{
   id?: string;
   label?: string;
   icon?: string;
+  decimals?: number;
   modelValue: string | number;
 }>();
 
@@ -38,6 +39,7 @@ const emit = defineEmits<{
         v-else-if="type === BaseInputType.NUMERIC"
         :id="id"
         class="w-full"
+        :minFractionDigits="decimals ?? 0"
         v-bind="$attrs"
         v-bind:model-value="(modelValue as number)"
         @input="emit('update:modelValue', $event.value)"

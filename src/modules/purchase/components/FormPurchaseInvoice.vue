@@ -89,6 +89,7 @@
           <div class="mt-2">
             <BaseInput
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               label="Base"
               id="baseAmount"
               v-model="purchaseInvoice.baseAmount"
@@ -98,6 +99,7 @@
           <div class="mt-2">
             <BaseInput
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               label="Ports"
               id="transportAmount"
               v-model="purchaseInvoice.transportAmount"
@@ -122,6 +124,7 @@
           <div class="mt-2">
             <BaseInput
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               label="% Dto."
               id="discountPercentage"
               v-model="purchaseInvoice.discountPercentage"
@@ -149,6 +152,7 @@
           <div class="mt-2">
             <BaseInput
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               label="Total"
               id="netAmount"
               v-model="purchaseInvoice.netAmount"
@@ -300,12 +304,11 @@ const calcAmounts = async () => {
   taxAmount = (baseAmount * 1 + transportAmount * 1) * (taxPercentage / 100);
   grossAmount = baseAmount * 1 + transportAmount * 1 + taxAmount * 1;
   discountAmount = (grossAmount * (1 * discountPercentage)) / 100;
-  netAmount = grossAmount - discountAmount;
+  netAmount = parseFloat((grossAmount - discountAmount).toFixed(2));
 
   purchaseInvoice.value!.baseAmount = baseAmount;
   purchaseInvoice.value!.transportAmount = transportAmount;
   purchaseInvoice.value!.subtotal = baseAmount + transportAmount;
-  // subtotal
   purchaseInvoice.value!.taxAmount = taxAmount;
   purchaseInvoice.value!.grossAmount = grossAmount;
   purchaseInvoice.value!.netAmount = netAmount;
