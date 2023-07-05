@@ -58,22 +58,21 @@ const applicationMenus = [
     text: "Clients",
     route: "/customers",
   },
-  {
-    icon: PrimeIcons.PRIME,
-    text: "Empresa",
-    route: "/enterprise",
-  },
-  {
-    icon: PrimeIcons.FLAG,
-    text: "Tipus de despesa",
-    route: "/expensetype",
-  },
+  // {
+  //   icon: PrimeIcons.PRIME,
+  //   text: "Empresa",
+  //   route: "/enterprise",
+  // },
+  // {
+  //   icon: PrimeIcons.FLAG,
+  //   text: "Tipus de despesa",
+  //   route: "/expensetype",
+  // },
   {
     icon: PrimeIcons.USERS,
     text: "Usuaris",
     route: "/users",
   },
-  
 ] as Array<MenuItem>;
 
 export const useStore = defineStore("applicationStore", {
