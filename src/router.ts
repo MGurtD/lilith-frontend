@@ -34,6 +34,13 @@ const PurchaseInvoices = () =>
 const PurchaseInvoice = () =>
   import("./modules/purchase/views/PurchaseInvoice.vue");
 
+const Enterprise = () => import("./modules/production/views/Enterprise.vue");
+const Enterprises = () => import("./modules/production/views/Enterprises.vue");
+
+const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
+const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
+
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -137,6 +144,26 @@ const router = createRouter({
       path: "/purchaseinvoices-by-period",
       name: "PurchaseInvoicesByDates",
       component: PurchaseInvoicesByDates,
+    },
+    {
+      path: "/enterprise/:id",
+      name: "Enterprise",
+      component: Enterprise,
+    },
+    {
+      path: "/enterprise",
+      name: "Enterprises",
+      component: Enterprises,
+    },
+    {
+      path: "/expensetype/:id",
+      name: "Expense Type",
+      component: ExpenseType,
+    },
+    {
+      path: "/expensetype",
+      name: "Expense Types",
+      component: ExpenseTypes,
     },
   ],
 });

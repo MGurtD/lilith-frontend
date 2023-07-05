@@ -304,6 +304,7 @@ const calcAmounts = async () => {
 
   purchaseInvoice.value!.baseAmount = baseAmount;
   purchaseInvoice.value!.transportAmount = transportAmount;
+  purchaseInvoice.value!.subtotal = baseAmount + transportAmount;
   // subtotal
   purchaseInvoice.value!.taxAmount = taxAmount;
   purchaseInvoice.value!.grossAmount = grossAmount;
