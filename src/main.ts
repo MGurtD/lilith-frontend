@@ -37,6 +37,7 @@ import ConfirmDialog from "primevue/confirmdialog";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Textarea from "primevue/textarea";
+import RadioButton from "primevue/radiobutton";
 import ConfirmPopup from "primevue/confirmpopup";
 import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
@@ -68,6 +69,7 @@ app
   .component("TabView", TabView)
   .component("TabPanel", TabPanel)
   .component("Textarea", Textarea)
+  .component("RadioButton", RadioButton)
   .component("BaseInput", BaseInput)
   .component("BooleanColumn", BooleanColumn);
 

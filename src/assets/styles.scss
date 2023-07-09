@@ -72,6 +72,19 @@ table > tbody > tr {
   font-size: 0.8rem !important;
 }
 
+.datatable-filter {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
 .filter-field {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
   font-size: 0.8rem !important;
+}
+
+.filter-field > label {
+  padding-top: 12px;
+  font-size: 1rem;
 }
