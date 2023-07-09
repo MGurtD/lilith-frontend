@@ -30,6 +30,8 @@ export const usePurchaseInvoiceStore = defineStore({
         purchaseInvoiceSerieId: "",
         paymentMethodId: "",
         purchaseInvoiceStatusId: "",
+        extraTaxAmount: 0,
+        extraTaxPercentatge: 0,
         purchaseInvoiceDueDates: [],
       } as PurchaseInvoice;
     },

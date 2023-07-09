@@ -87,11 +87,11 @@
           {{ getLastDueDate(slotProps.data) }}
         </template>
       </Column>
-      <Column
-        field="baseAmount"
-        header="Import Base"
-        style="width: 15%"
-      ></Column>
+      <Column header="Import" style="width: 15%">
+        <template #body="slotProps">
+          {{ slotProps.data.netAmount }} €
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>

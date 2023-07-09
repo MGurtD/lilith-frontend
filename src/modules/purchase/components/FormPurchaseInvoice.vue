@@ -53,8 +53,8 @@
           </div>
         </section>
 
-        <section class="three-columns">
-          <div class="mt-2">
+        <section class="four-columns">
+          <div class="mt-1">
             <label class="block text-900 mb-2">Proveïdor</label>
             <Dropdown
               v-model="purchaseInvoice.supplierId"
@@ -69,72 +69,21 @@
               }"
             />
           </div>
-          <div class="mt-2">
+          <div class="mt-1">
             <BaseInput
               label="Num. Fra. Proveïdor"
               id="supplierNumber"
               v-model="purchaseInvoice.supplierNumber"
             />
           </div>
-          <div class="mt-2">
+          <div class="mt-1">
             <label class="block text-900 mb-2">Data Factura: </label>
             <Calendar
               id="purchaseInvoiceDate"
               v-model="purchaseInvoice.purchaseInvoiceDate"
             />
           </div>
-        </section>
-
-        <section class="four-columns">
-          <div class="mt-2">
-            <BaseInput
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              label="Base"
-              id="baseAmount"
-              v-model="purchaseInvoice.baseAmount"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-2">
-            <BaseInput
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              label="Ports"
-              id="transportAmount"
-              v-model="purchaseInvoice.transportAmount"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-2">
-            <label class="block text-900 mb-2">IVA</label>
-            <Dropdown
-              v-model="purchaseInvoice.taxId"
-              editable
-              :options="purchaseMasterData.masterData.taxes"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.taxId,
-              }"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-2">
-            <BaseInput
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              label="% Dto."
-              id="discountPercentage"
-              v-model="purchaseInvoice.discountPercentage"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-        </section>
-
-        <section class="two-columns">
-          <div class="mt-2">
+          <div class="mt-1">
             <label class="block text-900 mb-2">Forma de pagament</label>
             <Dropdown
               v-model="purchaseInvoice.paymentMethodId"
@@ -149,10 +98,67 @@
               @update:modelValue="calcAmounts()"
             />
           </div>
-          <div class="mt-2">
+        </section>
+
+        <section class="four-columns">
+          <div class="mt-1">
+            <BaseInput
+              :type="BaseInputType.CURRENCY"
+              label="Base"
+              id="baseAmount"
+              v-model="purchaseInvoice.baseAmount"
+              @update:modelValue="calcAmounts()"
+            />
+          </div>
+          <div class="mt-1">
+            <BaseInput
+              :type="BaseInputType.CURRENCY"
+              label="Ports"
+              id="transportAmount"
+              v-model="purchaseInvoice.transportAmount"
+              @update:modelValue="calcAmounts()"
+            />
+          </div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">IVA</label>
+            <Dropdown
+              v-model="purchaseInvoice.taxId"
+              editable
+              :options="purchaseMasterData.masterData.taxes"
+              optionValue="id"
+              optionLabel="name"
+              class="w-full"
+              :class="{
+                'p-invalid': validation.errors.taxId,
+              }"
+              @update:modelValue="calcAmounts()"
+            />
+          </div>
+          <div class="mt-1">
+            <BaseInput
+              :type="BaseInputType.NUMERIC"
+              label="IRPF"
+              id="extraTaxPercentatge"
+              v-model="purchaseInvoice.extraTaxPercentatge"
+              @update:modelValue="calcAmounts()"
+            />
+          </div>
+        </section>
+
+        <section class="four-columns">
+          <div class="mt-1">
             <BaseInput
               :type="BaseInputType.NUMERIC"
               :decimals="2"
+              label="% Dto."
+              id="discountPercentage"
+              v-model="purchaseInvoice.discountPercentage"
+              @update:modelValue="calcAmounts()"
+            />
+          </div>
+          <div class="mt-1">
+            <BaseInput
+              :type="BaseInputType.CURRENCY"
               label="Total"
               id="netAmount"
               v-model="purchaseInvoice.netAmount"
@@ -176,7 +182,7 @@
         </DataTable>
       </div>
 
-      <Button label="Guardar" class="mt-2" @click="submitForm" />
+      <Button label="Guardar" class="save_button" @click="submitForm" />
     </TabPanel>
     <TabPanel header="Fitxers">
       <FileEntityPicker
@@ -259,7 +265,7 @@ const submitForm = async () => {
 
 const setSupplierPaymentMethod = () => {
   const supplier = purchaseMasterData.masterData.suppliers?.find(
-    (s) => purchaseInvoice.value?.supplierId
+    (s) => s.id === purchaseInvoice.value?.supplierId
   );
   if (supplier) {
     purchaseInvoice.value!.paymentMethodId = supplier.paymentMethodId;
@@ -269,20 +275,19 @@ const setSupplierPaymentMethod = () => {
 const calcAmounts = async () => {
   if (!hasBeenMounted) return;
 
-  var tax = purchaseMasterData.masterData.taxes?.find(
-    (item) => item.id === purchaseInvoice.value?.taxId
-  );
+  if (purchaseInvoice.value && purchaseInvoice.value.baseAmount !== 0) {
+    let baseAmount: number = 0;
+    let transportAmount: number = 0;
+    let subtotal: number = 0;
+    let taxPercentage: number = 0;
+    let taxAmount: number = 0;
+    let netAmount: number = 0;
+    let discountAmount: number = 0;
+    let discountPercentage: number = 0;
+    let grossAmount: number = 0;
+    let extraTaxPercentage: number = 0;
+    let extraTaxAmount: number = 0;
 
-  let baseAmount: number = 0;
-  let transportAmount: number = 0;
-  let taxPercentage: number = 0;
-  let taxAmount: number = 0;
-  let netAmount: number = 0;
-  let discountAmount: number = 0;
-  let discountPercentage: number = 0;
-  let grossAmount: number = 0;
-
-  if (purchaseInvoice.value) {
     if (purchaseInvoice.value.baseAmount) {
       baseAmount = parseFloat(purchaseInvoice.value.baseAmount.toFixed(2));
     }
@@ -296,29 +301,47 @@ const calcAmounts = async () => {
         purchaseInvoice.value.discountPercentage.toFixed(2)
       );
     }
+    if (purchaseInvoice.value.extraTaxPercentatge) {
+      extraTaxPercentage = purchaseInvoice.value.extraTaxPercentatge;
+    }
+
+    var tax = purchaseMasterData.masterData.taxes?.find(
+      (item) => item.id === purchaseInvoice.value?.taxId
+    );
     if (tax) {
       taxPercentage = parseFloat(tax.percentatge.toFixed(2));
     }
+
+    subtotal = (baseAmount + transportAmount) * 1;
+    taxAmount = subtotal * (taxPercentage / 100);
+    extraTaxAmount = subtotal * (extraTaxPercentage / 100);
+    grossAmount = subtotal + taxAmount * 1 - extraTaxAmount * 1;
+    discountAmount = (grossAmount * (1 * discountPercentage)) / 100;
+    netAmount = parseFloat((grossAmount - discountAmount).toFixed(2));
+
+    purchaseInvoice.value.baseAmount = baseAmount;
+    purchaseInvoice.value.transportAmount = transportAmount;
+    purchaseInvoice.value.subtotal = subtotal;
+    purchaseInvoice.value.taxAmount = taxAmount;
+    purchaseInvoice.value.grossAmount = grossAmount;
+    purchaseInvoice.value.netAmount = netAmount;
+    purchaseInvoice.value.discountPercentage = discountPercentage;
+    purchaseInvoice.value.discountAmount = discountAmount;
+    purchaseInvoice.value.extraTaxPercentatge = extraTaxPercentage;
+    purchaseInvoice.value.extraTaxAmount = extraTaxAmount;
+
+    // Calcular venciments
+    purchaseInvoice.value.purchaseInvoiceDueDates =
+      (await purchaseStore.GetDueDates(
+        purchaseInvoice.value
+      )) as Array<PurchaseInvoiceDueDate>;
   }
-
-  taxAmount = (baseAmount * 1 + transportAmount * 1) * (taxPercentage / 100);
-  grossAmount = baseAmount * 1 + transportAmount * 1 + taxAmount * 1;
-  discountAmount = (grossAmount * (1 * discountPercentage)) / 100;
-  netAmount = parseFloat((grossAmount - discountAmount).toFixed(2));
-
-  purchaseInvoice.value!.baseAmount = baseAmount;
-  purchaseInvoice.value!.transportAmount = transportAmount;
-  purchaseInvoice.value!.subtotal = baseAmount + transportAmount;
-  purchaseInvoice.value!.taxAmount = taxAmount;
-  purchaseInvoice.value!.grossAmount = grossAmount;
-  purchaseInvoice.value!.netAmount = netAmount;
-  purchaseInvoice.value!.discountPercentage = discountPercentage;
-  purchaseInvoice.value!.discountAmount = discountAmount;
-
-  // Calcular venciments
-  purchaseInvoice.value!.purchaseInvoiceDueDates =
-    (await purchaseStore.GetDueDates(
-      purchaseInvoice.value as PurchaseInvoice
-    )) as Array<PurchaseInvoiceDueDate>;
 };
 </script>
+<style scoped>
+.save_button {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+}
+</style>
