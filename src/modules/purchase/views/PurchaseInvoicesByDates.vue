@@ -146,7 +146,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Comptabilització de factures",
+    title: "Comptabilització de factures",
   });
 });
 

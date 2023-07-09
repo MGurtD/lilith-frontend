@@ -36,7 +36,7 @@ const loadView = async () => {
   if (user.value) {
     store.setMenuItem({
       icon: PrimeIcons.USER,
-      text: `Usuari ${user.value.username}`,
+      title: `Usuari ${user.value.username}`,
       backButtonVisible: true,
     });
   }

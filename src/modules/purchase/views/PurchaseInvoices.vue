@@ -148,7 +148,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
-    text: "Factures de compra",
+    title: "Factures de compra",
   });
 });
 

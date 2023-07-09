@@ -61,7 +61,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.HASHTAG,
-    text: "Gestió d'exercicis",
+    title: "Gestió d'exercicis",
   });
 });
 

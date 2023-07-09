@@ -42,7 +42,6 @@ import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
-import ContextMenu from "primevue/contextmenu";
 import catalan from "./i18n/catalan";
 
 app.use(PrimeVue, {

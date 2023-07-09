@@ -57,7 +57,7 @@ onMounted(async () => {
   await purchaseStore.fetchPurchaseInvoiceSeries();
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Sèries Factures de Compra",
+    title: "Sèries Factures de Compra",
   });
 });
 const createButtonClick = () => {

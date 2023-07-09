@@ -68,7 +68,7 @@ const loadView = async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    text: pageTitle,
+    title: pageTitle,
     backButtonVisible: true,
   });
 };

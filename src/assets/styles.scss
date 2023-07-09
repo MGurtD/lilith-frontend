@@ -27,9 +27,23 @@ body {
 }
 
 :root {
-  --top-panel-height: 5rem;
+  --top-panel-height: 4rem;
   --side-bar-width: 220px;
   --side-bar-collapsed-width: 50px;
+}
+
+.vsm--header {
+  font-size: 1.5rem !important;
+  padding-top: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+.vsm--toggle-btn {
+  height: 50px !important;
+}
+
+.vsm--link_open {
+  background-color: var(--blue-700) !important;
 }
 
 .grid_add_row_button {

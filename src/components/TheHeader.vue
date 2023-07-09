@@ -8,7 +8,7 @@
         @click="goBack"
       ></i>
       <span class="title-bar__page__text">{{
-        store.currentMenuItem.text
+        store.currentMenuItem.title
       }}</span>
     </div>
     <div class="title-bar__user" v-if="store.user">
@@ -60,14 +60,14 @@ const goBack = () => router.back();
   height: var(--top-panel-height);
   display: grid;
   grid-template-columns: 0.7fr 0.3fr;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
   padding-bottom: 1rem;
   width: calc(100vw - var(--side-bar-width));
   transition: all 0.3s ease-in-out;
 }
 
 .collapsed {
-  left: 50px;
+  left: 60px;
   width: calc(100vw - var(--side-bar-collapsed-width));
 }
 

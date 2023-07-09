@@ -109,7 +109,7 @@ onMounted(async () => {
   await customerStore.fetchCustomerTypes();
 
   store.setMenuItem({
-    text: "Clients",
+    title: "Clients",
     icon: PrimeIcons.HASHTAG,
   });
 });

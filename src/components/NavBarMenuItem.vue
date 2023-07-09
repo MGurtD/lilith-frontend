@@ -1,8 +1,8 @@
 <template>
-  <li class="menu-item">
-    <router-link :to="(item.route as string)">
+  <li class="menu-item" @click="() => emit('click', item)">
+    <router-link :to="(item.href as string)">
       <i :class="item.icon" />
-      <span v-if="!isCollapsed">&nbsp;&nbsp;{{ item.text }}</span>
+      <span v-if="!isCollapsed">&nbsp;&nbsp;{{ item.title }}</span>
     </router-link>
   </li>
 </template>
@@ -15,6 +15,10 @@ defineProps({
   item: { type: Object as PropType<MenuItem>, required: true },
   isCollapsed: Boolean,
 });
+
+const emit = defineEmits<{
+  (event: "click", item: MenuItem): void;
+}>();
 </script>
 
 <style scoped>

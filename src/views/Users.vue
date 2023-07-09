@@ -6,9 +6,16 @@
       tableStyle="min-width: 50rem"
       @row-click="openUser"
     >
+      <template #header>
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
+        >
+          <span class="text-xl text-900 font-bold">Usuaris</span>
+        </div>
+      </template>
       <Column
         field="username"
-        header="Usuari"
+        header="Nom d'usuari"
         sortable
         style="width: 20%"
       ></Column>
@@ -58,7 +65,7 @@ const openUser = (row: DataTableRowClickEvent) => {
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.USERS,
-    text: "Usuaris",
+    title: "Gestió d'usuaris",
   });
 
   await fetchUsers();

@@ -30,15 +30,6 @@
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
     </Column>
-    <!-- <Column>
-      <template #body="slotProps">
-        <i
-          :class="PrimeIcons.TIMES"
-          class="grid_delete_column_button"
-          @click="deletePaymentMethod($event, slotProps.data)"
-        />
-      </template>
-    </Column> -->
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -64,7 +55,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.HASHTAG,
-    text: "Formes de pagament",
+    title: "Gestió de formes de pagament",
   });
 });
 

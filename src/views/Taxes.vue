@@ -48,7 +48,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.HASHTAG,
-    text: "Gestió d'impostos",
+    title: "Gestió d'impostos",
   });
 });
 

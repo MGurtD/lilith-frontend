@@ -97,7 +97,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.HASHTAG,
-    text: "Proveïdors",
+    title: "Proveïdors",
   });
 });
 
