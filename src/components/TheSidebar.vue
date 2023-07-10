@@ -78,28 +78,4 @@ const menu = [
 .hide {
   visibility: hidden;
 }
-
-.toggle-button {
-  border: none;
-  background-color: #34495e; /* Cambiar a un tono de azul más oscuro */
-  color: #fff;
-  margin-bottom: 1.5rem;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-.side-menu-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.side-menu-footer {
-  color: #fff;
-  position: fixed;
-  left: 1rem;
-  bottom: 1rem;
-  border: 1px solid white;
-  width: calc(var(--side-bar-width) - 2rem);
-}
 </style>

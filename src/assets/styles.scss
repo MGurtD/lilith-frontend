@@ -28,13 +28,14 @@ body {
 
 :root {
   --top-panel-height: 4rem;
-  --side-bar-width: 220px;
+  --side-bar-width: 250px;
   --side-bar-collapsed-width: 50px;
 }
 
 .vsm--header {
   font-size: 1.5rem !important;
   padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
   padding-left: 1rem !important;
 }
 
