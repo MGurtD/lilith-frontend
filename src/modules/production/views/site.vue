@@ -1,8 +1,8 @@
 <template>
-    <FormExpense 
-    v-if="expense"
-    :expense="expense"
-    @submit="submitForm"
+    <FormSite 
+        v-if="site"
+        :site="site"
+        @submit="submitForm"
     />
 </template>
 <script setup lang="ts">
@@ -11,31 +11,31 @@ import { useRoute } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
-import { Expense } from "../types";
+import { Site } from "../types";
 import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import router from "../../../router";
-import FormExpense from "../components/FormExpense.vue";
-import { useExpenseStore } from "../store/expense";
+import FormSite from "../components/FormSite.vue";
+import { usePlantModelStore } from "../store/plantmodel";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
-const expenseStore = useExpenseStore();
-const { expense } = storeToRefs(expenseStore);
+const siteStore = usePlantModelStore();
+const { site } = storeToRefs(siteStore);
 
 const loadView = async () => {
-    await expenseStore.fetchExpense(route.params.id as string);
+    await siteStore.fetchSite(route.params.id as string);
     let pageTitle ="";
-    if(!expense.value){
+    if(!site.value){
         formMode.value = FormActionMode.CREATE;
-        expenseStore.setNewExpense(route.params.id as string);
-        pageTitle = "Alta de despeses";
+        siteStore.setNewSite(route.params.id as string);
+        pageTitle = "Alta de locals";
     } else {
         formMode.value = FormActionMode.EDIT;
-        pageTitle = "Modificació de despeses";
+        pageTitle = "Modificació de locals";
 
     }
     store.setMenuItem({
@@ -51,16 +51,16 @@ onMounted(async () => {
 
 const toast = useToast();
 const submitForm = async () => {
-  const data = expense.value as Expense;
+  const data = site.value as Site;
   let result = false;
   let message = "";
 
   if (formMode.value === FormActionMode.CREATE) {
-    result = await expenseStore.createExpense(data);
-    message = "Despesa registrada correctament";
+    result = await siteStore.createSite(data);
+    message = "Local registrat correctament";
   } else {
-    result = await expenseStore.updateExpense(data.id, data);
-    message = "Despesa actualizada correctament";
+    result = await siteStore.updateSite(data.id, data);
+    message = "Local actualitzat correctament";
   }
 
   if (result) {

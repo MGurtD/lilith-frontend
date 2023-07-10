@@ -76,7 +76,18 @@ const applicationMenus = [
     icon: PrimeIcons.CALCULATOR,
     title: "Despeses",
     href: "",
-    child: [],
+    child: [
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Tipus de despesa",
+        href: "/expensetype",
+      },
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Despeses",
+        href: "/expense",
+      },
+    ],
   },
   {
     icon: PrimeIcons.MONEY_BILL,
@@ -94,7 +105,38 @@ const applicationMenus = [
     icon: PrimeIcons.CHART_BAR,
     title: "Producció",
     href: "",
-    child: [],
+    child: [
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Empresa",
+        href: "/enterprise",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Local",
+        href: "/site",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Area",
+        href: "/area",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Tipus de línea",
+        href: "/workcentertype",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Línea",
+        href: "/workcenter",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Màquina",
+        href: "/unit",
+      },
+    ],
   },
 ] as Array<MenuItem>;
 

@@ -19,7 +19,11 @@
     </template>    
     <Column field="description" header="Descripció" style="width: 40%"></Column>
     <Column field="amount" header="Import" style="width: 15%"></Column>
-    <Column field="paymentDate" header="Data pagament" style="width: 20%"></Column>
+    <Column field="paymentDate" header="Data pagament" style="width: 20%">
+      <template #body="slotProps">
+          {{ formatDate(slotProps.data.paymentDate) }}
+        </template>
+    </Column>
     <Column header="Tipus" style="width: 15%">
         <template #body="slotProps">
           {{ getExpenseTypeNameById(slotProps.data.expensTypeId) }}
@@ -40,6 +44,10 @@ import { useExpenseStore } from '../store/expense';
 import { onMounted } from 'vue';
 import { PrimeIcons } from 'primevue/api';
 import { DataTableRowClickEvent } from "primevue/datatable";
+import {
+  formatDateForQueryParameter,
+  formatDate,
+} from "../../../utils/functions";
 
 
 const router = useRouter();
@@ -52,7 +60,7 @@ onMounted(async () => {
 
     store.setMenuItem({
         icon: PrimeIcons.WALLET,
-        text: "Gestió de despeses",
+        title: "Gestió de despeses",
     });
 });
 
@@ -77,4 +85,5 @@ const getExpenseTypeNameById = (id: string) => {
   if (type) return type.name;
   else return "";
 };
+
 </script>

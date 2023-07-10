@@ -25,7 +25,7 @@
                 }"
                 />
             </div>
-            <div class="mt-2">
+            <div class="mt-1">
                 <label class="block text-900 mb-2">Data Pagament: </label>
                 <Calendar
                 id="paymentDate"
@@ -69,14 +69,14 @@
                 }"
               />
             </div>
-            <div class="mt-2">
+            <div class="mt-1">
             <BaseInput
               label="Dia de pagament"
               id="paymentDay"
               v-model="expense.paymentDay"
             />
           </div>
-          <div class="mt-2">
+          <div class="mt-1">
                 <label class="block text-900 mb-2">Data fi: </label>
                 <Calendar
                 id="endDate"
@@ -84,14 +84,10 @@
                 />
             </div>
         </section>
-        <section class="one-column">
-            <Textarea
-            id="description"
-            v-model="expense.description"
-            >
-
-            </Textarea>
-        </section>
+        <div>
+          <label class="block text-900 mb-2">Descripció</label>
+          <Textarea v-model="expense.description" class="w-full" />
+        </div>        
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
         </div>
@@ -109,6 +105,10 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
+import {
+  formatDateForQueryParameter,
+  formatDate,
+} from "../../../utils/functions";
 
 
 const props = defineProps<{
