@@ -33,15 +33,16 @@ const PurchaseInvoices = () =>
   import("./modules/purchase/views/PurchaseInvoices.vue");
 const PurchaseInvoice = () =>
   import("./modules/purchase/views/PurchaseInvoice.vue");
+const PurchaseDashboard = () =>
+  import("./modules/purchase/views/PurchaseDashboard.vue");
 
-const Enterprise = () => import("./modules/production/views/Enterprise.vue");
-const Enterprises = () => import("./modules/production/views/Enterprises.vue");
+//const Enterprise = () => import("./modules/production/views/Enterprise.vue");
+//const Enterprises = () => import("./modules/production/views/Enterprises.vue");
 
 const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
 const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
 const Expense = () => import("./modules/expense/views/expense.vue");
 const Expenses = () => import("./modules/expense/views/expenses.vue");
-
 
 
 const router = createRouter({
@@ -122,6 +123,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/purchase-dashboard",
+      name: "PurchaseDashboard",
+      component: PurchaseDashboard,
+      props: true,
+    },
+    {
       path: "/exercise",
       name: "Exercises",
       component: Exercises,
@@ -148,16 +155,16 @@ const router = createRouter({
       name: "PurchaseInvoicesByDates",
       component: PurchaseInvoicesByDates,
     },
-    {
-      path: "/enterprise/:id",
-      name: "Enterprise",
-      component: Enterprise,
-    },
-    {
-      path: "/enterprise",
-      name: "Enterprises",
-      component: Enterprises,
-    },
+    // {
+    //   path: "/enterprise/:id",
+    //   name: "Enterprise",
+    //   component: Enterprise,
+    // },
+    // {
+    //   path: "/enterprise",
+    //   name: "Enterprises",
+    //   component: Enterprises,
+    // },
     {
       path: "/expensetype/:id",
       name: "Expense Type",

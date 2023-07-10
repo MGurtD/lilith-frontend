@@ -1,5 +1,5 @@
 <template>
-    <DataTable
+  <DataTable
     :value="expenseStore.expenseTypes"
     tableStyle="min-width: 100%"
     @row-click="editExpenseType"
@@ -24,33 +24,32 @@
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
     </Column>
-    </DataTable>
+  </DataTable>
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from 'vue-router';
-import { useStore } from '../../../store';
-import { useExpenseStore } from '../store/expense';
-import { onMounted } from 'vue';
-import { PrimeIcons } from 'primevue/api';
+import { useRouter } from "vue-router";
+import { useStore } from "../../../store";
+import { useExpenseStore } from "../store/expense";
+import { onMounted } from "vue";
+import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-
 
 const router = useRouter();
 const store = useStore();
 const expenseStore = useExpenseStore();
 
 onMounted(async () => {
-    await expenseStore.fetchExpenseTypes();
+  await expenseStore.fetchExpenseTypes();
 
-    store.setMenuItem({
-        icon: PrimeIcons.FLAG,
-        text: "Gestió de tipus de despesa",
-    });
+  store.setMenuItem({
+    icon: PrimeIcons.FLAG,
+    title: "Gestió de tipus de despesa",
+  });
 });
 
 const createButtonClick = () => {
-    router.push({ path: `/expensetype/${uuidv4()}`});
+  router.push({ path: `/expensetype/${uuidv4()}` });
 };
 
 const editExpenseType = (row: DataTableRowClickEvent) => {

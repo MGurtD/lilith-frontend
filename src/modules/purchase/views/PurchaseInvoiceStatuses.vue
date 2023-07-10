@@ -57,7 +57,7 @@ onMounted(async () => {
   await purchaseStore.fetchPurchaseInvoiceStatuses();
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Estats de Factures de Compra",
+    title: "Estats de Factures de Compra",
   });
 });
 const createButtonClick = () => {

@@ -24,12 +24,16 @@
               />
             </div>
             <div class="filter-field">
-              <label class="block text-900 mb-2">Excloure gestionades</label>
-              <Checkbox
-                v-model="filter.excludeManaged"
-                :binary="true"
-                @click="filterInvoices"
-              />
+              <label class="block text-900 mb-2 mr-3">Amagar Gestionades</label>
+              <div class="flex flex-wrap gap-3">
+                <div class="flex align-items-center">
+                  <Checkbox
+                    v-model="filter.excludeManaged"
+                    :binary="true"
+                    @change="filterInvoices"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div class="datatable-buttons">
@@ -146,7 +150,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    text: "Comptabilització de factures",
+    title: "Comptabilització de factures",
   });
 });
 
@@ -187,7 +191,7 @@ const isManagedStatus = (statusId: string): boolean => {
 const filterInvoices = async () => {
   if (filter.value.dates) {
     let managedStatus = undefined;
-    if (filter.value.excludeManaged) {
+    if (filter.value.excludeManaged === true) {
       managedStatus = purchaseStore.masterData.statuses?.find(
         (s) => s.name === "Gestionada"
       );
@@ -253,12 +257,6 @@ const downloadInvoices = async (invoice: PurchaseInvoice) => {
 };
 </script>
 <style scoped>
-.datatable-filter {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
 .datatable-button {
   margin-right: 1rem;
 }

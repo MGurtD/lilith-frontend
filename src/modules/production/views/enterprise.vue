@@ -1,9 +1,9 @@
 <template>
-    <FormEnterprise 
-        v-if="enterprise"
-        :enterprise="enterprise"
-        @submit="submitForm"
-    />
+  <FormEnterprise
+    v-if="enterprise"
+    :enterprise="enterprise"
+    @submit="submitForm"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -27,8 +27,8 @@ const plantmodelStore = usePlantModelStore();
 const { enterprise } = storeToRefs(plantmodelStore);
 
 const loadView = async () => {
-    await plantmodelStore.fetchEnterprise(route.params.id as string);
-    let pageTitle = "";
+  await plantmodelStore.fetchEnterprise(route.params.id as string);
+  let pageTitle = "";
   if (!enterprise.value) {
     formMode.value = FormActionMode.CREATE;
     plantmodelStore.setNewEnterprise(route.params.id as string);
@@ -41,7 +41,7 @@ const loadView = async () => {
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     backButtonVisible: true,
-    text: pageTitle,
+    title: pageTitle,
   });
 };
 
@@ -72,5 +72,4 @@ const submitForm = async () => {
     router.back();
   }
 };
-
 </script>

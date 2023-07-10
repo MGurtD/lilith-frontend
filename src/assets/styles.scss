@@ -27,9 +27,24 @@ body {
 }
 
 :root {
-  --top-panel-height: 5rem;
-  --side-bar-width: 220px;
+  --top-panel-height: 4rem;
+  --side-bar-width: 250px;
   --side-bar-collapsed-width: 50px;
+}
+
+.vsm--header {
+  font-size: 1.5rem !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+.vsm--toggle-btn {
+  height: 50px !important;
+}
+
+.vsm--link_open {
+  background-color: var(--blue-700) !important;
 }
 
 .grid_add_row_button {
@@ -58,6 +73,19 @@ table > tbody > tr {
   font-size: 0.8rem !important;
 }
 
+.datatable-filter {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
 .filter-field {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
   font-size: 0.8rem !important;
+}
+
+.filter-field > label {
+  padding-top: 12px;
+  font-size: 1rem;
 }

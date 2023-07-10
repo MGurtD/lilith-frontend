@@ -87,11 +87,11 @@
           {{ getLastDueDate(slotProps.data) }}
         </template>
       </Column>
-      <Column
-        field="baseAmount"
-        header="Import Base"
-        style="width: 15%"
-      ></Column>
+      <Column header="Import" style="width: 15%">
+        <template #body="slotProps">
+          {{ slotProps.data.netAmount }} €
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>
@@ -148,7 +148,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
-    text: "Factures de compra",
+    title: "Factures de compra",
   });
 });
 
@@ -222,24 +222,3 @@ const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
   }
 };
 </script>
-<style scoped>
-.datatable-filter {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-.datatable-button {
-  margin-right: 1rem;
-}
-
-.filter-field {
-  display: grid;
-  grid-template-columns: 0.4fr 1fr;
-}
-
-.filter-field > label {
-  padding-top: 12px;
-  font-size: 1rem;
-}
-</style>

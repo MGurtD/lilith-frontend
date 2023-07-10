@@ -9,75 +9,92 @@ const localStorageAuthKey = "temges.authorization";
 
 const applicationMenus = [
   {
-    icon: PrimeIcons.HOME,
-    text: "Inici",
-    route: "/",
-  },
-  {
-    icon: PrimeIcons.CALENDAR,
-    text: "Exercicis",
-    route: "/exercise",
-  },
-  {
-    icon: PrimeIcons.PERCENTAGE,
-    text: "Impostos",
-    route: "/taxes",
-  },
-  {
-    icon: PrimeIcons.PAYPAL,
-    text: "Formes de pagament",
-    route: "/payment-methods",
+    icon: PrimeIcons.COG,
+    title: "General",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.CALENDAR,
+        title: "Exercicis",
+        href: "/exercise",
+      },
+      {
+        icon: PrimeIcons.PERCENTAGE,
+        title: "Impostos",
+        href: "/taxes",
+      },
+      {
+        icon: PrimeIcons.PAYPAL,
+        title: "Formes de pagament",
+        href: "/payment-methods",
+      },
+      {
+        icon: PrimeIcons.USERS,
+        title: "Usuaris",
+        href: "/users",
+      },
+    ],
   },
   {
     icon: PrimeIcons.CART_PLUS,
-    text: "Proveïdors",
-    route: "/suppliers",
+    title: "Compres",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.SORT_NUMERIC_DOWN,
+        title: "Sèries de factures",
+        href: "/purchaseinvoiceserie",
+      },
+      {
+        icon: PrimeIcons.FLAG,
+        title: "Estats de factures",
+        href: "/purchaseinvoicestatus",
+      },
+      {
+        icon: PrimeIcons.BOOKMARK,
+        title: "Proveïdors",
+        href: "/suppliers",
+      },
+      {
+        icon: PrimeIcons.MONEY_BILL,
+        title: "Factures de compra",
+        href: "/purchaseinvoice",
+      },
+      {
+        icon: PrimeIcons.MONEY_BILL,
+        title: "Gestió de factures",
+        href: "/purchaseinvoices-by-period",
+      },
+      {
+        icon: PrimeIcons.CHART_PIE,
+        title: "Dashboard",
+        href: "/purchase-dashboard",
+      },
+    ],
   },
   {
-    icon: PrimeIcons.SORT_NUMERIC_DOWN,
-    text: "Sèries de factures",
-    route: "/purchaseinvoiceserie",
-  },
-  {
-    icon: PrimeIcons.FLAG,
-    text: "Estats de factures",
-    route: "/purchaseinvoicestatus",
+    icon: PrimeIcons.CALCULATOR,
+    title: "Despeses",
+    href: "",
+    child: [],
   },
   {
     icon: PrimeIcons.MONEY_BILL,
-    text: "Factures de compra",
-    route: "/purchaseinvoice",
+    title: "Ventes",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Clients",
+        href: "/customers",
+      },
+    ],
   },
   {
-    icon: PrimeIcons.MONEY_BILL,
-    text: "Gestió de factures",
-    route: "/purchaseinvoices-by-period",
-  },
-  {
-    icon: PrimeIcons.WALLET,
-    text: "Clients",
-    route: "/customers",
-  },
-  {
-    icon: PrimeIcons.PRIME,
-    text: "Empresa",
-    route: "/enterprise",
-  },
-  {
-    icon: PrimeIcons.FLAG,
-    text: "Tipus de despesa",
-    route: "/expensetype",
-  },
-  {
-    icon: PrimeIcons.WALLET,
-    text: "Despeses",
-    route: "/expense",
-  },
-  {
-    
-    icon: PrimeIcons.USERS,
-    text: "Usuaris",
-    route: "/users",
+    icon: PrimeIcons.CHART_BAR,
+    title: "Producció",
+    href: "",
+    child: [],
   },
 ] as Array<MenuItem>;
 
@@ -91,10 +108,21 @@ export const useStore = defineStore("applicationStore", {
       menus: [] as Array<MenuItem>,
       menuCollapsed: false,
       currentMenuItem: {
-        text: "Home",
+        title: "Home",
         icon: PrimeIcons.HOME,
       } as MenuItem,
     };
+  },
+  getters: {
+    userMenus: (state): Array<MenuItem> => {
+      if (state.user?.role?.name === "manager") {
+        return applicationMenus.filter(
+          (m) => m.title === "Gestió de factures" || m.title === "Inici"
+        );
+      } else {
+        return applicationMenus;
+      }
+    },
   },
   actions: {
     setMenuItem(menu: MenuItem) {
@@ -103,7 +131,7 @@ export const useStore = defineStore("applicationStore", {
     setMenusByRole() {
       if (this.user?.role?.name === "manager") {
         this.menus = applicationMenus.filter(
-          (m) => m.text === "Gestió de factures" || m.text === "Inici"
+          (m) => m.title === "Gestió de factures" || m.title === "Inici"
         );
       } else {
         this.menus = applicationMenus;

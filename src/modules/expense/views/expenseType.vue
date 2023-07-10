@@ -1,9 +1,9 @@
 <template>
-    <FormExpenseType 
-        v-if="expenseType"
-        :expenseType="expenseType"
-        @submit="submitForm"
-    />
+  <FormExpenseType
+    v-if="expenseType"
+    :expenseType="expenseType"
+    @submit="submitForm"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -27,8 +27,8 @@ const expenseStore = useExpenseStore();
 const { expenseType } = storeToRefs(expenseStore);
 
 const loadView = async () => {
-    await expenseStore.fetchExpenseType(route.params.id as string);
-    let pageTitle = "";
+  await expenseStore.fetchExpenseType(route.params.id as string);
+  let pageTitle = "";
   if (!expenseType.value) {
     formMode.value = FormActionMode.CREATE;
     expenseStore.setNewExpenseType(route.params.id as string);
@@ -41,7 +41,7 @@ const loadView = async () => {
   store.setMenuItem({
     icon: PrimeIcons.FLAG,
     backButtonVisible: true,
-    text: pageTitle,
+    title: pageTitle,
   });
 };
 
@@ -72,5 +72,4 @@ const submitForm = async () => {
     router.back();
   }
 };
-
 </script>

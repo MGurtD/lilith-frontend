@@ -11,7 +11,7 @@ const store = useStore();
 
 onMounted(() => {
   store.setMenuItem({
-    text: "",
+    title: "",
     icon: "",
   });
 });

@@ -1,9 +1,9 @@
 <template>
-    <DataTable
+  <DataTable
     :value="plantmodelStore.enterprises"
     tableStyle="min-width: 100%"
     @row-click="editEnterprise"
-    >
+  >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
@@ -24,33 +24,32 @@
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
     </Column>
-    </DataTable>
+  </DataTable>
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from 'vue-router';
-import { useStore } from '../../../store';
-import { usePlantModelStore } from '../store/plantmodel';
-import { onMounted } from 'vue';
-import { PrimeIcons } from 'primevue/api';
+import { useRouter } from "vue-router";
+import { useStore } from "../../../store";
+import { usePlantModelStore } from "../store/plantmodel";
+import { onMounted } from "vue";
+import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-
 
 const router = useRouter();
 const store = useStore();
 const plantmodelStore = usePlantModelStore();
 
 onMounted(async () => {
-    await plantmodelStore.fetchEnterprises();
+  await plantmodelStore.fetchEnterprises();
 
-    store.setMenuItem({
-        icon: PrimeIcons.CALENDAR,
-        text: "Gestió d'empreses",
-    });
+  store.setMenuItem({
+    icon: PrimeIcons.CALENDAR,
+    title: "Gestió d'empreses",
+  });
 });
 
 const createButtonClick = () => {
-    router.push({ path: `/enterprise/${uuidv4()}`});
+  router.push({ path: `/enterprise/${uuidv4()}` });
 };
 
 const editEnterprise = (row: DataTableRowClickEvent) => {
