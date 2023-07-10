@@ -58,17 +58,23 @@ const applicationMenus = [
     text: "Clients",
     route: "/customers",
   },
-  // {
-  //   icon: PrimeIcons.PRIME,
-  //   text: "Empresa",
-  //   route: "/enterprise",
-  // },
-  // {
-  //   icon: PrimeIcons.FLAG,
-  //   text: "Tipus de despesa",
-  //   route: "/expensetype",
-  // },
   {
+    icon: PrimeIcons.PRIME,
+    text: "Empresa",
+    route: "/enterprise",
+  },
+  {
+    icon: PrimeIcons.FLAG,
+    text: "Tipus de despesa",
+    route: "/expensetype",
+  },
+  {
+    icon: PrimeIcons.WALLET,
+    text: "Despeses",
+    route: "/expense",
+  },
+  {
+    
     icon: PrimeIcons.USERS,
     text: "Usuaris",
     route: "/users",

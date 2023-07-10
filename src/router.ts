@@ -39,6 +39,9 @@ const Enterprises = () => import("./modules/production/views/Enterprises.vue");
 
 const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
 const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
+const Expense = () => import("./modules/expense/views/expense.vue");
+const Expenses = () => import("./modules/expense/views/expenses.vue");
+
 
 
 const router = createRouter({
@@ -164,6 +167,16 @@ const router = createRouter({
       path: "/expensetype",
       name: "Expense Types",
       component: ExpenseTypes,
+    },
+    {
+      path: "/expense/:id",
+      name: "Expense",
+      component: Expense,
+    },
+    {
+      path: "/expense",
+      name: "Expenses",
+      component: Expenses,
     },
   ],
 });

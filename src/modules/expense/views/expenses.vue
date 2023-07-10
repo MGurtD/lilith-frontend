@@ -1,14 +1,14 @@
 <template>
     <DataTable
-    :value="expenseStore.expenseTypes"
+    :value="expenseStore.expenses"
     tableStyle="min-width: 100%"
-    @row-click="editExpenseType"
+    @row-click="editExpense"
     >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Tipus de despesa</span>
+        <span class="text-xl text-900 font-bold">Despeses</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded
@@ -16,12 +16,18 @@
           @click="createButtonClick"
         />
       </div>
-    </template>
-    <Column field="name" header="Nom" style="width: 25%"></Column>
-    <Column field="description" header="Descripció" style="width: 50%"></Column>
-    <Column header="Desactivada" style="width: 10%">
+    </template>    
+    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column field="amount" header="Import" style="width: 15%"></Column>
+    <Column field="paymentDate" header="Data pagament" style="width: 20%"></Column>
+    <Column header="Tipus" style="width: 15%">
+        <template #body="slotProps">
+          {{ getExpenseTypeNameById(slotProps.data.expensTypeId) }}
+        </template>
+    </Column>
+    <Column header="Recurrent" style="width: 10%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
+        <BooleanColumn :value="slotProps.data.recurring" />
       </template>
     </Column>
     </DataTable>
@@ -42,24 +48,33 @@ const expenseStore = useExpenseStore();
 
 onMounted(async () => {
     await expenseStore.fetchExpenseTypes();
+    await expenseStore.fetchExpenses();
 
     store.setMenuItem({
-        icon: PrimeIcons.FLAG,
-        text: "Gestió de tipus de despesa",
+        icon: PrimeIcons.WALLET,
+        text: "Gestió de despeses",
     });
 });
 
 const createButtonClick = () => {
-    router.push({ path: `/expensetype/${uuidv4()}`});
+    router.push({ path: `/expense/${uuidv4()}`});
 };
 
-const editExpenseType = (row: DataTableRowClickEvent) => {
+const editExpense = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/expensetype/${row.data.id}` });
+    router.push({ path: `/expense/${row.data.id}` });
   }
+};
+
+const getExpenseTypeNameById = (id: string) => {
+  const type = expenseStore.expenseTypes?.find(
+    (s) => s.id === id
+  );
+  if (type) return type.name;
+  else return "";
 };
 </script>
