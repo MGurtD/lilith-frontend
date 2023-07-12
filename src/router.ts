@@ -34,19 +34,17 @@ const PurchaseInvoices = () =>
 const PurchaseInvoice = () =>
   import("./modules/purchase/views/PurchaseInvoice.vue");
 const PurchaseDashboard = () =>
-  import("./modules/purchase/views/PurchaseDashboard.vue");
+  import("./modules/expense/views/ExpenseDashboard.vue");
 
 const Enterprise = () => import("./modules/production/views/Enterprise.vue");
 const Enterprises = () => import("./modules/production/views/Enterprises.vue");
 const Site = () => import("./modules/production/views/site.vue");
 const Sites = () => import("./modules/production/views/sites.vue");
 
-
-const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
-const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
-const Expense = () => import("./modules/expense/views/expense.vue");
-const Expenses = () => import("./modules/expense/views/expenses.vue");
-
+const ExpenseType = () => import("./modules/expense/views/ExpenseType.vue");
+const ExpenseTypes = () => import("./modules/expense/views/ExpenseTypes.vue");
+const Expense = () => import("./modules/expense/views/Expense.vue");
+const Expenses = () => import("./modules/expense/views/Expenses.vue");
 
 const router = createRouter({
   history: createWebHistory(),
