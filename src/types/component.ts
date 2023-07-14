@@ -17,3 +17,16 @@ export interface MenuItem {
   backButtonVisible?: boolean;
   child?: Array<MenuItem>;
 }
+
+export interface ChartOptions {
+  labels: string[];
+  datasets?: ChartDataSet[];
+}
+
+export interface ChartDataSet {
+  label: string;
+  data: number[];
+  backgroundColor: string[];
+  borderColor: string[];
+  borderWidth: number;
+}

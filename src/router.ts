@@ -33,18 +33,18 @@ const PurchaseInvoices = () =>
   import("./modules/purchase/views/PurchaseInvoices.vue");
 const PurchaseInvoice = () =>
   import("./modules/purchase/views/PurchaseInvoice.vue");
-const PurchaseDashboard = () =>
-  import("./modules/expense/views/ExpenseDashboard.vue");
 
 const Enterprise = () => import("./modules/production/views/Enterprise.vue");
 const Enterprises = () => import("./modules/production/views/Enterprises.vue");
-const Site = () => import("./modules/production/views/site.vue");
-const Sites = () => import("./modules/production/views/sites.vue");
+const Site = () => import("./modules/production/views/Site.vue");
+const Sites = () => import("./modules/production/views/Sites.vue");
 
 const ExpenseType = () => import("./modules/expense/views/ExpenseType.vue");
-const ExpenseTypes = () => import("./modules/expense/views/ExpenseTypes.vue");
+const ExpenseTypes = () => import("./modules/expense/views/ExpenseType.vue");
 const Expense = () => import("./modules/expense/views/Expense.vue");
 const Expenses = () => import("./modules/expense/views/Expenses.vue");
+const ExpenseDashboard = () =>
+  import("./modules/expense/views/ExpenseDashboard.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -124,12 +124,6 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/purchase-dashboard",
-      name: "PurchaseDashboard",
-      component: PurchaseDashboard,
-      props: true,
-    },
-    {
       path: "/exercise",
       name: "Exercises",
       component: Exercises,
@@ -195,6 +189,11 @@ const router = createRouter({
       path: "/expense",
       name: "Expenses",
       component: Expenses,
+    },
+    {
+      path: "/expense-dashboard",
+      name: "ExpenseDashboard",
+      component: ExpenseDashboard,
     },
   ],
 });

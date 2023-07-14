@@ -1,9 +1,6 @@
 import { defineStore } from "pinia";
-import { ExpenseTypeService, ExpenseService } from "../services";
+import ExpenseServices from "../services";
 import { ExpenseType, Expense } from "../types";
-
-const expenseTypeService = new ExpenseTypeService("/expensetype");
-const expenseService = new ExpenseService("/expense");
 
 export const useExpenseStore = defineStore({
   id: "expense",
@@ -25,23 +22,23 @@ export const useExpenseStore = defineStore({
       } as ExpenseType;
     },
     async fetchExpenseTypes() {
-      this.expenseTypes = await expenseTypeService.getAll();
+      this.expenseTypes = await ExpenseServices.ExpenseType.getAll();
     },
     async fetchExpenseType(id: string) {
-      this.expenseType = await expenseTypeService.getById(id);
+      this.expenseType = await ExpenseServices.ExpenseType.getById(id);
     },
     async createExpenseType(expenseType: ExpenseType) {
-      const result = await expenseTypeService.create(expenseType);
+      const result = await ExpenseServices.ExpenseType.create(expenseType);
       if (result) await this.fetchExpenseTypes();
       return result;
     },
     async updateExpenseType(id: string, expenseType: ExpenseType) {
-      const result = await expenseTypeService.update(id, expenseType);
+      const result = await ExpenseServices.ExpenseType.update(id, expenseType);
       if (result) await this.fetchExpenseTypes();
       return result;
     },
     async deleteExpenseType(id: string) {
-      const result = await expenseTypeService.delete(id);
+      const result = await ExpenseServices.ExpenseType.delete(id);
       if (result) await this.fetchExpenseTypes();
       return result;
     },
@@ -63,23 +60,23 @@ export const useExpenseStore = defineStore({
       } as Expense;
     },
     async fetchExpenses() {
-      this.expenses = await expenseService.getAll();
+      this.expenses = await ExpenseServices.Expense.getAll();
     },
     async fetchExpense(id: string) {
-      this.expense = await expenseService.getById(id);
+      this.expense = await ExpenseServices.Expense.getById(id);
     },
     async createExpense(expense: Expense) {
-      const result = await expenseService.create(expense);
+      const result = await ExpenseServices.Expense.create(expense);
       if (result) await this.fetchExpenses();
       return result;
     },
     async updateExpense(id: string, expense: Expense) {
-      const result = await expenseService.update(id, expense);
+      const result = await ExpenseServices.Expense.update(id, expense);
       if (result) await this.fetchExpenses();
       return result;
     },
     async deleteExpense(id: string) {
-      const result = await expenseService.delete(id);
+      const result = await ExpenseServices.Expense.delete(id);
       if (result) await this.fetchExpenses();
       return result;
     },

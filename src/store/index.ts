@@ -65,11 +65,6 @@ const applicationMenus = [
         title: "Gestió de factures",
         href: "/purchaseinvoices-by-period",
       },
-      {
-        icon: PrimeIcons.CHART_PIE,
-        title: "Dashboard",
-        href: "/purchase-dashboard",
-      },
     ],
   },
   {
@@ -86,6 +81,11 @@ const applicationMenus = [
         icon: PrimeIcons.WALLET,
         title: "Despeses",
         href: "/expense",
+      },
+      {
+        icon: PrimeIcons.CHART_PIE,
+        title: "Dashboard",
+        href: "/expense-dashboard",
       },
     ],
   },

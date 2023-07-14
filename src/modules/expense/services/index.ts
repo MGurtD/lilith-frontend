@@ -1,9 +1,9 @@
 import { ExpenseType, Expense, ConsolidatedExpense } from "../types";
 import BaseService from "../../../api/base.service";
 
-export class ExpenseTypeService extends BaseService<ExpenseType> {}
+class ExpenseTypeService extends BaseService<ExpenseType> {}
 
-export class ExpenseService extends BaseService<Expense> {
+class ExpenseService extends BaseService<Expense> {
   async getConsolidated(
     startTime: string,
     endTime: string
@@ -15,3 +15,8 @@ export class ExpenseService extends BaseService<Expense> {
     }
   }
 }
+
+export default {
+  Expense: new ExpenseService("Expense"),
+  ExpenseType: new ExpenseTypeService("ExpenseType"),
+};
