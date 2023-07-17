@@ -33,8 +33,6 @@ const PurchaseInvoices = () =>
   import("./modules/purchase/views/PurchaseInvoices.vue");
 const PurchaseInvoice = () =>
   import("./modules/purchase/views/PurchaseInvoice.vue");
-const PurchaseDashboard = () =>
-  import("./modules/purchase/views/PurchaseDashboard.vue");
 
 const Enterprise = () => import("./modules/production/views/Enterprise.vue");
 const Enterprises = () => import("./modules/production/views/Enterprises.vue");
@@ -47,11 +45,12 @@ const WorkcenterTypes = () => import("./modules/production/views/workcentertypes
 const Workcenter = () => import("./modules/production/views/workcenter.vue");
 const Workcenters = () => import("./modules/production/views/workcenters.vue");
 
-const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
-const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
-const Expense = () => import("./modules/expense/views/expense.vue");
-const Expenses = () => import("./modules/expense/views/expenses.vue");
-
+const ExpenseType = () => import("./modules/expense/views/ExpenseType.vue");
+const ExpenseTypes = () => import("./modules/expense/views/ExpenseType.vue");
+const Expense = () => import("./modules/expense/views/Expense.vue");
+const Expenses = () => import("./modules/expense/views/Expenses.vue");
+const ExpenseDashboard = () =>
+  import("./modules/expense/views/ExpenseDashboard.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -128,12 +127,6 @@ const router = createRouter({
       path: "/purchaseinvoice",
       name: "PurchaseInvoices",
       component: PurchaseInvoices,
-      props: true,
-    },
-    {
-      path: "/purchase-dashboard",
-      name: "PurchaseDashboard",
-      component: PurchaseDashboard,
       props: true,
     },
     {
@@ -232,6 +225,11 @@ const router = createRouter({
       path: "/expense",
       name: "Expenses",
       component: Expenses,
+    },
+    {
+      path: "/expense-dashboard",
+      name: "ExpenseDashboard",
+      component: ExpenseDashboard,
     },
   ],
 });

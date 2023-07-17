@@ -139,8 +139,6 @@ const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
-  startDate: undefined as Date | undefined,
-  endDate: undefined as Date | undefined,
   excludeManaged: false,
 });
 const selectedInvoices = ref([] as Array<PurchaseInvoice>);
