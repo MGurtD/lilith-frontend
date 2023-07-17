@@ -12,16 +12,22 @@ import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 
 import { useStore } from "../store";
+import { onMounted, ref } from "vue";
 
-const store = useStore();
-
-const menu = [
+const menu = ref([
   {
     header: "TEMGES",
     hiddenOnCollapse: true,
   },
-  ...store.menus,
-];
+] as Array<any>);
+const store = useStore();
+
+onMounted(() => {
+  setTimeout(() => {
+    store.setMenusByRole(store.user!);
+    menu.value.push(...store.menus);
+  }, 500);
+});
 </script>
 
 <style scoped>

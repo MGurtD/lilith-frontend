@@ -4,6 +4,7 @@ import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService, User } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
+import { Role } from "../api/services/role.service";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -142,7 +143,7 @@ export const useStore = defineStore("applicationStore", {
       user: undefined as User | undefined,
       isWaiting: false,
 
-      menus: [] as Array<MenuItem>,
+      menus: applicationMenus as Array<MenuItem>,
       menuCollapsed: false,
       currentMenuItem: {
         title: "Home",
@@ -150,23 +151,12 @@ export const useStore = defineStore("applicationStore", {
       } as MenuItem,
     };
   },
-  getters: {
-    userMenus: (state): Array<MenuItem> => {
-      if (state.user?.role?.name === "manager") {
-        return applicationMenus.filter(
-          (m) => m.title === "Gestió de factures" || m.title === "Inici"
-        );
-      } else {
-        return applicationMenus;
-      }
-    },
-  },
   actions: {
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
     },
-    setMenusByRole() {
-      if (this.user?.role?.name === "manager") {
+    setMenusByRole(user: User) {
+      if (user.role?.name === "manager") {
         this.menus = [
           {
             icon: PrimeIcons.MONEY_BILL,
@@ -196,7 +186,7 @@ export const useStore = defineStore("applicationStore", {
       if (jwtDecoded.id) {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
-        this.setMenusByRole();
+        if (this.user) this.setMenusByRole(this.user);
       }
     },
     removeAuthorization() {
