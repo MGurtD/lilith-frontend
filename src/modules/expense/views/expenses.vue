@@ -26,7 +26,7 @@
     </Column>
     <Column header="Tipus" style="width: 15%">
         <template #body="slotProps">
-          {{ getExpenseTypeNameById(slotProps.data.expensTypeId) }}
+          {{ getExpenseTypeNameById(slotProps.data.expenseTypeId) }}
         </template>
     </Column>
     <Column header="Recurrent" style="width: 10%">

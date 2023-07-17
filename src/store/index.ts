@@ -123,18 +123,13 @@ const applicationMenus = [
       },
       {
         icon: PrimeIcons.BUILDING,
-        title: "Tipus de línea",
+        title: "Tipus de màquina",
         href: "/workcentertype",
       },
       {
         icon: PrimeIcons.BUILDING,
-        title: "Línea",
-        href: "/workcenter",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
         title: "Màquina",
-        href: "/unit",
+        href: "/workcenter",
       },
     ],
   },

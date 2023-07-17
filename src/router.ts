@@ -40,7 +40,12 @@ const Enterprise = () => import("./modules/production/views/Enterprise.vue");
 const Enterprises = () => import("./modules/production/views/Enterprises.vue");
 const Site = () => import("./modules/production/views/site.vue");
 const Sites = () => import("./modules/production/views/sites.vue");
-
+const Area = () => import("./modules/production/views/area.vue");
+const Areas = () => import("./modules/production/views/areas.vue");
+const WorkcenterType = () => import("./modules/production/views/workcentertype.vue");
+const WorkcenterTypes = () => import("./modules/production/views/workcentertypes.vue");
+const Workcenter = () => import("./modules/production/views/workcenter.vue");
+const Workcenters = () => import("./modules/production/views/workcenters.vue");
 
 const ExpenseType = () => import("./modules/expense/views/expenseType.vue");
 const ExpenseTypes = () => import("./modules/expense/views/expenseTypes.vue");
@@ -177,6 +182,36 @@ const router = createRouter({
       path: "/site",
       name: "Sites",
       component: Sites,
+    },
+    {
+      path: "/area/:id",
+      name: "Area",
+      component: Area,
+    },
+    {
+      path: "/area",
+      name: "Areas",
+      component: Areas,
+    },
+    {
+      path: "/workcentertype/:id",
+      name: "WorkcenterType",
+      component: WorkcenterType,
+    },
+    {
+      path: "/workcentertype",
+      name: "WorkcenterTypes",
+      component: WorkcenterTypes,
+    },
+    {
+      path: "/workcenter/:id",
+      name: "Workcenter",
+      component: Workcenter,
+    },
+    {
+      path: "/workcenter",
+      name: "Workcenters",
+      component: Workcenters,
     },
     {
       path: "/expensetype/:id",

@@ -116,7 +116,7 @@
                 optionLabel="name"
                 class="w-full"
                 :class="{
-                    'p-invalid': validation.errors.supplierTypeId,
+                    'p-invalid': validation.errors.enterpriseId,
                 }"
                 />
             </div>
@@ -173,6 +173,8 @@
     description: Yup.string()
       .required("La descripció és obligatori")
       .max(250, "La descripció pot superar els 250 carácters"),
+    enterpriseId: Yup.string()
+        .required("L'empresa es obligatoria"),
   });
   const validation = ref({
     result: false,
