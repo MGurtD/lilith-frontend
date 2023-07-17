@@ -77,7 +77,7 @@
             />
           </div>
           <div class="mt-1">
-            <label class="block text-900 mb-2">Data Factura: </label>
+            <label class="block text-900 mb-2">Data Factura</label>
             <Calendar
               id="purchaseInvoiceDate"
               v-model="purchaseInvoice.purchaseInvoiceDate"

@@ -1,9 +1,12 @@
 <template>
-    <DataTable
+  <DataTable
     :value="expenseStore.expenses"
     tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="75vh"
+    sortMode="multiple"
     @row-click="editExpense"
-    >
+  >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
@@ -16,56 +19,69 @@
           @click="createButtonClick"
         />
       </div>
-    </template>    
+    </template>
     <Column field="description" header="Descripció" style="width: 40%"></Column>
-    <Column field="amount" header="Import" style="width: 15%"></Column>
+    <Column field="amount" header="Import" style="width: 15%">
+      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
+    </Column>
     <Column field="paymentDate" header="Data pagament" style="width: 20%">
       <template #body="slotProps">
-          {{ formatDate(slotProps.data.paymentDate) }}
-        </template>
+        {{ formatDate(slotProps.data.paymentDate) }}
+      </template>
     </Column>
     <Column header="Tipus" style="width: 15%">
-        <template #body="slotProps">
-          {{ getExpenseTypeNameById(slotProps.data.expenseTypeId) }}
-        </template>
+      <template #body="slotProps">
+        {{ getExpenseTypeNameById(slotProps.data.expenseTypeId) }}
+      </template>
     </Column>
     <Column header="Recurrent" style="width: 10%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.recurring" />
+        <BooleanColumn :value="slotProps.data.recurring" :showColor="false" />
       </template>
     </Column>
-    </DataTable>
+    <Column>
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deleteExpense($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+  </DataTable>
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from 'vue-router';
-import { useStore } from '../../../store';
-import { useExpenseStore } from '../store/expense';
-import { onMounted } from 'vue';
-import { PrimeIcons } from 'primevue/api';
+import { useRouter } from "vue-router";
+import { useStore } from "../../../store";
+import { useExpenseStore } from "../store/expense";
+import { onMounted } from "vue";
+import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   formatDateForQueryParameter,
   formatDate,
 } from "../../../utils/functions";
-
+import { Expense } from "../types";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const router = useRouter();
 const store = useStore();
 const expenseStore = useExpenseStore();
 
 onMounted(async () => {
-    await expenseStore.fetchExpenseTypes();
-    await expenseStore.fetchExpenses();
+  await expenseStore.fetchExpenseTypes();
+  await expenseStore.fetchExpenses();
 
-    store.setMenuItem({
-        icon: PrimeIcons.WALLET,
-        title: "Gestió de despeses",
-    });
+  store.setMenuItem({
+    icon: PrimeIcons.WALLET,
+    title: "Gestió de despeses",
+  });
 });
 
 const createButtonClick = () => {
-    router.push({ path: `/expense/${uuidv4()}`});
+  router.push({ path: `/expense/${uuidv4()}` });
 };
 
 const editExpense = (row: DataTableRowClickEvent) => {
@@ -78,12 +94,32 @@ const editExpense = (row: DataTableRowClickEvent) => {
   }
 };
 
+const toast = useToast();
+const confirm = useConfirm();
+const deleteExpense = (event: any, expense: Expense) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Està segur que vol eliminar la despesa?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await expenseStore.deleteExpense(expense.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+        await expenseStore.fetchExpenses();
+      }
+    },
+  });
+};
+
 const getExpenseTypeNameById = (id: string) => {
-  const type = expenseStore.expenseTypes?.find(
-    (s) => s.id === id
-  );
+  const type = expenseStore.expenseTypes?.find((s) => s.id === id);
   if (type) return type.name;
   else return "";
 };
-
 </script>

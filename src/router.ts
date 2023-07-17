@@ -36,21 +36,18 @@ const PurchaseInvoice = () =>
 
 const Enterprise = () => import("./modules/production/views/Enterprise.vue");
 const Enterprises = () => import("./modules/production/views/Enterprises.vue");
-const Site = () => import("./modules/production/views/site.vue");
-const Sites = () => import("./modules/production/views/sites.vue");
+const Site = () => import("./modules/production/views/Site.vue");
+const Sites = () => import("./modules/production/views/Sites.vue");
 const Area = () => import("./modules/production/views/area.vue");
 const Areas = () => import("./modules/production/views/areas.vue");
-const WorkcenterType = () => import("./modules/production/views/workcentertype.vue");
-const WorkcenterTypes = () => import("./modules/production/views/workcentertypes.vue");
+const WorkcenterType = () =>
+  import("./modules/production/views/workcentertype.vue");
+const WorkcenterTypes = () =>
+  import("./modules/production/views/workcentertypes.vue");
 const Workcenter = () => import("./modules/production/views/workcenter.vue");
 const Workcenters = () => import("./modules/production/views/workcenters.vue");
 
-const ExpenseType = () => import("./modules/expense/views/ExpenseType.vue");
-const ExpenseTypes = () => import("./modules/expense/views/ExpenseType.vue");
-const Expense = () => import("./modules/expense/views/Expense.vue");
-const Expenses = () => import("./modules/expense/views/Expenses.vue");
-const ExpenseDashboard = () =>
-  import("./modules/expense/views/ExpenseDashboard.vue");
+import ExpenseRoutes from "./modules/expense/routes";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -206,31 +203,7 @@ const router = createRouter({
       name: "Workcenters",
       component: Workcenters,
     },
-    {
-      path: "/expensetype/:id",
-      name: "Expense Type",
-      component: ExpenseType,
-    },
-    {
-      path: "/expensetype",
-      name: "Expense Types",
-      component: ExpenseTypes,
-    },
-    {
-      path: "/expense/:id",
-      name: "Expense",
-      component: Expense,
-    },
-    {
-      path: "/expense",
-      name: "Expenses",
-      component: Expenses,
-    },
-    {
-      path: "/expense-dashboard",
-      name: "ExpenseDashboard",
-      component: ExpenseDashboard,
-    },
+    ...ExpenseRoutes,
   ],
 });
 

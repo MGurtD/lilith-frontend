@@ -3,7 +3,7 @@
     :value="expenseStore.expenseTypes"
     tableStyle="min-width: 100%"
     @row-click="editExpenseType"
-    >
+  >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
@@ -21,7 +21,7 @@
     <Column field="description" header="Descripció" style="width: 50%"></Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
+        <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
       </template>
     </Column>
   </DataTable>

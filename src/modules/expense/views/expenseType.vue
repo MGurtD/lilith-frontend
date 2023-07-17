@@ -57,10 +57,10 @@ const submitForm = async () => {
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await expenseStore.createExpenseType(data);
-    message = "Tipus de despesa creat correctament";
+    message = "Tipus de despesa creada correctament";
   } else {
     result = await expenseStore.updateExpenseType(data.id, data);
-    message = "Tipus de despesa actualitzat correctament";
+    message = "Tipus de despesa actualitzada correctament";
   }
 
   if (result) {

@@ -1,9 +1,5 @@
 <template>
-    <FormExpense 
-    v-if="expense"
-    :expense="expense"
-    @submit="submitForm"
-    />
+  <FormExpense v-if="expense" :expense="expense" @submit="submitForm" />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -27,22 +23,26 @@ const expenseStore = useExpenseStore();
 const { expense } = storeToRefs(expenseStore);
 
 const loadView = async () => {
-    await expenseStore.fetchExpense(route.params.id as string);
-    let pageTitle ="";
-    if(!expense.value){
-        formMode.value = FormActionMode.CREATE;
-        expenseStore.setNewExpense(route.params.id as string);
-        pageTitle = "Alta de despeses";
-    } else {
-        formMode.value = FormActionMode.EDIT;
-        pageTitle = "Modificació de despeses";
+  await expenseStore.fetchExpense(route.params.id as string);
+  let pageTitle = "";
+  if (!expense.value) {
+    formMode.value = FormActionMode.CREATE;
+    expenseStore.setNewExpense(route.params.id as string);
+    pageTitle = "Alta de despeses";
+  } else {
+    formMode.value = FormActionMode.EDIT;
+    pageTitle = "Modificació de despeses";
 
-    }
-    store.setMenuItem({
-        icon: PrimeIcons.WALLET,
-        backButtonVisible: true,
-        title:pageTitle,
-    });    
+    expense.value.creationDate = new Date(expense.value.creationDate);
+    expense.value.endDate = new Date(expense.value.endDate);
+    expense.value.paymentDate = new Date(expense.value.paymentDate);
+  }
+
+  store.setMenuItem({
+    icon: PrimeIcons.WALLET,
+    backButtonVisible: true,
+    title: pageTitle,
+  });
 };
 
 onMounted(async () => {
@@ -72,5 +72,4 @@ const submitForm = async () => {
     router.back();
   }
 };
-
 </script>
