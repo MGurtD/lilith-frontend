@@ -101,7 +101,7 @@ const applicationMenus = [
       },
     ],
   },
-  {
+  /*{
     icon: PrimeIcons.CHART_BAR,
     title: "Producció",
     href: "",
@@ -132,7 +132,7 @@ const applicationMenus = [
         href: "/workcenter",
       },
     ],
-  },
+  },*/
 ] as Array<MenuItem>;
 
 export const useStore = defineStore("applicationStore", {

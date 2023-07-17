@@ -31,7 +31,7 @@
     let pageTitle = "";
     if (!workcenter.value) {
       formMode.value = FormActionMode.CREATE;
-      plantmodelStore.setNewArea(route.params.id as string);
+      plantmodelStore.setNewWorkcenter(route.params.id as string);
       pageTitle = "Alta de màquina";
     } else {
       formMode.value = FormActionMode.EDIT;

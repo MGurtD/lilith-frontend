@@ -80,7 +80,8 @@
   }>();
   
   onMounted(async () => {
-    await plantModelStore.fetchSites();
+    await plantModelStore.fetchWorkcenterTypes();
+    await plantModelStore.fetchAreas();
   });
 
   const emit = defineEmits<{
