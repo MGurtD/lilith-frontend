@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import PurchaseRoutes from "./modules/purchase/routes";
 import ExpenseRoutes from "./modules/expense/routes";
+import SalesRoutes from "./modules/sales/routes";
 import ProductionRoutes from "./modules/production/routes";
 
 const Home = () => import("./views/Home.vue");
@@ -53,6 +54,7 @@ const router = createRouter({
       component: Tax,
       props: true,
     },
+    ...SalesRoutes,
     ...PurchaseRoutes,
     ...ExpenseRoutes,
     ...ProductionRoutes,
