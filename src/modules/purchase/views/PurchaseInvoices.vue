@@ -212,7 +212,6 @@ const createButtonClick = () => {
 };
 
 const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
-  console.log("edit", row.data);
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"

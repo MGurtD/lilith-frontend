@@ -12,7 +12,7 @@
     <div class="dashboard-filter-field">
       <label class="block text-900">
         <i :class="PrimeIcons.WALLET"></i>
-        &nbsp; Total despesa <b>{{ totalAmount }} € </b>
+        &nbsp; Total despesa <b>{{ totalAmount.toFixed(2) }} € </b>
       </label>
     </div>
   </div>
@@ -153,14 +153,12 @@ const transformConsolidatedExpensesToChartOptions = (
   options.labels = Object.keys(groupedByMonth);
 
   const chartColors = getChartColors(options.labels.length);
-  console.log(chartColors);
-
   options.datasets = [
     {
       label: "Despeses",
       data: [],
-      backgroundColor: getChartColors(options.labels.length),
-      borderColor: getChartColors(options.labels.length),
+      backgroundColor: chartColors,
+      borderColor: chartColors,
       borderWidth: 1,
     },
   ];

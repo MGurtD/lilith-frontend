@@ -1,9 +1,11 @@
 import { createWebHistory, createRouter } from "vue-router";
+import PurchaseRoutes from "./modules/purchase/routes";
+import ExpenseRoutes from "./modules/expense/routes";
+import ProductionRoutes from "./modules/production/routes";
 
 const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
-
 const PaymentMethods = () => import("./views/PaymentMethods.vue");
 const PaymentMethod = () => import("./views/PaymentMethod.vue");
 const Exercise = () => import("./views/Exercise.vue");
@@ -11,55 +13,11 @@ const Exercises = () => import("./views/Exercises.vue");
 const Taxes = () => import("./views/Taxes.vue");
 const Tax = () => import("./views/Tax.vue");
 
-const Customers = () => import("./modules/sales/views/Customers.vue");
-const Customer = () => import("./modules/sales/views/Customer.vue");
-const CustomerType = () => import("./modules/sales/views/CustomerType.vue");
-
-const Suppliers = () => import("./modules/purchase/views/Suppliers.vue");
-const Supplier = () => import("./modules/purchase/views/Supplier.vue");
-const SupplierType = () => import("./modules/purchase/views/SupplierType.vue");
-const PurchaseInvoiceSeries = () =>
-  import("./modules/purchase/views/PurchaseInvoiceSeries.vue");
-const PurchaseInvoiceSerie = () =>
-  import("./modules/purchase/views/PurchaseInvoiceSerie.vue");
-const PurchaseInvoiceStatuses = () =>
-  import("./modules/purchase/views/PurchaseInvoiceStatuses.vue");
-const PurchaseInvoiceStatus = () =>
-  import("./modules/purchase/views/PurchaseInvoiceStatus.vue");
-const PurchaseInvoicesByDates = () =>
-  import("./modules/purchase/views/PurchaseInvoicesByDates.vue");
-
-const PurchaseInvoices = () =>
-  import("./modules/purchase/views/PurchaseInvoices.vue");
-const PurchaseInvoice = () =>
-  import("./modules/purchase/views/PurchaseInvoice.vue");
-
-const Enterprise = () => import("./modules/production/views/Enterprise.vue");
-const Enterprises = () => import("./modules/production/views/Enterprises.vue");
-const Site = () => import("./modules/production/views/Site.vue");
-const Sites = () => import("./modules/production/views/Sites.vue");
-const Area = () => import("./modules/production/views/area.vue");
-const Areas = () => import("./modules/production/views/areas.vue");
-const WorkcenterType = () =>
-  import("./modules/production/views/workcentertype.vue");
-const WorkcenterTypes = () =>
-  import("./modules/production/views/workcentertypes.vue");
-const Workcenter = () => import("./modules/production/views/workcenter.vue");
-const Workcenters = () => import("./modules/production/views/workcenters.vue");
-
-import ExpenseRoutes from "./modules/expense/routes";
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/", name: "Home", component: Home },
-    { path: "/customers", name: "Customers", component: Customers },
-    {
-      path: "/customers/:id",
-      name: "Customer",
-      component: Customer,
-      props: true,
-    },
+
     { path: "/users", name: "Users", component: Users },
     { path: "/user/:id", name: "User", component: User },
     {
@@ -71,59 +29,6 @@ const router = createRouter({
       path: "/payment-methods/:id",
       name: "PaymentMethod",
       component: PaymentMethod,
-      props: true,
-    },
-    { path: "/suppliers", name: "Suppliers", component: Suppliers },
-    {
-      path: "/suppliers/:id",
-      name: "Supplier",
-      component: Supplier,
-      props: true,
-    },
-    {
-      path: "/supplier-types/:id",
-      name: "SupplierType",
-      component: SupplierType,
-      props: true,
-    },
-    {
-      path: "/customer-types/:id",
-      name: "CustomerType",
-      component: CustomerType,
-      props: true,
-    },
-    {
-      path: "/purchaseinvoiceserie",
-      name: "PurchaseInvoiceSeries",
-      component: PurchaseInvoiceSeries,
-    },
-    {
-      path: "/purchaseinvoiceserie/:id",
-      name: "PurchaseInvoiceSerie",
-      component: PurchaseInvoiceSerie,
-      props: true,
-    },
-    {
-      path: "/purchaseinvoicestatus",
-      name: "PurchaseInvoiceStatuses",
-      component: PurchaseInvoiceStatuses,
-    },
-    {
-      path: "/purchaseinvoicestatus/:id",
-      name: "PurchaseInvoiceStatus",
-      component: PurchaseInvoiceStatus,
-      props: true,
-    },
-    {
-      path: "/purchaseinvoice/:id",
-      name: "PurchaseInvoice",
-      component: PurchaseInvoice,
-      props: true,
-    },
-    {
-      path: "/purchaseinvoice",
-      name: "PurchaseInvoices",
-      component: PurchaseInvoices,
       props: true,
     },
     {
@@ -148,62 +53,9 @@ const router = createRouter({
       component: Tax,
       props: true,
     },
-    {
-      path: "/purchaseinvoices-by-period",
-      name: "PurchaseInvoicesByDates",
-      component: PurchaseInvoicesByDates,
-    },
-    {
-      path: "/enterprise/:id",
-      name: "Enterprise",
-      component: Enterprise,
-    },
-    {
-      path: "/enterprise",
-      name: "Enterprises",
-      component: Enterprises,
-    },
-    {
-      path: "/site/:id",
-      name: "Site",
-      component: Site,
-    },
-    {
-      path: "/site",
-      name: "Sites",
-      component: Sites,
-    },
-    {
-      path: "/area/:id",
-      name: "Area",
-      component: Area,
-    },
-    {
-      path: "/area",
-      name: "Areas",
-      component: Areas,
-    },
-    {
-      path: "/workcentertype/:id",
-      name: "WorkcenterType",
-      component: WorkcenterType,
-    },
-    {
-      path: "/workcentertype",
-      name: "WorkcenterTypes",
-      component: WorkcenterTypes,
-    },
-    {
-      path: "/workcenter/:id",
-      name: "Workcenter",
-      component: Workcenter,
-    },
-    {
-      path: "/workcenter",
-      name: "Workcenters",
-      component: Workcenters,
-    },
+    ...PurchaseRoutes,
     ...ExpenseRoutes,
+    ...ProductionRoutes,
   ],
 });
 

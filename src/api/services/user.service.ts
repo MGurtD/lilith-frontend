@@ -14,11 +14,8 @@ export class UserService {
     try {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
-        //const res:AxiosResponse<User[]> = response.data;
         const models = response.data as Array<User>;
-        console.log(models);
         return models;
-        //return res;
       }
     } catch (error) {
       logException(error);

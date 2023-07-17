@@ -27,7 +27,7 @@
     ></Column>
     <Column header="Desactivada" style="width: 20%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
+        <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
       </template>
     </Column>
   </DataTable>

@@ -14,8 +14,6 @@ export class RoleService {
       let response = await this.apiClient.get(this.resource);
       if (response.status === 200) {
         const roles = response.data as Array<Role>;
-        console.log(roles);
-
         return roles;
       }
     } catch (error) {}
@@ -26,11 +24,7 @@ export class RoleService {
       let response = await this.apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) {
         const role = response.data as Role;
-        console.log(role);
-
         return role;
-      } else {
-        console.log(response.data);
       }
     } catch (error) {}
   }

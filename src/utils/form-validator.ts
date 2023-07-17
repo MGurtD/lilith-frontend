@@ -24,8 +24,6 @@ export class FormValidation {
         },
         {}
       );
-
-      console.log("after.validate.errors", validation);
     }
 
     return validation;

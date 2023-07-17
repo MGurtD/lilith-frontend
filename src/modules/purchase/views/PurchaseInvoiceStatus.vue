@@ -89,7 +89,6 @@ const submitForm = async () => {
 };
 
 const addTransition = async (transition: PurchaseInvoiceTransition) => {
-  console.log(transition);
   const result =
     await purchaseInvoiceStatusStore.createPurchaseInvoiceStatusTransition(
       transition

@@ -227,7 +227,6 @@ const updateSelectedInvoiceStatusToManaged = async () => {
     } as PurchaseInvoiceUpdateStatues;
 
     const updated = await purchaseInvoiceStore.UpdateInvoicesStatus(request);
-    console.log("UpdateInvoicesStatus", updated);
     if (updated) {
       toast.add({
         severity: "success",

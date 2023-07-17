@@ -104,7 +104,6 @@ export const usePurchaseInvoiceStore = defineStore({
       const updated = await PurchaseService.PurchaseInvoice.UpdateStatuses(
         request
       );
-      console.log("purchaseMasterData.UpdateInvoicesStatus", updated);
       return updated;
     },
   },
