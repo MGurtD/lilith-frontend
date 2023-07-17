@@ -28,11 +28,6 @@ const applicationMenus = [
         title: "Formes de pagament",
         href: "/payment-methods",
       },
-      {
-        icon: PrimeIcons.USERS,
-        title: "Usuaris",
-        href: "/users",
-      },
     ],
   },
   {
@@ -101,6 +96,11 @@ const applicationMenus = [
       },
     ],
   },
+  {
+    icon: PrimeIcons.USERS,
+    title: "Usuaris",
+    href: "/users",
+  },
   /*{
     icon: PrimeIcons.CHART_BAR,
     title: "Producció",
@@ -167,9 +167,13 @@ export const useStore = defineStore("applicationStore", {
     },
     setMenusByRole() {
       if (this.user?.role?.name === "manager") {
-        this.menus = applicationMenus.filter(
-          (m) => m.title === "Gestió de factures" || m.title === "Inici"
-        );
+        this.menus = [
+          {
+            icon: PrimeIcons.MONEY_BILL,
+            title: "Gestió de factures",
+            href: "/purchaseinvoices-by-period",
+          },
+        ];
       } else {
         this.menus = applicationMenus;
       }

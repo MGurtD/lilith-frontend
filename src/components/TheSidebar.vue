@@ -1,25 +1,4 @@
 <template>
-  <!-- <navbar class="side-menu" :class="{ collapsed: store.menuCollapsed }">
-    <header class="side-menu-header">
-      <button
-        @click="store.menuCollapsed = !store.menuCollapsed"
-        class="toggle-button"
-      >
-        <i class="pi pi-list"></i>
-      </button>
-      <h2 :class="{ hide: store.menuCollapsed }">TEMGES</h2>
-    </header>
-
-    <ul class="side-menu-list">
-      <NavBarMenuItem
-        v-for="menuItem in store.userMenus"
-        :key="menuItem.text"
-        :item="menuItem"
-        :is-collapsed="store.menuCollapsed"
-      />
-    </ul>
-  </navbar> -->
-
   <sidebar-menu
     :menu="menu"
     :collapsed="store.menuCollapsed"
@@ -33,7 +12,6 @@ import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 
 import { useStore } from "../store";
-import { PrimeIcons } from "primevue/api";
 
 const store = useStore();
 
@@ -42,7 +20,7 @@ const menu = [
     header: "TEMGES",
     hiddenOnCollapse: true,
   },
-  ...store.userMenus,
+  ...store.menus,
 ];
 </script>
 
