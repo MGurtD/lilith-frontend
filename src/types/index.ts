@@ -10,32 +10,19 @@ export interface Region {
   nm: string;
 }
 
-export interface PaymentMethod {
+export interface Role {
   id: string;
   name: string;
-  description: string;
-  disabled: boolean;
-  dueDays: number;
-  paymentDay: number;
-  numberOfPayments: number;
-  frequency: number;
 }
 
-export interface Exercise {
+export interface User {
   id: string;
-  name: string;
-  description: string;
-  startDate: Date;
-  endDate: Date;
-  purchaseInvoiceCounter: number;
+  username: string;
+  firstName: string;
+  lastName: string;
   disabled: boolean;
-}
-
-export interface Tax {
-  id: string;
-  name: string;
-  percentatge: number;
-  disabled: boolean;
+  roleId: string;
+  role?: Role;
 }
 
 export interface File {

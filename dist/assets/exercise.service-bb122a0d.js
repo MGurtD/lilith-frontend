@@ -1,1 +1,0 @@
-import{B as e}from"./base.service-01d8aabb.js";class a extends e{}export{a as E};

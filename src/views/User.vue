@@ -15,10 +15,11 @@ import FormUser from "../components/forms/FormUser.vue";
 import { useStore } from "../store";
 
 import { useToast } from "primevue/usetoast";
-import { User, UserService } from "../api/services/user.service";
+import { UserService } from "../api/services/user.service";
 import { Role, UserLogin } from "../api/services/authentications.service";
 import { AuthenticationService } from "../api/services/authentications.service";
 import { RoleService } from "../api/services/role.service";
+import { User } from "../types";
 
 const router = useRouter();
 const route = useRoute();

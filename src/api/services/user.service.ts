@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import apiClient, { logException } from "../api.client";
-import { Role } from "./role.service";
+import { User } from "../../types";
 
 export class UserService {
   public apiClient: AxiosInstance;
@@ -47,14 +47,4 @@ export class UserService {
     }
     return false;
   }
-}
-
-export interface User {
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  disabled: boolean;
-  roleId: string;
-  role?: Role;
 }

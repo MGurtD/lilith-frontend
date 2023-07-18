@@ -81,6 +81,7 @@
             <Calendar
               id="purchaseInvoiceDate"
               v-model="purchaseInvoice.purchaseInvoiceDate"
+              @date-select="calcAmounts()"
             />
           </div>
           <div class="mt-1">

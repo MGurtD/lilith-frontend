@@ -42,12 +42,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { User, UserService } from "../api/services/user.service";
+import { UserService } from "../api/services/user.service";
 import { useStore } from "../store";
 import { PrimeIcons } from "primevue/api";
 import BooleanColumn from "../components/tables/BooleanColumn.vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
+import { User } from "../types";
 
 const service = new UserService();
 const users = ref(undefined as User[] | undefined);

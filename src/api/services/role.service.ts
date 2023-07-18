@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
 import apiClient from "../api.client";
+import { Role } from "../../types";
 
 export class RoleService {
   public apiClient: AxiosInstance;
@@ -28,9 +29,4 @@ export class RoleService {
       }
     } catch (error) {}
   }
-}
-
-export interface Role {
-  id: string;
-  name: string;
 }

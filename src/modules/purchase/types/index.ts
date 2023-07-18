@@ -1,4 +1,4 @@
-import { Exercise, PaymentMethod, Tax } from "../../../types";
+import { Exercise, PaymentMethod, Tax } from "../../../modules/shared/types";
 
 export interface SupplierType {
   id: string;

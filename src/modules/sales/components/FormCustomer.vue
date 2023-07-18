@@ -105,7 +105,7 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { usePaymentMethodStore } from "../../../store/paymentMethod";
+import { usePaymentMethodStore } from "../../../modules/shared/store/paymentMethod";
 
 const emit = defineEmits<{
   (e: "submit", customer: Customer): void;

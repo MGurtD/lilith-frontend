@@ -109,9 +109,9 @@ import {
   FormValidationResult,
 } from "../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { User } from "../../api/services/user.service";
 import { BaseInputType } from "../../types/component";
-import { Role, UserLogin } from "../../api/services/authentications.service";
+import { UserLogin } from "../../api/services/authentications.service";
+import { User, Role } from "../../types";
 
 const props = defineProps<{
   roles: Role[] | undefined;

@@ -1,10 +1,9 @@
 import { defineStore } from "pinia";
-import { AuthenticationResponse } from "../types";
+import { AuthenticationResponse, User } from "../types";
 import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
-import { UserService, User } from "../api/services/user.service";
+import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
-import { Role } from "../api/services/role.service";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -37,47 +36,54 @@ const applicationMenus = [
     href: "",
     child: [
       {
-        icon: PrimeIcons.SORT_NUMERIC_DOWN,
-        title: "Sèries de factures",
-        href: "/purchaseinvoiceserie",
-      },
-      {
-        icon: PrimeIcons.FLAG,
-        title: "Estats de factures",
-        href: "/purchaseinvoicestatus",
-      },
-      {
         icon: PrimeIcons.BOOKMARK,
         title: "Proveïdors",
         href: "/suppliers",
       },
       {
         icon: PrimeIcons.MONEY_BILL,
-        title: "Factures de compra",
-        href: "/purchaseinvoice",
-      },
-      {
-        icon: PrimeIcons.MONEY_BILL,
-        title: "Gestió de factures",
-        href: "/purchaseinvoices-by-period",
-      },
-    ],
-  },
-  {
-    icon: PrimeIcons.CALCULATOR,
-    title: "Despeses",
-    href: "",
-    child: [
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Tipus de despesa",
-        href: "/expensetype",
+        title: "Factures",
+        child: [
+          {
+            icon: PrimeIcons.SORT_NUMERIC_DOWN,
+            title: "Sèries de factures",
+            href: "/purchaseinvoiceserie",
+          },
+          {
+            icon: PrimeIcons.FLAG,
+            title: "Estats de factures",
+            href: "/purchaseinvoicestatus",
+          },
+
+          {
+            icon: PrimeIcons.MONEY_BILL,
+            title: "Factures de compra",
+            href: "/purchaseinvoice",
+          },
+          {
+            icon: PrimeIcons.MONEY_BILL,
+            title: "Gestió de factures",
+            href: "/purchaseinvoices-by-period",
+          },
+        ],
       },
       {
         icon: PrimeIcons.WALLET,
         title: "Despeses",
-        href: "/expense",
+        child: [
+          {
+            icon: PrimeIcons.TAG,
+            title: "Tipus de despesa",
+            href: "/expensetype",
+          },
+          {
+            icon: PrimeIcons.WALLET,
+            title: "Declaració de despeses",
+            href: "/expense",
+          },
+        ],
       },
+
       {
         icon: PrimeIcons.CHART_PIE,
         title: "Dashboard",

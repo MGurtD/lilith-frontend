@@ -1,14 +1,13 @@
 import { defineStore } from "pinia";
-import SharedServices from "../../../api/services";
+import SharedServices from "../../../modules/shared/services";
 import PurchaseServices from "../services";
 import {
   PurchaseInvoice,
   PurchaseInvoiceSerie,
   PurchaseInvoiceStatus,
-  PurchaseInvoiceUpdateStatues,
   PurchaseMasterData,
 } from "../types";
-import { Exercise, PaymentMethod, Tax } from "../../../types";
+import { Exercise, PaymentMethod, Tax } from "../../../modules/shared/types";
 import { Supplier } from "../types";
 
 export const usePurchaseMasterDataStore = defineStore({
@@ -39,6 +38,5 @@ export const usePurchaseMasterDataStore = defineStore({
       this.masterData.exercises = await SharedServices.Exercice.getAll();
       this.masterData.taxes = await SharedServices.Tax.getAll();
     },
-    
   },
 });
