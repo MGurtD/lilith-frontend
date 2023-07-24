@@ -41,15 +41,6 @@ export const usePurchaseInvoiceStore = defineStore({
       );
       if (created) return created;
     },
-    async Update(purchaseInvoice: PurchaseInvoice) {
-      const updated = await PurchaseService.PurchaseInvoice.update(
-        purchaseInvoice.id,
-        purchaseInvoice
-      );
-      const dueDatesRecreated =
-        await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
-      return updated && dueDatesRecreated;
-    },
     async GetById(id: string) {
       this.purchaseInvoice = await PurchaseService.PurchaseInvoice.getById(id);
     },
@@ -89,6 +80,19 @@ export const usePurchaseInvoiceStore = defineStore({
             endDate
           );
       }
+    },
+    async Update(purchaseInvoice: PurchaseInvoice) {
+      const updated = await PurchaseService.PurchaseInvoice.update(
+        purchaseInvoice.id,
+        purchaseInvoice
+      );
+      const dueDatesRecreated =
+        await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
+      return updated && dueDatesRecreated;
+    },
+    async Delete(id: string): Promise<boolean> {
+      const deleted = await PurchaseService.PurchaseInvoice.delete(id);
+      return deleted;
     },
 
     async GetDueDates(purchaseInvoice: PurchaseInvoice) {

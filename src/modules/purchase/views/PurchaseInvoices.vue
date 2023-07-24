@@ -92,6 +92,19 @@
           {{ slotProps.data.netAmount }} €
         </template>
       </Column>
+      <Column style="width: 5%">
+        <template #body="slotProps">
+          <i
+            v-if="
+              getStatusNameById(slotProps.data.purchaseInvoiceStatusId) ===
+              'Nova'
+            "
+            :class="PrimeIcons.TIMES"
+            class="grid_delete_column_button"
+            @click="deletePurchaseInvoice($event, slotProps.data)"
+          />
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>
@@ -219,5 +232,26 @@ const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
   ) {
     router.push({ path: `/purchaseinvoice/${row.data.id}` });
   }
+};
+
+const deletePurchaseInvoice = (event: any, invoice: PurchaseInvoice) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Està segur que vol eliminar el tipus de despesa?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await purchaseInvoiceStore.Delete(invoice.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminada",
+          life: 3000,
+        });
+        await filterInvoices();
+      }
+    },
+  });
 };
 </script>
