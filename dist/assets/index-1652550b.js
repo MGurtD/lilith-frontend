@@ -1,1 +1,0 @@
-import{B as e}from"./base.service-a5cc43bf.js";class a extends e{}class c extends e{}class r extends e{}const n={Exercice:new a("/Exercise"),PaymentMethod:new c("/PaymentMethod"),Tax:new r("/Tax")};export{n as S};

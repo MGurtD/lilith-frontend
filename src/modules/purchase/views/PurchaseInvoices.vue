@@ -36,7 +36,7 @@
           </div>
           <div class="datatable-buttons">
             <Button
-              class="datatable-button"
+              class="datatable-button mr-2"
               :icon="PrimeIcons.FILTER"
               rounded
               raised

@@ -187,10 +187,10 @@
     <TabPanel header="Fitxers">
       <Button label="Guardar" class="save_button" @click="submitForm" />
       <FileEntityPicker
-        v-if="purchaseInvoiceId"
+        v-if="hasBeenMounted"
         title="Factures"
         entity="PurchaseInvoice"
-        :id="purchaseInvoiceId"
+        :id="props.purchaseInvoice.id"
       />
     </TabPanel>
   </TabView>
@@ -215,7 +215,6 @@ import { BaseInputType } from "../../../types/component";
 const props = defineProps<{
   purchaseInvoice: PurchaseInvoice;
 }>();
-const purchaseInvoiceId = ref();
 
 const emit = defineEmits<{
   (e: "submit", purchaseInvoice: PurchaseInvoice): void;
@@ -245,8 +244,9 @@ const validate = () => {
 
 let hasBeenMounted = false;
 onMounted(() => {
-  setTimeout(() => (hasBeenMounted = true), 1000);
-  purchaseInvoiceId.value = props.purchaseInvoice.id;
+  setTimeout(() => {
+    hasBeenMounted = true;
+  }, 500);
 });
 
 const submitForm = async () => {
