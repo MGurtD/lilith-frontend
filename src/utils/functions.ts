@@ -1,4 +1,4 @@
-import { ScatterDataPoint } from "chart.js";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Use Date.getTime
@@ -81,4 +81,8 @@ export const createBlobAndDownloadFile = (name: string, data: any) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+export const getNewUuid = () => {
+  return uuidv4();
 };

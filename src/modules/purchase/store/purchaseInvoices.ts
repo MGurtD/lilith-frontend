@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import PurchaseService from "../services";
-import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
+import {
+  PurchaseInvoice,
+  PurchaseInvoiceImport,
+  PurchaseInvoiceUpdateStatues,
+} from "../types";
 
 export const usePurchaseInvoiceStore = defineStore({
   id: "purchaseInvoices",
@@ -33,13 +37,14 @@ export const usePurchaseInvoiceStore = defineStore({
         extraTaxAmount: 0,
         extraTaxPercentatge: 0,
         purchaseInvoiceDueDates: [],
+        purchaseInvoiceImports: [],
       } as PurchaseInvoice;
     },
     async Create(purchaseInvoice: PurchaseInvoice) {
       const created = await PurchaseService.PurchaseInvoice.create(
         purchaseInvoice
       );
-      if (created) return created;
+      return created;
     },
     async GetById(id: string) {
       this.purchaseInvoice = await PurchaseService.PurchaseInvoice.getById(id);
@@ -103,12 +108,37 @@ export const usePurchaseInvoiceStore = defineStore({
     },
 
     async UpdateInvoicesStatus(
-      request: PurchaseInvoiceUpdateStatues
+      invoiceImport: PurchaseInvoiceUpdateStatues
     ): Promise<boolean> {
       const updated = await PurchaseService.PurchaseInvoice.UpdateStatuses(
-        request
+        invoiceImport
       );
       return updated;
+    },
+
+    async CreateInvoiceImport(
+      invoiceImport: PurchaseInvoiceImport
+    ): Promise<boolean> {
+      const created = await PurchaseService.PurchaseInvoice.CreateImport(
+        invoiceImport
+      );
+      return created;
+    },
+    async UpdateInvoiceImport(
+      invoiceImport: PurchaseInvoiceImport
+    ): Promise<boolean> {
+      const created = await PurchaseService.PurchaseInvoice.UpdateImport(
+        invoiceImport
+      );
+      return created;
+    },
+    async DeleteInvoiceImport(
+      invoiceImport: PurchaseInvoiceImport
+    ): Promise<boolean> {
+      const created = await PurchaseService.PurchaseInvoice.DeleteImport(
+        invoiceImport
+      );
+      return created;
     },
   },
 });

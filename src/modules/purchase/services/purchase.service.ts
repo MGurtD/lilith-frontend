@@ -7,6 +7,7 @@ import {
   PurchaseInvoiceStatus,
   PurchaseInvoiceTransition,
   PurchaseInvoiceUpdateStatues,
+  PurchaseInvoiceImport,
 } from "../types";
 
 export class PurchaseInvoiceSerieService extends BaseService<PurchaseInvoiceSerie> {}
@@ -103,9 +104,7 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     }
   }
 
-  async RecreateDueDates(
-    purchaseInvoice: PurchaseInvoice
-  ): Promise<boolean | undefined> {
+  async RecreateDueDates(purchaseInvoice: PurchaseInvoice): Promise<boolean> {
     const response = await apiClient.post(
       `${this.resource}/RecreateDueDates`,
       purchaseInvoice
@@ -118,6 +117,24 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
   ): Promise<boolean> {
     const endpoint = `${this.resource}/UpdateStatuses`;
     const response = await apiClient.post(endpoint, request);
+    return response.status === 200;
+  }
+
+  async CreateImport(request: PurchaseInvoiceImport): Promise<boolean> {
+    const endpoint = `${this.resource}/Import`;
+    const response = await apiClient.post(endpoint, request);
+    return response.status === 200;
+  }
+
+  async UpdateImport(request: PurchaseInvoiceImport): Promise<boolean> {
+    const endpoint = `${this.resource}/Import/${request.id}`;
+    const response = await apiClient.put(endpoint, request);
+    return response.status === 200;
+  }
+
+  async DeleteImport(request: PurchaseInvoiceImport): Promise<boolean> {
+    const endpoint = `${this.resource}/Import/${request.id}`;
+    const response = await apiClient.delete(endpoint);
     return response.status === 200;
   }
 }

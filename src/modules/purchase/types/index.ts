@@ -68,6 +68,15 @@ export interface PurchaseInvoiceDueDate {
   purchaseInvoiceId: string;
 }
 
+export interface PurchaseInvoiceImport {
+  id: string;
+  taxId: string;
+  baseAmount: number | null;
+  taxAmount: number;
+  netAmount: number;
+  purchaseInvoiceId: string;
+}
+
 export interface PurchaseInvoice {
   id: string;
   number: number;
@@ -82,7 +91,6 @@ export interface PurchaseInvoice {
   discountPercentage: number;
   discountAmount: number;
   supplierId: string;
-  taxId: string;
   exerciceId: string;
   purchaseInvoiceSerieId: string;
   paymentMethodId: string;
@@ -90,6 +98,7 @@ export interface PurchaseInvoice {
   extraTaxPercentatge: number;
   extraTaxAmount: number;
   purchaseInvoiceDueDates: Array<PurchaseInvoiceDueDate>;
+  purchaseInvoiceImports: Array<PurchaseInvoiceImport>;
 }
 
 export interface PurchaseMasterData {

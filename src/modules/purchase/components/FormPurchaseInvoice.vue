@@ -1,199 +1,153 @@
 <template>
-  <TabView>
-    <TabPanel header="Factura">
-      <form v-if="purchaseInvoice">
-        <section class="four-columns">
-          <BaseInput
-            label="Num. Fra. Intern"
-            id="number"
-            v-model="purchaseInvoice.number"
-            disabled
+  <div>
+    <form v-if="purchaseInvoice">
+      <section class="four-columns">
+        <BaseInput
+          label="Num. Fra. Intern"
+          id="number"
+          v-model="purchaseInvoice.number"
+          disabled
+        />
+        <div>
+          <label class="block text-900 mb-2">Exercici</label>
+          <Dropdown
+            v-model="purchaseInvoice.exerciceId"
+            editable
+            :options="purchaseMasterData.masterData.exercises"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.exerciseId,
+            }"
           />
-          <div>
-            <label class="block text-900 mb-2">Exercici</label>
-            <Dropdown
-              v-model="purchaseInvoice.exerciceId"
-              editable
-              :options="purchaseMasterData.masterData.exercises"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.exerciseId,
-              }"
-            />
-          </div>
-          <div>
-            <label class="block text-900 mb-2">Sèrie</label>
-            <Dropdown
-              v-model="purchaseInvoice.purchaseInvoiceSerieId"
-              editable
-              :options="purchaseMasterData.masterData.series"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.purchaseInvoiceSerieId,
-              }"
-            />
-          </div>
-          <div>
-            <label class="block text-900 mb-2">Estat</label>
-            <Dropdown
-              v-model="purchaseInvoice.purchaseInvoiceStatusId"
-              editable
-              :options="purchaseMasterData.masterData.statuses"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.purchaseInvoiceStatusId,
-              }"
-            />
-          </div>
-        </section>
+        </div>
+        <div>
+          <label class="block text-900 mb-2">Sèrie</label>
+          <Dropdown
+            v-model="purchaseInvoice.purchaseInvoiceSerieId"
+            editable
+            :options="purchaseMasterData.masterData.series"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.purchaseInvoiceSerieId,
+            }"
+          />
+        </div>
+        <div>
+          <label class="block text-900 mb-2">Estat</label>
+          <Dropdown
+            v-model="purchaseInvoice.purchaseInvoiceStatusId"
+            editable
+            :options="purchaseMasterData.masterData.statuses"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.purchaseInvoiceStatusId,
+            }"
+          />
+        </div>
+      </section>
 
-        <section class="four-columns">
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Proveïdor</label>
-            <Dropdown
-              v-model="purchaseInvoice.supplierId"
-              editable
-              :options="purchaseMasterData.masterData.suppliers"
-              optionValue="id"
-              optionLabel="comercialName"
-              @change="setSupplierPaymentMethod"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.supplierId,
-              }"
-            />
-          </div>
-          <div class="mt-1">
-            <BaseInput
-              label="Num. Fra. Proveïdor"
-              id="supplierNumber"
-              v-model="purchaseInvoice.supplierNumber"
-            />
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Data Factura</label>
-            <Calendar
-              id="purchaseInvoiceDate"
-              v-model="purchaseInvoice.purchaseInvoiceDate"
-              @date-select="calcAmounts()"
-            />
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Forma de pagament</label>
-            <Dropdown
-              v-model="purchaseInvoice.paymentMethodId"
-              editable
-              :options="purchaseMasterData.masterData.paymentMethods"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.paymentmethod,
-              }"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-        </section>
+      <section class="four-columns">
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Proveïdor</label>
+          <Dropdown
+            v-model="purchaseInvoice.supplierId"
+            editable
+            :options="purchaseMasterData.masterData.suppliers"
+            optionValue="id"
+            optionLabel="comercialName"
+            @change="setSupplierPaymentMethod"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.supplierId,
+            }"
+          />
+        </div>
+        <div class="mt-1">
+          <BaseInput
+            label="Num. Fra. Proveïdor"
+            id="supplierNumber"
+            v-model="purchaseInvoice.supplierNumber"
+          />
+        </div>
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Data Factura</label>
+          <Calendar
+            id="purchaseInvoiceDate"
+            v-model="purchaseInvoice.purchaseInvoiceDate"
+            @date-select="calcAmounts()"
+          />
+        </div>
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Forma de pagament</label>
+          <Dropdown
+            v-model="purchaseInvoice.paymentMethodId"
+            editable
+            :options="purchaseMasterData.masterData.paymentMethods"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.paymentmethod,
+            }"
+            @update:modelValue="calcAmounts()"
+          />
+        </div>
+      </section>
 
-        <section class="four-columns">
-          <div class="mt-1">
-            <BaseInput
-              :type="BaseInputType.CURRENCY"
-              label="Base"
-              id="baseAmount"
-              v-model="purchaseInvoice.baseAmount"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-1">
-            <BaseInput
-              :type="BaseInputType.CURRENCY"
-              label="Ports"
-              id="transportAmount"
-              v-model="purchaseInvoice.transportAmount"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">IVA</label>
-            <Dropdown
-              v-model="purchaseInvoice.taxId"
-              editable
-              :options="purchaseMasterData.masterData.taxes"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.taxId,
-              }"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-1">
-            <BaseInput
-              :type="BaseInputType.NUMERIC"
-              label="IRPF"
-              id="extraTaxPercentatge"
-              v-model="purchaseInvoice.extraTaxPercentatge"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-        </section>
+      <section class="four-columns">
+        <div class="mt-1">
+          <BaseInput
+            :type="BaseInputType.CURRENCY"
+            label="Ports"
+            id="transportAmount"
+            v-model="purchaseInvoice.transportAmount"
+            @update:modelValue="calcAmounts()"
+          />
+        </div>
+        <div class="mt-1">
+          <BaseInput
+            :type="BaseInputType.NUMERIC"
+            label="% IRPF"
+            id="extraTaxPercentatge"
+            v-model="purchaseInvoice.extraTaxPercentatge"
+            @update:modelValue="calcAmounts()"
+          />
+        </div>
+        <div class="mt-1">
+          <BaseInput
+            :type="BaseInputType.NUMERIC"
+            label="% Dto."
+            id="discountPercentage"
+            v-model="purchaseInvoice.discountPercentage"
+            @update:modelValue="calcAmounts()"
+          />
+        </div>
+      </section>
 
-        <section class="four-columns">
-          <div class="mt-1">
-            <BaseInput
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              label="% Dto."
-              id="discountPercentage"
-              v-model="purchaseInvoice.discountPercentage"
-              @update:modelValue="calcAmounts()"
-            />
-          </div>
-          <div class="mt-1">
-            <BaseInput
-              :type="BaseInputType.CURRENCY"
-              label="Total"
-              id="netAmount"
-              v-model="purchaseInvoice.netAmount"
-              disabled
-            />
-          </div>
-        </section>
-      </form>
+      <section class="four-columns">
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Base</label>
+          <span class="summary-field">{{ purchaseInvoice.baseAmount }} €</span>
+        </div>
 
-      <div class="mt-3">
-        <DataTable
-          :value="purchaseInvoice.purchaseInvoiceDueDates"
-          tableStyle="min-width: 100%"
-        >
-          <Column field="dueDate" header="Venciment" style="width: 50%">
-            <template #body="slotProps">
-              {{ formatDate(slotProps.data.dueDate) }}
-            </template>
-          </Column>
-          <Column field="amount" header="Import" style="width: 50%"></Column>
-        </DataTable>
-      </div>
-      <Button label="Guardar" class="save_button" @click="submitForm" />
-    </TabPanel>
-    <TabPanel header="Fitxers">
-      <Button label="Guardar" class="save_button" @click="submitForm" />
-      <FileEntityPicker
-        v-if="hasBeenMounted"
-        title="Factures"
-        entity="PurchaseInvoice"
-        :id="props.purchaseInvoice.id"
-      />
-    </TabPanel>
-  </TabView>
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Impostos</label>
+          <span class="summary-field">{{ purchaseInvoice.taxAmount }} €</span>
+        </div>
+
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Total</label>
+          <span class="summary-field">{{ purchaseInvoice.netAmount }} €</span>
+        </div>
+      </section>
+    </form>
+  </div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -208,13 +162,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
-import FileEntityPicker from "../../../components/FileEntityPicker.vue";
-import { formatDate } from "../../../utils/functions";
 import { BaseInputType } from "../../../types/component";
-
-const props = defineProps<{
-  purchaseInvoice: PurchaseInvoice;
-}>();
 
 const emit = defineEmits<{
   (e: "submit", purchaseInvoice: PurchaseInvoice): void;
@@ -224,8 +172,6 @@ const emit = defineEmits<{
 const purchaseStore = usePurchaseInvoiceStore();
 const purchaseMasterData = usePurchaseMasterDataStore();
 const { purchaseInvoice } = storeToRefs(purchaseStore);
-
-const toast = useToast();
 
 const schema = Yup.object().shape({
   exerciceId: Yup.string().required("L'exercici es obligatori"),
@@ -239,7 +185,20 @@ const validation = ref({
 
 const validate = () => {
   const formValidation = new FormValidation(schema);
-  validation.value = formValidation.validate(props.purchaseInvoice);
+  validation.value = formValidation.validate(purchaseInvoice.value);
+};
+
+const validateImports = () => {
+  if (purchaseInvoice.value?.purchaseInvoiceImports.length === 0) {
+    toast.add({
+      severity: "warn",
+      summary: "Formulari inválid",
+      detail: "Ha d'introduir els imports de factura",
+      life: 5000,
+    });
+    return false;
+  }
+  return true;
 };
 
 let hasBeenMounted = false;
@@ -249,10 +208,13 @@ onMounted(() => {
   }, 500);
 });
 
+const toast = useToast();
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    emit("submit", purchaseInvoice.value as PurchaseInvoice);
+    if (!validateImports()) return;
+
+    emit("submit", purchaseInvoice.value!);
   } else {
     let errors = "";
     Object.entries(validation.value.errors).forEach((e) => {
@@ -273,17 +235,17 @@ const setSupplierPaymentMethod = () => {
   );
   if (supplier) {
     purchaseInvoice.value!.paymentMethodId = supplier.paymentMethodId;
+    calcAmounts();
   }
 };
 
 const calcAmounts = async () => {
   if (!hasBeenMounted) return;
 
-  if (purchaseInvoice.value && purchaseInvoice.value.baseAmount !== 0) {
+  if (purchaseInvoice.value) {
     let baseAmount: number = 0;
     let transportAmount: number = 0;
     let subtotal: number = 0;
-    let taxPercentage: number = 0;
     let taxAmount: number = 0;
     let netAmount: number = 0;
     let discountAmount: number = 0;
@@ -292,9 +254,9 @@ const calcAmounts = async () => {
     let extraTaxPercentage: number = 0;
     let extraTaxAmount: number = 0;
 
-    if (purchaseInvoice.value.baseAmount) {
-      baseAmount = parseFloat(purchaseInvoice.value.baseAmount.toFixed(2));
-    }
+    baseAmount = getBaseAmountFromImports();
+    taxAmount = getTaxAmountFromImports();
+
     if (purchaseInvoice.value.transportAmount) {
       transportAmount = parseFloat(
         purchaseInvoice.value.transportAmount.toFixed(2)
@@ -309,15 +271,7 @@ const calcAmounts = async () => {
       extraTaxPercentage = purchaseInvoice.value.extraTaxPercentatge;
     }
 
-    var tax = purchaseMasterData.masterData.taxes?.find(
-      (item) => item.id === purchaseInvoice.value?.taxId
-    );
-    if (tax) {
-      taxPercentage = parseFloat(tax.percentatge.toFixed(2));
-    }
-
     subtotal = (baseAmount + transportAmount) * 1;
-    taxAmount = subtotal * (taxPercentage / 100);
     extraTaxAmount = subtotal * (extraTaxPercentage / 100);
     grossAmount = subtotal + taxAmount * 1 - extraTaxAmount * 1;
     discountAmount = (grossAmount * (1 * discountPercentage)) / 100;
@@ -340,12 +294,45 @@ const calcAmounts = async () => {
         purchaseInvoice.value
       )) as Array<PurchaseInvoiceDueDate>;
   }
+
+  console.log("calcAmounts", purchaseInvoice.value);
 };
+
+const getBaseAmountFromImports = (): number => {
+  let baseAmount = 0;
+  if (purchaseInvoice.value) {
+    purchaseInvoice.value.purchaseInvoiceImports.forEach(
+      (i) => (baseAmount += i.baseAmount!)
+    );
+  }
+  return baseAmount;
+};
+
+const getTaxAmountFromImports = (): number => {
+  let taxAmount = 0;
+  if (purchaseInvoice.value) {
+    purchaseInvoice.value.purchaseInvoiceImports.forEach(
+      (i) => (taxAmount += i.taxAmount!)
+    );
+  }
+  return taxAmount;
+};
+
+// Methods exposed for the parent components
+defineExpose({
+  submitForm,
+  calcAmounts,
+});
 </script>
 <style scoped>
 .save_button {
   position: absolute;
   top: 0;
   right: 1rem;
+}
+
+.summary-field {
+  font-weight: bold;
+  border-bottom: 1px solid black;
 }
 </style>

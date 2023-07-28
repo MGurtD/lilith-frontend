@@ -6,10 +6,10 @@ import {
 import { SupplierService } from "./suppliers.service";
 
 export default {
+  PurchaseInvoice: new PurchaseInvoiceService("/PurchaseInvoice"),
   PurchaseInvoiceSerie: new PurchaseInvoiceSerieService(
     "/PurchaseInvoiceSerie"
   ),
-  PurchaseInvoice: new PurchaseInvoiceService("/PurchaseInvoice"),
   PurchaseInvoiceStatus: new PurchaseInvoiceStatusService(
     "/PurchaseInvoiceStatus"
   ),
