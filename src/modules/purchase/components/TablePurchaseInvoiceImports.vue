@@ -20,7 +20,10 @@
         {{ getTaxNameById(slotProps.data.taxId) }}
       </template>
     </Column>
-    <Column field="netAmount" header="Import" style="width: 25%">
+    <Column field="taxAmount" header="Cuota IVA" style="width: 25%">
+      <template #body="slotProps"> {{ slotProps.data.taxAmount }} € </template>
+    </Column>
+    <Column field="netAmount" header="Total" style="width: 25%">
       <template #body="slotProps"> {{ slotProps.data.netAmount }} € </template>
     </Column>
     <Column style="width: 10%">
@@ -56,7 +59,7 @@ const purchaseMasterData = usePurchaseMasterDataStore();
 
 const getTaxNameById = (taxId: string) => {
   const tax = purchaseMasterData.masterData.taxes?.find((t) => t.id === taxId);
-  if (tax) return tax.name;
+  if (tax) return tax.percentatge;
 };
 
 const onAdd = () => {
