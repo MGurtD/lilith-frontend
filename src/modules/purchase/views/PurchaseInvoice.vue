@@ -40,7 +40,7 @@
         v-if="purchaseInvoice"
         title="Factures"
         entity="PurchaseInvoice"
-        :id="purchaseInvoice.id"
+        :id="(route.params.id as string)"
       />
     </TabPanel>
   </TabView>

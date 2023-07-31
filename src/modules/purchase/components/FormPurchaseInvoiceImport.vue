@@ -87,8 +87,8 @@ const calcAmounts = () => {
     const netAmount = baseAmount + taxAmount;
 
     props.invoiceImport.baseAmount = baseAmount;
-    props.invoiceImport.taxAmount = ceil(taxAmount, 2);
-    props.invoiceImport.netAmount = ceil(netAmount, 2);
+    props.invoiceImport.taxAmount = round(taxAmount, 2);
+    props.invoiceImport.netAmount = round(netAmount, 2);
 
     console.log("netAmount, rounded netAmount", netAmount, round(netAmount, 2));
   }

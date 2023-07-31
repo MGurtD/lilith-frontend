@@ -173,6 +173,15 @@ const purchaseStore = usePurchaseInvoiceStore();
 const purchaseMasterData = usePurchaseMasterDataStore();
 const { purchaseInvoice } = storeToRefs(purchaseStore);
 
+onMounted(() => {
+  if (
+    purchaseInvoice.value &&
+    purchaseInvoice.value.purchaseInvoiceImports.length > 0
+  ) {
+    purchaseInvoice.value.taxAmount = getTaxAmountFromImports();
+  }
+});
+
 const schema = Yup.object().shape({
   exerciceId: Yup.string().required("L'exercici es obligatori"),
   supplierId: Yup.string().required("El proveïdor es obligatori"),
@@ -312,7 +321,7 @@ const getTaxAmountFromImports = (): number => {
   let taxAmount = 0;
   if (purchaseInvoice.value) {
     purchaseInvoice.value.purchaseInvoiceImports.forEach(
-      (i) => (taxAmount += i.taxAmount!)
+      (i) => (taxAmount += i.taxAmount)
     );
   }
   return taxAmount;

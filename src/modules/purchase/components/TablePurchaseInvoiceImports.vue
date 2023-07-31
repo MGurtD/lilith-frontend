@@ -60,10 +60,14 @@ const getTaxNameById = (taxId: string) => {
 };
 
 const onAdd = () => {
+  const tax = purchaseMasterData.masterData.taxes?.find((t) =>
+    t.name.includes("21")
+  );
+
   const defaultImport = {
     id: getNewUuid(),
     baseAmount: null,
-    taxId: "",
+    taxId: tax ? tax.id : "",
     taxAmount: 0,
     netAmount: 0,
     purchaseInvoiceId: "",
