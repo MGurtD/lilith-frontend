@@ -46,3 +46,12 @@ export interface CustomerType {
     observations: string;
     customerId: string;
   }
+
+  export interface Reference {
+    id: string;
+    code: string;
+    description: string;
+    cost: number;
+    price: number;
+    disabled: boolean;
+  }
