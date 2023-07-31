@@ -101,6 +101,11 @@ const applicationMenus = [
         title: "Clients",
         href: "/customers",
       },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Referències",
+        href: "/referencia",
+      },
     ],
   },
   {
