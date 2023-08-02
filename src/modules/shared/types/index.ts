@@ -25,3 +25,27 @@ export interface Tax {
   percentatge: number;
   disabled: boolean;
 }
+
+export interface Lifecycle {
+  id: string;
+  name: string;
+  description: string;
+  disabled: boolean;
+  statuses: Array<Status>;
+}
+
+export interface Status {
+  id: string;
+  name: string;
+  disabled: boolean;
+  lifecycleId: string;
+  transitions: Array<StatusTransition>;
+}
+
+export interface StatusTransition {
+  id: string;
+  name: string;
+  disabled: boolean;
+  statusId: string;
+  statusToId: string;
+}

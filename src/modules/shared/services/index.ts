@@ -1,5 +1,6 @@
 import { Exercise, PaymentMethod, Tax } from "../types";
 import BaseService from "../../../api/base.service";
+import LifecycleService from "./lifecycle.service";
 
 class ExerciseService extends BaseService<Exercise> {}
 class PaymentMethodService extends BaseService<PaymentMethod> {}
@@ -9,4 +10,5 @@ export default {
   Exercice: new ExerciseService("/Exercise"),
   PaymentMethod: new PaymentMethodService("/PaymentMethod"),
   Tax: new TaxService("/Tax"),
+  Lifecycle: new LifecycleService("/Lifecycle"),
 };

@@ -4,6 +4,7 @@ import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
+import { ref } from "vue";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -27,6 +28,11 @@ const applicationMenus = [
         icon: PrimeIcons.PAYPAL,
         title: "Formes de pagament",
         href: "/payment-methods",
+      },
+      {
+        icon: PrimeIcons.REFRESH,
+        title: "Cicles de vida",
+        href: "/lifecycle",
       },
     ],
   },
@@ -154,7 +160,7 @@ export const useStore = defineStore("applicationStore", {
       user: undefined as User | undefined,
       isWaiting: false,
 
-      menus: applicationMenus as Array<MenuItem>,
+      menus: ref(applicationMenus as Array<MenuItem>),
       menuCollapsed: false,
       currentMenuItem: {
         title: "Home",
@@ -211,9 +217,4 @@ export interface JwtDecoded {
   jti: string;
   id: string;
   sub: string;
-}
-
-export interface Backend {
-  isWaitingResponse: boolean;
-  isOnError: boolean;
 }

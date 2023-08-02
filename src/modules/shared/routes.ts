@@ -6,6 +6,8 @@ const Exercise = () => import("./views/Exercise.vue");
 const Exercises = () => import("./views/Exercises.vue");
 const Taxes = () => import("./views/Taxes.vue");
 const Tax = () => import("./views/Tax.vue");
+const Lifecycles = () => import("./views/Lifecycles.vue");
+const Lifecycle = () => import("./views/Lifecycle.vue");
 
 export default [
   {
@@ -39,6 +41,17 @@ export default [
     path: "/tax/:id",
     name: "Tax",
     component: Tax,
+    props: true,
+  },
+  {
+    path: "/lifecycle",
+    name: "Lifecycles",
+    component: Lifecycles,
+  },
+  {
+    path: "/lifecycle/:id",
+    name: "Lifecycle",
+    component: Lifecycle,
     props: true,
   },
 ] as Array<RouteRecordRaw>;

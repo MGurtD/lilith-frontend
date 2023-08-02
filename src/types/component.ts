@@ -30,3 +30,11 @@ export interface ChartDataSet {
   borderColor: string[];
   borderWidth: number;
 }
+
+export interface DialogOptions {
+  visible: boolean;
+  title: string;
+  closable: boolean;
+  position: string;
+  modal: boolean;
+}
