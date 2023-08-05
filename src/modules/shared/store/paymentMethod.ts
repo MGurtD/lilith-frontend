@@ -19,7 +19,7 @@ export const usePaymentMethodStore = defineStore({
         dueDays: 0,
         paymentDay: 1,
         numberOfPayments: 1,
-        frequency: 1,
+        frequency: 0,
       } as PaymentMethod;
     },
     async fetchAll() {

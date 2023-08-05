@@ -16,6 +16,8 @@ export interface Exercise {
   startDate: Date;
   endDate: Date;
   purchaseInvoiceCounter: number;
+  salesInvoiceCounter: number;
+  salesOrderCounter: number;
   disabled: boolean;
 }
 
