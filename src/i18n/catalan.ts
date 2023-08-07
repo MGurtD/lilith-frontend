@@ -66,7 +66,7 @@ export default {
   ],
   today: "Avui",
   weekHeader: "Se",
-  firstDayOfWeek: 0,
+  firstDayOfWeek: 1,
   dateFormat: "dd/mm/yy",
   weak: "Feble",
   medium: "Mitja",
