@@ -106,6 +106,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const props = defineProps<{
   expense: Expense;
@@ -150,6 +151,14 @@ const toast = useToast();
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
+    props.expense.creationDate = convertDateTimeToJSON(
+      props.expense.creationDate
+    );
+    props.expense.endDate = convertDateTimeToJSON(props.expense.endDate);
+    props.expense.paymentDate = convertDateTimeToJSON(
+      props.expense.paymentDate
+    );
+
     emit("submit", expense.value as Expense);
   } else {
     let errors = "";

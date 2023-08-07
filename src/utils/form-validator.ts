@@ -13,7 +13,6 @@ export class FormValidation {
       this.schema.validateSync(formData, { abortEarly: false });
       validation.result = true;
     } catch (err: any) {
-      console.log("FormValidation error", err);
       validation.errors = err.inner.reduce(
         (acc: Errors, cv: ValidationError) => {
           let { path, message } = cv;

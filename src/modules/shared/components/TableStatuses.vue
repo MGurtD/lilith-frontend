@@ -52,7 +52,6 @@ const hasTransitions = (status: Status) => {
         (t) => t.statusId === status.id || t.statusToId === status.id
       ).length > 0;
   }
-  console.log("hasTransitions", status, props.transitions, has);
 
   return has;
 };

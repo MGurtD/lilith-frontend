@@ -75,6 +75,7 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const props = defineProps<{
   exercise: Exercise;
@@ -115,6 +116,9 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
+    props.exercise.startDate = convertDateTimeToJSON(props.exercise.startDate);
+    props.exercise.endDate = convertDateTimeToJSON(props.exercise.endDate);
+
     emit("submit", props.exercise);
   } else {
     let errors = "";

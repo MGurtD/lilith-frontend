@@ -54,6 +54,16 @@ export const formatDate = (date: string | Date) => {
   return formatter.format(new Date(date));
 };
 
+export const convertDateTimeToJSON = (dateTime: any) => {
+  if (dateTime instanceof Date) {
+    const hoursDiff = dateTime.getHours() - dateTime.getTimezoneOffset() / 60;
+    dateTime.setHours(hoursDiff);
+    return dateTime.toISOString();
+  } else {
+    return dateTime;
+  }
+};
+
 export const formatDateTime = (dateTime: string) => {
   const formatter = new Intl.DateTimeFormat("es-ES", {
     year: "numeric",

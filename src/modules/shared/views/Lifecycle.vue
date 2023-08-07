@@ -110,7 +110,6 @@ onMounted(async () => {
 
 // Status
 const openStatus = (action: FormActionMode, status: Status) => {
-  console.log("openStatus", action);
   if (formMode.value === FormActionMode.CREATE) return;
 
   auxiliarFormAction.value = action;

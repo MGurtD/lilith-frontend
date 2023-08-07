@@ -209,7 +209,6 @@ const onInvoiceImportSubmit = async (invoiceImport: PurchaseInvoiceImport) => {
 };
 
 const deleteInvoiceImport = async (invoiceImport: PurchaseInvoiceImport) => {
-  console.log("deleteInvoiceImport");
   if (formMode.value === FormActionMode.EDIT) {
     await purchaseInvoiceStore.DeleteInvoiceImport(invoiceImport);
   }

@@ -89,8 +89,6 @@ const calcAmounts = () => {
     props.invoiceImport.baseAmount = baseAmount;
     props.invoiceImport.taxAmount = round(taxAmount, 2);
     props.invoiceImport.netAmount = round(netAmount, 2);
-
-    console.log("netAmount, rounded netAmount", netAmount, round(netAmount, 2));
   }
 };
 
