@@ -15,6 +15,8 @@
       <DataTable
         :value="supplierStore.suppliers"
         tableStyle="min-width: 100%"
+        scrollable
+        scrollHeight="80vh"
         @row-click="editSupplier"
       >
         <Column
@@ -51,6 +53,8 @@
       <DataTable
         :value="supplierStore.supplierTypes"
         tableStyle="min-width: 100%"
+        scrollable
+        scrollHeight="80vh"
         @row-click="editSupplierType"
       >
         <Column field="name" header="Nom" style="width: 50%"></Column>
