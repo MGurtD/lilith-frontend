@@ -56,6 +56,32 @@ export interface Reference {
   disabled: boolean;
 }
 
+export interface SalesOrderDetail {
+  id: string;
+  salesOrderHeaderId: string;
+  referenceId: string;
+  description: string;
+  quantity: number;
+  unitCost: number;
+  unitPrice: number;
+  totalCost: number;
+  amount: number;
+  isServed: boolean;
+  isInvoiced: boolean;
+}
+
+export interface CreateInvoiceDetailsFromOrderDetailsRequest {
+  invoiceId: string;
+  orderDetails: Array<SalesOrderDetail>;
+}
+
+export interface CreateInvoiceRequest {
+  id: string;
+  invoiceDate: string;
+  exerciseId: string;
+  customerId: string;
+}
+
 export interface SalesInvoice {
   id: string;
   disabled: boolean;
@@ -67,8 +93,8 @@ export interface SalesInvoice {
   netAmount: number;
   exerciseId: string;
   statusId: string;
-  paymentMethodId: string;
   customerId: string;
+  paymentMethodId: string;
   customerCode: string;
   customerComercialName: string;
   customerTaxName: string;
@@ -103,7 +129,6 @@ export interface SalesInvoiceDetail {
   unitPrice: number;
   totalCost: number;
   amount: number;
-  estimatedDeliveryDate: string;
 }
 
 export interface SalesInvoiceDueDate {

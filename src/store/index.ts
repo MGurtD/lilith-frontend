@@ -108,9 +108,14 @@ const applicationMenus = [
         href: "/customers",
       },
       {
-        icon: PrimeIcons.BUILDING,
+        icon: PrimeIcons.TICKET,
         title: "Referències",
         href: "/referencia",
+      },
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Factures",
+        href: "/sales-invoice",
       },
     ],
   },
