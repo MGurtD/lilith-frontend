@@ -49,7 +49,7 @@
       <template #body="slotProps">
         <i
           v-if="
-            getStatusNameById(slotProps.data.statusId) ===
+            slotProps.data.statusId ===
             lifecycleStore.lifecycle?.initialStatusId
           "
           :class="PrimeIcons.TIMES"

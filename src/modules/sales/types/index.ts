@@ -88,6 +88,7 @@ export interface SalesInvoice {
   invoiceNumber: string;
   invoiceDate: string;
   baseAmount: number;
+  taxAmount: number;
   transportAmount: number;
   grossAmount: number;
   netAmount: number;
@@ -122,8 +123,10 @@ export interface SalesInvoiceDetail {
   id: string;
   salesInvoiceId: string;
   salesOrderDetailId: string;
+  taxId: string;
   referenceId: string;
   reference: Reference;
+  description: string;
   quantity: number;
   unitCost: number;
   unitPrice: number;

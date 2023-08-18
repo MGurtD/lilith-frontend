@@ -130,15 +130,8 @@ const dialogOptions = reactive({
 
 onMounted(async () => {
   sharedData.fetchMasterData();
-  await customersStore.fetchCustomers();
-
-  let startDate: Date = new Date();
-  let endDate: Date = new Date();
-  startDate.setDate(endDate.getDate() - 30);
-
-  const strStartDate = formatDateForQueryParameter(startDate);
-  const strEndDate = formatDateForQueryParameter(endDate);
-  await invoiceStore.GetFiltered(strStartDate, strEndDate);
+  customersStore.fetchCustomers();
+  await filterInvoices();
 
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
@@ -147,25 +140,29 @@ onMounted(async () => {
 });
 
 const filterInvoices = async () => {
-  if (filter.value.dates) {
-    const startTime = formatDateForQueryParameter(filter.value.dates[0]);
-    const endTime = formatDateForQueryParameter(filter.value.dates[1]);
+  let startTime = "";
+  let endTime = "";
 
-    await invoiceStore.GetFiltered(
-      startTime,
-      endTime,
-      undefined,
-      undefined,
-      filter.value.customerId
-    );
+  if (filter.value.dates) {
+    startTime = formatDateForQueryParameter(filter.value.dates[0]);
+    endTime = formatDateForQueryParameter(filter.value.dates[1]);
   } else {
-    toast.add({
-      severity: "info",
-      summary: "Filtre invàlid",
-      detail: "Seleccioni un període",
-      life: 5000,
-    });
+    // default filter (last 30 days)
+    let startDate: Date = new Date();
+    let endDate: Date = new Date();
+    startDate.setDate(endDate.getDate() - 30);
+
+    startTime = formatDateForQueryParameter(startDate);
+    endTime = formatDateForQueryParameter(endDate);
   }
+
+  await invoiceStore.GetFiltered(
+    startTime,
+    endTime,
+    undefined,
+    undefined,
+    filter.value.customerId
+  );
 };
 
 const createInvoiceRequest = reactive({
@@ -182,7 +179,7 @@ const createButtonClick = () => {
 const createInvoice = async () => {
   const created = await invoiceStore.Create(createInvoiceRequest);
   if (created) {
-    router.push({ path: `/sales-invoice/${createInvoiceRequest.id}}` });
+    router.push({ path: `/sales-invoice/${createInvoiceRequest.id}` });
   }
 };
 
@@ -204,6 +201,7 @@ const deleteSalesInvoice = (invoice: SalesInvoice) => {
           summary: "Eliminada",
           life: 3000,
         });
+
         await filterInvoices();
       }
     },

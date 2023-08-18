@@ -51,10 +51,10 @@ export const useSalesInvoiceStore = defineStore({
         console.log("GetFiltered", this.invoices);
       }
     },
-    async Update(purchaseInvoice: SalesInvoice) {
+    async Update(invoice: SalesInvoice) {
       const updated = await SalesService.SalesInvoice.update(
-        purchaseInvoice.id,
-        purchaseInvoice
+        invoice.id,
+        invoice
       );
       return updated;
     },
