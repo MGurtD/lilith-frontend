@@ -5,6 +5,8 @@ const Customers = () => import("./views/Customers.vue");
 const Customer = () => import("./views/Customer.vue");
 const Referencies = () => import("./views/references.vue");
 const Referencia = () => import("./views/reference.vue");
+const SalesOrders = () => import("./views/SalesOrders.vue");
+const SalesOrder = () => import("./views/SalesOrder.vue");
 
 export default [
   {
@@ -27,4 +29,7 @@ export default [
     component: Referencia,
     props: true,
   },
+  { path: "/salesorder", name:"SalesOrders", component: SalesOrders },
+  { path: "/salesorder/:id", name:"SalesOrder", component: SalesOrder },
 ] as Array<RouteRecordRaw>;
+

@@ -1,6 +1,6 @@
 <template>
     <form v-if="reference">
-        <section class="two-columns">
+        <section class="three-columns">
             <div class="mt-1">
             <BaseInput
           class="mb-2"
@@ -23,8 +23,16 @@
           }"
         ></BaseInput> 
         </div>
+        <div class="mt-1">
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Versió"
+            id="version"
+            v-model="reference.version"            
+          />
+        </div>
         </section>
-        <section class="two-columns">
+        <section class="three-columns">
             <div class="mt-1">
           <BaseInput
             :type="BaseInputType.CURRENCY"
@@ -39,6 +47,20 @@
             label="Preu"
             id="price"
             v-model="reference.price"            
+          />
+        </div>
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Forma de pagament</label>
+          <Dropdown
+            v-model="reference.taxId"
+            editable
+            :options="taxesStore.taxes"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.taxid,
+            }"            
           />
         </div>
         </section>
@@ -70,6 +92,7 @@
   import { storeToRefs } from "pinia";
   import { useReferenceStore } from "../store/reference";
   import { BaseInputType } from "../../../types/component";
+import { useTaxesStore } from "../../shared/store/tax";
   
   const props = defineProps<{
     reference: Reference;
@@ -84,7 +107,12 @@
   
   const toast = useToast();
   const referenceStore = useReferenceStore();
+  const taxesStore = useTaxesStore();
   const { reference } = storeToRefs(referenceStore);
+
+  onMounted(async () => {
+    await taxesStore.fetchAll();
+  });
 
   const schema = Yup.object().shape({
     code: Yup.string()
@@ -93,10 +121,15 @@
     description: Yup.string()
       .required("La descripció és obligatori")
       .max(250, "La descripció pot superar els 250 carácters"),
+    version: Yup.string()
+      .required("La versió és obligatoria")
+      .max(20, "La versió pot superar els 20 carácters"),
     cost: Yup.string()
         .required("El cost es obligatori"),
     price: Yup.string()
         .required("El preu es obligatori"),
+    taxId: Yup.string()
+        .required("El tipus d'iva es obligatori"),
   });
   const validation = ref({
     result: false,

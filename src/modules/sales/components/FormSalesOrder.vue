@@ -1,0 +1,229 @@
+<template>
+    <div>
+        <form v-if="salesOrder">
+            <section class="four-columns">
+                <div class="mt-1">
+                    <label class="block text-900 mb-2">Exercici</label>
+                    <Dropdown
+                        v-model="salesOrder.exerciseId"
+                        editable
+                        :options="exerciseStore.exercises"
+                        optionValue="id"
+                        optionLabel="name"
+                        class="w-full"
+                        :class="{
+                        'p-invalid': validation.errors.exerciseId,
+                        }"
+                    />
+                </div>
+                <div class="mt-1">
+                  <BaseInput
+                    :type="BaseInputType.TEXT"
+                    label="Num. Comanda"
+                    id="salesOrderNumber"
+                    v-model="salesOrder.salesOrderNumber"                    
+                    disabled
+                  />
+                </div>
+                <div class="mt-1">
+                  <label class="block text-900 mb-2">Data Comanda</label>
+                  <Calendar
+                    id="salesOrderDate"
+                    v-model="salesOrder.salesOrderDate"                    
+                  />
+                </div>
+                <div class="mt-1">
+                    <label class="block text-900 mb-2">Estat</label>
+                    <Dropdown
+                        v-model="salesOrder.statusId"
+                        editable
+                        :options="lifeCycleStore.lifecycles"
+                        optionValue="id"
+                        optionLabel="Name"
+                        class="w-full"
+                        :class="{
+                        'p-invalid': validation.errors.statusId,
+                        }"
+                    />
+                </div>
+            </section>
+            <section class="two-columns">
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Origen</label>
+                <Dropdown
+                  v-model="salesOrder.siteId"
+                  editable
+                  :options="plantModelStore.sites"
+                  optionValue="id"
+                  optionLabel="name"
+                  class="w-full"
+                  :class="{
+                    'p-invalid': validation.errors.siteId,
+                  }"
+                  @update:modelValue="updateSite()"
+                />
+              </div>
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Client</label>
+                <Dropdown
+                  v-model="salesOrder.customerId"
+                  editable
+                  :options="customerStore.customers"
+                  optionValue="id"
+                  optionLabel="comercialName"
+                  class="w-full"
+                  :class="{
+                    'p-invalid': validation.errors.siteId,
+                  }"
+                  @update:modelValue="updateCustomer()"
+                />
+              </div>
+            </section>
+        </form>
+    </div>
+</template>
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import BaseInput from "../../../components/BaseInput.vue";
+import { useSalesOrderStore } from "../store/salesOrder";
+import { useCustomersStore } from "../store/customers";
+import { useExerciseStore } from "../../shared/store/exercise";
+import { usePlantModelStore } from "../../production/store/plantmodel";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { SalesOrderHeader, SalesOrderDetail } from "../types";
+import * as Yup from "yup";
+import {
+  FormValidation,
+  FormValidationResult,
+} from "../../../utils/form-validator";
+import { useToast } from "primevue/usetoast";
+import { storeToRefs } from "pinia";
+import { BaseInputType } from "../../../types/component";
+import { Lifecycle } from "../../shared/types";
+import {  v4 as uuidv4 } from "uuid";
+import LifecycleService from "../../shared/services/lifecycle.service";
+import { useReferenceStore } from "../store/reference";
+
+const emit = defineEmits<{
+  (e: "submit", salesOrder: SalesOrderHeader): void;
+  (e: "cancel"): void;
+}>();
+
+const salesOrderStore = useSalesOrderStore();
+const customerStore = useCustomersStore();
+const plantModelStore = usePlantModelStore();
+const exerciseStore = useExerciseStore();
+const lifeCycleStore = useLifecyclesStore();
+const referenceStore = useReferenceStore();
+const toast = useToast();
+
+const { salesOrder } = storeToRefs(salesOrderStore);
+
+onMounted(async () => {    
+    await plantModelStore.fetchSites();
+    await exerciseStore.fetchAll();
+    await lifeCycleStore.fetchAll();
+    await customerStore.fetchCustomers();
+    await referenceStore.fetchReferences();
+    await lifeCycleStore.fetchByName("SalesOrder");
+    console.log(lifeCycleStore.lifecycles);
+    salesOrder.value!.statusId = "ca610d3f-f38a-49fc-abb5-4c818d70159a"
+    
+    
+});
+
+const schema = Yup.object().shape({
+    name: Yup.string()
+      .required("El nom és obligatori")
+      .max(250, "El nom no pot superar els 250 carácters"),
+    description: Yup.string()
+      .required("La descripció és obligatori")
+      .max(250, "La descripció pot superar els 250 carácters"),
+    siteId: Yup.string()
+        .required("El local es obligatori"),
+  });
+  const validation = ref({
+    result: false,
+    errors: {},
+  } as FormValidationResult);
+  
+  const validate = () => {
+    const formValidation = new FormValidation(schema);
+    validation.value = formValidation.validate(salesOrder.value);
+  };
+
+
+
+
+const submitForm = async () => {
+    
+    validate();
+    if (validation.value.result) {
+      emit("submit", salesOrder.value!);
+    } else {
+      let errors = "";
+      Object.entries(validation.value.errors).forEach((e) => {
+        errors += `${e[1].map((e) => e)}.   `;
+      });
+      toast.add({
+        severity: "warn",
+        summary: "Formulari inválid",
+        detail: errors,
+        life: 5000,
+      });
+    }
+  };
+
+
+defineExpose({
+  submitForm,
+});
+
+const updateCustomer = () => {
+  const customer = customerStore.customers?.find(
+    (c) => c.id === salesOrder.value?.customerId
+  );
+  if (customer){
+    salesOrder.value!.customerCode = customer.code;
+    salesOrder.value!.customerComercialName = customer.comercialName;
+    salesOrder.value!.customerTaxName = customer.taxName;
+    salesOrder.value!.customerVatNumber = customer.vatNumber;
+    salesOrder.value!.customerAccountNumber = customer.accountNumber;
+  }
+  console.log(salesOrder.value);
+}
+
+const updateSite = () => {
+  const site = plantModelStore.sites?.find(
+    (s) => s.id === salesOrder.value?.siteId
+  );
+  if (site){
+    salesOrder.value!.name = site.name;
+    salesOrder.value!.address = site.address;
+    salesOrder.value!.city = site.city;
+    salesOrder.value!.postalCode = site.postalCode;
+    salesOrder.value!.region = site.region;
+    salesOrder.value!.country = site.country;
+    salesOrder.value!.vatNumber = site.vatNumber;
+  }
+};
+
+
+/*const getSalesOrderStatuses = async () =>  {
+      lifeCycleStore = lifeCycleStore.fetchOne("SalesOrder");
+};*/
+
+
+</script>
+<style scoped>
+.save_button {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+}
+
+.summary-field {
+  font-weight: bold;
+  border-bottom: 1px solid black;
+}
+</style>

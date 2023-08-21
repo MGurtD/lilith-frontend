@@ -1,6 +1,16 @@
 <template>
   <form v-if="invoiceImport">
     <section class="two-columns">
+      <BaseInput
+        class="mb-2"
+        label="Import Base"
+        v-model="invoiceImport.baseAmount"
+        :type="BaseInputType.CURRENCY"
+        :class="{
+          'p-invalid': validation.errors.baseAmount,
+        }"
+        @update:modelValue="calcAmounts()"
+      ></BaseInput>
       <div>
         <label class="block text-900 mb-2">IVA</label>
         <Dropdown
@@ -12,16 +22,7 @@
           @update:modelValue="calcAmounts()"
         />
       </div>
-      <BaseInput
-        class="mb-2"
-        label="Import Base"
-        v-model="invoiceImport.baseAmount"
-        :type="BaseInputType.CURRENCY"
-        :class="{
-          'p-invalid': validation.errors.baseAmount,
-        }"
-        @update:modelValue="calcAmounts()"
-      ></BaseInput>
+      
     </section>
     <section class="two-columns">
       <BaseInput

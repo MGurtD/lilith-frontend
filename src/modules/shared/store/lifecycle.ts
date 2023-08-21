@@ -42,6 +42,9 @@ export const useLifecyclesStore = defineStore({
     async fetchOne(id: string) {
       this.lifecycle = await Services.Lifecycle.getById(id);
     },
+    async fetchByName(name: string) {
+      this.lifecycle = await Services.Lifecycle.getByName(name);
+    },
     async create(model: Lifecycle) {
       const result = await Services.Lifecycle.create(model);
       if (result) await this.fetchAll();
