@@ -76,33 +76,6 @@
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
       </div>    
-    <section class="two-columns">
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Cost"
-          id="cost"
-          v-model="reference.cost"
-        />
-      </div>
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Preu"
-          id="price"
-          v-model="reference.price"
-        />
-      </div>
-    </section>
-    <section>
-      <br />
-      <FileEntityPicker
-        v-if="reference"
-        title="Planos"
-        entity="referenceMaps"
-        :id="reference.id"
-      />
-    </section>
   </form>
 </template>
 <script setup lang="ts">
