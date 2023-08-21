@@ -342,9 +342,4 @@ defineExpose({
   top: 0;
   right: 1rem;
 }
-
-.summary-field {
-  font-weight: bold;
-  border-bottom: 1px solid black;
-}
 </style>

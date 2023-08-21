@@ -14,12 +14,21 @@
         <TableInvoiceDetails
           :header-visible="true"
           :details="invoice.salesInvoiceDetails"
-          @edit="onEditInvoiceDetail"
-          @delete="onDeleteInvoiceDetail"
+          @edit="editInvoiceDetail"
+          @delete="deleteInvoiceDetail"
         >
           <template #header>
-            <Button :size="'small'" label="Afegir de comanda" /> &nbsp;&nbsp;
-            <Button :size="'small'" label="Crear linia lliure" />
+            <Button
+              :size="'small'"
+              label="Afegir de comanda"
+              @click="openAddFromOrderDetails"
+            />
+            &nbsp;&nbsp;
+            <Button
+              :size="'small'"
+              label="Crear linia lliure"
+              @click="openAddDetail"
+            />
           </template>
         </TableInvoiceDetails>
       </TabPanel>
@@ -32,16 +41,21 @@
     :header="dialogOptions.title"
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
+    :style="{ width: currentDialogType === dialogType.Free ? '50vw' : '60vw' }"
   >
-    <form>
-      <footer class="mt-2">
-        <Button
-          label="Crear"
-          @click="createInvoiceDetailsFromOrder"
-          style="float: right"
-        />
-      </footer>
-    </form>
+    <FormSalesInvoiceDetail
+      v-if="currentDialogType === dialogType.Free"
+      :invoiceDetail="currentInvoiceDetail"
+      @submit="addInvoiceDetail"
+    />
+    <SelectorOrderDetails
+      v-if="currentDialogType === dialogType.FromOrder"
+      :headerVisible="true"
+      :details="[]"
+      @selected="createInvoiceDetailsFromOrder"
+    >
+      <template #header> </template>
+    </SelectorOrderDetails>
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -61,11 +75,14 @@ import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
   SalesInvoice,
   SalesInvoiceDetail,
+  SalesOrderDetail,
 } from "../types";
 import { DialogOptions } from "../../../types/component";
 import SplitButton from "primevue/splitbutton";
 import FormSalesInvoice from "../components/FormSalesInvoice.vue";
 import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
+import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
+import SelectorOrderDetails from "../components/SelectorOrderDetails.vue";
 
 const items = [
   {
@@ -74,9 +91,7 @@ const items = [
     command: () => printInvoice(),
   },
 ];
-const printInvoice = () => {
-  console.log(invoice.value);
-};
+const printInvoice = () => {};
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -89,6 +104,11 @@ const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
 const { invoice } = storeToRefs(invoiceStore);
 
+const dialogType = {
+  Free: 0,
+  FromOrder: 1,
+};
+const currentDialogType = ref(0);
 const dialogOptions = reactive({
   visible: false,
   title: "",
@@ -113,29 +133,6 @@ onMounted(async () => {
   });
 });
 
-const createInvoiceDetailsRequest = reactive(
-  {} as CreateInvoiceDetailsFromOrderDetailsRequest
-);
-
-const createButtonClick = () => {
-  if (invoiceStore.invoice) {
-    createInvoiceDetailsRequest.invoiceId = invoiceStore.invoice.id;
-    createInvoiceDetailsRequest.orderDetails = [];
-
-    dialogOptions.title = "Selecció de linees de comanda";
-    dialogOptions.visible = true;
-  }
-};
-
-const createInvoiceDetailsFromOrder = async () => {
-  const created = await invoiceStore.CreateInvoiceDetailsFromOrderDetails(
-    createInvoiceDetailsRequest
-  );
-  if (created) {
-    await invoiceStore.GetById(route.params.id as string);
-  }
-};
-
 const updateInvoice = async () => {
   const updated = await invoiceStore.Update(invoice.value!);
   if (updated) {
@@ -149,10 +146,64 @@ const updateInvoice = async () => {
   }
 };
 
-const onEditInvoiceDetail = (detail: SalesInvoiceDetail) => {
-  // TODO : Obrir dialeg per editar
+const createInvoiceDetailsRequest = reactive(
+  {} as CreateInvoiceDetailsFromOrderDetailsRequest
+);
+const openAddFromOrderDetails = () => {
+  if (invoice.value) {
+    createInvoiceDetailsRequest.invoiceId = invoice.value.id;
+    createInvoiceDetailsRequest.orderDetails = [];
+
+    currentDialogType.value = dialogType.FromOrder;
+    dialogOptions.title = "Selecció de linees de comanda";
+    dialogOptions.visible = true;
+  }
 };
-const onDeleteInvoiceDetail = (detail: SalesInvoiceDetail) => {
-  // TODO : Demanar confirmació i eliminar
+const createInvoiceDetailsFromOrder = async (
+  selectedOrderDetails: Array<SalesOrderDetail>
+) => {
+  createInvoiceDetailsRequest.orderDetails = selectedOrderDetails;
+  const created = await invoiceStore.CreateInvoiceDetailsFromOrderDetails(
+    createInvoiceDetailsRequest
+  );
+  if (created) {
+    await invoiceStore.GetById(route.params.id as string);
+  }
+};
+
+const currentInvoiceDetail = reactive({} as SalesInvoiceDetail);
+const openAddDetail = () => {
+  currentDialogType.value = dialogType.Free;
+  if (invoice.value) {
+    currentInvoiceDetail.salesInvoiceId = invoice.value.id;
+    currentInvoiceDetail.quantity = 1;
+    currentInvoiceDetail.description = "";
+    currentInvoiceDetail.totalCost = 0;
+
+    const tax = sharedData.taxes?.find((t) => t.name.includes("0"));
+    if (tax) currentInvoiceDetail.taxId = tax.id;
+
+    dialogOptions.title = "Introducció de línea lliure";
+    dialogOptions.visible = true;
+  }
+};
+const addInvoiceDetail = async () => {
+  await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
+};
+
+const editInvoiceDetail = async (detail: SalesInvoiceDetail) => {
+  await invoiceStore.UpdateInvoiceDetail(detail);
+};
+
+const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
+  confirm.require({
+    message: `Està segur que vol eliminar la línea ${detail.description}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      await invoiceStore.DeleteInvoiceDetail(detail);
+    },
+  });
 };
 </script>
