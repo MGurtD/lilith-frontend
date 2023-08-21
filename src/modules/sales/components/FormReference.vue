@@ -11,8 +11,8 @@
             'p-invalid': validation.errors.code,
           }"
         ></BaseInput>
-        </div>
-        <div class="mt-1">
+      </div>
+      <div class="mt-1">
         <BaseInput
           class="mb-2"
           label="Descripció"
@@ -50,7 +50,7 @@
           />
         </div>
         <div class="mt-1">
-          <label class="block text-900 mb-2">Forma de pagament</label>
+          <label class="block text-900 mb-2">Imposts</label>
           <Dropdown
             v-model="reference.taxId"
             editable
@@ -75,8 +75,35 @@
         </section>
         <div class="mt-2">
         <Button label="Guardar" class="mr-2" @click="submitForm" />
+      </div>    
+    <section class="two-columns">
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost"
+          id="cost"
+          v-model="reference.cost"
+        />
       </div>
-    </form>
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Preu"
+          id="price"
+          v-model="reference.price"
+        />
+      </div>
+    </section>
+    <section>
+      <br />
+      <FileEntityPicker
+        v-if="reference"
+        title="Planos"
+        entity="referenceMaps"
+        :id="reference.id"
+      />
+    </section>
+  </form>
 </template>
 <script setup lang="ts">
   import { onMounted, ref } from "vue";

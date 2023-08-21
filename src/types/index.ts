@@ -1,3 +1,9 @@
+export interface GenericResponse<T> {
+  result: boolean;
+  errors: Array<string>;
+  content?: T;
+}
+
 export interface AuthenticationResponse {
   token: string;
   refreshToken: string;

@@ -1,7 +1,7 @@
 <template>
   <main class="container">
     <Button label="Guardar" class="grid_add_row_button" @click="submitForm" />
-    <section class="section_lifecycle">
+    <section class="section_lifecycle mt-5">
       <FormLifecycle v-if="lifecycle" :lifecycle="lifecycle" />
     </section>
     <section class="section_status">
@@ -209,7 +209,7 @@ const submitForm = async () => {
 <style scoped>
 .container {
   display: grid;
-  grid-template-rows: 0.2fr 0.8fr;
+  grid-template-rows: 0.15fr 0.85fr;
   height: 100%;
 }
 

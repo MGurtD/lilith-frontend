@@ -33,6 +33,7 @@ export interface Lifecycle {
   name: string;
   description: string;
   disabled: boolean;
+  initialStatusId?: string;
   statuses: Array<Status>;
 }
 

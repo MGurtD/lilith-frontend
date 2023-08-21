@@ -19,11 +19,6 @@ export const useLifecyclesStore = defineStore({
       }
       return transitions;
     },
-    statusIsOnTransition: (state) => {
-      return (statusId: string) => {
-        
-      }
-    },
   },
   actions: {
     setNew(id: string) {
@@ -42,7 +37,11 @@ export const useLifecyclesStore = defineStore({
     async fetchOne(id: string) {
       this.lifecycle = await Services.Lifecycle.getById(id);
     },
+<<<<<<< HEAD
     async fetchByName(name: string) {
+=======
+    async fetchOneByName(name: string) {
+>>>>>>> 7a915e1bfa417b0af1b3e05064cdfcaed74d1036
       this.lifecycle = await Services.Lifecycle.getByName(name);
     },
     async create(model: Lifecycle) {

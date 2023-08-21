@@ -108,15 +108,22 @@ const applicationMenus = [
         href: "/customers",
       },
       {
-        icon: PrimeIcons.BUILDING,
+        icon: PrimeIcons.TICKET,
         title: "Referències",
         href: "/referencia",
       },
       {
+<<<<<<< HEAD
         icon: PrimeIcons.APPLE,
         title: "Comandes de venta",
         href: "/salesorder",
       }
+=======
+        icon: PrimeIcons.WALLET,
+        title: "Factures",
+        href: "/sales-invoice",
+      },
+>>>>>>> 7a915e1bfa417b0af1b3e05064cdfcaed74d1036
     ],
   },
   {

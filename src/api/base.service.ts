@@ -17,6 +17,11 @@ export default abstract class BaseService<T> {
       logException(err);
     }
   }
+  async getActive(): Promise<Array<T> | undefined> {
+    const response = await this.getAll();
+    if (response && response.length > 0)
+      return response.filter((e) => (e as any).disabled === false);
+  }
   async getById(id: string): Promise<T | undefined> {
     try {
       const response = await apiClient.get(`${this.resource}/${id}`);

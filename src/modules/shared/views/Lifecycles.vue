@@ -19,9 +19,9 @@
     </template>
     <Column field="name" header="Nom" style="width: 33%"></Column>
     <Column field="description" header="Descripció" style="width: 33%"></Column>
-    <Column header="Desactivat" style="width: 33%">
+    <Column header="Estat Inicial" style="width: 33%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
+        {{ getInitialStatusName(slotProps.data) }}
       </template>
     </Column>
     <Column>
@@ -30,8 +30,10 @@
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
           @click="onDeleteRow($event, slotProps.data)"
-        /> </template
-    ></Column>
+        />
+      </template>
+      ></Column
+    >
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -58,6 +60,21 @@ onMounted(async () => {
     title: "Gestió de cicles de vida",
   });
 });
+
+const getInitialStatusName = (lifecycle: Lifecycle) => {
+  let name = "";
+
+  if (lifecycle.initialStatusId && lifecycle.initialStatusId.length > 0) {
+    const initialStatus = lifecycle.statuses.find(
+      (s) => s.id === lifecycle.initialStatusId
+    );
+    if (initialStatus) {
+      name = initialStatus.name;
+    }
+  }
+
+  return name;
+};
 
 const createButtonClick = () => {
   router.push({ path: `/${resource}/${uuidv4()}` });

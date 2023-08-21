@@ -3,12 +3,19 @@ import { Lifecycle, Status, StatusTransition } from "../types";
 
 export default class LifecycleService extends BaseService<Lifecycle> {
   async getByName(name: string): Promise<Lifecycle | undefined> {
+<<<<<<< HEAD
 
       const response = await this.apiClient.get(`${this.resource}/Name/${name}`);
       if (response.status === 200) {
         return response.data as Lifecycle;
       }
     
+=======
+    const response = await this.apiClient.get(`${this.resource}/name/${name}`);
+    if (response.status === 200) {
+      return response.data as Lifecycle;
+    }
+>>>>>>> 7a915e1bfa417b0af1b3e05064cdfcaed74d1036
   }
   // Statuses
   async createStatus(model: Status): Promise<boolean> {
