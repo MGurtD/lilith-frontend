@@ -78,23 +78,26 @@ export const useSalesInvoiceStore = defineStore({
       const created = await SalesService.SalesInvoice.CreateDetail(
         invoiceDetail
       );
+      await this.GetById(invoiceDetail.salesInvoiceId);
       return created;
     },
     async UpdateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<boolean> {
-      const created = await SalesService.SalesInvoice.UpdateDetail(
+      const updated = await SalesService.SalesInvoice.UpdateDetail(
         invoiceDetail
       );
-      return created;
+      await this.GetById(invoiceDetail.salesInvoiceId);
+      return updated;
     },
     async DeleteInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<boolean> {
-      const created = await SalesService.SalesInvoice.DeleteDetail(
+      const deleted = await SalesService.SalesInvoice.DeleteDetail(
         invoiceDetail
       );
-      return created;
+      await this.GetById(invoiceDetail.salesInvoiceId);
+      return deleted;
     },
   },
 });

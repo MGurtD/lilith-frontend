@@ -13,13 +13,17 @@
     </template>
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
     <Column header="Descripció" field="description" style="width: 40%"></Column>
-    <Column header="Preu unitat" field="unitCost" style="width: 10%"></Column>
+    <Column header="Preu unitat" field="unitCost" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.unitCost }} € </template>
+    </Column>
     <Column header="IVA" style="width: 10%">
       <template #body="slotProps">
         {{ getTaxNameById(slotProps.data.taxId) }}
       </template>
     </Column>
-    <Column header="Total" field="totalCost" style="width: 10%"></Column>
+    <Column header="Total" field="totalCost" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.totalCost }} € </template>
+    </Column>
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -56,7 +60,7 @@ onMounted(async () => {
 });
 const getTaxNameById = (taxId: string) => {
   const tax = sharedData.taxes?.find((t) => t.id === taxId);
-  if (tax) return tax.percentatge;
+  if (tax) return `${tax.percentatge} %`;
 };
 
 const emit = defineEmits<{
