@@ -1,5 +1,6 @@
 <template>
     <DataTable
+    @row-click="onEditRow"
     :value="props.salesOrderDetails"
     tableStyle="min-width: 100%"
     >
