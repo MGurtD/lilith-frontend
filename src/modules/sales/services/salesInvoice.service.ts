@@ -1,8 +1,13 @@
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 import {
+  createDate,
+  formatDateForQueryParameter,
+} from "../../../utils/functions";
+import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
   CreateInvoiceRequest,
+  InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
   SalesInvoiceDueDate,
@@ -67,6 +72,19 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     return response.status === 200;
   }
 
+  async GetInvoiceableOrderDetails(
+    customerId: string
+  ): Promise<Array<InvoiceableOrderDetail> | undefined> {
+    const startTime = formatDateForQueryParameter(createDate(0, 0, -1));
+    const endTime = formatDateForQueryParameter(new Date());
+
+    const endpoint = `${this.resource}/InvoiceableOrderDetails?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<InvoiceableOrderDetail>;
+    }
+  }
+
   async CreateDetail(request: SalesInvoiceDetail) {
     const endpoint = `${this.resource}/Detail`;
     const response = await this.apiClient.post(endpoint, request);
@@ -76,7 +94,7 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
   async CreateInvoiceDetailsFromOrderDetails(
     request: CreateInvoiceDetailsFromOrderDetailsRequest
   ) {
-    const endpoint = `${this.resource}/Detail`;
+    const endpoint = `${this.resource}/Detail/FromOrderDetails`;
     const response = await this.apiClient.post(endpoint, request);
     return response.status === 200;
   }

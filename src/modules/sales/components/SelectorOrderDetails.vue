@@ -3,60 +3,101 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
-    sortMode="multiple"
-    :value="details"
+    scrollHeight="70vh"
+    :value="filteredOrders"
+    selectionMode="multiple"
     v-model:selection="selectedDetails"
+    :meta-key-selection="false"
+    rowGroupMode="subheader"
+    groupRowsBy="salesOrderNumber"
+    sortMode="single"
+    sortField="salesOrderNumber"
   >
-    <template #header v-if="headerVisible">
-      <slot name="header"></slot>
+    <template #header>
+      <header class="selector-filter">
+        <div class="selector-filter-field">
+          <label for="">Comanda</label> &nbsp;
+          <InputText
+            style="width: 150px; height: 35px"
+            v-model="selectedOrder"
+            size="small"
+          />
+        </div>
+        <div class="selector-filter-button">
+          <Button
+            @click="onSelectedClick"
+            :size="'small'"
+            :icon="PrimeIcons.CHECK_SQUARE"
+          ></Button>
+        </div>
+      </header>
     </template>
-    <Column selectionMode="multiple" style="width: 2%"></Column>
+
+    <template #groupheader="slotProps">
+      <div class="flex align-items-center gap-2">
+        <b
+          >Comanda {{ slotProps.data.salesOrderNumber }} -
+          {{ formatDate(slotProps.data.salesOrderDate) }}</b
+        >
+      </div>
+    </template>
+
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
     <Column header="Descripció" field="description" style="width: 50%"></Column>
-    <Column header="Preu" field="totalCost" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.totalCost }} € </template>
+    <Column header="Preu" field="amount" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
     </Column>
   </DataTable>
-  <footer class="mt-2">
-    <Button
-      label="Seleccionar"
-      @click="onSelectedClick"
-      style="float: right"
-      :size="'small'"
-    ></Button>
-  </footer>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
-import { SalesOrderDetail } from "../types";
+import { computed, onMounted, reactive, ref } from "vue";
+import { InvoiceableOrderDetail, SalesOrderDetail } from "../types";
+import { formatDate } from "../../../utils/functions";
+import _ from "lodash";
 import { PrimeIcons } from "primevue/api";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { DataTableRowClickEvent } from "primevue/datatable";
-import { useSharedDataStore } from "../../shared/store/masterData";
-import BaseService from "../../../api/base.service";
 
-const lifecycleStore = useLifecyclesStore();
-const sharedData = useSharedDataStore();
-const selectedDetails = reactive([] as Array<SalesOrderDetail>);
+const selectedDetails = ref([] as Array<InvoiceableOrderDetail>);
 
-defineProps<{
-  details: Array<SalesOrderDetail> | undefined;
+const props = defineProps<{
+  details: Array<InvoiceableOrderDetail> | undefined;
   headerVisible?: boolean;
 }>();
 const emits = defineEmits<{
   (e: "selected", orderDetails: Array<SalesOrderDetail>): void;
 }>();
 
-onMounted(async () => {
-  await lifecycleStore.fetchOneByName("SalesInvoice");
+const selectedOrder = ref("");
+const filteredOrders = computed(() => {
+  if (selectedOrder.value.length === 0) return props.details;
+  return props.details?.filter((d) =>
+    d.salesOrderNumber.toString().includes(selectedOrder.value)
+  );
 });
-const getTaxNameById = (taxId: string) => {
-  const tax = sharedData.taxes?.find((t) => t.id === taxId);
-  if (tax) return `${tax.percentatge} %`;
-};
 
 const onSelectedClick = () => {
-  emits("selected", selectedDetails);
+  if (selectedDetails.value.length === 0) return;
+
+  const salesOrderDetails = selectedDetails.value.map((sd) => {
+    return {
+      salesOrderHeaderId: sd.salesOrderId,
+      description: sd.description,
+      isInvoiced: true,
+      isServed: sd.isServed,
+      quantity: sd.quantity,
+      referenceId: sd.referenceId,
+      id: sd.id,
+      unitCost: sd.unitCost,
+      unitPrice: sd.unitPrice,
+      totalCost: sd.totalCost,
+      amount: sd.amount,
+    } as SalesOrderDetail;
+  });
+  emits("selected", salesOrderDetails);
 };
 </script>
+<style scoped>
+.selector-filter {
+  display: grid;
+  grid-template-columns: 1fr 0.1fr;
+}
+</style>

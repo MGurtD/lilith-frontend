@@ -9,15 +9,19 @@
   <main v-if="invoice">
     <FormSalesInvoice class="mt-3 mr-3" :invoice="invoice" />
 
-    <TabView>
-      <TabPanel header="Linies">
-        <TableInvoiceDetails
-          :header-visible="true"
-          :details="invoice.salesInvoiceDetails"
-          @edit="editInvoiceDetail"
-          @delete="deleteInvoiceDetail"
+    <TableInvoiceDetails
+      class="mt-3"
+      :header-visible="true"
+      :details="invoice.salesInvoiceDetails"
+      @edit="editInvoiceDetail"
+      @delete="deleteInvoiceDetail"
+    >
+      <template #header>
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <template #header>
+          <span class="text-xl text-900 font-bold">Detall de la factura</span>
+          <div>
             <Button
               :size="'small'"
               label="Afegir de comanda"
@@ -29,11 +33,10 @@
               label="Crear linia lliure"
               @click="openAddDetail"
             />
-          </template>
-        </TableInvoiceDetails>
-      </TabPanel>
-      <TabPanel header="Facturació"> </TabPanel>
-    </TabView>
+          </div>
+        </div>
+      </template>
+    </TableInvoiceDetails>
   </main>
 
   <Dialog
@@ -42,16 +45,17 @@
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
     :style="{ width: currentDialogType === dialogType.Free ? '50vw' : '60vw' }"
+    :maximizable="currentDialogType === dialogType.FromOrder"
   >
     <FormSalesInvoiceDetail
       v-if="currentDialogType === dialogType.Free"
       :invoiceDetail="currentInvoiceDetail"
-      @submit="addInvoiceDetail"
+      @submit="createInvoiceDetail"
     />
     <SelectorOrderDetails
       v-if="currentDialogType === dialogType.FromOrder"
       :headerVisible="true"
-      :details="[]"
+      :details="customerSelectableOrderDetails"
       @selected="createInvoiceDetailsFromOrder"
     >
       <template #header> </template>
@@ -73,6 +77,7 @@ import { PrimeIcons } from "primevue/api";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
+  InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
   SalesOrderDetail,
@@ -83,6 +88,7 @@ import FormSalesInvoice from "../components/FormSalesInvoice.vue";
 import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import SelectorOrderDetails from "../components/SelectorOrderDetails.vue";
+import services from "../services";
 
 const items = [
   {
@@ -146,13 +152,20 @@ const updateInvoice = async () => {
   }
 };
 
+const customerSelectableOrderDetails = ref(
+  [] as Array<InvoiceableOrderDetail> | undefined
+);
 const createInvoiceDetailsRequest = reactive(
   {} as CreateInvoiceDetailsFromOrderDetailsRequest
 );
-const openAddFromOrderDetails = () => {
+const openAddFromOrderDetails = async () => {
   if (invoice.value) {
+    customerSelectableOrderDetails.value =
+      await services.SalesInvoice.GetInvoiceableOrderDetails(
+        invoice.value!.customerId
+      );
+
     createInvoiceDetailsRequest.invoiceId = invoice.value.id;
-    createInvoiceDetailsRequest.orderDetails = [];
 
     currentDialogType.value = dialogType.FromOrder;
     dialogOptions.title = "Selecció de linees de comanda";
@@ -166,9 +179,8 @@ const createInvoiceDetailsFromOrder = async (
   const created = await invoiceStore.CreateInvoiceDetailsFromOrderDetails(
     createInvoiceDetailsRequest
   );
-  if (created) {
-    await invoiceStore.GetById(route.params.id as string);
-  }
+  if (created) await invoiceStore.GetById(route.params.id as string);
+  dialogOptions.visible = false;
 };
 
 const currentInvoiceDetail = reactive({} as SalesInvoiceDetail);
@@ -187,8 +199,12 @@ const openAddDetail = () => {
     dialogOptions.visible = true;
   }
 };
-const addInvoiceDetail = async () => {
+const createInvoiceDetail = async () => {
   await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
+  dialogOptions.visible = false;
+  invoiceStore.invoice!.invoiceDate = formatDate(
+    invoiceStore.invoice!.invoiceDate
+  );
 };
 
 const editInvoiceDetail = async (detail: SalesInvoiceDetail) => {
@@ -203,6 +219,9 @@ const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       await invoiceStore.DeleteInvoiceDetail(detail);
+      invoiceStore.invoice!.invoiceDate = formatDate(
+        invoiceStore.invoice!.invoiceDate
+      );
     },
   });
 };

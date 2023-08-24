@@ -119,6 +119,28 @@ export interface SalesInvoice {
   salesInvoiceImports: Array<SalesInvoiceImport>;
 }
 
+export interface InvoiceableOrderDetail {
+  salesOrderId: string;
+  salesOrderNumber: number;
+  salesOrderDate: string;
+  customerId: string;
+  id: string;
+  statusId: string;
+  statusName: string;
+  referenceId: string;
+  referenceCode: string;
+  referenceDescription: string;
+  referenceVersion: string;
+  quantity: number;
+  description: string;
+  unitCost: number;
+  unitPrice: number;
+  totalCost: number;
+  amount: number;
+  isInvoiced: boolean;
+  isServed: boolean;
+}
+
 export interface SalesInvoiceDetail {
   id: string;
   salesInvoiceId: string;

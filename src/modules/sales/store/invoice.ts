@@ -62,7 +62,7 @@ export const useSalesInvoiceStore = defineStore({
       const deleted = await SalesService.SalesInvoice.delete(id);
       return deleted;
     },
-
+    
     async CreateInvoiceDetailsFromOrderDetails(
       createRequest: CreateInvoiceDetailsFromOrderDetailsRequest
     ): Promise<boolean> {

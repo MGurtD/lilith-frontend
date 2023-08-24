@@ -3,10 +3,9 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="55vh"
     sortMode="multiple"
     :value="details"
-    @row-click="editButtonClick"
   >
     <template #header v-if="headerVisible">
       <slot name="header"></slot>
@@ -22,15 +21,11 @@
       </template>
     </Column>
     <Column header="Total" field="totalCost" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.totalCost }} € </template>
+      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
     </Column>
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
-          v-if="
-            slotProps.data.statusId ===
-            lifecycleStore.lifecycle?.initialStatusId
-          "
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
           @click="deleteButtonClick($event, slotProps.data)"
