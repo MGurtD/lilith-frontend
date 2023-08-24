@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
-import { AuthenticationResponse, User } from "../types";
+import { AuthenticationResponse, Role, User } from "../types";
 import { MenuItem } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
 import { ref } from "vue";
+import { getMenusByRole } from "./menus";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -156,7 +157,7 @@ const applicationMenus = [
       },
     ],
   },*/
-] as Array<MenuItem>;
+];
 
 export const useStore = defineStore("applicationStore", {
   state: () => {
@@ -165,7 +166,7 @@ export const useStore = defineStore("applicationStore", {
       user: undefined as User | undefined,
       isWaiting: false,
 
-      menus: ref(applicationMenus as Array<MenuItem>),
+      menus: ref([] as Array<any>),
       menuCollapsed: false,
       currentMenuItem: {
         title: "Home",
@@ -178,17 +179,7 @@ export const useStore = defineStore("applicationStore", {
       this.currentMenuItem = menu;
     },
     setMenusByRole(user: User) {
-      if (user.role?.name === "manager") {
-        this.menus = [
-          {
-            icon: PrimeIcons.MONEY_BILL,
-            title: "Gestió de factures",
-            href: "/purchaseinvoices-by-period",
-          },
-        ];
-      } else {
-        this.menus = applicationMenus;
-      }
+      this.menus = getMenusByRole(user.role as Role);
     },
     async getAuthorization() {
       if (this.authorization !== undefined) {

@@ -1,6 +1,6 @@
 <template>
   <sidebar-menu
-    :menu="menu"
+    :menu="store.menus"
     :collapsed="store.menuCollapsed"
     :showOneChild="true"
     @update:collapsed="store.menuCollapsed = !store.menuCollapsed"
@@ -12,22 +12,7 @@ import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 
 import { useStore } from "../store";
-import { onMounted, ref } from "vue";
-
-const menu = ref([
-  {
-    header: "TEMGES",
-    hiddenOnCollapse: true,
-  },
-] as Array<any>);
 const store = useStore();
-
-onMounted(() => {
-  setTimeout(() => {
-    store.setMenusByRole(store.user!);
-    menu.value.push(...store.menus);
-  }, 500);
-});
 </script>
 
 <style scoped>
