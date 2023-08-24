@@ -74,7 +74,7 @@
         <Dropdown
           v-model="customer.paymentMethodId"
           editable
-          :options="paymentMethodStore.paymentMethods"
+          :options="sharedData.paymentMethods"
           optionValue="id"
           optionLabel="name"
           class="w-full"
@@ -105,14 +105,14 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { usePaymentMethodStore } from "../../../modules/shared/store/paymentMethod";
+import { useSharedDataStore } from "../../../modules/shared/store/masterData";
 
 const emit = defineEmits<{
   (e: "submit", customer: Customer): void;
 }>();
 
 const customerStore = useCustomersStore();
-const paymentMethodStore = usePaymentMethodStore();
+const sharedData = useSharedDataStore();
 const { customer } = storeToRefs(customerStore);
 const toast = useToast();
 

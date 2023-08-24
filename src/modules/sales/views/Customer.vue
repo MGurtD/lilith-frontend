@@ -44,16 +44,19 @@ import { FormActionMode } from "../../../types/component";
 import FormCustomer from "../components/FormCustomer.vue";
 import CustomerAddresses from "../components/TableCustomerAddresses.vue";
 import CustomerContacts from "../components/TableCustomerContacts.vue";
+import { useSharedDataStore } from "../../shared/store/masterData";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
+const sharedData = useSharedDataStore();
 const customerStore = useCustomersStore();
 const { customer } = storeToRefs(customerStore);
 
 const loadView = async () => {
   await customerStore.fetchCustomer(route.params.id as string);
-  await customerStore.fetchCustomerTypes();
+  customerStore.fetchCustomerTypes();
+  sharedData.fetchMasterData();
 
   // Comprovar existencia del proveïdor
   let pageTitle = "";

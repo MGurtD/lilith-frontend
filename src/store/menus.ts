@@ -123,22 +123,22 @@ export const applicationMenus = [
     title: "Usuaris",
     href: "/users",
   },
-  /*{
-      icon: PrimeIcons.CHART_BAR,
-      title: "Producció",
-      href: "",
-      child: [
-        {
-          icon: PrimeIcons.BUILDING,
-          title: "Empresa",
-          href: "/enterprise",
-        },
-        {
-          icon: PrimeIcons.BUILDING,
-          title: "Local",
-          href: "/site",
-        },
-        {
+  {
+    icon: PrimeIcons.CHART_BAR,
+    title: "Producció",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Empresa",
+        href: "/enterprise",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Local",
+        href: "/site",
+      },
+      /* {
           icon: PrimeIcons.BUILDING,
           title: "Area",
           href: "/area",
@@ -152,9 +152,9 @@ export const applicationMenus = [
           icon: PrimeIcons.BUILDING,
           title: "Màquina",
           href: "/workcenter",
-        },
-      ],
-    },*/
+        }, */
+    ],
+  },
 ];
 
 export const getMenusByRole = (role: Role) => {
