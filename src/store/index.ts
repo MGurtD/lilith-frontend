@@ -114,6 +114,11 @@ const applicationMenus = [
         href: "/referencia",
       },
       {
+        icon: PrimeIcons.APPLE,
+        title: "Comandes de venta",
+        href: "/salesorder",
+      },
+      {
         icon: PrimeIcons.WALLET,
         title: "Factures",
         href: "/sales-invoice",
