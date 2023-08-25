@@ -112,6 +112,11 @@ export const applicationMenus = [
         href: "/referencia",
       },
       {
+        icon: PrimeIcons.APPLE,
+        title: "Comandes",
+        href: "/salesorder",
+      },
+      {
         icon: PrimeIcons.WALLET,
         title: "Factures",
         href: "/sales-invoice",

@@ -13,7 +13,7 @@
             :salesOrderDetails="salesOrder.salesOrderDetails"
             @add="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
             @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
-            @delete="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
+            @delete="deleteSalesOrderDetails"
           />
         </TabPanel>
       </TabView>
@@ -115,13 +115,15 @@ const toast = useToast();
 const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
-
+  console.log(salesOrder);
   if (formMode.value === FormActionMode.CREATE) {
     result = await salesOrderStore.Create(salesOrder);
     message = result ? "Comanda creada" : "Error al crear la comanda";
   } else {
-    result = false;
-    message = "Falta el mètode update";
+    result = await salesOrderStore.Update(salesOrder.id, salesOrder);
+    message = result
+      ? "Comanda actualitzada"
+      : "Error a l'actualitzar la comanda";
   }
 
   toast.add({
@@ -138,8 +140,30 @@ const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
 const onSalesOrderReferenceSubmit = async (
   salesOrderDetail: SalesOrderDetail
 ) => {
-  salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
-  const form = salesOrderForm.value as any;
+  if (formDetailMode.value === FormActionMode.CREATE) {
+    if (formMode.value === FormActionMode.EDIT) {
+      await salesOrderStore.CreateDetail(salesOrderDetail);
+    }
+    salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
+  } else if (formDetailMode.value === FormActionMode.EDIT) {
+    if (formMode.value === FormActionMode.EDIT) {
+      await salesOrderStore.UpdateDetail(salesOrderDetail);
+    } else {
+      await salesOrderStore.CreateDetail(salesOrderDetail);
+      salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
+    }
+  }
+  isDialogVisible.value = false;
+};
+
+const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
+  if (formMode.value === FormActionMode.EDIT) {
+    await salesOrderStore.DeleteDetail(detail);
+  }
+  const afterDelete = salesOrder.value!.salesOrderDetails!.filter(
+    (i) => i.id !== detail.id
+  );
+  salesOrder.value!.salesOrderDetails = afterDelete;
   isDialogVisible.value = false;
 };
 </script>

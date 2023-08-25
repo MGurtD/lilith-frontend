@@ -36,7 +36,7 @@
           :class="{
             'p-invalid': validation.errors.quantity,
           }"
-          @update:modelValue="getReferenceInfo()"
+          @update:modelValue="updateImports()"
         ></BaseInput>
       </div>
       <div>
@@ -70,7 +70,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useSalesOrderStore } from "../store/salesOrder";
 import { BaseInputType, FormActionMode } from "../../../types/component";
-import { ceil, isNumber, round } from "lodash";
+import { ceil, isNumber, round, update } from "lodash";
 import { useReferenceStore } from "../store/reference";
 
 const salesOrder = useSalesOrderStore();
@@ -97,11 +97,17 @@ const getReferenceInfo = () => {
     props.salesOrderDetail.isInvoiced = false;
     props.salesOrderDetail.isServed = false;
     props.salesOrderDetail.unitCost = reference?.cost;
-    props.salesOrderDetail.amount =
-      reference.price * props.salesOrderDetail.quantity;
+    props.salesOrderDetail.unitPrice = reference?.price;
+    updateImports();
   }
 };
 
+const updateImports = () => {
+  props.salesOrderDetail.amount =
+    props.salesOrderDetail.unitPrice * props.salesOrderDetail.quantity;
+  props.salesOrderDetail.totalCost =
+    props.salesOrderDetail.unitCost * props.salesOrderDetail.quantity;
+};
 const schema = Yup.object().shape({
   quantity: Yup.number()
     .required("La quantitat és obligatoria")

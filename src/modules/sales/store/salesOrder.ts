@@ -47,5 +47,25 @@ export const useSalesOrderStore = defineStore({
         endTime
       );
     },
+    async Update(id: string, salesOrder: SalesOrderHeader) {
+      const updated = await SalesServices.SalesOrder.update(id, salesOrder);
+      return updated;
+    },
+    async Delete(id: string): Promise<boolean> {
+      const deleted = await SalesServices.SalesOrder.delete(id);
+      return deleted;
+    },
+    async CreateDetail(detail: SalesOrderDetail): Promise<boolean> {
+      const created = await SalesServices.SalesOrder.CreateDetail(detail);
+      return created;
+    },
+    async UpdateDetail(detail: SalesOrderDetail): Promise<boolean> {
+      const updated = await SalesServices.SalesOrder.UpdateDetail(detail);
+      return updated;
+    },
+    async DeleteDetail(detail: SalesOrderDetail): Promise<boolean> {
+      const deleted = await SalesServices.SalesOrder.DeleteDetail(detail);
+      return deleted;
+    },
   },
 });
