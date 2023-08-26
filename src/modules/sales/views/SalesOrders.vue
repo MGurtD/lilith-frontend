@@ -32,7 +32,7 @@
               class="w-full"
             />
           </div>
-          <div class="filter-field">
+          <!--<div class="filter-field">
             <label class="block text-900 mb-2">Referencia</label>
             <Dropdown
               v-model="filter.referenceId"
@@ -42,7 +42,7 @@
               optionLabel="description"
               class="w-full"
             />
-          </div>
+          </div>-->
         </div>
         <div class="datatable-buttons">
           <Button
@@ -50,7 +50,7 @@
             :icon="PrimeIcons.FILTER"
             rounded
             raised
-            @click="filterInvoices"
+            @click="filterSalesOrder"
           />
           <Button
             :icon="PrimeIcons.PLUS"
@@ -76,7 +76,11 @@
         {{ formatDate(slotProps.data.salesOrderDate) }}
       </template>
     </Column>
-    <Column field="statusId" header="Estat Comanda" style="width: 20%"></Column>
+    <Column header="Estat Comanda" style="width: 20%">
+      <template #body="slotProps">
+        {{ getStatusNameById(slotProps.data.statusId) }}
+      </template>
+    </Column>
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -94,6 +98,7 @@ import {
 } from "../../../utils/functions";
 import { useReferenceStore } from "../store/reference";
 import { useCustomersStore } from "../store/customers";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const router = useRouter();
 const toast = useToast();
@@ -101,6 +106,7 @@ const store = useStore();
 const salesOrderStore = useSalesOrderStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
+const lifeCycleStore = useLifecyclesStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
@@ -111,6 +117,25 @@ const filter = ref({
 onMounted(async () => {
   await referenceStore.fetchReferences();
   await customerStore.fetchCustomers();
+  await lifeCycleStore.fetchOneByName("SalesOrder");
+  //Filtre
+  const storageFilter = localStorage.getItem(filterLocalStorageKey);
+  if (storageFilter !== null) {
+    filter.value = JSON.parse(storageFilter);
+    if (filter.value.dates) {
+      filter.value.dates[0] = new Date(filter.value.dates[0]);
+      filter.value.dates[1] = new Date(filter.value.dates[1]);
+    }
+    await filterSalesOrder();
+  } else {
+    let startDate: Date = new Date();
+    let endDate: Date = new Date();
+    startDate.setDate(endDate.getDate() - 30);
+    const strStartDate = formatDateForQueryParameter(startDate);
+    const strEndDate = formatDateForQueryParameter(endDate);
+    await salesOrderStore.GetBetweenDates(strStartDate, strEndDate);
+  }
+
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
     title: "Comandes",
@@ -130,7 +155,7 @@ const editRow = (row: DataTableRowClickEvent) => {
 };
 
 const filterLocalStorageKey = "temges.salesorder.filter";
-const filterInvoices = async () => {
+const filterSalesOrder = async () => {
   if (filter.value.dates) {
     const startTime = formatDateForQueryParameter(filter.value.dates[0]);
     const endTime = formatDateForQueryParameter(filter.value.dates[1]);
@@ -146,5 +171,11 @@ const filterInvoices = async () => {
       life: 5000,
     });
   }
+};
+
+const getStatusNameById = (id: string) => {
+  const status = lifeCycleStore.lifecycle?.statuses?.find((s) => s.id === id);
+  if (status) return status.name;
+  else return "";
 };
 </script>
