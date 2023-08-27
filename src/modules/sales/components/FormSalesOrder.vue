@@ -27,7 +27,11 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Data Comanda</label>
-          <Calendar id="salesOrderDate" v-model="salesOrder.salesOrderDate" />
+          <Calendar
+            id="salesOrderDate"
+            v-model="salesOrder.salesOrderDate"
+            dateFormat="dd/mm/yy"
+          />
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Estat</label>

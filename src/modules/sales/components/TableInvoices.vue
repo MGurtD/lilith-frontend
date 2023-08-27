@@ -17,16 +17,6 @@
       :sortable="true"
       style="width: 10%"
     ></Column>
-    <Column header="Client" style="width: 15%">
-      <template #body="slotProps">
-        {{ getCustomerNameById(slotProps.data.customerId) }}
-      </template>
-    </Column>
-    <Column header="Estat" style="width: 15%">
-      <template #body="slotProps">
-        {{ getStatusNameById(slotProps.data.statusId) }}
-      </template>
-    </Column>
     <Column
       header="Data"
       field="purchaseInvoiceDate"
@@ -35,6 +25,16 @@
     >
       <template #body="slotProps">
         {{ formatDate(slotProps.data.invoiceDate) }}
+      </template>
+    </Column>
+    <Column header="Client" style="width: 15%">
+      <template #body="slotProps">
+        {{ getCustomerNameById(slotProps.data.customerId) }}
+      </template>
+    </Column>
+    <Column header="Estat" style="width: 15%">
+      <template #body="slotProps">
+        {{ getStatusNameById(slotProps.data.statusId) }}
       </template>
     </Column>
     <Column header="Venciment" style="width: 15%">

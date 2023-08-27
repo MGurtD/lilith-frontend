@@ -1,6 +1,6 @@
 <template>
   <form v-if="salesOrderDetail">
-    <section class="four-columns">
+    <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Referència</label>
         <Dropdown
@@ -19,17 +19,6 @@
       <div>
         <BaseInput
           class="mb-2"
-          label="Descripció"
-          v-model="salesOrderDetail.description"
-          :type="BaseInputType.TEXT"
-          :class="{
-            'p-invalid': validation.errors.description,
-          }"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
           label="Quantitat"
           v-model="salesOrderDetail.quantity"
           :type="BaseInputType.NUMERIC"
@@ -44,11 +33,25 @@
           class="mb-2"
           label="Total"
           v-model="salesOrderDetail.amount"
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           :class="{
             'p-invalid': validation.errors.amount,
           }"
           disabled
+        ></BaseInput>
+      </div>
+      
+    </section>
+    <section>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Descripció"
+          v-model="salesOrderDetail.description"
+          :type="BaseInputType.TEXT"
+          :class="{
+            'p-invalid': validation.errors.description,
+          }"
         ></BaseInput>
       </div>
     </section>

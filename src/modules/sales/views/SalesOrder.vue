@@ -1,29 +1,34 @@
 <template>
-  <Button label="Guardar" class="grid_add_row_button" @click="submitForm" />
+  <Button
+    label="Guardar"
+    class="grid_add_row_button"
+    :size="'small'"
+    @click="submitForm"
+  />
+
+  <FormSalesOrder
+    class="mt-3"
+    ref="salesOrderForm"
+    salesOrder="salesOrder"
+    @submit="onSalesOrderSubmit"
+  />
+
   <TabView>
-    <TabPanel header="Comanda" v-if="salesOrder">
-      <FormSalesOrder
-        ref="salesOrderForm"
-        salesOrder="salesOrder"
-        @submit="onSalesOrderSubmit"
+    <TabPanel header="Referències">
+      <TableSalesOrderReferences
+        v-if="salesOrder"
+        :salesOrderDetails="salesOrder.salesOrderDetails"
+        @add="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
+        @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
+        @delete="deleteSalesOrderDetails"
       />
-      <TabView>
-        <TabPanel header="Referències">
-          <TableSalesOrderReferences
-            :salesOrderDetails="salesOrder.salesOrderDetails"
-            @add="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
-            @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
-            @delete="deleteSalesOrderDetails"
-          />
-        </TabPanel>
-      </TabView>
     </TabPanel>
   </TabView>
   <Dialog
     :closable="true"
     v-model:visible="isDialogVisible"
     :header="dialogTitle"
-    position="bottom"
+    :modal="true"
   >
     <FormSalesOrderReference
       v-if="selectedSalesOrderDetail"
@@ -79,6 +84,10 @@ const loadView = async () => {
   } else {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
+
+    salesOrderStore.salesOrder!.salesOrderDate = formatDate(
+      salesOrderStore.salesOrder!.salesOrderDate
+    );
   }
 
   store.setMenuItem({

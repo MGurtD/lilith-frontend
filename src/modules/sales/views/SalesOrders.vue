@@ -62,21 +62,21 @@
       </div>
     </template>
     <Column
-      field="customerComercialName"
-      header="Client"
-      style="width: 40%"
-    ></Column>
-    <Column
       field="salesOrderNumber"
-      header="Num. Comanda"
-      style="width: 20%"
+      header="Número"
+      style="width: 15%"
     ></Column>
-    <Column header="Data Comanda" style="width: 20%">
+    <Column header="Data" style="width: 15%">
       <template #body="slotProps">
         {{ formatDate(slotProps.data.salesOrderDate) }}
       </template>
     </Column>
-    <Column header="Estat Comanda" style="width: 20%">
+    <Column
+      field="customerComercialName"
+      header="Client"
+      style="width: 40%"
+    ></Column>
+    <Column header="Estat" style="width: 20%">
       <template #body="slotProps">
         {{ getStatusNameById(slotProps.data.statusId) }}
       </template>
