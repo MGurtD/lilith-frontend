@@ -123,9 +123,9 @@ export interface CreateInvoiceDetailsFromOrderDetailsRequest {
   orderDetails: Array<SalesOrderDetail>;
 }
 
-export interface CreateInvoiceRequest {
+export interface CreateSalesHeaderRequest {
   id: string;
-  invoiceDate: string;
+  date: string | Date;
   exerciseId: string;
   customerId: string;
 }

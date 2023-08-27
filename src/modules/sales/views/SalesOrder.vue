@@ -44,7 +44,7 @@ import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
-import { Reference, SalesOrderDetail, SalesOrderHeader } from "../types";
+import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { useStore } from "../../../store";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
@@ -74,14 +74,10 @@ const formDetailMode = ref(FormActionMode.EDIT);
 const selectedSalesOrderDetail = ref(undefined as undefined | SalesOrderDetail);
 
 const loadView = async () => {
-  //await referenceStore.fetchReference(route.params.id as string);
   await salesOrderStore.GetById(route.params.id as string);
+
   let pageTitle = "";
-  if (!salesOrder.value) {
-    formMode.value = FormActionMode.CREATE;
-    salesOrderStore.setNewSalesOrder(route.params.id as string);
-    pageTitle = "Alta de comanda";
-  } else {
+  if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
 
@@ -124,16 +120,11 @@ const toast = useToast();
 const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
-  console.log(salesOrder);
-  if (formMode.value === FormActionMode.CREATE) {
-    result = await salesOrderStore.Create(salesOrder);
-    message = result ? "Comanda creada" : "Error al crear la comanda";
-  } else {
-    result = await salesOrderStore.Update(salesOrder.id, salesOrder);
-    message = result
-      ? "Comanda actualitzada"
-      : "Error a l'actualitzar la comanda";
-  }
+
+  result = await salesOrderStore.Update(salesOrder.id, salesOrder);
+  message = result
+    ? "Comanda actualitzada"
+    : "Error a l'actualitzar la comanda";
 
   toast.add({
     life: 5000,
@@ -150,17 +141,9 @@ const onSalesOrderReferenceSubmit = async (
   salesOrderDetail: SalesOrderDetail
 ) => {
   if (formDetailMode.value === FormActionMode.CREATE) {
-    if (formMode.value === FormActionMode.EDIT) {
-      await salesOrderStore.CreateDetail(salesOrderDetail);
-    }
-    salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
+    await salesOrderStore.CreateDetail(salesOrderDetail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
-    if (formMode.value === FormActionMode.EDIT) {
-      await salesOrderStore.UpdateDetail(salesOrderDetail);
-    } else {
-      await salesOrderStore.CreateDetail(salesOrderDetail);
-      salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
-    }
+    await salesOrderStore.UpdateDetail(salesOrderDetail);
   }
   isDialogVisible.value = false;
 };

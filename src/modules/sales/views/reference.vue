@@ -31,7 +31,7 @@ const loadView = async () => {
     pageTitle = "Alta de referència";
   } else {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Area ${reference.value.description}`;
+    pageTitle = `Referència ${reference.value.description}`;
   }
 
   store.setMenuItem({

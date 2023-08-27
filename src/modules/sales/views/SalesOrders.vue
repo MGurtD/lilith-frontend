@@ -82,27 +82,44 @@
       </template>
     </Column>
   </DataTable>
+
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormCreateOrderOrInvoice
+      :create-request="createRequest"
+      @submit="createOrder"
+    />
+  </Dialog>
 </template>
 <script setup lang="ts">
-import { v4 as uuidv4 } from "uuid";
+import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { useSalesOrderStore } from "../store/salesOrder";
-import { onMounted, ref } from "vue";
+import { useReferenceStore } from "../store/reference";
+import { useCustomersStore } from "../store/customers";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   formatDateForQueryParameter,
   formatDate,
+  getNewUuid,
 } from "../../../utils/functions";
-import { useReferenceStore } from "../store/reference";
-import { useCustomersStore } from "../store/customers";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { DialogOptions } from "../../../types/component";
+import { CreateSalesHeaderRequest } from "../types";
+import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
+import { useSharedDataStore } from "../../shared/store/masterData";
 
 const router = useRouter();
 const toast = useToast();
 const store = useStore();
+const sharedStore = useSharedDataStore();
 const salesOrderStore = useSalesOrderStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
@@ -113,11 +130,20 @@ const filter = ref({
   customerId: undefined as string | undefined,
   referenceId: undefined as string | undefined,
 });
+const dialogOptions = reactive({
+  visible: false,
+  title: "Crear comanda",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 onMounted(async () => {
   await referenceStore.fetchReferences();
   await customerStore.fetchCustomers();
   await lifeCycleStore.fetchOneByName("SalesOrder");
+  sharedStore.fetchMasterData();
+
   //Filtre
   const storageFilter = localStorage.getItem(filterLocalStorageKey);
   if (storageFilter !== null) {
@@ -141,9 +167,31 @@ onMounted(async () => {
     title: "Comandes",
   });
 });
-const createButtonClick = () => {
-  router.push({ path: `/salesorder/${uuidv4()}` });
+
+const createRequest = ref({} as CreateSalesHeaderRequest);
+const generateNewRequest = (): CreateSalesHeaderRequest => {
+  return {
+    id: getNewUuid(),
+    customerId: "",
+    exerciseId: "",
+    date: new Date(),
+  };
 };
+
+const createButtonClick = () => {
+  createRequest.value = generateNewRequest();
+  dialogOptions.visible = true;
+};
+const createOrder = async () => {
+  dialogOptions.visible = false;
+  const created = await salesOrderStore.Create(createRequest.value);
+  console.log("createOrder.request", createRequest.value);
+  console.log("createOrder.response", created);
+  if (created) {
+    router.push({ path: `/salesorder/${createRequest.value.id}` });
+  }
+};
+
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(

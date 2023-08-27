@@ -6,17 +6,15 @@ import {
 } from "../../../utils/functions";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
-  CreateInvoiceRequest,
+  CreateSalesHeaderRequest,
   InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
-  SalesInvoiceDueDate,
-  SalesInvoiceImport,
 } from "../types";
 
 export class SalesInvoiceService extends BaseService<SalesInvoice> {
   async Create(
-    request: CreateInvoiceRequest
+    request: CreateSalesHeaderRequest
   ): Promise<GenericResponse<SalesInvoice> | undefined> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);

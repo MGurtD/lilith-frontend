@@ -1,5 +1,9 @@
 import { defineStore } from "pinia";
-import { SalesOrderHeader, SalesOrderDetail } from "../types";
+import {
+  SalesOrderHeader,
+  SalesOrderDetail,
+  CreateSalesHeaderRequest,
+} from "../types";
 import SalesServices from "../services";
 
 export const useSalesOrderStore = defineStore({
@@ -10,32 +14,8 @@ export const useSalesOrderStore = defineStore({
   }),
   getters: {},
   actions: {
-    setNewSalesOrder(id: string) {
-      this.salesOrder = {
-        id: id,
-        customerId: "",
-        exerciseId: "",
-        salesOrderDate: new Date(),
-        salesOrderNumber: 0,
-        customerCode: "",
-        customerComercialName: "",
-        customerTaxName: "",
-        customerVatNumber: "",
-        customerAccountNumber: "",
-        siteId: "",
-        name: "",
-        address: "",
-        city: "",
-        postalCode: "",
-        region: "",
-        country: "",
-        vatNumber: "",
-        statusId: "",
-        salesOrderDetails: [],
-      } as SalesOrderHeader;
-    },
-    async Create(salesOrder: SalesOrderHeader) {
-      const created = await SalesServices.SalesOrder.create(salesOrder);
+    async Create(createRequest: CreateSalesHeaderRequest) {
+      const created = await SalesServices.SalesOrder.Create(createRequest);
       return created;
     },
     async GetById(id: string) {
