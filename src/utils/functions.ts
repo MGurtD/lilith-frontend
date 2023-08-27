@@ -48,7 +48,7 @@ export const formatDateTime = (dateTime: string) => {
 };
 
 export const formatDateForQueryParameter = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  return convertDateTimeToJSON(date).split("T")[0];
 };
 
 export const createBlobAndDownloadFile = (name: string, data: any) => {
