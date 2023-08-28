@@ -74,7 +74,11 @@ import { useCustomersStore } from "../store/customers";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { PrimeIcons } from "primevue/api";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import {
+  convertDDMMYYYYToDate,
+  formatDate,
+  getNewUuid,
+} from "../../../utils/functions";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
   InvoiceableOrderDetail,
@@ -134,12 +138,18 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.WALLET,
-    title: `Factura de venta ${invoiceStore.invoice?.invoiceNumber} - ${invoiceStore.invoice?.customerComercialName}`,
+    title: `Factura de venta ${invoice.value!.invoiceNumber} - ${
+      invoice.value!.customerComercialName
+    }`,
     backButtonVisible: true,
   });
 });
 
 const updateInvoice = async () => {
+  invoice.value!.invoiceDate = convertDDMMYYYYToDate(
+    invoice.value!.invoiceDate
+  );
+
   const updated = await invoiceStore.Update(invoice.value!);
   if (updated) {
     toast.add({

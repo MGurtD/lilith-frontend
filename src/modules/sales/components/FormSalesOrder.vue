@@ -101,6 +101,11 @@ import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
 import { useReferenceStore } from "../store/reference";
+import {
+  convertDDMMYYYYToDate,
+  createDate,
+  formatDate,
+} from "../../../utils/functions";
 
 const emit = defineEmits<{
   (e: "submit", salesOrder: SalesOrderHeader): void;
@@ -120,10 +125,13 @@ const { salesOrder } = storeToRefs(salesOrderStore);
 onMounted(async () => {
   await plantModelStore.fetchSites();
   await exerciseStore.fetchAll();
-  await lifeCycleStore.fetchAll();
   await customerStore.fetchCustomers();
-  await referenceStore.fetchReferences();
+  referenceStore.fetchReferences();
   await lifeCycleStore.fetchOneByName("SalesOrder");
+
+  salesOrder.value!.salesOrderDate = formatDate(
+    salesOrder.value!.salesOrderDate
+  );
 });
 
 const schema = Yup.object().shape({
@@ -145,6 +153,9 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
+    salesOrder.value!.salesOrderDate = convertDDMMYYYYToDate(
+      salesOrder.value!.salesOrderDate
+    );
     emit("submit", salesOrder.value!);
   } else {
     let errors = "";
@@ -168,12 +179,12 @@ const updateCustomer = () => {
   const customer = customerStore.customers?.find(
     (c) => c.id === salesOrder.value?.customerId
   );
-  if (customer) {
-    salesOrder.value!.customerCode = customer.code;
-    salesOrder.value!.customerComercialName = customer.comercialName;
-    salesOrder.value!.customerTaxName = customer.taxName;
-    salesOrder.value!.customerVatNumber = customer.vatNumber;
-    salesOrder.value!.customerAccountNumber = customer.accountNumber;
+  if (customer && salesOrder.value) {
+    salesOrder.value.customerCode = customer.code;
+    salesOrder.value.customerComercialName = customer.comercialName;
+    salesOrder.value.customerTaxName = customer.taxName;
+    salesOrder.value.customerVatNumber = customer.vatNumber;
+    salesOrder.value.customerAccountNumber = customer.accountNumber;
   }
   console.log(salesOrder.value);
 };
@@ -182,20 +193,16 @@ const updateSite = () => {
   const site = plantModelStore.sites?.find(
     (s) => s.id === salesOrder.value?.siteId
   );
-  if (site) {
-    salesOrder.value!.name = site.name;
-    salesOrder.value!.address = site.address;
-    salesOrder.value!.city = site.city;
-    salesOrder.value!.postalCode = site.postalCode;
-    salesOrder.value!.region = site.region;
-    salesOrder.value!.country = site.country;
-    salesOrder.value!.vatNumber = site.vatNumber;
+  if (site && salesOrder.value) {
+    salesOrder.value.name = site.name;
+    salesOrder.value.address = site.address;
+    salesOrder.value.city = site.city;
+    salesOrder.value.postalCode = site.postalCode;
+    salesOrder.value.region = site.region;
+    salesOrder.value.country = site.country;
+    salesOrder.value.vatNumber = site.vatNumber;
   }
 };
-
-/*const getSalesOrderStatuses = async () =>  {
-      lifeCycleStore = lifeCycleStore.fetchOne("SalesOrder");
-};*/
 </script>
 <style scoped>
 .save_button {

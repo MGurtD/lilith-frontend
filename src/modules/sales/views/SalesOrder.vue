@@ -46,13 +46,14 @@ import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { useStore } from "../../../store";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import { getNewUuid } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import { useSalesOrderStore } from "../store/salesOrder";
 import FormSalesOrderReference from "../components/FormSalesOrderReference.vue";
 import TableSalesOrderReferences from "../components/TableSalesOrderReferences.vue";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const salesOrderForm = ref();
 
@@ -80,10 +81,6 @@ const loadView = async () => {
   if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
-
-    salesOrderStore.salesOrder!.salesOrderDate = formatDate(
-      salesOrderStore.salesOrder!.salesOrderDate
-    );
   }
 
   store.setMenuItem({
@@ -120,6 +117,10 @@ const toast = useToast();
 const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
+
+  salesOrder.salesOrderDate = convertDateTimeToJSON(
+    new Date(salesOrder.salesOrderDate)
+  );
 
   result = await salesOrderStore.Update(salesOrder.id, salesOrder);
   message = result
