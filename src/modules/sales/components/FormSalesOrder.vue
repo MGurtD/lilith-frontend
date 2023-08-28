@@ -91,7 +91,7 @@ import { useCustomersStore } from "../store/customers";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { SalesOrderHeader, SalesOrderDetail } from "../types";
+import { SalesOrderHeader } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -100,9 +100,6 @@ import {
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
-import { Lifecycle } from "../../shared/types";
-import { v4 as uuidv4 } from "uuid";
-import LifecycleService from "../../shared/services/lifecycle.service";
 import { useReferenceStore } from "../store/reference";
 
 const emit = defineEmits<{
@@ -127,8 +124,6 @@ onMounted(async () => {
   await customerStore.fetchCustomers();
   await referenceStore.fetchReferences();
   await lifeCycleStore.fetchOneByName("SalesOrder");
-  console.log(lifeCycleStore.lifecycles);
-  salesOrder.value!.statusId = "ca610d3f-f38a-49fc-abb5-4c818d70159a";
 });
 
 const schema = Yup.object().shape({

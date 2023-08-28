@@ -185,8 +185,6 @@ const createButtonClick = () => {
 const createOrder = async () => {
   dialogOptions.visible = false;
   const created = await salesOrderStore.Create(createRequest.value);
-  console.log("createOrder.request", createRequest.value);
-  console.log("createOrder.response", created);
   if (created) {
     router.push({ path: `/salesorder/${createRequest.value.id}` });
   }

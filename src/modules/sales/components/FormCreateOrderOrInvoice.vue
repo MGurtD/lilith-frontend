@@ -23,7 +23,7 @@
       />
     </div>
     <div class="mt-2">
-      <label class="block text-900 mb-2">Data Factura</label>
+      <label class="block text-900 mb-2">Data</label>
       <Calendar v-model="createRequest.date" />
     </div>
 
