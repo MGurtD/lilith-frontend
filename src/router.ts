@@ -8,6 +8,7 @@ import ProductionRoutes from "./modules/production/routes";
 const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
+const Reports = () => import("./views/Reports.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,6 +17,7 @@ const router = createRouter({
 
     { path: "/users", name: "Users", component: Users },
     { path: "/user/:id", name: "User", component: User },
+    { path: "/reports", name: "Reports", component: Reports },
     ...SharedRoutes,
     ...SalesRoutes,
     ...PurchaseRoutes,

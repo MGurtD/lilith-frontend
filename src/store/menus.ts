@@ -14,6 +14,11 @@ export const applicationMenus = [
     href: "",
     child: [
       {
+        icon: PrimeIcons.USERS,
+        title: "Usuaris",
+        href: "/users",
+      },
+      {
         icon: PrimeIcons.CALENDAR,
         title: "Exercicis",
         href: "/exercise",
@@ -122,11 +127,6 @@ export const applicationMenus = [
         href: "/sales-invoice",
       },
     ],
-  },
-  {
-    icon: PrimeIcons.USERS,
-    title: "Usuaris",
-    href: "/users",
   },
   {
     icon: PrimeIcons.CHART_BAR,

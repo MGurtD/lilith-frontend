@@ -68,7 +68,7 @@ const deleteFile = async (file: File) => {
   <div class="base_input">
     <Toolbar>
       <template #start>
-        <h4>{{ title }}</h4>
+        <p class="file_viewer_title">{{ title }}</p>
       </template>
       <template #end>
         <Button
@@ -123,6 +123,12 @@ const deleteFile = async (file: File) => {
   gap: 1rem;
 }
 
+.file_viewer_title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: black;
+}
+
 .file-viewer-item {
   border: 1px solid var(--blue-800);
   font-size: 0.8rem;
@@ -133,6 +139,7 @@ const deleteFile = async (file: File) => {
 .file-viewer-item-type {
   padding-top: 10px;
   text-align: center;
+  color: darkgray;
 }
 
 .file-viewer-item-actions {
