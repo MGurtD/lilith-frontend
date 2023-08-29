@@ -13,7 +13,6 @@
       class="mt-3"
       :header-visible="true"
       :details="invoice.salesInvoiceDetails"
-      @edit="editInvoiceDetail"
       @delete="deleteInvoiceDetail"
     >
       <template #header>
@@ -93,6 +92,7 @@ import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import SelectorOrderDetails from "../components/SelectorOrderDetails.vue";
 import services from "../services";
+import { useReportsStore } from "../../shared/store/reports";
 
 const items = [
   {
@@ -101,7 +101,6 @@ const items = [
     command: () => printInvoice(),
   },
 ];
-const printInvoice = () => {};
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -109,6 +108,7 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const sharedData = useSharedDataStore();
+const reportsStore = useReportsStore();
 const customersStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
@@ -131,6 +131,7 @@ onMounted(async () => {
   sharedData.fetchMasterData();
   customersStore.fetchCustomers();
   lifecycleStore.fetchOneByName("SalesInvoice");
+  reportsStore.fetchAll();
   await invoiceStore.GetById(route.params.id as string);
   invoiceStore.invoice!.invoiceDate = formatDate(
     invoiceStore.invoice!.invoiceDate
@@ -162,6 +163,23 @@ const updateInvoice = async () => {
   }
 };
 
+// Report print
+const printInvoice = () => {
+  const invoiceReport = reportsStore.getReportByName("SalesInvoice");
+  if (invoiceReport)
+    reportsStore.generateAndDownload(
+      invoiceReport,
+      [
+        {
+          key: "InvoiceId",
+          value: invoice.value!.id,
+        },
+      ],
+      `Temges_Factura_${invoice.value?.invoiceNumber}.pdf`
+    );
+};
+
+// Invoice details
 const customerSelectableOrderDetails = ref(
   [] as Array<InvoiceableOrderDetail> | undefined
 );
@@ -216,11 +234,6 @@ const createInvoiceDetail = async () => {
     invoiceStore.invoice!.invoiceDate
   );
 };
-
-const editInvoiceDetail = async (detail: SalesInvoiceDetail) => {
-  await invoiceStore.UpdateInvoiceDetail(detail);
-};
-
 const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
   confirm.require({
     message: `Està segur que vol eliminar la línea ${detail.description}?`,

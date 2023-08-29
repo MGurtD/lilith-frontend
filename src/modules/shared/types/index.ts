@@ -52,3 +52,8 @@ export interface StatusTransition {
   statusId: string;
   statusToId: string;
 }
+
+export interface Parameter {
+  key: string;
+  value: string;
+}

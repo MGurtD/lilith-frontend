@@ -36,7 +36,7 @@
           />
         </div>
       </section>
-      <section class="three-columns">
+      <section class="four-columns">
         <div class="mt-1">
           <label class="block text-900 mb-2">Base</label>
           <span class="summary-field">{{ invoice.baseAmount }} €</span>

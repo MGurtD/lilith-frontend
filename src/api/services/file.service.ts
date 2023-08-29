@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import { File } from "../../types";
-import apiClient, { logException } from "../api.client";
+import apiClient from "../api.client";
+import { Parameter } from "../../modules/shared/types";
 
 export class FileService {
   public apiClient: AxiosInstance;
@@ -26,6 +27,20 @@ export class FileService {
     let response = await this.apiClient.post(
       `${this.resource}/Download`,
       file,
+      { responseType: "blob" }
+    );
+    if (response.status === 200) {
+      return response.data;
+    }
+  }
+
+  public async DownloadReport(
+    file: File,
+    parameters: Array<Parameter>
+  ): Promise<any> {
+    let response = await this.apiClient.post(
+      `Report/Download`,
+      { file, parameters },
       { responseType: "blob" }
     );
     if (response.status === 200) {
