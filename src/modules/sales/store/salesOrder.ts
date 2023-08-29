@@ -21,6 +21,22 @@ export const useSalesOrderStore = defineStore({
     async GetById(id: string) {
       this.salesOrder = await SalesServices.SalesOrder.getById(id);
     },
+    async GetFiltered(startTime: string, endTime: string, customerId?: string) {
+      if (customerId) {
+        this.salesOrders =
+          await SalesServices.SalesOrder.GetBetweenDatesAndCustomer(
+            startTime,
+            endTime,
+            customerId
+          );
+      } else {
+        this.salesOrders = await SalesServices.SalesOrder.GetBetweenDates(
+          startTime,
+          endTime
+        );
+      }
+    },
+
     async GetBetweenDates(startTime: string, endTime: string) {
       this.salesOrders = await SalesServices.SalesOrder.GetBetweenDates(
         startTime,

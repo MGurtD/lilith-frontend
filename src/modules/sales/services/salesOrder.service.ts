@@ -31,6 +31,18 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     }
   }
 
+  async GetBetweenDatesAndCustomer(
+    startTime: string,
+    endTime: string,
+    customerId: string
+  ): Promise<Array<SalesOrderHeader> | undefined> {
+    const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<SalesOrderHeader>;
+    }
+  }
+
   async CreateDetail(request: SalesOrderDetail): Promise<boolean> {
     const endpoint = `${this.resource}/Detail`;
     const response = await apiClient.post(endpoint, request);

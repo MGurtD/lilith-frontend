@@ -206,7 +206,11 @@ const filterSalesOrder = async () => {
     const startTime = formatDateForQueryParameter(filter.value.dates[0]);
     const endTime = formatDateForQueryParameter(filter.value.dates[1]);
 
-    await salesOrderStore.GetBetweenDates(startTime, endTime);
+    await salesOrderStore.GetFiltered(
+      startTime,
+      endTime,
+      filter.value.customerId
+    );
 
     localStorage.setItem(filterLocalStorageKey, JSON.stringify(filter.value));
   } else {
