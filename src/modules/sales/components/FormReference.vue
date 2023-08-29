@@ -1,5 +1,11 @@
 <template>
-  <form v-if="reference">
+  <Button
+    label="Guardar"
+    class="grid_add_row_button"
+    size="small"
+    @click="submitForm"
+  />
+  <form v-if="reference" class="mt-3">
     <section class="three-columns">
       <div class="mt-1">
         <BaseInput
@@ -73,9 +79,6 @@
         :id="reference.id"
       />
     </section>
-    <div class="mt-2">
-      <Button label="Guardar" class="mr-2" @click="submitForm" />
-    </div>
   </form>
 </template>
 <script setup lang="ts">

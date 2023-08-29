@@ -5,8 +5,8 @@ const Customers = () => import("./views/Customers.vue");
 const Customer = () => import("./views/Customer.vue");
 const SalesOrders = () => import("./views/SalesOrders.vue");
 const SalesOrder = () => import("./views/SalesOrder.vue");
-const References = () => import("./views/references.vue");
-const Reference = () => import("./views/reference.vue");
+const References = () => import("./views/References.vue");
+const Reference = () => import("./views/Reference.vue");
 const SalesInvoices = () => import("./views/SalesInvoices.vue");
 const SalesInvoice = () => import("./views/SalesInvoice.vue");
 

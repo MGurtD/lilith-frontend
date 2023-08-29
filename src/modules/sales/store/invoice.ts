@@ -3,7 +3,7 @@ import SalesService from "../services";
 import {
   SalesInvoice,
   SalesInvoiceDetail,
-  CreateInvoiceRequest,
+  CreateSalesHeaderRequest,
   CreateInvoiceDetailsFromOrderDetailsRequest,
 } from "../types";
 
@@ -15,7 +15,7 @@ export const useSalesInvoiceStore = defineStore({
   }),
   getters: {},
   actions: {
-    async Create(createRequest: CreateInvoiceRequest) {
+    async Create(createRequest: CreateSalesHeaderRequest) {
       const created = await SalesService.SalesInvoice.Create(createRequest);
       return created;
     },
@@ -62,7 +62,7 @@ export const useSalesInvoiceStore = defineStore({
       const deleted = await SalesService.SalesInvoice.delete(id);
       return deleted;
     },
-    
+
     async CreateInvoiceDetailsFromOrderDetails(
       createRequest: CreateInvoiceDetailsFromOrderDetailsRequest
     ): Promise<boolean> {

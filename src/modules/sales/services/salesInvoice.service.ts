@@ -1,22 +1,20 @@
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 import {
-  createDate,
+  createDateFromNow,
   formatDateForQueryParameter,
 } from "../../../utils/functions";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
-  CreateInvoiceRequest,
+  CreateSalesHeaderRequest,
   InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
-  SalesInvoiceDueDate,
-  SalesInvoiceImport,
 } from "../types";
 
 export class SalesInvoiceService extends BaseService<SalesInvoice> {
   async Create(
-    request: CreateInvoiceRequest
+    request: CreateSalesHeaderRequest
   ): Promise<GenericResponse<SalesInvoice> | undefined> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
@@ -75,7 +73,7 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
   async GetInvoiceableOrderDetails(
     customerId: string
   ): Promise<Array<InvoiceableOrderDetail> | undefined> {
-    const startTime = formatDateForQueryParameter(createDate(0, 0, -1));
+    const startTime = formatDateForQueryParameter(createDateFromNow(0, 0, -1));
     const endTime = formatDateForQueryParameter(new Date());
 
     const endpoint = `${this.resource}/InvoiceableOrderDetails?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;

@@ -1,14 +1,37 @@
 import { v4 as uuidv4 } from "uuid";
 
+export const convertDDMMYYYYToDate = (strDate: string): any => {
+  const strDateParts = strDate.split("/");
+  if (strDateParts.length === 3) {
+    return createDate(
+      parseInt(strDateParts[0]),
+      parseInt(strDateParts[1]),
+      parseInt(strDateParts[2])
+    );
+  }
+};
+
 export const createDate = (
   days: number,
   months: number,
   years: number
 ): Date => {
   var date = new Date();
-  date.setDate(date.getDate() + days);
-  date.setMonth(date.getMonth() + months);
-  date.setFullYear(date.getFullYear() + years);
+  date.setDate(days);
+  date.setMonth(months - 1);
+  date.setFullYear(years);
+  return date;
+};
+
+export const createDateFromNow = (
+  daysToAdd: number,
+  monthsToAdd: number,
+  yearsToAdd: number
+): Date => {
+  var date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+  date.setMonth(date.getMonth() + monthsToAdd);
+  date.setFullYear(date.getFullYear() + yearsToAdd);
   return date;
 };
 
@@ -48,7 +71,7 @@ export const formatDateTime = (dateTime: string) => {
 };
 
 export const formatDateForQueryParameter = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  return convertDateTimeToJSON(date).split("T")[0];
 };
 
 export const createBlobAndDownloadFile = (name: string, data: any) => {

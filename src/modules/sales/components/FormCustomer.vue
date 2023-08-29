@@ -129,10 +129,6 @@ const validation = ref({
   errors: {},
 } as FormValidationResult);
 
-/*  const onRegionChanged = () => {
-    (customer.value as Customer).address = "";
-  };
-  */
 const validate = () => {
   const formValidation = new FormValidation(schema);
   validation.value = formValidation.validate(customer.value);

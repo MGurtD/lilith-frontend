@@ -57,14 +57,24 @@
         :sortable="true"
         style="width: 10%"
       ></Column>
+      <Column
+        header="Data"
+        field="purchaseInvoiceDate"
+        sortable
+        style="width: 10%"
+      >
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.purchaseInvoiceDate) }}
+        </template>
+      </Column>
       <Column header="Proveïdor" style="width: 15%">
         <template #body="slotProps">
           {{ getSupplierNameById(slotProps.data.supplierId) }}
         </template>
       </Column>
       <Column
-        header="Num Fra. Proveïdor"
-        style="width: 12%"
+        header="Núm. Fra. Proveïdor"
+        style="width: 15%"
         field="supplierNumber"
       ></Column>
       <Column header="Estat" style="width: 15%">
@@ -72,22 +82,12 @@
           {{ getStatusNameById(slotProps.data.purchaseInvoiceStatusId) }}
         </template>
       </Column>
-      <Column
-        header="Data"
-        field="purchaseInvoiceDate"
-        sortable
-        style="width: 15%"
-      >
-        <template #body="slotProps">
-          {{ formatDate(slotProps.data.purchaseInvoiceDate) }}
-        </template>
-      </Column>
-      <Column header="Venciment" style="width: 15%">
+      <Column header="Venciment" style="width: 10%">
         <template #body="slotProps">
           {{ getLastDueDate(slotProps.data) }}
         </template>
       </Column>
-      <Column header="Import" style="width: 15%">
+      <Column header="Import" style="width: 10%">
         <template #body="slotProps">
           {{ slotProps.data.netAmount }} €
         </template>

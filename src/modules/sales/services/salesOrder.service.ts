@@ -1,10 +1,25 @@
-import { SalesOrderDetail, SalesOrderHeader } from "../types";
-import apiClient, { logException } from "../../../api/api.client";
+import {
+  CreateSalesHeaderRequest,
+  SalesOrderDetail,
+  SalesOrderHeader,
+} from "../types";
+import apiClient from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
+import { GenericResponse } from "../../../types";
 
 export class SalesOrderDetailService extends BaseService<SalesOrderDetail> {}
 
 export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
+  async Create(
+    request: CreateSalesHeaderRequest
+  ): Promise<GenericResponse<SalesOrderHeader> | undefined> {
+    const endpoint = `${this.resource}`;
+    const response = await this.apiClient.post(endpoint, request);
+    if (response.status === 200) {
+      return response.data as GenericResponse<SalesOrderHeader>;
+    }
+  }
+
   async GetBetweenDates(
     startTime: string,
     endTime: string

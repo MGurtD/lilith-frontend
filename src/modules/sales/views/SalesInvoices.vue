@@ -55,38 +55,10 @@
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
   >
-    <form>
-      <div class="mt-2">
-        <label class="block text-900 mb-2">Client</label>
-        <Dropdown
-          class="w-full"
-          v-model="createInvoiceRequest.customerId"
-          editable
-          :options="customersStore.customers"
-          optionValue="id"
-          optionLabel="comercialName"
-        />
-      </div>
-      <div class="mt-2">
-        <label class="block text-900 mb-2">Exercici</label>
-        <Dropdown
-          class="w-full"
-          v-model="createInvoiceRequest.exerciseId"
-          editable
-          :options="sharedData.exercises"
-          optionValue="id"
-          optionLabel="name"
-        />
-      </div>
-      <div class="mt-2">
-        <label class="block text-900 mb-2">Data Factura</label>
-        <Calendar v-model="createInvoiceRequest.invoiceDate" />
-      </div>
-
-      <footer class="mt-2">
-        <Button label="Crear" @click="createInvoice" style="float: right" />
-      </footer>
-    </form>
+    <FormCreateOrderOrInvoice
+      :create-request="createRequest"
+      @submit="createInvoice"
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -105,8 +77,9 @@ import {
   formatDateForQueryParameter,
   getNewUuid,
 } from "../../../utils/functions";
-import { CreateInvoiceRequest, SalesInvoice } from "../types";
+import { CreateSalesHeaderRequest, SalesInvoice } from "../types";
 import { DialogOptions } from "../../../types/component";
+import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -165,21 +138,25 @@ const filterInvoices = async () => {
   );
 };
 
-const createInvoiceRequest = reactive({
-  id: getNewUuid(),
-  customerId: "",
-  exerciseId: "",
-  invoiceDate: formatDate(new Date()),
-} as CreateInvoiceRequest);
+const createRequest = ref({} as CreateSalesHeaderRequest);
+const generateNewRequest = (): CreateSalesHeaderRequest => {
+  return {
+    id: getNewUuid(),
+    customerId: "",
+    exerciseId: "",
+    date: new Date(),
+  };
+};
 
 const createButtonClick = () => {
+  createRequest.value = generateNewRequest();
   dialogOptions.visible = true;
 };
 
 const createInvoice = async () => {
-  const created = await invoiceStore.Create(createInvoiceRequest);
+  const created = await invoiceStore.Create(createRequest.value);
   if (created) {
-    router.push({ path: `/sales-invoice/${createInvoiceRequest.id}` });
+    router.push({ path: `/sales-invoice/${createRequest.value.id}` });
   }
 };
 

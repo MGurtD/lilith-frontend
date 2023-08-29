@@ -1,29 +1,34 @@
 <template>
-  <Button label="Guardar" class="grid_add_row_button" @click="submitForm" />
+  <Button
+    label="Guardar"
+    class="grid_add_row_button"
+    :size="'small'"
+    @click="submitForm"
+  />
+
+  <FormSalesOrder
+    class="mt-3"
+    ref="salesOrderForm"
+    salesOrder="salesOrder"
+    @submit="onSalesOrderSubmit"
+  />
+
   <TabView>
-    <TabPanel header="Comanda" v-if="salesOrder">
-      <FormSalesOrder
-        ref="salesOrderForm"
-        salesOrder="salesOrder"
-        @submit="onSalesOrderSubmit"
+    <TabPanel header="Referències">
+      <TableSalesOrderReferences
+        v-if="salesOrder"
+        :salesOrderDetails="salesOrder.salesOrderDetails"
+        @add="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
+        @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
+        @delete="deleteSalesOrderDetails"
       />
-      <TabView>
-        <TabPanel header="Referències">
-          <TableSalesOrderReferences
-            :salesOrderDetails="salesOrder.salesOrderDetails"
-            @add="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.CREATE, det)"
-            @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
-            @delete="deleteSalesOrderDetails"
-          />
-        </TabPanel>
-      </TabView>
     </TabPanel>
   </TabView>
   <Dialog
     :closable="true"
     v-model:visible="isDialogVisible"
     :header="dialogTitle"
-    position="bottom"
+    :modal="true"
   >
     <FormSalesOrderReference
       v-if="selectedSalesOrderDetail"
@@ -39,15 +44,16 @@ import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
-import { Reference, SalesOrderDetail, SalesOrderHeader } from "../types";
+import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { useStore } from "../../../store";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import { getNewUuid } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import { useSalesOrderStore } from "../store/salesOrder";
 import FormSalesOrderReference from "../components/FormSalesOrderReference.vue";
 import TableSalesOrderReferences from "../components/TableSalesOrderReferences.vue";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const salesOrderForm = ref();
 
@@ -69,14 +75,10 @@ const formDetailMode = ref(FormActionMode.EDIT);
 const selectedSalesOrderDetail = ref(undefined as undefined | SalesOrderDetail);
 
 const loadView = async () => {
-  //await referenceStore.fetchReference(route.params.id as string);
   await salesOrderStore.GetById(route.params.id as string);
+
   let pageTitle = "";
-  if (!salesOrder.value) {
-    formMode.value = FormActionMode.CREATE;
-    salesOrderStore.setNewSalesOrder(route.params.id as string);
-    pageTitle = "Alta de comanda";
-  } else {
+  if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
   }
@@ -115,16 +117,15 @@ const toast = useToast();
 const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
-  console.log(salesOrder);
-  if (formMode.value === FormActionMode.CREATE) {
-    result = await salesOrderStore.Create(salesOrder);
-    message = result ? "Comanda creada" : "Error al crear la comanda";
-  } else {
-    result = await salesOrderStore.Update(salesOrder.id, salesOrder);
-    message = result
-      ? "Comanda actualitzada"
-      : "Error a l'actualitzar la comanda";
-  }
+
+  salesOrder.salesOrderDate = convertDateTimeToJSON(
+    new Date(salesOrder.salesOrderDate)
+  );
+
+  result = await salesOrderStore.Update(salesOrder.id, salesOrder);
+  message = result
+    ? "Comanda actualitzada"
+    : "Error a l'actualitzar la comanda";
 
   toast.add({
     life: 5000,
@@ -141,17 +142,9 @@ const onSalesOrderReferenceSubmit = async (
   salesOrderDetail: SalesOrderDetail
 ) => {
   if (formDetailMode.value === FormActionMode.CREATE) {
-    if (formMode.value === FormActionMode.EDIT) {
-      await salesOrderStore.CreateDetail(salesOrderDetail);
-    }
-    salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
+    await salesOrderStore.CreateDetail(salesOrderDetail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
-    if (formMode.value === FormActionMode.EDIT) {
-      await salesOrderStore.UpdateDetail(salesOrderDetail);
-    } else {
-      await salesOrderStore.CreateDetail(salesOrderDetail);
-      salesOrder.value?.salesOrderDetails?.push(salesOrderDetail);
-    }
+    await salesOrderStore.UpdateDetail(salesOrderDetail);
   }
   isDialogVisible.value = false;
 };
