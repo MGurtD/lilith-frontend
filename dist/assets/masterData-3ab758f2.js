@@ -1,0 +1,1 @@
+import{I as t}from"./index-6408418a.js";import{S as e}from"./index-053583c1.js";const i=t({id:"sharedMasterData",state:()=>({paymentMethods:[],taxes:[],exercises:[]}),getters:{},actions:{async fetchMasterData(){this.paymentMethods=await e.PaymentMethod.getActive(),this.exercises=await e.Exercice.getActive(),this.taxes=await e.Tax.getActive()}}});export{i as u};
