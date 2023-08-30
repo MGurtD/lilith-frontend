@@ -13,13 +13,11 @@ import {
 } from "../types";
 
 export class SalesInvoiceService extends BaseService<SalesInvoice> {
-  async Create(
-    request: CreateSalesHeaderRequest
-  ): Promise<GenericResponse<SalesInvoice> | undefined> {
+  async Create(request: CreateSalesHeaderRequest): Promise<boolean> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
 
-    return response.data as GenericResponse<SalesInvoice>;
+    return response.status === 200;
   }
 
   async GetBetweenDates(
