@@ -53,14 +53,17 @@ export const useSalesOrderStore = defineStore({
     },
     async CreateDetail(detail: SalesOrderDetail): Promise<boolean> {
       const created = await SalesServices.SalesOrder.CreateDetail(detail);
+      if (created) await this.GetById(detail.salesOrderHeaderId);
       return created;
     },
     async UpdateDetail(detail: SalesOrderDetail): Promise<boolean> {
       const updated = await SalesServices.SalesOrder.UpdateDetail(detail);
+      if (updated) await this.GetById(detail.salesOrderHeaderId);
       return updated;
     },
     async DeleteDetail(detail: SalesOrderDetail): Promise<boolean> {
       const deleted = await SalesServices.SalesOrder.DeleteDetail(detail);
+      if (deleted) await this.GetById(detail.salesOrderHeaderId);
       return deleted;
     },
   },

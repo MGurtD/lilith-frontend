@@ -18,9 +18,8 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
   ): Promise<GenericResponse<SalesInvoice> | undefined> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
-    if (response.status === 200) {
-      return response.data as GenericResponse<SalesInvoice>;
-    }
+
+    return response.data as GenericResponse<SalesInvoice>;
   }
 
   async GetBetweenDates(
@@ -83,10 +82,12 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     }
   }
 
-  async CreateDetail(request: SalesInvoiceDetail) {
+  async CreateDetail(
+    request: SalesInvoiceDetail
+  ): Promise<GenericResponse<any>> {
     const endpoint = `${this.resource}/Detail`;
     const response = await this.apiClient.post(endpoint, request);
-    return response.status === 200;
+    return response.data;
   }
 
   async CreateInvoiceDetailsFromOrderDetails(

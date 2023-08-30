@@ -228,11 +228,10 @@ const openAddDetail = () => {
   }
 };
 const createInvoiceDetail = async () => {
-  await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
+  const response = await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
   dialogOptions.visible = false;
-  invoiceStore.invoice!.invoiceDate = formatDate(
-    invoiceStore.invoice!.invoiceDate
-  );
+
+  console.log("createInvoiceDetail", response);
 };
 const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
   confirm.require({

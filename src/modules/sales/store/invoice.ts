@@ -6,6 +6,7 @@ import {
   CreateSalesHeaderRequest,
   CreateInvoiceDetailsFromOrderDetailsRequest,
 } from "../types";
+import { GenericResponse } from "../../../types";
 
 export const useSalesInvoiceStore = defineStore({
   id: "salseInvoices",
@@ -74,12 +75,14 @@ export const useSalesInvoiceStore = defineStore({
     },
     async CreateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
-    ): Promise<boolean> {
-      const created = await SalesService.SalesInvoice.CreateDetail(
+    ): Promise<GenericResponse<any>> {
+      const response = await SalesService.SalesInvoice.CreateDetail(
         invoiceDetail
       );
+      console.log("CreateInvoiceDetail before", invoiceDetail);
       await this.GetById(invoiceDetail.salesInvoiceId);
-      return created;
+      console.log("CreateInvoiceDetail after", this.invoice);
+      return response;
     },
     async UpdateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail

@@ -237,7 +237,7 @@ const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
 const deletePurchaseInvoice = (event: any, invoice: PurchaseInvoice) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Està segur que vol eliminar el tipus de despesa?`,
+    message: `Està segur que vol eliminar la factura ${invoice.number}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",

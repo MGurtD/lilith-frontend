@@ -154,10 +154,19 @@ const createButtonClick = () => {
 };
 
 const createInvoice = async () => {
-  const created = await invoiceStore.Create(createRequest.value);
-  if (created) {
-    router.push({ path: `/sales-invoice/${createRequest.value.id}` });
+  const response = await invoiceStore.Create(createRequest.value);
+
+  console.log("createInvoice", response);
+  if (!response!.result) {
+    toast.add({
+      summary: "Error al crear detall",
+      detail: response!.errors.length > 0 ? response!.errors[0] : "",
+      severity: "error",
+    });
+    return;
   }
+
+  router.push({ path: `/sales-invoice/${createRequest.value.id}` });
 };
 
 const editSalesInvoice = (invoice: SalesInvoice) => {

@@ -81,6 +81,19 @@
         {{ getStatusNameById(slotProps.data.statusId) }}
       </template>
     </Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          v-if="
+            slotProps.data.statusId ===
+            lifecycleStore.lifecycle?.initialStatusId
+          "
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deleteSalesInvoice($event, slotProps.data)"
+        />
+      </template>
+    </Column>
   </DataTable>
 
   <Dialog
@@ -112,18 +125,20 @@ import {
   getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
-import { CreateSalesHeaderRequest } from "../types";
+import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
 import { useSharedDataStore } from "../../shared/store/masterData";
+import { useConfirm } from "primevue/useconfirm";
 
 const router = useRouter();
 const toast = useToast();
+const confirm = useConfirm();
 const store = useStore();
 const sharedStore = useSharedDataStore();
 const salesOrderStore = useSalesOrderStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
-const lifeCycleStore = useLifecyclesStore();
+const lifecycleStore = useLifecyclesStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
@@ -141,7 +156,7 @@ const dialogOptions = reactive({
 onMounted(async () => {
   await referenceStore.fetchReferences();
   await customerStore.fetchCustomers();
-  await lifeCycleStore.fetchOneByName("SalesOrder");
+  await lifecycleStore.fetchOneByName("SalesOrder");
   sharedStore.fetchMasterData();
 
   //Filtre
@@ -182,23 +197,6 @@ const createButtonClick = () => {
   createRequest.value = generateNewRequest();
   dialogOptions.visible = true;
 };
-const createOrder = async () => {
-  dialogOptions.visible = false;
-  const created = await salesOrderStore.Create(createRequest.value);
-  if (created) {
-    router.push({ path: `/salesorder/${createRequest.value.id}` });
-  }
-};
-
-const editRow = (row: DataTableRowClickEvent) => {
-  if (
-    !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
-    )
-  ) {
-    router.push({ path: `/salesorder/${row.data.id}` });
-  }
-};
 
 const filterLocalStorageKey = "temges.salesorder.filter";
 const filterSalesOrder = async () => {
@@ -224,8 +222,47 @@ const filterSalesOrder = async () => {
 };
 
 const getStatusNameById = (id: string) => {
-  const status = lifeCycleStore.lifecycle?.statuses?.find((s) => s.id === id);
+  const status = lifecycleStore.lifecycle?.statuses?.find((s) => s.id === id);
   if (status) return status.name;
   else return "";
+};
+
+const createOrder = async () => {
+  dialogOptions.visible = false;
+  const created = await salesOrderStore.Create(createRequest.value);
+  if (created) {
+    router.push({ path: `/salesorder/${createRequest.value.id}` });
+  }
+};
+
+const editRow = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
+  ) {
+    router.push({ path: `/salesorder/${row.data.id}` });
+  }
+};
+
+const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
+  confirm.require({
+    message: `Està segur que vol eliminar la comanda?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await salesOrderStore.Delete(order.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminada",
+          life: 3000,
+        });
+
+        await filterSalesOrder();
+      }
+    },
+  });
 };
 </script>
