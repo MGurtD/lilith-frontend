@@ -91,9 +91,9 @@ export const usePurchaseInvoiceStore = defineStore({
         purchaseInvoice.id,
         purchaseInvoice
       );
-      const dueDatesRecreated =
-        await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
-      return updated && dueDatesRecreated;
+      // const dueDatesRecreated =
+      //   await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
+      return updated;
     },
     async Delete(id: string): Promise<boolean> {
       const deleted = await PurchaseService.PurchaseInvoice.delete(id);

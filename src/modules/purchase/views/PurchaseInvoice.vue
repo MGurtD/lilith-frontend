@@ -20,8 +20,17 @@
           <DataTable
             :value="purchaseInvoice.purchaseInvoiceDueDates"
             tableStyle="min-width: 100%"
+            scrollable
+            scrollHeight="40vh"
+            sortField="dueDate"
+            :sortOrder="1"
           >
-            <Column field="dueDate" header="Venciment" style="width: 50%">
+            <Column
+              field="dueDate"
+              header="Venciment"
+              style="width: 50%"
+              sortable
+            >
               <template #body="slotProps">
                 {{ formatDate(slotProps.data.dueDate) }}
               </template>
@@ -68,7 +77,11 @@ import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { PurchaseInvoice, PurchaseInvoiceImport } from "../types";
 import { FormActionMode } from "../../../types/component";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import {
+  convertDateTimeToJSON,
+  formatDate,
+  getNewUuid,
+} from "../../../utils/functions";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
 import FormPurchaseInvoiceImport from "../components/FormPurchaseInvoiceImport.vue";
@@ -171,6 +184,11 @@ const toast = useToast();
 const onInvoiceSubmit = async (invoice: PurchaseInvoice) => {
   let result = false;
   let message = "";
+
+  invoice.purchaseInvoiceDate = convertDateTimeToJSON(
+    invoice.purchaseInvoiceDate
+  );
+  console.log(invoice.purchaseInvoiceDate);
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await purchaseInvoiceStore.Create(invoice);

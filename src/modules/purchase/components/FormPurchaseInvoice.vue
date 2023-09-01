@@ -300,10 +300,15 @@ const calcAmounts = async () => {
     purchaseInvoice.value.extraTaxPercentatge = extraTaxPercentage;
     purchaseInvoice.value.extraTaxAmount = extraTaxAmount;
 
+    const invoice = Object.assign({}, purchaseInvoice.value);
+    invoice.purchaseInvoiceDate = convertDateTimeToJSON(
+      invoice.purchaseInvoiceDate
+    );
+
     // Calcular venciments
     purchaseInvoice.value.purchaseInvoiceDueDates =
       (await purchaseStore.GetDueDates(
-        purchaseInvoice.value
+        invoice
       )) as Array<PurchaseInvoiceDueDate>;
   }
 
