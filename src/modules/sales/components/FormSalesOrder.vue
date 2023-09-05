@@ -27,11 +27,7 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Data Comanda</label>
-          <Calendar
-            id="salesOrderDate"
-            v-model="salesOrder.salesOrderDate"
-            dateFormat="dd/mm/yy"
-          />
+          <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Estat</label>
@@ -153,9 +149,9 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    salesOrder.value!.salesOrderDate = convertDDMMYYYYToDate(
+    /*  salesOrder.value!.salesOrderDate = convertDDMMYYYYToDate(
       salesOrder.value!.salesOrderDate
-    );
+    );*/
     emit("submit", salesOrder.value!);
   } else {
     let errors = "";

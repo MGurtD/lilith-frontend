@@ -46,14 +46,18 @@ import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { useStore } from "../../../store";
-import { getNewUuid } from "../../../utils/functions";
+import {
+  getNewUuid,
+  convertDateTimeToJSON,
+  convertDDMMYYYYToDate,
+  formatDate,
+} from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import { useSalesOrderStore } from "../store/salesOrder";
 import FormSalesOrderReference from "../components/FormSalesOrderReference.vue";
 import TableSalesOrderReferences from "../components/TableSalesOrderReferences.vue";
-import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const salesOrderForm = ref();
 
@@ -76,7 +80,9 @@ const selectedSalesOrderDetail = ref(undefined as undefined | SalesOrderDetail);
 
 const loadView = async () => {
   await salesOrderStore.GetById(route.params.id as string);
-
+  /*salesOrderStore.salesOrder!.salesOrderDate = formatDate(
+    salesOrderStore.salesOrder!.salesOrderDate
+  );*/
   let pageTitle = "";
   if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
@@ -106,6 +112,7 @@ const openReferencesForm = (
   if (formMode === FormActionMode.CREATE) {
     salesOrderDetail.id = getNewUuid();
   }
+
   salesOrderDetail.salesOrderHeaderId = salesOrder.value!.id;
   selectedSalesOrderDetail.value = salesOrderDetail;
   formDetailMode.value = formMode;
@@ -118,11 +125,12 @@ const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
 
-  salesOrder.salesOrderDate = convertDateTimeToJSON(
-    new Date(salesOrder.salesOrderDate)
-  );
-
+  //salesOrder!.salesOrderDate = convertDDMMYYYYToDate(
+  //  salesOrder!.salesOrderDate
+  //);
+  console.log(salesOrder.salesOrderDate);
   result = await salesOrderStore.Update(salesOrder.id, salesOrder);
+  console.log("guardar comanda de venda: ", result);
   message = result
     ? "Comanda actualitzada"
     : "Error a l'actualitzar la comanda";

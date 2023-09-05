@@ -16,7 +16,7 @@ export const createDate = (
   months: number,
   years: number
 ): Date => {
-  var date = new Date();
+  let date = new Date();
   date.setDate(days);
   date.setMonth(months - 1);
   date.setFullYear(years);
@@ -28,7 +28,7 @@ export const createDateFromNow = (
   monthsToAdd: number,
   yearsToAdd: number
 ): Date => {
-  var date = new Date();
+  let date = new Date();
   date.setDate(date.getDate() + daysToAdd);
   date.setMonth(date.getMonth() + monthsToAdd);
   date.setFullYear(date.getFullYear() + yearsToAdd);
