@@ -14,6 +14,15 @@ class ExpenseService extends BaseService<Expense> {
       return response.data as Array<ConsolidatedExpense>;
     }
   }
+  async getByExpenseType(
+    expensetypeid: string
+  ): Promise<Array<Expense> | undefined> {
+    const endpoint = `${this.resource}/ExpenseType/${expensetypeid}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<Expense>;
+    }
+  }
 }
 
 export default {

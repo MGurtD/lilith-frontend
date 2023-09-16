@@ -1,15 +1,25 @@
 import { RouteRecordRaw } from "vue-router";
 
-const Enterprise = () => import("./views/Enterprise.vue");
-const Enterprises = () => import("./views/Enterprises.vue");
-const Site = () => import("./views/Site.vue");
-const Sites = () => import("./views/Sites.vue");
+const Enterprise = () => import("./views/enterprise.vue");
+const Enterprises = () => import("./views/enterprises.vue");
+const Site = () => import("./views/site.vue");
+const Sites = () => import("./views/sites.vue");
 const Area = () => import("./views/area.vue");
 const Areas = () => import("./views/areas.vue");
 const WorkcenterType = () => import("./views/workcentertype.vue");
 const WorkcenterTypes = () => import("./views/workcentertypes.vue");
 const Workcenter = () => import("./views/workcenter.vue");
 const Workcenters = () => import("./views/workcenters.vue");
+const Workcentercost = () => import("./views/workcentercost.vue");
+const Workcentercosts = () => import("./views/workcentercosts.vue");
+const MachineStatus = () => import("./views/machinestatus.vue");
+const MachineStatuses = () => import("./views/machinestatuses.vue");
+const Operator = () => import("./views/operator.vue");
+const Operators = () => import("./views/operators.vue");
+const OperatorType = () => import("./views/operatortype.vue");
+const OperatorTypes = () => import("./views/operatortypes.vue");
+const OperatorCost = () => import("./views/operatorcost.vue");
+const OperatorCosts = () => import("./views/operatorcosts.vue");
 
 export default [
   {
@@ -61,5 +71,55 @@ export default [
     path: "/workcenter",
     name: "Workcenters",
     component: Workcenters,
+  },
+  {
+    path: "/workcentercost/:id",
+    name: "Workcentercost",
+    component: Workcentercost,
+  },
+  {
+    path: "/workcentercost",
+    name: "Workcentercosts",
+    component: Workcentercosts,
+  },
+  {
+    path: "/operatortype/:id",
+    name: "Operatortype",
+    component: OperatorType,
+  },
+  {
+    path: "/operatortype",
+    name: "Operatortypes",
+    component: OperatorTypes,
+  },
+  {
+    path: "/operator/:id",
+    name: "Operator",
+    component: Operator,
+  },
+  {
+    path: "/operator",
+    name: "Operators",
+    component: Operators,
+  },
+  {
+    path: "/operatorcost/:id",
+    name: "OperatorCost",
+    component: OperatorCost,
+  },
+  {
+    path: "/operatorcost",
+    name: "OperatorCosts",
+    component: OperatorCosts,
+  },
+  {
+    path: "/machinestatus/:id",
+    name: "MachineStatus",
+    component: MachineStatus,
+  },
+  {
+    path: "/machinestatus",
+    name: "MachineStatuses",
+    component: MachineStatuses,
   },
 ] as Array<RouteRecordRaw>;

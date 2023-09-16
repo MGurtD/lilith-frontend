@@ -143,21 +143,59 @@ export const applicationMenus = [
         title: "Local",
         href: "/site",
       },
-      /* {
-          icon: PrimeIcons.BUILDING,
-          title: "Area",
-          href: "/area",
-        },
-        {
-          icon: PrimeIcons.BUILDING,
-          title: "Tipus de màquina",
-          href: "/workcentertype",
-        },
-        {
-          icon: PrimeIcons.BUILDING,
-          title: "Màquina",
-          href: "/workcenter",
-        }, */
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Area",
+        href: "/area",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Tipus de màquina",
+        href: "/workcentertype",
+      },
+      {
+        icon: PrimeIcons.BUILDING,
+        title: "Màquina",
+        href: "/workcenter",
+      },
+      {
+        icon: PrimeIcons.EURO,
+        title: "Costs per màquina",
+        href: "/workcentercost",
+      },
+      {
+        icon: PrimeIcons.DATABASE,
+        title: "Estats de màquina",
+        href: "/machinestatus",
+      },
+
+      {
+        icon: PrimeIcons.USERS,
+        title: "Tipus d'operari",
+        href: "/operatortype",
+      },
+      {
+        icon: PrimeIcons.USER,
+        title: "Operaris",
+        href: "/operator",
+      },
+      {
+        icon: PrimeIcons.MONEY_BILL,
+        title: "Costs per tipus d'operari",
+        href: "/operatorcost",
+      },
+    ],
+  },
+  {
+    icon: PrimeIcons.BOX,
+    title: "Magatzem",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.BOX,
+        title: "Magatzem",
+        href: "/warehouse",
+      },
     ],
   },
 ];

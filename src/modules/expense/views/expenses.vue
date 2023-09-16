@@ -1,6 +1,7 @@
 <template>
   <DataTable
     :value="expenseStore.expenses"
+    class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="75vh"
@@ -11,13 +12,42 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Despeses</span>
-        <Button
-          :icon="PrimeIcons.PLUS"
-          rounded
-          raised
-          @click="createButtonClick"
-        />
+        <div class="datatable-filter">
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Tipus de despesa</label>
+            <Dropdown
+              v-model="filter.expenseTypeId"
+              editable
+              :options="expenseStore.expenseTypes"
+              optionValue="id"
+              optionLabel="name"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER"
+            rounded
+            raised
+            @click="filterExpense"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.TIMES"
+            rounded
+            raised
+            @click="clearFilter"
+          />
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+        </div>
       </div>
     </template>
     <Column field="description" header="Descripció" style="width: 40%"></Column>
@@ -55,7 +85,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useExpenseStore } from "../store/expense";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
@@ -69,6 +99,10 @@ import { useToast } from "primevue/usetoast";
 const router = useRouter();
 const store = useStore();
 const expenseStore = useExpenseStore();
+const filter = ref({
+  dates: undefined as Array<Date> | undefined,
+  expenseTypeId: undefined as string | undefined,
+});
 
 onMounted(async () => {
   await expenseStore.fetchExpenseTypes();
@@ -79,6 +113,18 @@ onMounted(async () => {
     title: "Gestió de despeses",
   });
 });
+
+const filterExpense = async () => {
+  if (filter.value.expenseTypeId) {
+    await expenseStore.getFiltered(filter.value.expenseTypeId);
+  }
+};
+
+const clearFilter = async () => {
+  filter.value.expenseTypeId = "";
+
+  await expenseStore.fetchExpenses();
+};
 
 const createButtonClick = () => {
   router.push({ path: `/expense/${uuidv4()}` });

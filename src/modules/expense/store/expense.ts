@@ -65,6 +65,9 @@ export const useExpenseStore = defineStore({
     async fetchExpense(id: string) {
       this.expense = await ExpenseServices.Expense.getById(id);
     },
+    async getFiltered(id: string) {
+      this.expenses = await ExpenseServices.Expense.getByExpenseType(id);
+    },
     async createExpense(expense: Expense) {
       const result = await ExpenseServices.Expense.create(expense);
       if (result) await this.fetchExpenses();
