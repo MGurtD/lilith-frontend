@@ -1,3 +1,4 @@
+import { ExpenseService, ExpenseTypeService } from "./expense.service";
 import {
   PurchaseInvoiceSerieService,
   PurchaseInvoiceService,
@@ -14,5 +15,7 @@ export default {
     "/PurchaseInvoiceStatus"
   ),
   Supplier: new SupplierService("/Supplier"),
-  supplierType: new SupplierService("/SupplierType"),
+  SupplierType: new SupplierService("/SupplierType"),
+  Expense: new ExpenseService("Expense"),
+  ExpenseType: new ExpenseTypeService("ExpenseType"),
 };

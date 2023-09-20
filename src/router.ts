@@ -1,7 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 import SharedRoutes from "./modules/shared/routes";
 import PurchaseRoutes from "./modules/purchase/routes";
-import ExpenseRoutes from "./modules/expense/routes";
 import SalesRoutes from "./modules/sales/routes";
 import ProductionRoutes from "./modules/production/routes";
 import WarehouseRoutes from "./modules/warehouse/routes";
@@ -22,7 +21,6 @@ const router = createRouter({
     ...SharedRoutes,
     ...SalesRoutes,
     ...PurchaseRoutes,
-    ...ExpenseRoutes,
     ...ProductionRoutes,
     ...WarehouseRoutes,
   ],

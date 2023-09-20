@@ -1,5 +1,5 @@
 <template>
-  <FormWarehouse v-if="Warehouse" :warehouse="Warehouse" @submit="submitForm" />
+  <FormWarehouse v-if="warehouse" :warehouse="warehouse" @submit="submitForm" />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -8,6 +8,7 @@ import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
 import { Warehouse } from "../types";
+
 import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
