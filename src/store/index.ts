@@ -6,163 +6,9 @@ import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
 import { ref } from "vue";
 import { getMenusByRole } from "./menus";
+import { Exercise } from "../modules/shared/types";
 
 const localStorageAuthKey = "temges.authorization";
-
-const applicationMenus = [
-  {
-    icon: PrimeIcons.COG,
-    title: "General",
-    href: "",
-    child: [
-      {
-        icon: PrimeIcons.CALENDAR,
-        title: "Exercicis",
-        href: "/exercise",
-      },
-      {
-        icon: PrimeIcons.PERCENTAGE,
-        title: "Impostos",
-        href: "/taxes",
-      },
-      {
-        icon: PrimeIcons.PAYPAL,
-        title: "Formes de pagament",
-        href: "/payment-methods",
-      },
-      {
-        icon: PrimeIcons.REFRESH,
-        title: "Cicles de vida",
-        href: "/lifecycle",
-      },
-    ],
-  },
-  {
-    icon: PrimeIcons.CART_PLUS,
-    title: "Compres",
-    href: "",
-    child: [
-      {
-        icon: PrimeIcons.BOOKMARK,
-        title: "Proveïdors",
-        href: "/suppliers",
-      },
-      {
-        icon: PrimeIcons.MONEY_BILL,
-        title: "Factures",
-        child: [
-          {
-            icon: PrimeIcons.SORT_NUMERIC_DOWN,
-            title: "Sèries de factures",
-            href: "/purchaseinvoiceserie",
-          },
-          {
-            icon: PrimeIcons.FLAG,
-            title: "Estats de factures",
-            href: "/purchaseinvoicestatus",
-          },
-
-          {
-            icon: PrimeIcons.MONEY_BILL,
-            title: "Factures de compra",
-            href: "/purchaseinvoice",
-          },
-          {
-            icon: PrimeIcons.MONEY_BILL,
-            title: "Gestió de factures",
-            href: "/purchaseinvoices-by-period",
-          },
-        ],
-      },
-      {
-        icon: PrimeIcons.WALLET,
-        title: "Despeses",
-        child: [
-          {
-            icon: PrimeIcons.TAG,
-            title: "Tipus de despesa",
-            href: "/expensetype",
-          },
-          {
-            icon: PrimeIcons.WALLET,
-            title: "Declaració de despeses",
-            href: "/expense",
-          },
-        ],
-      },
-
-      {
-        icon: PrimeIcons.CHART_PIE,
-        title: "Dashboard",
-        href: "/expense-dashboard",
-      },
-    ],
-  },
-  {
-    icon: PrimeIcons.MONEY_BILL,
-    title: "Ventes",
-    href: "",
-    child: [
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Clients",
-        href: "/customers",
-      },
-      {
-        icon: PrimeIcons.TICKET,
-        title: "Referències",
-        href: "/referencia",
-      },
-      {
-        icon: PrimeIcons.APPLE,
-        title: "Comandes de venta",
-        href: "/salesorder",
-      },
-      {
-        icon: PrimeIcons.WALLET,
-        title: "Factures",
-        href: "/sales-invoice",
-      },
-    ],
-  },
-  {
-    icon: PrimeIcons.USERS,
-    title: "Usuaris",
-    href: "/users",
-  },
-  /*{
-    icon: PrimeIcons.CHART_BAR,
-    title: "Producció",
-    href: "",
-    child: [
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Empresa",
-        href: "/enterprise",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Local",
-        href: "/site",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Area",
-        href: "/area",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Tipus de màquina",
-        href: "/workcentertype",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Màquina",
-        href: "/workcenter",
-      },
-    ],
-  },*/
-];
 
 export const useStore = defineStore("applicationStore", {
   state: () => {
@@ -170,16 +16,23 @@ export const useStore = defineStore("applicationStore", {
       authorization: undefined as AuthenticationResponse | undefined,
       user: undefined as User | undefined,
       isWaiting: false,
-
       menus: ref([] as Array<any>),
       menuCollapsed: false,
       currentMenuItem: {
         title: "Home",
         icon: PrimeIcons.HOME,
       } as MenuItem,
+      exercisePicker: {
+        exercise: undefined as Exercise | undefined,
+        dates: undefined as Array<Date> | undefined,
+      },
     };
   },
   actions: {
+    cleanExercisePicker() {
+      this.exercisePicker.exercise = undefined;
+      this.exercisePicker.dates = undefined;
+    },
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
     },

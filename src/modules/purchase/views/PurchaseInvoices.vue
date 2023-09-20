@@ -15,11 +15,9 @@
         >
           <div class="datatable-filter">
             <div class="filter-field">
-              <label class="block text-900 mb-2">Període</label>
-              <Calendar
-                v-model="filter.dates"
-                selectionMode="range"
-                dateFormat="dd/mm/yy"
+              <ExerciseDatePicker
+                :exercises="puchaseMasterDataStore.masterData.exercises"
+                @range-selected="filterInvoices"
               />
             </div>
             <div class="filter-field">
@@ -41,6 +39,13 @@
               rounded
               raised
               @click="filterInvoices"
+            />
+            <Button
+              class="datatable-button mr-2"
+              :icon="PrimeIcons.FILTER_SLASH"
+              rounded
+              raised
+              @click="cleanFilter"
             />
             <Button
               :icon="PrimeIcons.PLUS"
@@ -109,6 +114,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { v4 as uuidv4 } from "uuid";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
@@ -124,6 +130,7 @@ import {
   formatDate,
 } from "../../../utils/functions";
 import { PurchaseInvoice } from "../types";
+import { Exercise } from "../../shared/types";
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -133,43 +140,49 @@ const puchaseMasterDataStore = usePurchaseMasterDataStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
 const filter = ref({
-  dates: undefined as Array<Date> | undefined,
   supplierId: undefined as string | undefined,
+  exercise: undefined as Exercise | undefined,
 });
 
 onMounted(async () => {
-  await puchaseMasterDataStore.fetchMasterData();
-
-  const storageFilter = localStorage.getItem(filterLocalStorageKey);
-  if (storageFilter !== null) {
-    filter.value = JSON.parse(storageFilter);
-
-    if (filter.value.dates) {
-      filter.value.dates[0] = new Date(filter.value.dates[0]);
-      filter.value.dates[1] = new Date(filter.value.dates[1]);
-    }
-    await filterInvoices();
-  } else {
-    let startDate: Date = new Date();
-    let endDate: Date = new Date();
-    startDate.setDate(endDate.getDate() - 30);
-
-    const strStartDate = formatDateForQueryParameter(startDate);
-    const strEndDate = formatDateForQueryParameter(endDate);
-    await purchaseInvoiceStore.GetFiltered(strStartDate, strEndDate);
-  }
-
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
     title: "Factures de compra",
   });
+
+  await puchaseMasterDataStore.fetchMasterData();
+  setCurrentYear();
+
+  await filterInvoices();
 });
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = puchaseMasterDataStore.masterData.exercises?.find(
+    (e) => e.name === year
+  );
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
+
+const cleanFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.supplierId = undefined;
+};
 
 const filterLocalStorageKey = "temges.purchaseinvoice.filter";
 const filterInvoices = async () => {
-  if (filter.value.dates) {
-    const startTime = formatDateForQueryParameter(filter.value.dates[0]);
-    const endTime = formatDateForQueryParameter(filter.value.dates[1]);
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await purchaseInvoiceStore.GetFiltered(
       startTime,

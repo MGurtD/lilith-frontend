@@ -1,3 +1,5 @@
+import { Exercise } from "../modules/shared/types";
+
 export enum BaseInputType {
   NUMERIC = 1,
   TEXT = 2,

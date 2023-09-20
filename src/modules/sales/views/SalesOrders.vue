@@ -14,11 +14,9 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
-            <label class="block text-900 mb-2">Període</label>
-            <Calendar
-              v-model="filter.dates"
-              selectionMode="range"
-              dateFormat="dd/mm/yy"
+            <ExerciseDatePicker
+              :exercises="sharedStore.exercises"
+              @range-selected="filterSalesOrder"
             />
           </div>
           <div class="filter-field">
@@ -32,17 +30,6 @@
               class="w-full"
             />
           </div>
-          <!--<div class="filter-field">
-            <label class="block text-900 mb-2">Referencia</label>
-            <Dropdown
-              v-model="filter.referenceId"
-              editable
-              :options="referenceStore.references"
-              optionValue="id"
-              optionLabel="description"
-              class="w-full"
-            />
-          </div>-->
         </div>
         <div class="datatable-buttons">
           <Button
@@ -51,6 +38,13 @@
             rounded
             raised
             @click="filterSalesOrder"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
           />
           <Button
             :icon="PrimeIcons.PLUS"
@@ -109,6 +103,8 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -126,7 +122,6 @@ import {
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
-import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
 
@@ -141,7 +136,6 @@ const customerStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
 
 const filter = ref({
-  dates: undefined as Array<Date> | undefined,
   customerId: undefined as string | undefined,
   referenceId: undefined as string | undefined,
 });
@@ -154,34 +148,37 @@ const dialogOptions = reactive({
 } as DialogOptions);
 
 onMounted(async () => {
-  await referenceStore.fetchReferences();
-  await customerStore.fetchCustomers();
-  await lifecycleStore.fetchOneByName("SalesOrder");
-  sharedStore.fetchMasterData();
+  lifecycleStore.fetchOneByName("SalesOrder");
+  referenceStore.fetchReferences();
+  customerStore.fetchCustomers();
+  await sharedStore.fetchMasterData();
 
-  //Filtre
-  const storageFilter = localStorage.getItem(filterLocalStorageKey);
-  if (storageFilter !== null) {
-    filter.value = JSON.parse(storageFilter);
-    if (filter.value.dates) {
-      filter.value.dates[0] = new Date(filter.value.dates[0]);
-      filter.value.dates[1] = new Date(filter.value.dates[1]);
-    }
-    await filterSalesOrder();
-  } else {
-    let startDate: Date = new Date();
-    let endDate: Date = new Date();
-    startDate.setDate(endDate.getDate() - 30);
-    const strStartDate = formatDateForQueryParameter(startDate);
-    const strEndDate = formatDateForQueryParameter(endDate);
-    await salesOrderStore.GetBetweenDates(strStartDate, strEndDate);
-  }
+  setCurrentYear();
+  await filterSalesOrder();
 
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
     title: "Comandes",
   });
 });
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = sharedStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
+
+const cleanFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.customerId = undefined;
+};
 
 const createRequest = ref({} as CreateSalesHeaderRequest);
 const generateNewRequest = (): CreateSalesHeaderRequest => {
@@ -198,19 +195,18 @@ const createButtonClick = () => {
   dialogOptions.visible = true;
 };
 
-const filterLocalStorageKey = "temges.salesorder.filter";
 const filterSalesOrder = async () => {
-  if (filter.value.dates) {
-    const startTime = formatDateForQueryParameter(filter.value.dates[0]);
-    const endTime = formatDateForQueryParameter(filter.value.dates[1]);
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await salesOrderStore.GetFiltered(
       startTime,
       endTime,
       filter.value.customerId
     );
-
-    localStorage.setItem(filterLocalStorageKey, JSON.stringify(filter.value));
   } else {
     toast.add({
       severity: "info",

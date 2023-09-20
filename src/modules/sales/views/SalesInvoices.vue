@@ -11,11 +11,9 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
-            <label class="block text-900 mb-2">Període</label>
-            <Calendar
-              v-model="filter.dates"
-              selectionMode="range"
-              dateFormat="dd/mm/yy"
+            <ExerciseDatePicker
+              :exercises="sharedStore.exercises"
+              @range-selected="filterInvoices"
             />
           </div>
           <div class="filter-field">
@@ -37,6 +35,13 @@
             rounded
             raised
             @click="filterInvoices"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
           />
           <Button
             :icon="PrimeIcons.PLUS"
@@ -63,6 +68,7 @@
 </template>
 <script setup lang="ts">
 import TableInvoices from "../components/TableInvoices.vue";
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
@@ -73,7 +79,6 @@ import { useSharedDataStore } from "../../shared/store/masterData";
 import { onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import {
-  formatDate,
   formatDateForQueryParameter,
   getNewUuid,
 } from "../../../utils/functions";
@@ -85,12 +90,11 @@ const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
-const sharedData = useSharedDataStore();
+const sharedStore = useSharedDataStore();
 const customersStore = useCustomersStore();
 const invoiceStore = useSalesInvoiceStore();
 
 const filter = ref({
-  dates: undefined as Array<Date> | undefined,
   customerId: undefined as string | undefined,
 });
 const dialogOptions = reactive({
@@ -102,8 +106,9 @@ const dialogOptions = reactive({
 } as DialogOptions);
 
 onMounted(async () => {
-  sharedData.fetchMasterData();
   customersStore.fetchCustomers();
+  await sharedStore.fetchMasterData();
+  setCurrentYear();
   await filterInvoices();
 
   store.setMenuItem({
@@ -112,21 +117,31 @@ onMounted(async () => {
   });
 });
 
+const cleanFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.customerId = undefined;
+};
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = sharedStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
+
 const filterInvoices = async () => {
   let startTime = "";
   let endTime = "";
 
-  if (filter.value.dates) {
-    startTime = formatDateForQueryParameter(filter.value.dates[0]);
-    endTime = formatDateForQueryParameter(filter.value.dates[1]);
-  } else {
-    // default filter (last 30 days)
-    let startDate: Date = new Date();
-    let endDate: Date = new Date();
-    startDate.setDate(endDate.getDate() - 30);
-
-    startTime = formatDateForQueryParameter(startDate);
-    endTime = formatDateForQueryParameter(endDate);
+  if (store.exercisePicker.dates) {
+    startTime = formatDateForQueryParameter(store.exercisePicker.dates[0]);
+    endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
   }
 
   await invoiceStore.GetFiltered(
