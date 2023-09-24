@@ -6,9 +6,11 @@ export class ExpenseTypeService extends BaseService<ExpenseType> {}
 export class ExpenseService extends BaseService<Expense> {
   async getConsolidated(
     startTime: string,
-    endTime: string
+    endTime: string,
+    type: string,
+    typeDetail: string
   ): Promise<Array<ConsolidatedExpense> | undefined> {
-    const endpoint = `${this.resource}/Consolidated?startTime=${startTime}&endTime=${endTime}`;
+    let endpoint = `${this.resource}/Consolidated?startTime=${startTime}&endTime=${endTime}&type=${type}&typeDetail=${typeDetail}`;
     const response = await this.apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<ConsolidatedExpense>;

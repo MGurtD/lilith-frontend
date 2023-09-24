@@ -1,12 +1,25 @@
 <template>
   <div class="dashboard-filter">
     <div class="dashboard-filter-field">
-      <label class="block text-900">Període</label>
-      <Calendar
-        v-model="filter.dates"
-        selectionMode="range"
-        dateFormat="dd/mm/yy"
-        @date-select="filterDashboard"
+      <ExerciseDatePicker
+        :exercises="sharedDataStore.exercises"
+        @range-selected="filterDashboard(false)"
+      />
+    </div>
+    <div class="dashboard-filter-field">
+      <label>Tipus</label>
+      <Dropdown
+        :options="['Despesa', 'Compra']"
+        v-model="filter.type"
+        @change="filterDashboard(true)"
+      />
+    </div>
+    <div class="dashboard-filter-field">
+      <label>Detall</label>
+      <Dropdown
+        :options="pieChartData?.labels"
+        v-model="filter.typeDetail"
+        @change="filterDashboard(false)"
       />
     </div>
     <div class="dashboard-filter-field">
@@ -15,6 +28,11 @@
         &nbsp; Total despesa <b>{{ totalAmount.toFixed(2) }} € </b>
       </label>
     </div>
+    <Button
+      class="grid_add_row_button"
+      :icon="PrimeIcons.FILTER_SLASH"
+      @click="clearFilter"
+    />
   </div>
 
   <TabView v-model:activeIndex="selectedTabIndex">
@@ -66,31 +84,45 @@
   </TabView>
 </template>
 <script setup lang="ts">
-import { useStore } from "../../../store";
 import { computed, onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import Chart from "primevue/chart";
+import { PrimeIcons } from "primevue/api";
+import { useStore } from "../../../store";
+import { useSharedDataStore } from "../../shared/store/masterData";
 import _ from "lodash";
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import ExpenseServices from "../services";
-import { ConsolidatedExpense } from "../types";
+import { ConsolidatedExpense, ExpenseType } from "../types";
 import TableConsolidatedExpenses from "../components/TableConsolidatedExpenses.vue";
 import { ChartOptions } from "../../../types/component";
 
 const store = useStore();
+const sharedDataStore = useSharedDataStore();
 const selectedTabIndex = ref(0);
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
-  excludeManaged: false,
+  type: "" as string,
+  typeDetail: "" as string,
 });
-const consolidatedExpenses = ref([] as ConsolidatedExpense[]);
+const expenseTypes = ref(undefined as Array<ExpenseType> | undefined);
+const consolidatedExpenses = ref([] as Array<ConsolidatedExpense>);
+
+const clearFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.type = "";
+  filter.value.typeDetail = "";
+};
 
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
     title: "Dashboard despeses",
   });
+
+  await sharedDataStore.fetchMasterData();
+  expenseTypes.value = await ExpenseServices.ExpenseType.getAll();
 });
 
 const pieChartData = ref(undefined as undefined | ChartOptions);
@@ -121,14 +153,20 @@ const totalAmount = computed((): number => {
   return amount;
 });
 
-const filterDashboard = async () => {
-  if (filter.value.dates && filter.value.dates[0] && filter.value.dates[1]) {
-    const startTime = formatDateForQueryParameter(filter.value.dates[0]);
-    const endTime = formatDateForQueryParameter(filter.value.dates[1]);
+const filterDashboard = async (clearDetail: boolean) => {
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
+
+    if (clearDetail) filter.value.typeDetail = "";
 
     const dataResponse = await ExpenseServices.Expense.getConsolidated(
       startTime,
-      endTime
+      endTime,
+      filter.value.type,
+      filter.value.typeDetail
     );
     if (dataResponse) consolidatedExpenses.value = dataResponse;
 
@@ -149,8 +187,8 @@ const transformConsolidatedExpensesToChartOptions = (
 ): ChartOptions => {
   const options = {} as ChartOptions;
 
-  const groupedByMonth = _.groupBy(expenses, fieldToGroup);
-  options.labels = Object.keys(groupedByMonth);
+  const groupedData = _.groupBy(expenses, fieldToGroup);
+  options.labels = Object.keys(groupedData);
 
   const chartColors = getChartColors(options.labels.length);
   options.datasets = [
@@ -163,9 +201,9 @@ const transformConsolidatedExpensesToChartOptions = (
     },
   ];
 
-  Object.keys(groupedByMonth).forEach((key) => {
+  Object.keys(groupedData).forEach((key) => {
     let totalAmount = 0;
-    groupedByMonth[key].forEach((mov) => {
+    groupedData[key].forEach((mov) => {
       totalAmount += mov.amount;
     });
 
@@ -205,6 +243,7 @@ const getChartColors = (numberOfColors: number): Array<string> => {
   flex-direction: row;
   justify-content: flex-start;
   gap: 1rem;
+  color: black;
 }
 
 .dashboard-filter-field {

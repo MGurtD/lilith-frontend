@@ -14,7 +14,7 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
-            <label class="block text-900 mb-2">Tipus de despesa</label>
+            <label class="block text-900 mb-2">Tipus</label>
             <Dropdown
               v-model="filter.expenseTypeId"
               editable
@@ -36,7 +36,7 @@
           />
           <Button
             class="datatable-button mr-2"
-            :icon="PrimeIcons.TIMES"
+            :icon="PrimeIcons.FILTER_SLASH"
             rounded
             raised
             @click="clearFilter"
