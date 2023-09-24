@@ -11,6 +11,7 @@
       <slot name="header"></slot>
     </template>
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
+    
     <Column header="Descripció" field="description" style="width: 40%"></Column>
     <Column header="Preu unitat" field="unitCost" style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitCost }} € </template>

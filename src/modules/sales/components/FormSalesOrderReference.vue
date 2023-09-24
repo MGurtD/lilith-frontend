@@ -14,7 +14,20 @@
             'p-invalid': validation.errors.referenceId,
           }"
           @update:modelValue="getReferenceInfo()"
-        />
+        >
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="flex align-items-center">
+              {{ slotProps.value.code }} ({{ slotProps.value.version }}) -
+              {{ slotProps.value.description }}
+            </div>
+          </template>
+          <template #option="slotProps">
+            <div v-if="slotProps.option" class="flex align-items-center">
+              {{ slotProps.option.code }} ({{ slotProps.option.version }}) -
+              {{ slotProps.option.description }}
+            </div>
+          </template>
+        </Dropdown>
       </div>
       <div>
         <BaseInput
@@ -40,7 +53,6 @@
           disabled
         ></BaseInput>
       </div>
-      
     </section>
     <section>
       <div>
@@ -96,7 +108,7 @@ const getReferenceInfo = () => {
     (r) => r.id === props.salesOrderDetail.referenceId
   );
   if (reference) {
-    props.salesOrderDetail.description = reference?.description;
+    props.salesOrderDetail.description = `${reference.code} (${reference.version}) - ${reference.description}`;
     props.salesOrderDetail.isInvoiced = false;
     props.salesOrderDetail.isServed = false;
     props.salesOrderDetail.unitCost = reference?.cost;

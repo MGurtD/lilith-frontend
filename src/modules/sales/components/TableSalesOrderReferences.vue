@@ -12,10 +12,14 @@
       style="margin-right: 1.5rem"
     />
     <Column field="quantity" header="Quantitat" style="width: 10%" />
-    <Column field="description" header="Descripció" style="width: 30%" />
-    <Column field="unitCost" header="Cost un." style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.unitCost }} € </template>
+    <Column header="Referencia" style="width: 25%">
+      <template #body="slotProps">
+        {{ slotProps.data.reference.code }} ({{
+          slotProps.data.reference.version
+        }}) - {{ slotProps.data.reference.description }}
+      </template>
     </Column>
+    <Column field="description" header="Descripció" style="width: 25%" />
     <Column field="unitPrice" header="Preu un." style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
     </Column>
