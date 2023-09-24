@@ -10,7 +10,7 @@ export const useExpenseStore = defineStore({
     expense: undefined as Expense | undefined,
     expenses: undefined as Array<Expense> | undefined,
   }),
-  getters: {},
+  getters: {  },
   actions: {
     //Expense Types
     setNewExpenseType(id: string) {

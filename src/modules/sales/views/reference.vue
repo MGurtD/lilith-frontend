@@ -53,19 +53,19 @@ const submitForm = async () => {
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await referenceStore.createReference(data);
-    message = "Referència creada correctament";
+    if (result) message = "Referència creada correctament";
+    else message = "La referència + versió introduïda ja existeix";
   } else {
     result = await referenceStore.updateReference(data.id, data);
     message = "Referència actualizada correctament";
   }
 
-  if (result) {
-    toast.add({
-      severity: "success",
-      summary: message,
-      life: 5000,
-    });
-    router.back();
-  }
+  toast.add({
+    severity: result ? "success" : "warn",
+    summary: message,
+    life: 5000,
+  });
+
+  if (result) router.back();
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <DataTable
     :value="expenseStore.expenses"
-    class="small-datatable"
+    class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="75vh"
@@ -78,6 +78,7 @@
         />
       </template>
     </Column>
+    <template #footer>Total {{ totalAmount }} €</template>
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -85,13 +86,10 @@ import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useExpenseStore } from "../store/expense";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import {
-  formatDateForQueryParameter,
-  formatDate,
-} from "../../../utils/functions";
+import { formatDate } from "../../../utils/functions";
 import { Expense } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
@@ -102,6 +100,13 @@ const expenseStore = useExpenseStore();
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
   expenseTypeId: undefined as string | undefined,
+});
+const totalAmount = computed(() => {
+  let total = 0;
+  if (expenseStore.expenses) {
+    expenseStore.expenses.forEach((e) => (total += e.amount));
+  }
+  return total.toFixed(2);
 });
 
 onMounted(async () => {
