@@ -39,6 +39,7 @@ export interface SalesOrderHeader {
   salesOrderNumber: number;
   customerCode: string;
   customerComercialName: string;
+  customerSalesOrderNumber: string;
   customerTaxName: string;
   customerVatNumber: string;
   customerAccountNumber: string;

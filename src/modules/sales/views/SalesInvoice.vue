@@ -133,9 +133,6 @@ onMounted(async () => {
   lifecycleStore.fetchOneByName("SalesInvoice");
   reportsStore.fetchAll();
   await invoiceStore.GetById(route.params.id as string);
-  invoiceStore.invoice!.invoiceDate = formatDate(
-    invoiceStore.invoice!.invoiceDate
-  );
 
   store.setMenuItem({
     icon: PrimeIcons.WALLET,
@@ -147,18 +144,8 @@ onMounted(async () => {
 });
 
 const updateInvoice = async () => {
-  invoice.value!.invoiceDate = convertDDMMYYYYToDate(
-    invoice.value!.invoiceDate
-  );
-
   const updated = await invoiceStore.Update(invoice.value!);
   if (updated) {
-    toast.add({
-      summary: "Factura de venta",
-      detail: "Actualizada correctament",
-      life: 5000,
-    });
-
     router.back();
   }
 };

@@ -44,7 +44,7 @@
           />
         </div>
       </section>
-      <section class="two-columns">
+      <section class="three-columns">
         <div class="mt-1">
           <label class="block text-900 mb-2">Origen</label>
           <Dropdown
@@ -75,6 +75,14 @@
             @update:modelValue="updateCustomer()"
           />
         </div>
+        <div class="mt-1">
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Comanda Client"
+            id="customerSalesOrderNumber"
+            v-model="salesOrder.customerSalesOrderNumber"
+          />
+        </div>
       </section>
     </form>
   </div>
@@ -97,11 +105,7 @@ import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
 import { useReferenceStore } from "../store/reference";
-import {
-  convertDDMMYYYYToDate,
-  createDate,
-  formatDate,
-} from "../../../utils/functions";
+import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
 
 const emit = defineEmits<{
   (e: "submit", salesOrder: SalesOrderHeader): void;
@@ -124,10 +128,6 @@ onMounted(async () => {
   await customerStore.fetchCustomers();
   referenceStore.fetchReferences();
   await lifeCycleStore.fetchOneByName("SalesOrder");
-
-  salesOrder.value!.salesOrderDate = formatDate(
-    salesOrder.value!.salesOrderDate
-  );
 });
 
 const schema = Yup.object().shape({
@@ -149,9 +149,9 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    /*  salesOrder.value!.salesOrderDate = convertDDMMYYYYToDate(
+    salesOrder.value!.salesOrderDate = convertDateTimeToJSON(
       salesOrder.value!.salesOrderDate
-    );*/
+    );
     emit("submit", salesOrder.value!);
   } else {
     let errors = "";

@@ -67,7 +67,6 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { pad, padStart } from "lodash";
 
 const props = defineProps<{
   invoice: SalesInvoice;
@@ -81,18 +80,6 @@ const emit = defineEmits<{
 const toast = useToast();
 const sharedData = useSharedDataStore();
 const lifecycleStore = useLifecyclesStore();
-
-/* const invoiceNumber = computed(() => {
-  const exercise = sharedData.exercises?.find(
-    (t) => t.id === props.invoice.exerciseId
-  );
-  if (!exercise) return props.invoice.invoiceNumber;
-  return `${exercise.name.substring(2, 4)}${padStart(
-    props.invoice.invoiceNumber,
-    3,
-    "0"
-  )}`;
-}); */
 
 const schema = Yup.object().shape({
   invoiceDate: Yup.string().required("La data és obligatoria"),

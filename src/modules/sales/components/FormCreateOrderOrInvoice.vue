@@ -57,7 +57,6 @@ const emit = defineEmits<{
 }>();
 
 const schema = Yup.object().shape({
-  //date: Yup.date().required("La data és obligatoria"),
   exerciseId: Yup.string().required("L'exercici és obligatori"),
   customerId: Yup.string().required("El client és obligatori"),
 });
