@@ -135,54 +135,71 @@ export const applicationMenus = [
     child: [
       {
         icon: PrimeIcons.BUILDING,
-        title: "Empresa",
-        href: "/enterprise",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Local",
-        href: "/site",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Area",
-        href: "/area",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Tipus de màquina",
-        href: "/workcentertype",
-      },
-      {
-        icon: PrimeIcons.BUILDING,
-        title: "Màquina",
-        href: "/workcenter",
-      },
-      {
-        icon: PrimeIcons.EURO,
-        title: "Costs per màquina",
-        href: "/workcentercost",
+        title: "Model de planta",
+        child: [
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Empresa",
+            href: "/enterprise",
+          },
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Locals",
+            href: "/site",
+          },
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Arees",
+            href: "/area",
+          },
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Tipus de màquines",
+            href: "/workcentertype",
+          },
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Màquines",
+            href: "/workcenter",
+          },
+        ],
       },
       {
         icon: PrimeIcons.DATABASE,
         title: "Estats de màquina",
         href: "/machinestatus",
       },
-
       {
         icon: PrimeIcons.USERS,
-        title: "Tipus d'operari",
-        href: "/operatortype",
-      },
-      {
-        icon: PrimeIcons.USER,
         title: "Operaris",
-        href: "/operator",
+        child: [
+          {
+            icon: PrimeIcons.USERS,
+            title: "Tipus d'operari",
+            href: "/operatortype",
+          },
+          {
+            icon: PrimeIcons.USER,
+            title: "Operaris",
+            href: "/operator",
+          },
+        ],
       },
       {
-        icon: PrimeIcons.MONEY_BILL,
-        title: "Costs per tipus d'operari",
-        href: "/operatorcost",
+        icon: PrimeIcons.WALLET,
+        title: "Costs",
+        child: [
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Per màquina",
+            href: "/workcentercost",
+          },
+          {
+            icon: PrimeIcons.USERS,
+            title: "Per tipus d'operari",
+            href: "/operatorcost",
+          },
+        ],
       },
     ],
   },
