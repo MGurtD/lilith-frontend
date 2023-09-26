@@ -213,6 +213,11 @@ export const applicationMenus = [
         title: "Magatzem",
         href: "/warehouse",
       },
+      {
+        icon: PrimeIcons.CAR,
+        title: "Tipus de materies primes",
+        href: "/rawmaterialtype",
+      },
     ],
   },
 ];
