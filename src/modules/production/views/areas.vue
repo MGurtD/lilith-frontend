@@ -24,6 +24,15 @@
           <BooleanColumn :value="slotProps.data.disabled" />
         </template>
       </Column>
+      <Column>
+        <template #body="slotProps">
+          <i
+            :class="PrimeIcons.TIMES"
+            class="grid_delete_column_button"
+            @click="deleteButton($event, slotProps.data)"
+          />
+        </template>
+      </Column>
     </DataTable>
   </template>
   <script setup lang="ts">
@@ -34,9 +43,14 @@
   import { onMounted } from "vue";
   import { PrimeIcons } from "primevue/api";
   import { DataTableRowClickEvent } from "primevue/datatable";
-  
+  import { useToast } from "primevue/usetoast";
+  import { useConfirm } from "primevue/useconfirm";
+  import { Area } from "../types";
+
   const router = useRouter();
   const store = useStore();
+  const toast = useToast();
+  const confirm = useConfirm();
   const plantmodelStore = usePlantModelStore();
   
   onMounted(async () => {
@@ -61,6 +75,26 @@
       router.push({ path: `/area/${row.data.id}` });
     }
   };
-
+  const deleteButton = (event: any, area: Area) => {
+    confirm.require({
+      target: event.currentTarget,
+      message: `Está segur que vol eliminar l'area ${area.name}?`,
+      icon: "pi pi-question-circle",
+      acceptIcon: "pi pi-check",
+      rejectIcon: "pi pi-times",
+      accept: async () => {
+        const deleted = await plantmodelStore.deleteArea(area.id);
+  
+        if (deleted) {
+          toast.add({
+            severity: "success",
+            summary: "Eliminat",
+            life: 3000,
+          });
+          await plantmodelStore.fetchAreas();
+        }
+      },
+    });
+  };
   </script>
   
