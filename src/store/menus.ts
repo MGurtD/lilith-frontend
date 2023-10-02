@@ -1,5 +1,5 @@
 import { PrimeIcons } from "primevue/api";
-import { Role } from "../types";
+import { Role, User } from "../types";
 
 const header = {
   header: "TEMGES",
@@ -222,8 +222,8 @@ export const applicationMenus = [
   },
 ];
 
-export const getMenusByRole = (role: Role) => {
-  if (role && role.name === "manager") {
+export const getMenusByRole = (user: User) => {
+  if (user && user.username === "gestoria") {
     return [
       header,
       {

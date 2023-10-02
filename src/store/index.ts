@@ -37,7 +37,7 @@ export const useStore = defineStore("applicationStore", {
       this.currentMenuItem = menu;
     },
     setMenusByRole(user: User) {
-      this.menus = getMenusByRole(user.role as Role);
+      this.menus = getMenusByRole(user);
     },
     async getAuthorization() {
       if (this.authorization !== undefined) {
@@ -57,6 +57,7 @@ export const useStore = defineStore("applicationStore", {
       if (jwtDecoded.id) {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
+        console.log(this.user);
         if (this.user) this.setMenusByRole(this.user);
       }
     },
