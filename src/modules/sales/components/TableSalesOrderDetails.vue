@@ -3,14 +3,11 @@
     @row-click="onEditRow"
     :value="props.salesOrderDetails"
     tableStyle="min-width: 100%"
+    class="p-datatable-sm"
   >
-    <Button
-      @click="onAdd"
-      rounded
-      :icon="PrimeIcons.PLUS"
-      class="grid_add_row_button"
-      style="margin-right: 1.5rem"
-    />
+    <template #header>
+      <slot name="header"></slot>
+    </template>
     <Column field="quantity" header="Quantitat" style="width: 10%" />
     <Column header="Referencia" style="width: 25%">
       <template #body="slotProps">
@@ -41,39 +38,15 @@
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { SalesOrderDetail } from "../types";
-import { getNewUuid } from "../../../utils/functions";
-
-import { useSalesOrderStore } from "../store/salesOrder";
 
 const props = defineProps<{
   salesOrderDetails: Array<SalesOrderDetail> | undefined;
 }>();
 
 const emit = defineEmits<{
-  (e: "add", salesOrderDetail: SalesOrderDetail): void;
   (e: "edit", salesOrderDetail: SalesOrderDetail): void;
   (e: "delete", salesOrderDetail: SalesOrderDetail): void;
 }>();
-
-const salesOrder = useSalesOrderStore();
-
-const onAdd = () => {
-  const defaultSalesOrderDetail = {
-    id: getNewUuid(),
-    referenceId: "",
-    quantity: 0,
-    unitCost: 0,
-    unitPrice: 0,
-    totalCost: 0,
-    amount: 0,
-    salesOrderHeaderId: "",
-    description: "",
-    estimatedDeliveryDate: new Date(),
-    isServerd: false,
-    isInvoiced: false,
-  } as SalesOrderDetail;
-  emit("add", defaultSalesOrderDetail);
-};
 
 const onEditRow = (row: DataTableRowClickEvent) => {
   if (

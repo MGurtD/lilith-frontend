@@ -1,11 +1,14 @@
 <template>
-  <Button
-    label="Guardar"
-    class="grid_add_row_button"
-    size="small"
-    @click="submitForm"
-  />
-  <form v-if="reference" class="mt-3">
+  <div>
+    <Button
+      label="Guardar"
+      class="grid_add_row_button"
+      size="small"
+      @click="submitForm"
+    />
+    <br />
+  </div>
+  <form v-if="reference">
     <section class="three-columns">
       <div class="mt-1">
         <BaseInput
@@ -56,7 +59,7 @@
         />
       </div>
       <div class="mt-1">
-        <label class="block text-900 mb-2">Imposts</label>
+        <label class="block text-900 mb-2">Impost</label>
         <Dropdown
           v-model="reference.taxId"
           editable

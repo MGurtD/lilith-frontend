@@ -1,34 +1,34 @@
 <template>
   <form v-if="salesOrderDetail">
-    <section class="three-columns">
-      <div>
-        <label class="block text-900 mb-2">Referència</label>
-        <Dropdown
-          v-model="salesOrderDetail.referenceId"
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.referenceId,
-          }"
-          @update:modelValue="getReferenceInfo()"
-        >
-          <template #value="slotProps">
-            <div v-if="slotProps.value" class="flex align-items-center">
-              {{ slotProps.value.code }} ({{ slotProps.value.version }}) -
-              {{ slotProps.value.description }}
-            </div>
-          </template>
-          <template #option="slotProps">
-            <div v-if="slotProps.option" class="flex align-items-center">
-              {{ slotProps.option.code }} ({{ slotProps.option.version }}) -
-              {{ slotProps.option.description }}
-            </div>
-          </template>
-        </Dropdown>
-      </div>
+    <div class="mb-2">
+      <label class="block text-900 mb-2">Referència</label>
+      <Dropdown
+        v-model="salesOrderDetail.referenceId"
+        editable
+        :options="referenceStore.references"
+        optionValue="id"
+        optionLabel="description"
+        class="w-full"
+        :class="{
+          'p-invalid': validation.errors.referenceId,
+        }"
+        @update:modelValue="getReferenceInfo()"
+      >
+        <template #value="slotProps">
+          <div v-if="slotProps.value" class="flex align-items-center">
+            {{ slotProps.value.code }} ({{ slotProps.value.version }}) -
+            {{ slotProps.value.description }}
+          </div>
+        </template>
+        <template #option="slotProps">
+          <div v-if="slotProps.option" class="flex align-items-center">
+            {{ slotProps.option.code }} ({{ slotProps.option.version }}) -
+            {{ slotProps.option.description }}
+          </div>
+        </template>
+      </Dropdown>
+    </div>
+    <section class="two-columns">
       <div>
         <BaseInput
           class="mb-2"
@@ -58,7 +58,7 @@
       <div>
         <BaseInput
           class="mb-2"
-          label="Descripció"
+          label="Descripció línea"
           v-model="salesOrderDetail.description"
           :type="BaseInputType.TEXT"
           :class="{
