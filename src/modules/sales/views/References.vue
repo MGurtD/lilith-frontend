@@ -64,7 +64,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.SHOPPING_BAG,
-    title: "Gestió de referencies",
+    title: "Referencies de venta",
   });
 });
 

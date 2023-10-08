@@ -14,6 +14,9 @@ export interface Reference {
   version: string;
   taxId: string;
   disabled: boolean;
+  sales: boolean;
+  purchase: boolean;
+  production: boolean;
 }
 
 export interface SalesOrderDetail {
