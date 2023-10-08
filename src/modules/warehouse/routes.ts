@@ -1,9 +1,9 @@
 import { RouteRecordRaw } from "vue-router";
 
-const Warehouse = () => import("./views/warehouse.vue");
-const Warehouses = () => import("./views/warehouses.vue");
-const RawMaterialType = () => import("./views/rawmaterialtype.vue");
-const RawMaterialTypes = () => import("./views/rawmaterialtypes.vue");
+const Warehouse = () => import("./views/Warehouse.vue");
+const Warehouses = () => import("./views/Warehouses.vue");
+const RawMaterialType = () => import("./views/ReferenceType.vue");
+const RawMaterialTypes = () => import("./views/ReferenceTypes.vue");
 
 export default [
   {

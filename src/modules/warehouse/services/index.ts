@@ -1,5 +1,10 @@
 import BaseService from "../../../api/base.service";
-import { Warehouse, RawMaterialType } from "../types";
+import { Warehouse, ReferenceType } from "../types";
 
 export class WarehouseService extends BaseService<Warehouse> {}
-export class RawMaterialTypeService extends BaseService<RawMaterialType> {}
+export class ReferenceTypeService extends BaseService<ReferenceType> {}
+
+export default {
+  Warehouse: new WarehouseService("/Warehouse"),
+  ReferenceType: new ReferenceTypeService("/ReferenceType"),
+};

@@ -1,6 +1,6 @@
 <template>
   <DataTable
-    :value="warehouseStore.warehouses"
+    :value="referenceTypeStore.referenceTypes"
     tableStyle="min-width: 100%"
     @row-click="editRow"
   >
@@ -8,7 +8,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Magatzem</span>
+        <span class="text-xl text-900 font-bold">Tipus de matèries primes</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded
@@ -39,34 +39,31 @@
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { useWarehouseStore } from "../store/warehouse";
-import { usePlantModelStore } from "../../production/store/plantmodel";
 import { onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { Warehouse } from "../types";
+import { ReferenceType } from "../types";
+import { useReferenceTypeStore } from "../store/referenceType";
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
 const confirm = useConfirm();
-const warehouseStore = useWarehouseStore();
-const plantmodelStore = usePlantModelStore();
+const referenceTypeStore = useReferenceTypeStore();
 
 onMounted(async () => {
-  await warehouseStore.fetchWarehouses();
-  await plantmodelStore.fetchSites();
+  await referenceTypeStore.fetchAll();
 
   store.setMenuItem({
     icon: PrimeIcons.BOX,
-    title: "Gestió de magatzems",
+    title: "Gestió de tipus de matèries primes",
   });
 });
 
 const createButtonClick = () => {
-  router.push({ path: `/warehouse/${uuidv4()}` });
+  router.push({ path: `/rawmaterialtype/${uuidv4()}` });
 };
 
 const editRow = (row: DataTableRowClickEvent) => {
@@ -75,19 +72,21 @@ const editRow = (row: DataTableRowClickEvent) => {
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/warehouse/${row.data.id}` });
+    router.push({ path: `/rawmaterialtype/${row.data.id}` });
   }
 };
 
-const deleteButton = (event: any, warehouse: Warehouse) => {
+const deleteButton = (event: any, rawmaterialtype: ReferenceType) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Está segur que vol eliminar el magatzem ${warehouse.name}?`,
+    message: `Está segur que vol eliminar el tipus de materia prima ${rawmaterialtype.name}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await warehouseStore.deleteWarehouse(warehouse.id);
+      const deleted = await referenceTypeStore.deleteRawMaterialType(
+        rawmaterialtype.id
+      );
 
       if (deleted) {
         toast.add({
@@ -95,7 +94,7 @@ const deleteButton = (event: any, warehouse: Warehouse) => {
           summary: "Eliminat",
           life: 3000,
         });
-        await warehouseStore.fetchWarehouses();
+        await referenceTypeStore.fetchAll();
       }
     },
   });

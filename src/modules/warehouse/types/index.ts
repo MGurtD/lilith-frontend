@@ -6,9 +6,11 @@ export interface Warehouse {
   disabled: boolean;
 }
 
-export interface RawMaterialType {
+export interface ReferenceType {
   id: string;
   name: string;
   description: string;
+  primaryColor: string;
+  secondaryColor: string;
   disabled: boolean;
 }
