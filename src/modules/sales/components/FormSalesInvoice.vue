@@ -1,58 +1,56 @@
 <template>
   <form v-if="invoice">
-    <header>
-      <section class="four-columns">
-        <div class="mt-2">
-          <BaseInput
-            v-model="invoice.invoiceNumber"
-            label="Número"
-            :disabled="true"
-          />
-        </div>
-        <div class="mt-2">
-          <label class="block text-900 mb-2">Data Factura</label>
-          <Calendar v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
-        </div>
-        <div class="mt-2">
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
-            v-model="invoice.statusId"
-            editable
-            :options="lifecycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-          />
-        </div>
-        <div class="mt-2">
-          <label class="block text-900 mb-2">Métode Pagament</label>
-          <Dropdown
-            v-model="invoice.paymentMethodId"
-            editable
-            :options="sharedData.paymentMethods"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-          />
-        </div>
-      </section>
-      <section class="four-columns">
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Base</label>
-          <span class="summary-field">{{ invoice.baseAmount }} €</span>
-        </div>
+    <section class="four-columns">
+      <div class="mt-2">
+        <BaseInput
+          v-model="invoice.invoiceNumber"
+          label="Número"
+          :disabled="true"
+        />
+      </div>
+      <div class="mt-2">
+        <label class="block text-900 mb-2">Data Factura</label>
+        <Calendar v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
+      </div>
+      <div class="mt-2">
+        <label class="block text-900 mb-2">Estat</label>
+        <Dropdown
+          v-model="invoice.statusId"
+          editable
+          :options="lifecycleStore.lifecycle?.statuses"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+        />
+      </div>
+      <div class="mt-2">
+        <label class="block text-900 mb-2">Métode Pagament</label>
+        <Dropdown
+          v-model="invoice.paymentMethodId"
+          editable
+          :options="sharedData.paymentMethods"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+        />
+      </div>
+    </section>
+    <section class="four-columns">
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Base</label>
+        <span class="summary-field">{{ invoice.baseAmount }} €</span>
+      </div>
 
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Impostos</label>
-          <span class="summary-field">{{ invoice.taxAmount }} €</span>
-        </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Impostos</label>
+        <span class="summary-field">{{ invoice.taxAmount }} €</span>
+      </div>
 
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Total</label>
-          <span class="summary-field">{{ invoice.netAmount }} €</span>
-        </div>
-      </section>
-    </header>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Total</label>
+        <span class="summary-field">{{ invoice.netAmount }} €</span>
+      </div>
+    </section>
   </form>
 </template>
 

@@ -34,6 +34,11 @@ export const applicationMenus = [
         href: "/payment-methods",
       },
       {
+        icon: PrimeIcons.SORT_NUMERIC_DOWN,
+        title: "Sèries de factures",
+        href: "/purchaseinvoiceserie",
+      },
+      {
         icon: PrimeIcons.REFRESH,
         title: "Cicles de vida",
         href: "/lifecycle",
@@ -51,20 +56,19 @@ export const applicationMenus = [
         href: "/suppliers",
       },
       {
+        icon: PrimeIcons.TRUCK,
+        title: "Albarans de recepció",
+        href: "/receipts",
+      },
+      {
         icon: PrimeIcons.MONEY_BILL,
         title: "Factures",
         child: [
-          {
-            icon: PrimeIcons.SORT_NUMERIC_DOWN,
-            title: "Sèries de factures",
-            href: "/purchaseinvoiceserie",
-          },
           {
             icon: PrimeIcons.FLAG,
             title: "Estats de factures",
             href: "/purchaseinvoicestatus",
           },
-
           {
             icon: PrimeIcons.MONEY_BILL,
             title: "Factures de compra",

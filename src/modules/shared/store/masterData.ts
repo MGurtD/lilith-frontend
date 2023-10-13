@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import SharedServices from "../services";
-import { Exercise, PaymentMethod, Tax } from "../types";
+import { Exercise, Lifecycle, PaymentMethod, Tax } from "../types";
 
 export const useSharedDataStore = defineStore({
   id: "sharedMasterData",
@@ -8,6 +8,7 @@ export const useSharedDataStore = defineStore({
     paymentMethods: [] as Array<PaymentMethod> | undefined,
     taxes: [] as Array<Tax> | undefined,
     exercises: [] as Array<Exercise> | undefined,
+    lifecycles: [] as Array<Lifecycle> | undefined,
   }),
   getters: {},
   actions: {
@@ -15,6 +16,7 @@ export const useSharedDataStore = defineStore({
       this.paymentMethods = await SharedServices.PaymentMethod.getActive();
       this.exercises = await SharedServices.Exercice.getActive();
       this.taxes = await SharedServices.Tax.getActive();
+      this.lifecycles = await SharedServices.Lifecycle.getActive();
     },
   },
 });

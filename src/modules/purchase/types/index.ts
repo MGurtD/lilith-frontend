@@ -149,3 +149,40 @@ export interface ConsolidatedExpense {
   description: string;
   amount: number;
 }
+
+export interface Receipt {
+  number: string;
+  date: string;
+  supplierId: string;
+  exerciseId: string;
+  statusId: string;
+  supplierNumber: string;
+  details: Array<ReceiptDetail>;
+  id: string;
+  disabled: boolean;
+}
+
+export interface CreateReceiptRequest {
+  id: string;
+  date: string | Date;
+  supplierId: string;
+  exerciseId: string;
+}
+
+export interface ReceiptDetail {
+  receiptId: string;
+  referenceId: string;
+  quantity: number;
+  width: number;
+  lenght: number;
+  height: number;
+  diameter: number;
+  thickness: number;
+  totalWeight: number;
+  unitWeight: number;
+  kilogramPrice: number;
+  unitPrice: number;
+  amount: number;
+  id: string;
+  disabled: boolean;
+}

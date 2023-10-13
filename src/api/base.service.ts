@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
 import apiClient, { logException } from "./api.client";
+import { CreateReceiptRequest } from "../modules/purchase/types";
 
 export default abstract class BaseService<T> {
   public apiClient: AxiosInstance;
@@ -32,7 +33,7 @@ export default abstract class BaseService<T> {
       logException(err);
     }
   }
-  async create(model: T): Promise<boolean> {
+  async create(model: T | CreateReceiptRequest): Promise<boolean> {
     let result: boolean = false;
     try {
       const response = await apiClient.post(`${this.resource}`, model);
