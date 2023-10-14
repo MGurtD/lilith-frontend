@@ -57,3 +57,20 @@ export interface Parameter {
   key: string;
   value: string;
 }
+
+export interface Reference {
+  id: string;
+  code: string;
+  description: string;
+  version: string;
+  taxId?: string;
+  cost: number;
+  price: number;
+  disabled: boolean;
+  formatId: number;
+  density: number;
+  lastPurchaseCost: number;
+  sales: boolean;
+  purchase: boolean;
+  production: boolean;
+}

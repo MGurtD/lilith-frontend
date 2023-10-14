@@ -8,6 +8,8 @@ const Taxes = () => import("./views/Taxes.vue");
 const Tax = () => import("./views/Tax.vue");
 const Lifecycles = () => import("./views/Lifecycles.vue");
 const Lifecycle = () => import("./views/Lifecycle.vue");
+const References = () => import("./views/References.vue");
+const Reference = () => import("./views/Reference.vue");
 
 export default [
   {
@@ -52,6 +54,13 @@ export default [
     path: "/lifecycle/:id",
     name: "Lifecycle",
     component: Lifecycle,
+    props: true,
+  },
+  { path: "/referencia", name: "References", component: References },
+  {
+    path: "/referencia/:id",
+    name: "Referencia",
+    component: Reference,
     props: true,
   },
 ] as Array<RouteRecordRaw>;

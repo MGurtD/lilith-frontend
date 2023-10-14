@@ -54,7 +54,7 @@ import {
   getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
-import { useReferenceStore } from "../../sales/store/reference";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const route = useRoute();
 const store = useStore();

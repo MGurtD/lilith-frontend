@@ -110,7 +110,7 @@ import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { useSalesOrderStore } from "../store/salesOrder";
-import { useReferenceStore } from "../store/reference";
+import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { PrimeIcons } from "primevue/api";

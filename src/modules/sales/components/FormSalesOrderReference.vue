@@ -83,12 +83,9 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { useSalesOrderStore } from "../store/salesOrder";
 import { BaseInputType, FormActionMode } from "../../../types/component";
-import { ceil, isNumber, round, update } from "lodash";
-import { useReferenceStore } from "../store/reference";
+import { useReferenceStore } from "../../shared/store/reference";
 
-const salesOrder = useSalesOrderStore();
 const referenceStore = useReferenceStore();
 const toast = useToast();
 const props = defineProps<{

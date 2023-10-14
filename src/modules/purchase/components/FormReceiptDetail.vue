@@ -84,8 +84,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
-import { round } from "lodash";
-import { useReferenceStore } from "../../sales/store/reference";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   detail: ReceiptDetail;

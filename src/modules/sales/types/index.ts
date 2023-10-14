@@ -1,22 +1,10 @@
+import { Reference } from "../../shared/types";
+
 export interface CustomerType {
   id: string;
   name: string;
   description: string;
   disabled: boolean;
-}
-
-export interface Reference {
-  id: string;
-  code: string;
-  description: string;
-  cost: number;
-  price: number;
-  version: string;
-  taxId: string;
-  disabled: boolean;
-  sales: boolean;
-  purchase: boolean;
-  production: boolean;
 }
 
 export interface SalesOrderDetail {
@@ -97,15 +85,6 @@ export interface CustomerAddress {
   disabled: boolean;
   observations: string;
   customerId: string;
-}
-
-export interface Reference {
-  id: string;
-  code: string;
-  description: string;
-  cost: number;
-  price: number;
-  disabled: boolean;
 }
 
 export interface SalesOrderDetail {

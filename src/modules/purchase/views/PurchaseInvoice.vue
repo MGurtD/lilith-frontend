@@ -188,7 +188,6 @@ const onInvoiceSubmit = async (invoice: PurchaseInvoice) => {
   invoice.purchaseInvoiceDate = convertDateTimeToJSON(
     invoice.purchaseInvoiceDate
   );
-  console.log(invoice.purchaseInvoiceDate);
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await purchaseInvoiceStore.Create(invoice);
