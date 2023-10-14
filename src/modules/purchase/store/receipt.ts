@@ -29,7 +29,11 @@ export const useReceiptsStore = defineStore({
       supplierId?: string,
       statusId?: string
     ) {
-      this.receipts = await Services.Receipt.getFiltered(startDate, endDate, supplierId);
+      this.receipts = await Services.Receipt.getFiltered(
+        startDate,
+        endDate,
+        supplierId
+      );
     },
     async fetchReceipts() {
       this.receipts = await Services.Receipt.getAll();
@@ -53,19 +57,25 @@ export const useReceiptsStore = defineStore({
       return response;
     },
 
-    async createReceiptDetail(receipt: ReceiptDetail) {
-      const response = await Services.Receipt.addDetail(receipt);
-      if (response.result) await this.fetchReceipts();
+    async createReceiptDetail(detail: ReceiptDetail) {
+      const response = await Services.Receipt.addDetail(detail);
+      if (response.result) await this.fetchReceipt(detail.receiptId);
       return response;
     },
     async updateReceiptDetail(id: string, detail: ReceiptDetail) {
       const response = await Services.Receipt.updateDetail(detail);
-      if (response.result) await this.fetchReceipts();
+      if (response.result) await this.fetchReceipt(detail.receiptId);
       return response;
     },
     async deleteReceiptDetail(id: string) {
       const response = await Services.Receipt.removeDetail(id);
-      if (response.result) await this.fetchReceipts();
+      if (response.result) {
+        const detail = this.receipt!.details.find((d) => d.id === id);
+        if (detail) {
+          const index = this.receipt!.details.indexOf(detail);
+          this.receipt!.details.splice(index);
+        }
+      }
       return response;
     },
   },

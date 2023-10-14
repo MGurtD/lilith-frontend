@@ -41,7 +41,7 @@ export default [
     component: Receipts,
   },
   {
-    path: "/receipt/:id",
+    path: "/receipts/:id",
     name: "Receipt",
     component: Receipt,
     props: true,

@@ -7,7 +7,7 @@
       scrollHeight="75vh"
       sortMode="multiple"
       :value="receiptsStore.receipts"
-      @row-click="editPurchaseInvoice"
+      @row-click="editReceipt"
     >
       <template #header>
         <div
@@ -88,7 +88,7 @@
             v-if="getStatusNameById(slotProps.data.statusId) === 'Nou'"
             :class="PrimeIcons.TIMES"
             class="grid_delete_column_button"
-            @click="deletePurchaseInvoice($event, slotProps.data)"
+            @click="deleteReceipt($event, slotProps.data)"
           />
         </template>
       </Column>
@@ -234,20 +234,20 @@ const generateNewRequest = (): CreateReceiptRequest => {
 };
 const createReceipt = async () => {
   const created = await receiptsStore.createReceipt(createRequest.value);
-  if (created) router.push({ path: `/receipt/${createRequest.value.id}` });
+  if (created) router.push({ path: `/receipts/${createRequest.value.id}` });
 };
 
-const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
+const editReceipt = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/receipt/${row.data.id}` });
+    router.push({ path: `/receipts/${row.data.id}` });
   }
 };
 
-const deletePurchaseInvoice = (event: any, invoice: PurchaseInvoice) => {
+const deleteReceipt = (event: any, invoice: PurchaseInvoice) => {
   confirm.require({
     target: event.currentTarget,
     message: `Està segur que vol eliminar l'albarà ${invoice.number}?`,

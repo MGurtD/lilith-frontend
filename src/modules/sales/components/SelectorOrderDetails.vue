@@ -50,7 +50,7 @@
   </DataTable>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, ref } from "vue";
 import { InvoiceableOrderDetail, SalesOrderDetail } from "../types";
 import { formatDate } from "../../../utils/functions";
 import _ from "lodash";
