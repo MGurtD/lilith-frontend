@@ -56,9 +56,9 @@ export default [
     component: Lifecycle,
     props: true,
   },
-  { path: "/referencia", name: "References", component: References },
+  { path: "/reference/:module", name: "References", component: References },
   {
-    path: "/referencia/:id",
+    path: "/reference/:module/:id",
     name: "Referencia",
     component: Reference,
     props: true,

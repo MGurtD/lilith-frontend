@@ -65,6 +65,7 @@
       <TabPanel header="Crear referencia">
         <FormReference
           v-if="referenceStore.reference"
+          :module="'sales'"
           :reference="referenceStore.reference"
           @submit="onFormReferenceSubmit"
         />

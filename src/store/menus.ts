@@ -56,6 +56,11 @@ export const applicationMenus = [
         href: "/suppliers",
       },
       {
+        icon: PrimeIcons.TICKET,
+        title: "Referències",
+        href: "/reference/purchase",
+      },
+      {
         icon: PrimeIcons.TRUCK,
         title: "Albarans de recepció",
         href: "/receipts",
@@ -118,7 +123,7 @@ export const applicationMenus = [
       {
         icon: PrimeIcons.TICKET,
         title: "Referències",
-        href: "/referencia",
+        href: "/reference/sales",
       },
       {
         icon: PrimeIcons.APPLE,

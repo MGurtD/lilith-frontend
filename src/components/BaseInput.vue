@@ -41,8 +41,9 @@ const emit = defineEmits<{
         class="w-full"
         :minFractionDigits="decimals ?? 0"
         v-bind="$attrs"
+        locale="en-US"
         v-bind:model-value="(modelValue as number)"
-        @input="emit('update:modelValue', $event.value)"
+        @input="emit('update:modelValue', $event.value as any)"
       />
       <InputNumber
         v-else-if="type === BaseInputType.CURRENCY"
@@ -53,7 +54,7 @@ const emit = defineEmits<{
         locale="en-US"
         v-bind="$attrs"
         v-bind:model-value="(modelValue as number)"
-        @input="emit('update:modelValue', $event.value)"
+        @input="emit('update:modelValue', $event.value as any)"
       />
       <Password
         v-else-if="type === BaseInputType.PASSWORD"

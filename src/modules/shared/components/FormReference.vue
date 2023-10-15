@@ -41,7 +41,48 @@
         />
       </div>
     </section>
-    <section class="three-columns">
+    <section class="four-columns" v-if="isPurchase">
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Densitat"
+          id="density"
+          v-model="reference.density"
+        />
+      </div>
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Format"
+          id="formatId"
+          v-model="reference.formatId"
+        />
+      </div>
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Últim preu de compra"
+          id="lastPurchaseCost"
+          v-model="reference.lastPurchaseCost"
+        />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Impost</label>
+        <Dropdown
+          v-model="reference.taxId"
+          editable
+          :options="taxesStore.taxes"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.taxid,
+          }"
+        />
+      </div>
+    </section>
+    <section class="three-columns" v-if="isSales">
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
@@ -85,7 +126,7 @@
   </form>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { Reference } from "../types";
 import * as Yup from "yup";
@@ -101,6 +142,7 @@ import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 
 const props = defineProps<{
+  module: string;
   reference: Reference;
 }>();
 
@@ -108,6 +150,16 @@ const emit = defineEmits<{
   (e: "submit", reference: Reference): void;
   (e: "cancel"): void;
 }>();
+
+const isSales = computed(() => {
+  return props.module === "sales";
+});
+const isPurchase = computed(() => {
+  return props.module === "purchase";
+});
+const isProduction = computed(() => {
+  return props.module === "production";
+});
 
 const toast = useToast();
 const referenceStore = useReferenceStore();

@@ -1,5 +1,10 @@
 <template>
-  <FormReference v-if="reference" :reference="reference" @submit="submitForm" />
+  <FormReference
+    v-if="reference"
+    :module="module"
+    :reference="reference"
+    @submit="submitForm"
+  />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -21,6 +26,7 @@ const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const { reference } = storeToRefs(referenceStore);
+const module = ref("");
 
 const loadView = async () => {
   await referenceStore.fetchReference(route.params.id as string);
@@ -42,6 +48,7 @@ const loadView = async () => {
 };
 
 onMounted(async () => {
+  module.value = route.params.module as string;
   await loadView();
 });
 
