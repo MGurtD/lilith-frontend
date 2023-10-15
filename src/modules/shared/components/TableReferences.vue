@@ -38,21 +38,21 @@
       v-if="isPurchase"
       field="formatId"
       header="Format"
-      style="width: 20%"
+      style="width: 10%"
     ></Column>
     <Column
       v-if="isPurchase"
       field="density"
       header="Densitat"
-      style="width: 20%"
+      style="width: 10%"
     ></Column>
     <Column
       v-if="isPurchase"
       field="lastPurchaseCost"
-      header="Cost Última Compra"
-      style="width: 20%"
+      header="Última Compra"
+      style="width: 15%"
     ></Column>
-    <Column header="Desactivada" style="width: 10%">
+    <Column header="Desc." style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>

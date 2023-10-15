@@ -57,7 +57,7 @@ export const applicationMenus = [
       },
       {
         icon: PrimeIcons.TICKET,
-        title: "Referències",
+        title: "Materies primes",
         href: "/reference/purchase",
       },
       {

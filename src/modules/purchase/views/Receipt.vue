@@ -64,7 +64,7 @@ const { receipt } = storeToRefs(receiptStore);
 
 const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
-  referenceStore.fetchReferences();
+  referenceStore.fetchReferencesByModule("purchase");
   receipt.value!.date = formatDate(receipt.value!.date);
 
   store.setMenuItem({

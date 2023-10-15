@@ -2,7 +2,7 @@
   <form v-if="detail">
     <section class="two-columns-7525">
       <div>
-        <label class="block text-900 mb-2">Referència</label>
+        <label class="block text-900 mb-2">Material</label>
         <Dropdown
           v-model="detail.referenceId"
           editable
@@ -37,12 +37,14 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           label="Amplada"
+          :decimals="2"
           v-model="detail.width"
         />
       </div>
       <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Alçada"
           v-model="detail.height"
         />
@@ -50,6 +52,7 @@
       <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Longitud"
           v-model="detail.lenght"
         />
@@ -57,6 +60,7 @@
       <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Diàmetre"
           v-model="detail.diameter"
         />

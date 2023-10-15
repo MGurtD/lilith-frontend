@@ -27,10 +27,10 @@ onMounted(async () => {
   module.value = route.params.module as string;
   await referenceStore.fetchReferencesByModule(module.value);
 
-  let title = "Referencies de ";
-  if (module.value === "sales") title += "venta";
-  else if (module.value === "purchase") title += "compra";
-  else if (module.value === "production") title += "producció";
+  let title = "";
+  if (module.value === "sales") title = "Referencies de venta";
+  else if (module.value === "purchase") title = "Materies primes";
+  else if (module.value === "production") title = "Referencies de producció";
 
   store.setMenuItem({
     icon: PrimeIcons.TICKET,

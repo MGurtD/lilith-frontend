@@ -9,7 +9,7 @@
       <slot name="header"></slot>
     </template>
     <Column field="quantity" header="Quantitat" style="width: 10%" />
-    <Column header="Referencia" style="width: 25%">
+    <Column header="Material" style="width: 25%">
       <template #body="slotProps">
         {{ slotProps.data.reference.code }} ({{
           slotProps.data.reference.version
