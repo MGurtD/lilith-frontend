@@ -222,7 +222,7 @@ const onFormReferenceSubmit = async (reference: Reference) => {
 
   if (result) {
     selectedSalesOrderDetail.value!.referenceId = reference.id;
-    formsActiveIndex.value = 1;
+    formsActiveIndex.value = 0;
 
     referenceStore.setNewReference(getNewUuid());
   }
