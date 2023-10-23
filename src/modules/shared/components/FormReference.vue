@@ -136,8 +136,6 @@ import {
 } from "../../../utils/form-validator";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useToast } from "primevue/usetoast";
-import { storeToRefs } from "pinia";
-import { useReferenceStore } from "../store/reference";
 import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 
@@ -162,9 +160,7 @@ const isProduction = computed(() => {
 });
 
 const toast = useToast();
-const referenceStore = useReferenceStore();
 const taxesStore = useTaxesStore();
-const { reference } = storeToRefs(referenceStore);
 
 onMounted(async () => {
   await taxesStore.fetchAll();

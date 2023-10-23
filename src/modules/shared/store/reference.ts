@@ -20,6 +20,7 @@ export const useReferenceStore = defineStore({
         cost: 0.0,
         price: 0.0,
         disabled: false,
+        version: "1",
         sales: this.module === "sales",
         purchase: this.module === "purchase",
         production: this.module === "production",
@@ -40,17 +41,18 @@ export const useReferenceStore = defineStore({
     },
     async createReference(reference: Reference) {
       const result = await referenceService.create(reference);
-      if (result) await referenceService.getByModule(this.module);
+      console.log("createReference", this.module, result);
+      if (result) await this.fetchReferencesByModule(this.module);
       return result;
     },
     async updateReference(id: string, reference: Reference) {
       const result = await referenceService.update(id, reference);
-      if (result) await referenceService.getByModule(this.module);
+      if (result) await this.fetchReferencesByModule(this.module);
       return result;
     },
     async deleteReference(id: string) {
       const result = await referenceService.delete(id);
-      if (result) await referenceService.getByModule(this.module);
+      if (result) await this.fetchReferencesByModule(this.module);
       return result;
     },
   },
