@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ReferenceService } from "../services/reference.service";
-import { Reference } from "../types";
+import { Reference, ReferenceFormat } from "../types";
 
 const referenceService = new ReferenceService("/reference");
 export const useReferenceStore = defineStore({
@@ -8,6 +8,7 @@ export const useReferenceStore = defineStore({
   state: () => ({
     reference: undefined as Reference | undefined,
     references: undefined as Array<Reference> | undefined,
+    referenceFormats: undefined as Array<ReferenceFormat> | undefined,
     module: "" as string,
   }),
   getters: {},
@@ -24,6 +25,7 @@ export const useReferenceStore = defineStore({
         sales: this.module === "sales",
         purchase: this.module === "purchase",
         production: this.module === "production",
+        referenceFormatId: "",
         density: 0,
         formatId: 0,
         lastPurchaseCost: 0,
@@ -31,10 +33,15 @@ export const useReferenceStore = defineStore({
     },
     async fetchReferences() {
       this.references = await referenceService.getAll();
+
+      if (!this.referenceFormats)
+        this.referenceFormats = await referenceService.getReferenceFormats();
     },
     async fetchReferencesByModule(module: string) {
       this.module = module;
       this.references = await referenceService.getByModule(module);
+      if (!this.referenceFormats)
+        this.referenceFormats = await referenceService.getReferenceFormats();
     },
     async fetchReference(id: string) {
       this.reference = await referenceService.getById(id);

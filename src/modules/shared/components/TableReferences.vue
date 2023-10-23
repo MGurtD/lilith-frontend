@@ -2,6 +2,8 @@
   <DataTable
     :value="filteredData"
     tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="75vh"
     @row-click="editRow"
   >
     <template #header>
@@ -36,10 +38,16 @@
     ></Column>
     <Column
       v-if="isPurchase"
-      field="formatId"
+      field="referenceFormatId"
       header="Format"
       style="width: 10%"
-    ></Column>
+    >
+      <template #body="slotProps">
+        <span>{{
+          getFormatDescription(slotProps.data.referenceFormatId)
+        }}</span>
+      </template>
+    </Column>
     <Column
       v-if="isPurchase"
       field="density"
@@ -129,6 +137,14 @@ const editRow = (row: DataTableRowClickEvent) => {
 
 const onDeleteRow = (event: any, reference: Reference) => {
   emit("delete", reference);
+};
+
+const getFormatDescription = (formatId: string) => {
+  const format = referenceStore.referenceFormats?.find(
+    (f) => f.id === formatId
+  );
+  if (format) return format.description;
+  else return "";
 };
 </script>
 <style scoped>
