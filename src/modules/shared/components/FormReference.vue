@@ -118,7 +118,7 @@
       <br />
       <FileEntityPicker
         v-if="reference"
-        title="Planos"
+        title="Documentació"
         entity="referenceMaps"
         :id="reference.id"
       />
