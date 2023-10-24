@@ -227,6 +227,16 @@ export const applicationMenus = [
         title: "Tipus de materies primes",
         href: "/rawmaterialtype",
       },
+      {
+        icon: PrimeIcons.WRENCH,
+        title: "Estocs",
+        href: "/stocks",
+      },
+      {
+        icon: PrimeIcons.MAP,
+        title: "Moviments de magatzem",
+        href:"/stockmovement",
+      }
     ],
   },
 ];
