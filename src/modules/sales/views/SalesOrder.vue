@@ -54,7 +54,7 @@
     :modal="true"
   >
     <TabView v-model:activeIndex="formsActiveIndex">
-      <TabPanel header="Crear línea">
+      <TabPanel header="Línea">
         <FormSalesOrderReference
           v-if="selectedSalesOrderDetail"
           :formAction="formDetailMode"
@@ -62,7 +62,7 @@
           @submit="onFormSalesOrderReferenceSubmit"
         />
       </TabPanel>
-      <TabPanel header="Crear referencia">
+      <TabPanel header="Referencia">
         <FormReference
           v-if="referenceStore.reference"
           :module="'sales'"
@@ -222,7 +222,7 @@ const onFormReferenceSubmit = async (reference: Reference) => {
 
   if (result) {
     selectedSalesOrderDetail.value!.referenceId = reference.id;
-    formsActiveIndex.value = 1;
+    formsActiveIndex.value = 0;
 
     referenceStore.setNewReference(getNewUuid());
   }

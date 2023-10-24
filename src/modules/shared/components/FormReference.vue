@@ -52,11 +52,17 @@
         />
       </div>
       <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.NUMERIC"
-          label="Format"
-          id="formatId"
-          v-model="reference.formatId"
+        <label class="block text-900 mb-2">Format</label>
+        <Dropdown
+          v-model="reference.referenceFormatId"
+          editable
+          :options="referenceStore.referenceFormats"
+          optionValue="id"
+          optionLabel="description"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.taxid,
+          }"
         />
       </div>
       <div class="mt-1">
@@ -118,7 +124,7 @@
       <br />
       <FileEntityPicker
         v-if="reference"
-        title="Planos"
+        title="Documentació"
         entity="referenceMaps"
         :id="reference.id"
       />
@@ -136,10 +142,9 @@ import {
 } from "../../../utils/form-validator";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useToast } from "primevue/usetoast";
-import { storeToRefs } from "pinia";
-import { useReferenceStore } from "../store/reference";
 import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   module: string;
@@ -162,9 +167,8 @@ const isProduction = computed(() => {
 });
 
 const toast = useToast();
-const referenceStore = useReferenceStore();
 const taxesStore = useTaxesStore();
-const { reference } = storeToRefs(referenceStore);
+const referenceStore = useReferenceStore();
 
 onMounted(async () => {
   await taxesStore.fetchAll();

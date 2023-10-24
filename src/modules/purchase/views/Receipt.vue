@@ -30,7 +30,22 @@
       :closable="dialogOptions.closable"
       :modal="dialogOptions.modal"
     >
-      <FormReceiptDetail :detail="selectedDetail" @submit="submitDetailForm" />
+      <TabView v-model:activeIndex="formsActiveIndex">
+        <TabPanel header="Línea">
+          <FormReceiptDetail
+            :detail="selectedDetail"
+            @submit="submitDetailForm"
+          />
+        </TabPanel>
+        <TabPanel header="Referencia">
+          <FormReference
+            v-if="referenceStore.reference"
+            :module="'purchase'"
+            :reference="referenceStore.reference"
+            @submit="onFormReferenceSubmit"
+          />
+        </TabPanel>
+      </TabView>
     </Dialog>
   </main>
   <main v-else>Carregant albarà ...</main>
@@ -39,6 +54,7 @@
 import FormReceipt from "../components/FormReceipt.vue";
 import TableReceiptDetails from "../components/TableReceiptDetails.vue";
 import FormReceiptDetail from "../components/FormReceiptDetail.vue";
+import FormReference from "../../shared/components/FormReference.vue";
 import { onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
@@ -55,12 +71,15 @@ import {
 } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
+import { Reference } from "../../shared/types";
+import router from "../../../router";
 
 const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const receiptStore = useReceiptsStore();
 const { receipt } = storeToRefs(receiptStore);
+const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
@@ -94,20 +113,21 @@ const submitForm = async () => {
         summary: message,
         life: 5000,
       });
-      await loadView();
+      router.back();
     }
   }
 };
 
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear detall",
+  title: "Linea",
   closable: true,
   position: "center",
   modal: true,
 } as DialogOptions);
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref({} as ReceiptDetail);
+
 const openCreateDetailForm = () => {
   formAction.value = FormActionMode.CREATE;
   selectedDetail.value = {
@@ -126,18 +146,22 @@ const openCreateDetailForm = () => {
     width: 0,
     disabled: false,
   } as ReceiptDetail;
+  referenceStore.setNewReference(getNewUuid());
 
-  dialogOptions.title = "Crear detall";
+  dialogOptions.title = "Crear línia";
   dialogOptions.visible = true;
 };
+
 const openEditDetailForm = (detail: ReceiptDetail) => {
   formAction.value = FormActionMode.EDIT;
   selectedDetail.value = detail;
+  referenceStore.setNewReference(getNewUuid());
 
-  dialogOptions.title = "Modificar detall";
+  dialogOptions.title = "Modificar línia";
   dialogOptions.visible = true;
 };
 
+// Receipt Detail
 const submitDetailForm = (detail: ReceiptDetail) => {
   if (formAction.value === FormActionMode.CREATE) {
     addDetail(detail);
@@ -168,6 +192,30 @@ const showResponseErrorToast = (response: GenericResponse<ReceiptDetail>) => {
     severity: "error",
     summary: response.errors[0],
     life: 10000,
+    closable: true,
   });
+};
+
+//
+const onFormReferenceSubmit = async (reference: Reference) => {
+  let result = false;
+  let message = "";
+
+  result = await referenceStore.createReference(reference);
+  if (result) message = "Referència creada correctament";
+  else message = "La referència + versió introduïda ja existeix";
+
+  toast.add({
+    severity: result ? "success" : "warn",
+    summary: message,
+    life: 5000,
+  });
+
+  if (result) {
+    selectedDetail.value!.referenceId = reference.id;
+    formsActiveIndex.value = 0;
+
+    referenceStore.setNewReference(getNewUuid());
+  }
 };
 </script>

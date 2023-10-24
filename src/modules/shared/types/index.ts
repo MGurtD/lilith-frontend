@@ -67,10 +67,16 @@ export interface Reference {
   cost: number;
   price: number;
   disabled: boolean;
-  formatId: number;
+  referenceFormatId: string;
   density: number;
   lastPurchaseCost: number;
   sales: boolean;
   purchase: boolean;
   production: boolean;
+}
+
+export interface ReferenceFormat {
+  id: string;
+  code: string;
+  description: string;
 }
