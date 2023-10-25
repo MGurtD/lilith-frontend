@@ -17,6 +17,7 @@
               :size="'small'"
               :icon="PrimeIcons.PLUS"
               rounded
+              :disabled="hasToBlockDetailCreation"
               @click="openCreateDetailForm"
             />
           </div>
@@ -55,7 +56,7 @@ import FormReceipt from "../components/FormReceipt.vue";
 import TableReceiptDetails from "../components/TableReceiptDetails.vue";
 import FormReceiptDetail from "../components/FormReceiptDetail.vue";
 import FormReference from "../../shared/components/FormReference.vue";
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
@@ -64,25 +65,24 @@ import { ReceiptDetail } from "../types";
 import { useStore } from "../../../store";
 import { useReceiptsStore } from "../store/receipt";
 import { GenericResponse } from "../../../types";
-import {
-  convertDDMMYYYYToDate,
-  formatDate,
-  getNewUuid,
-} from "../../../utils/functions";
+import { formatDate, getNewUuid } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
 import { Reference } from "../../shared/types";
 import router from "../../../router";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const receiptStore = useReceiptsStore();
+const lifecycleStore = useLifecyclesStore();
 const { receipt } = storeToRefs(receiptStore);
 const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
+  lifecycleStore.fetchOneByName("Receipts");
   referenceStore.fetchReferencesByModule("purchase");
   if (receipt.value) {
     receipt.value.date = formatDate(receipt.value.date);
@@ -100,6 +100,17 @@ onMounted(async () => {
 });
 
 const toast = useToast();
+
+const hasToBlockDetailCreation = computed(() => {
+  if (!lifecycleStore.lifecycle) return false;
+
+  const warehouseStatus = lifecycleStore.lifecycle!.statuses.find(
+    (s) => s.name === "Recepcionat"
+  );
+  if (!warehouseStatus) return false;
+  return receipt.value?.statusId === warehouseStatus.id;
+});
+
 const submitForm = async () => {
   let result = false;
   let message = "";

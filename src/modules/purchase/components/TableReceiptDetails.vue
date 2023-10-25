@@ -24,6 +24,7 @@
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
+          v-if="slotProps.data.stockMovementId === null"
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
           @click="onDeleteRow($event, slotProps.data)"
