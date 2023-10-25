@@ -185,16 +185,19 @@ const submitDetailForm = (detail: ReceiptDetail) => {
 
 const addDetail = async (detail: ReceiptDetail) => {
   const response = await receiptStore.createReceiptDetail(detail);
+  receipt.value!.date = formatDate(receipt.value!.date);
   if (!response.result) showResponseErrorToast(response);
 };
 
 const editDetail = async (detail: ReceiptDetail) => {
   const response = await receiptStore.updateReceiptDetail(detail.id, detail);
+  receipt.value!.date = formatDate(receipt.value!.date);
   if (!response.result) showResponseErrorToast(response);
 };
 
 const removeDetail = async (detail: ReceiptDetail) => {
   const response = await receiptStore.deleteReceiptDetail(detail.id);
+  receipt.value!.date = formatDate(receipt.value!.date);
   if (!response.result) showResponseErrorToast(response);
 };
 
