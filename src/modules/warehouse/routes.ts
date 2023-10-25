@@ -4,6 +4,8 @@ const Warehouse = () => import("./views/Warehouse.vue");
 const Warehouses = () => import("./views/Warehouses.vue");
 const RawMaterialType = () => import("./views/ReferenceType.vue");
 const RawMaterialTypes = () => import("./views/ReferenceTypes.vue");
+const Stocks = () => import("./views/Stocks.vue");
+const StockMovements = () => import("./views/StockMovements.vue");
 
 export default [
   {
@@ -26,4 +28,14 @@ export default [
     name: "Rawmaterialtype",
     component: RawMaterialType,
   },
+  {
+    path: "/stocks",
+    name: "Stocks",
+    component: Stocks,
+  },
+  {
+    path: "/stockmovement",
+    name:"stockMovements",
+    component: StockMovements,
+  }
 ] as Array<RouteRecordRaw>;
