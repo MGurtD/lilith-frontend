@@ -95,6 +95,7 @@ import { useCustomersStore } from "../store/customers";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useReferenceStore } from "../../shared/store/reference";
 import { SalesOrderHeader } from "../types";
 import * as Yup from "yup";
 import {
@@ -104,7 +105,6 @@ import {
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
 import { convertDateTimeToJSON } from "../../../utils/functions";
 
 const emit = defineEmits<{
@@ -121,14 +121,6 @@ const referenceStore = useReferenceStore();
 const toast = useToast();
 
 const { salesOrder } = storeToRefs(salesOrderStore);
-
-onMounted(async () => {
-  await plantModelStore.fetchSites();
-  await exerciseStore.fetchAll();
-  await customerStore.fetchCustomers();
-  referenceStore.fetchReferences();
-  await lifeCycleStore.fetchOneByName("SalesOrder");
-});
 
 const schema = Yup.object().shape({
   siteId: Yup.string().required("L'origen es obligatori"),

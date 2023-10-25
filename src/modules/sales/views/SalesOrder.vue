@@ -74,22 +74,26 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { Reference } from "../../shared/types";
 import { useStore } from "../../../store";
-import { getNewUuid } from "../../../utils/functions";
+import { formatDate, getNewUuid } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import { useSalesOrderStore } from "../store/salesOrder";
+import { useReferenceStore } from "../../shared/store/reference";
+import { useCustomersStore } from "../store/customers";
+import { useExerciseStore } from "../../shared/store/exercise";
+import { usePlantModelStore } from "../../production/store/plantmodel";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import FormSalesOrderReference from "../components/FormSalesOrderReference.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FormReference from "../../shared/components/FormReference.vue";
-import { useReferenceStore } from "../../shared/store/reference";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 
 const salesOrderForm = ref();
@@ -99,6 +103,10 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const salesOrderStore = useSalesOrderStore();
+const customerStore = useCustomersStore();
+const plantModelStore = usePlantModelStore();
+const exerciseStore = useExerciseStore();
+const lifeCycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
@@ -111,10 +119,20 @@ const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   await salesOrderStore.GetById(route.params.id as string);
+  referenceStore.fetchReferencesByModule("sales");
+  lifeCycleStore.fetchOneByName("SalesOrder");
+  plantModelStore.fetchSites();
+  exerciseStore.fetchAll();
+  customerStore.fetchCustomers();
+
   let pageTitle = "";
   if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
+
+    salesOrder.value.salesOrderDate = formatDate(
+      salesOrder.value.salesOrderDate
+    );
   }
 
   store.setMenuItem({

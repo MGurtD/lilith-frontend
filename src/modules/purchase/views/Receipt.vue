@@ -84,7 +84,9 @@ const formsActiveIndex = ref(0);
 const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
   referenceStore.fetchReferencesByModule("purchase");
-  receipt.value!.date = formatDate(receipt.value!.date);
+  if (receipt.value) {
+    receipt.value.date = formatDate(receipt.value.date);
+  }
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
@@ -102,8 +104,6 @@ const submitForm = async () => {
   let result = false;
   let message = "";
   if (receipt.value) {
-    receipt.value.date = convertDDMMYYYYToDate(receipt.value.date);
-
     result = await receiptStore.updateReceipt(receipt.value.id, receipt.value);
     message = "Albarà actualizat correctament";
 

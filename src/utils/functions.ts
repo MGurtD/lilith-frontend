@@ -46,13 +46,13 @@ export const formatDate = (date: string | Date) => {
   return formatter.format(new Date(date));
 };
 
-export const convertDateTimeToJSON = (dateTime: any) => {
+export const convertDateTimeToJSON = (dateTime: any): string => {
   if (dateTime instanceof Date) {
     const hoursDiff = dateTime.getHours() - dateTime.getTimezoneOffset() / 60;
     dateTime.setHours(hoursDiff);
     return dateTime.toISOString();
   } else {
-    return dateTime;
+    return convertDateTimeToJSON(convertDDMMYYYYToDate(dateTime));
   }
 };
 
