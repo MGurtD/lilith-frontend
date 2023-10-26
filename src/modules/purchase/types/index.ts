@@ -81,7 +81,7 @@ export interface PurchaseInvoice {
   id: string;
   number: number;
   supplierNumber: string;
-  purchaseInvoiceDate: Date;
+  purchaseInvoiceDate: Date | string;
   baseAmount: number;
   transportAmount: number;
   subtotal: number;
@@ -125,9 +125,9 @@ export interface ExpenseType {
 export interface Expense {
   id: string;
   description: string;
-  creationDate: Date;
-  paymentDate: Date;
-  endDate: Date;
+  creationDate: Date | string;
+  paymentDate: Date | string;
+  endDate: Date | string;
   amount: number;
   recurring: boolean;
   frecuency: number;
