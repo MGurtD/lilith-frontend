@@ -38,7 +38,11 @@
           </div>
         </div>
       </template>
-      <Column field="movementDate" header="Data moviment" :sortable="true" style="width:10%"></Column>
+      <Column header="Data moviment" :sortable="true" style="width:10%">
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.movementDate) }}
+        </template>
+      </Column>
       <Column header="Producte" :sortable="true" style="width:20%">
         <template #body="slotProps">
         {{ getReferenceNameById(slotProps.data.referenceId) }}

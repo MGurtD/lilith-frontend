@@ -35,7 +35,7 @@ export default {
     "Dissabte",
   ],
   dayNamesShort: ["Diu", "Dill", "Dim", "Dme", "Dij", "Div", "Diss"],
-  dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+  dayNamesMin: ["Di", "Dl", "Dm", "Dx", "Dj", "Dv", "Ds"],
   monthNames: [
     "Gener",
     "Febrer",
