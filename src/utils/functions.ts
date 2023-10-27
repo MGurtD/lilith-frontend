@@ -46,7 +46,7 @@ export const formatDate = (date: string | Date) => {
   return formatter.format(new Date(date));
 };
 
-export const convertDateTimeToJSON = (dateTime: any): string => {
+export const convertDateTimeToJSON = (dateTime: any): any => {
   if (dateTime instanceof Date) {
     const hoursDiff = dateTime.getHours() - dateTime.getTimezoneOffset() / 60;
     dateTime.setHours(hoursDiff);
