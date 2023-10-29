@@ -27,7 +27,7 @@
   const { workcenter } = storeToRefs(plantmodelStore);
   
   const loadView = async () => {
-    await plantmodelStore.fetchArea(route.params.id as string);    
+    await plantmodelStore.fetchWorkcenter(route.params.id as string);    
     let pageTitle = "";
     if (!workcenter.value) {
       formMode.value = FormActionMode.CREATE;

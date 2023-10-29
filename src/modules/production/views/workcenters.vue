@@ -17,7 +17,7 @@
           />
         </div>
       </template>
-      <Column field="name" header="Nom" style="width: 20%"></Column>
+      <Column field="name" header="Nom" style="width: 20%" ></Column>
       <Column field="description" header="Descripció" style="width: 40%"></Column>
       <Column header="Tipus" style="width: 15%">
         <template #body="slotProps">
