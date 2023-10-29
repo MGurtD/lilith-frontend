@@ -6,15 +6,6 @@ export interface Warehouse {
   disabled: boolean;
 }
 
-export interface ReferenceType {
-  id: string;
-  name: string;
-  description: string;
-  primaryColor: string;
-  secondaryColor: string;
-  disabled: boolean;
-}
-
 export interface Stock {
   id: string;
   locationId: string;

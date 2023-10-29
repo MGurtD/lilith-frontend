@@ -11,9 +11,8 @@
     <Column field="quantity" header="Quantitat" style="width: 10%" />
     <Column header="Material" style="width: 25%">
       <template #body="slotProps">
-        {{ slotProps.data.reference.code }} ({{
-          slotProps.data.reference.version
-        }}) - {{ slotProps.data.reference.description }}
+        {{ slotProps.data.reference.code }} -
+        {{ slotProps.data.reference.description }}
       </template>
     </Column>
     <Column field="width" header="Amplada" style="width: 10%"></Column>

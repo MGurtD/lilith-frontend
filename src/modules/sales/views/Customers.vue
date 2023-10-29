@@ -15,6 +15,8 @@
       <DataTable
         :value="customerStore.customers"
         tableStyle="min-width: 100%"
+        scrollable
+        scrollHeight="80vh"
         @row-click="editCustomer"
       >
         <Column
@@ -59,6 +61,8 @@
       <DataTable
         :value="customerStore.customerTypes"
         tableStyle="min-width: 100%"
+        scrollable
+        scrollHeight="80vh"
         @row-click="editCustomerType"
       >
         <Column field="name" header="Nom" style="width: 33%"></Column>

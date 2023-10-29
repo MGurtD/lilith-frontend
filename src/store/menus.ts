@@ -57,8 +57,19 @@ export const applicationMenus = [
       },
       {
         icon: PrimeIcons.TICKET,
-        title: "Materies primes",
-        href: "/reference/purchase",
+        title: "Materials",
+        child: [
+          {
+            icon: PrimeIcons.PALETTE,
+            title: "Tipus de materials",
+            href: "/referencetype",
+          },
+          {
+            icon: PrimeIcons.TICKET,
+            title: "Materies primeres",
+            href: "/reference/purchase",
+          },
+        ],
       },
       {
         icon: PrimeIcons.TRUCK,
@@ -179,6 +190,11 @@ export const applicationMenus = [
         href: "/machinestatus",
       },
       {
+        icon: PrimeIcons.BUILDING,
+        title: "Costs de màquina",
+        href: "/workcentercost",
+      },
+      {
         icon: PrimeIcons.USERS,
         title: "Operaris",
         child: [
@@ -191,22 +207,6 @@ export const applicationMenus = [
             icon: PrimeIcons.USER,
             title: "Operaris",
             href: "/operator",
-          },
-        ],
-      },
-      {
-        icon: PrimeIcons.WALLET,
-        title: "Costs",
-        child: [
-          {
-            icon: PrimeIcons.BUILDING,
-            title: "Per màquina",
-            href: "/workcentercost",
-          },
-          {
-            icon: PrimeIcons.USERS,
-            title: "Per tipus d'operari",
-            href: "/operatorcost",
           },
         ],
       },
@@ -223,11 +223,6 @@ export const applicationMenus = [
         href: "/warehouse",
       },
       {
-        icon: PrimeIcons.CAR,
-        title: "Tipus de materies primes",
-        href: "/rawmaterialtype",
-      },
-      {
         icon: PrimeIcons.WRENCH,
         title: "Estocs",
         href: "/stocks",
@@ -235,8 +230,8 @@ export const applicationMenus = [
       {
         icon: PrimeIcons.MAP,
         title: "Moviments de magatzem",
-        href:"/stockmovement",
-      }
+        href: "/stockmovement",
+      },
     ],
   },
 ];

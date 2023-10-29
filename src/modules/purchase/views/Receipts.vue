@@ -4,7 +4,7 @@
       class="small-datatable"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="80vh"
+      scrollHeight="75vh"
       sortMode="multiple"
       :value="receiptsStore.receipts"
       @row-click="editReceipt"
@@ -85,7 +85,10 @@
       <Column style="width: 5%">
         <template #body="slotProps">
           <i
-            v-if="getStatusNameById(slotProps.data.statusId) === 'Nou'"
+            v-if="
+              lifecycleStore.lifecycle?.initialStatusId ===
+              slotProps.data.statusId
+            "
             :class="PrimeIcons.TIMES"
             class="grid_delete_column_button"
             @click="deleteReceipt($event, slotProps.data)"
@@ -128,11 +131,13 @@ import {
 } from "../../../utils/functions";
 import { CreateReceiptRequest, PurchaseInvoice } from "../types";
 import { Exercise } from "../../shared/types";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
+const lifecycleStore = useLifecyclesStore();
 const receiptsStore = useReceiptsStore();
 const suppliersStore = useSuppliersStore();
 const sharedDataStore = useSharedDataStore();
@@ -156,6 +161,7 @@ onMounted(async () => {
   });
 
   suppliersStore.fetchSuppliers();
+  lifecycleStore.fetchOneByName("Receipts");
   await sharedDataStore.fetchMasterData();
   await receiptsStore.fetchReceipts();
   setCurrentYear();
@@ -210,11 +216,8 @@ const getSupplierNameById = (id: string) => {
   else return "";
 };
 const getStatusNameById = (id: string) => {
-  const lifecycle = sharedDataStore.lifecycles?.find(
-    (s) => s.name === "Receipts"
-  );
-  if (lifecycle) {
-    const status = lifecycle.statuses.find((s) => s.id === id);
+  if (lifecycleStore.lifecycle) {
+    const status = lifecycleStore.lifecycle.statuses.find((s) => s.id === id);
     if (status) return status.name;
   }
   return "";

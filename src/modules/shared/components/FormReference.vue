@@ -32,7 +32,7 @@
           }"
         ></BaseInput>
       </div>
-      <div class="mt-1">
+      <div class="mt-1" v-if="isSales">
         <BaseInput
           :type="BaseInputType.TEXT"
           label="Versió"
@@ -40,17 +40,22 @@
           v-model="reference.version"
         />
       </div>
-    </section>
-    <section class="four-columns" v-if="isPurchase">
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.NUMERIC"
-          :decimals="2"
-          label="Densitat"
-          id="density"
-          v-model="reference.density"
+      <div class="mt-1" v-if="isPurchase">
+        <label class="block text-900 mb-2">Tipus de material</label>
+        <Dropdown
+          v-model="reference.referenceTypeId"
+          editable
+          :options="referenceTypeStore.referenceTypes"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.taxid,
+          }"
         />
       </div>
+    </section>
+    <section class="four-columns" v-if="isPurchase">
       <div class="mt-1">
         <label class="block text-900 mb-2">Format</label>
         <Dropdown
@@ -65,6 +70,16 @@
           }"
         />
       </div>
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Densitat"
+          id="density"
+          v-model="reference.density"
+        />
+      </div>
+
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
@@ -132,7 +147,7 @@
   </form>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { Reference } from "../types";
 import * as Yup from "yup";
@@ -145,6 +160,7 @@ import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useReferenceStore } from "../../shared/store/reference";
+import { useReferenceTypeStore } from "../store/referenceType";
 
 const props = defineProps<{
   module: string;
@@ -169,10 +185,7 @@ const isProduction = computed(() => {
 const toast = useToast();
 const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
-
-onMounted(async () => {
-  await taxesStore.fetchAll();
-});
+const referenceTypeStore = useReferenceTypeStore();
 
 const schema = Yup.object().shape({
   code: Yup.string()
@@ -184,8 +197,9 @@ const schema = Yup.object().shape({
   version: Yup.string()
     .required("La versió és obligatoria")
     .max(20, "La versió pot superar els 20 carácters"),
-  cost: Yup.string().required("El cost es obligatori"),
-  price: Yup.string().required("El preu es obligatori"),
+  cost: Yup.number().required("El cost es obligatori"),
+  price: Yup.number().required("El preu es obligatori"),
+  density: Yup.number().required("La densitat és obligatoria"),
   taxId: Yup.string().required("El tipus d'iva es obligatori"),
 });
 const validation = ref({
