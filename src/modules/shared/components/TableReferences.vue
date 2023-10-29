@@ -3,7 +3,7 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="80vh"
     @row-click="editRow"
   >
     <template #header>
