@@ -50,11 +50,11 @@
         </div>
       </div>
     </template>
-    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column field="description" header="Descripció" style="width: 40%" sortable></Column>
     <Column field="amount" header="Import" style="width: 15%">
       <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
     </Column>
-    <Column field="paymentDate" header="Data pagament" style="width: 20%">
+    <Column field="paymentDate" header="Data pagament" style="width: 20%" sortable>
       <template #body="slotProps">
         {{ formatDate(slotProps.data.paymentDate) }}
       </template>

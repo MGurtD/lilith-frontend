@@ -1,6 +1,6 @@
 <template>
   <form v-if="operatorType">
-    <section class="three-columns">
+    <section class="four-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -17,6 +17,15 @@
         v-model="operatorType.description"
         :class="{
           'p-invalid': validation.errors.description,
+        }"
+      ></BaseInput>
+      <BaseInput
+        class="mb-2"
+        label="Cost/h"
+        id="cost"
+        v-model="operatorType.cost"
+        :class="{
+          'p-invalid': validation.errors.cost,
         }"
       ></BaseInput>
       <div>
@@ -72,6 +81,9 @@ const schema = Yup.object().shape({
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
+  cost: Yup.number()
+    .required("El cost es obligatori")
+    .min(0),
 });
 const validation = ref({
   result: false,

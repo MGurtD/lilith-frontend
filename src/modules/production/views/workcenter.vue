@@ -42,7 +42,6 @@ const loadView = async () => {
     icon: PrimeIcons.BUILDING,
     backButtonVisible: true,
     title: pageTitle,
->>>>>>> b68406eb89c75f0d7f4759efd420ea5c314e6dc7
   });
 };
 

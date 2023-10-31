@@ -202,12 +202,7 @@ export const applicationMenus = [
             icon: PrimeIcons.BUILDING,
             title: "Per màquina",
             href: "/workcentercost",
-          },
-          {
-            icon: PrimeIcons.USERS,
-            title: "Per tipus d'operari",
-            href: "/operatorcost",
-          },
+          },          
         ],
       },
     ],

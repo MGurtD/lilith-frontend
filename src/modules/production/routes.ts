@@ -18,8 +18,6 @@ const Operator = () => import("./views/operator.vue");
 const Operators = () => import("./views/operators.vue");
 const OperatorType = () => import("./views/operatortype.vue");
 const OperatorTypes = () => import("./views/operatortypes.vue");
-const OperatorCost = () => import("./views/operatorcost.vue");
-const OperatorCosts = () => import("./views/operatorcosts.vue");
 
 export default [
   {
@@ -101,16 +99,6 @@ export default [
     path: "/operator",
     name: "Operators",
     component: Operators,
-  },
-  {
-    path: "/operatorcost/:id",
-    name: "OperatorCost",
-    component: OperatorCost,
-  },
-  {
-    path: "/operatorcost",
-    name: "OperatorCosts",
-    component: OperatorCosts,
   },
   {
     path: "/machinestatus/:id",
