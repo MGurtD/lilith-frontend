@@ -55,7 +55,7 @@
   >
     <TabView v-model:activeIndex="formsActiveIndex">
       <TabPanel header="Línea">
-        <FormSalesOrderReference
+        <FormSalesOrderDetail
           v-if="selectedSalesOrderDetail"
           :formAction="formDetailMode"
           :salesOrderDetail="selectedSalesOrderDetail"
@@ -91,7 +91,7 @@ import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
-import FormSalesOrderReference from "../components/FormSalesOrderReference.vue";
+import FormSalesOrderDetail from "../components/FormSalesOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FormReference from "../../shared/components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
@@ -239,10 +239,10 @@ const onFormReferenceSubmit = async (reference: Reference) => {
   });
 
   if (result) {
-    selectedSalesOrderDetail.value!.referenceId = reference.id;
-    formsActiveIndex.value = 0;
-
+    // Clean reference form
     referenceStore.setNewReference(getNewUuid());
+    // Go to details tab
+    formsActiveIndex.value = 0;
   }
 };
 </script>

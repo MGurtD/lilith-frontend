@@ -20,21 +20,29 @@ import { FormActionMode } from "../../../types/component";
 import router from "../../../router";
 import FormReference from "../components/FormReference.vue";
 import { useReferenceStore } from "../store/reference";
+import { useTaxesStore } from "../store/tax";
+import { useReferenceTypeStore } from "../store/referenceType";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
+const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
+const referenceTypeStore = useReferenceTypeStore();
 const { reference } = storeToRefs(referenceStore);
+const id = ref("");
 const module = ref("");
 
 const loadView = async () => {
-  await referenceStore.fetchReference(route.params.id as string);
+  await referenceStore.fetchReference(id.value);
+  taxesStore.fetchAll();
+  referenceTypeStore.fetchAll();
+
   let pageTitle = "";
   if (!reference.value) {
     formMode.value = FormActionMode.CREATE;
-    referenceStore.setNewReference(route.params.id as string);
-    pageTitle = "Alta de referència";
+    referenceStore.setNewReference(id.value);
+    pageTitle = `Alta de referència`;
   } else {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Referència ${reference.value.description}`;
@@ -48,6 +56,7 @@ const loadView = async () => {
 };
 
 onMounted(async () => {
+  id.value = route.params.id as string;
   module.value = route.params.module as string;
   await loadView();
 });

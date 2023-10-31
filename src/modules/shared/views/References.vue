@@ -16,11 +16,15 @@ import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import TableReferences from "../components/TableReferences.vue";
 import { Reference } from "../types";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
+const confirm = useConfirm();
+const toast = useToast();
 const module = ref("");
 
 onMounted(async () => {
@@ -29,7 +33,7 @@ onMounted(async () => {
 
   let title = "";
   if (module.value === "sales") title = "Referencies de venta";
-  else if (module.value === "purchase") title = "Materies primes";
+  else if (module.value === "purchase") title = "Materies primeres";
   else if (module.value === "production") title = "Referencies de producció";
 
   store.setMenuItem({
@@ -46,9 +50,23 @@ const editReference = (reference: Reference) => {
   router.push({ path: `/reference/${module.value}/${reference.id}` });
 };
 
-const deleteReference = async (reference: Reference) => {
-  await referenceStore.deleteReference(reference.id);
-  await referenceStore.fetchReferencesByModule(module.value);
+const deleteReference = (reference: Reference) => {
+  confirm.require({
+    message: `Está segur que vol eliminar el material ${reference.description}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await referenceStore.deleteReference(reference.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+      }
+    },
+  });
 };
 </script>
 <style scoped>

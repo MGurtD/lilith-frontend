@@ -16,7 +16,7 @@
         >
           <template #option="slotProps">
             <div v-if="slotProps.option" class="flex align-items-center">
-              {{ slotProps.option.code }} ({{ slotProps.option.version }}) -
+              {{ slotProps.option.code }} -
               {{ slotProps.option.description }}
             </div>
           </template>

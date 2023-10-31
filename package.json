@@ -19,7 +19,7 @@
     "pinia": "^2.0.28",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
-    "primevue": "^3.29.2",
+    "primevue": "^3.38.1",
     "uuid": "^9.0.0",
     "vee-validate": "^4.10.1",
     "vue": "^3.2.45",
@@ -30,7 +30,6 @@
     "yup": "^1.1.1"
   },
   "devDependencies": {
-    "@types/carbone": "^3.2.3",
     "@types/lodash": "^4.14.195",
     "@types/uuid": "^9.0.1",
     "@vitejs/plugin-vue": "^4.0.0",

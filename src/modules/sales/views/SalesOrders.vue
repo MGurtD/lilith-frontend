@@ -4,7 +4,7 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="80vh"
     sortMode="multiple"
     @row-click="editRow"
   >

@@ -10,6 +10,8 @@ const Lifecycles = () => import("./views/Lifecycles.vue");
 const Lifecycle = () => import("./views/Lifecycle.vue");
 const References = () => import("./views/References.vue");
 const Reference = () => import("./views/Reference.vue");
+const ReferenceTypes = () => import("./views/ReferenceTypes.vue");
+const ReferenceType = () => import("./views/ReferenceType.vue");
 
 export default [
   {
@@ -62,5 +64,15 @@ export default [
     name: "Referencia",
     component: Reference,
     props: true,
+  },
+  {
+    path: "/referencetype",
+    name: "ReferenceTypes",
+    component: ReferenceTypes,
+  },
+  {
+    path: "/referencetype/:id",
+    name: "ReferenceType",
+    component: ReferenceType,
   },
 ] as Array<RouteRecordRaw>;

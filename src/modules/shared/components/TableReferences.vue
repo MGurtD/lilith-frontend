@@ -3,7 +3,7 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="80vh"
     @row-click="editRow"
   >
     <template #header>
@@ -23,7 +23,12 @@
     </template>
     <Column field="code" header="Codi" style="width: 15%"></Column>
     <Column field="description" header="Descripció" style="width: 35%"></Column>
-    <Column field="version" header="Versió" style="width: 15%"></Column>
+    <Column
+      v-if="isSales"
+      field="version"
+      header="Versió"
+      style="width: 15%"
+    ></Column>
     <Column
       v-if="isSales"
       field="cost"
@@ -36,6 +41,16 @@
       header="Preu"
       style="width: 20%"
     ></Column>
+    <Column
+      v-if="isPurchase"
+      field="referenceTypeId"
+      header="Tipus"
+      style="width: 10%"
+    >
+      <template #body="slotProps">
+        <span>{{ getTypeDescription(slotProps.data.referenceTypeId) }}</span>
+      </template>
+    </Column>
     <Column
       v-if="isPurchase"
       field="referenceFormatId"
@@ -81,10 +96,13 @@
 import BaseInput from "../../../components/BaseInput.vue";
 import { computed, ref } from "vue";
 import { useReferenceStore } from "../store/reference";
+
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../types";
+import { useReferenceTypeStore } from "../store/referenceType";
 
+const referenceTypeStore = useReferenceTypeStore();
 const referenceStore = useReferenceStore();
 const filter = ref({
   code: "",
@@ -144,6 +162,12 @@ const getFormatDescription = (formatId: string) => {
     (f) => f.id === formatId
   );
   if (format) return format.description;
+  else return "";
+};
+
+const getTypeDescription = (typeId: string) => {
+  const type = referenceTypeStore.referenceTypes?.find((f) => f.id === typeId);
+  if (type) return type.name;
   else return "";
 };
 </script>

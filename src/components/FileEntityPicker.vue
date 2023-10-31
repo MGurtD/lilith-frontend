@@ -6,6 +6,7 @@ import Toolbar from "primevue/toolbar";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { createBlobAndDownloadFile } from "../utils/functions";
+import { useConfirm } from "primevue/useconfirm";
 
 const props = defineProps<{
   title: string;
@@ -14,6 +15,7 @@ const props = defineProps<{
 }>();
 
 const toast = useToast();
+const confirm = useConfirm();
 
 const service = new FileService();
 const files = ref(undefined as undefined | Array<File>);
@@ -53,15 +55,20 @@ const downloadFile = async (file: File) => {
 };
 
 const deleteFile = async (file: File) => {
-  var deleted = await service.Delete(file.id);
-  if (!deleted) {
-    toast.add({
-      severity: "error",
-      detail: "Error al eliminar l'arxiu",
-    });
-    return;
-  }
-  await fetchData();
+  confirm.require({
+    message: "Està segur que vol eliminar l'arxiu seleccionat",
+    accept: async () => {
+      var deleted = await service.Delete(file.id);
+      if (!deleted) {
+        toast.add({
+          severity: "error",
+          detail: "Error al eliminar l'arxiu",
+        });
+        return;
+      }
+      await fetchData();
+    },
+  });
 };
 </script>
 <template>

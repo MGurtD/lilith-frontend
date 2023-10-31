@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <DataTable
-            class="small-datatable"
-            tablStyle="min-width:100%"
-            scrollable
-            scrollHeight="75vh"
-            sortMode="multiple"
-            :value="stockMovementStore.stockMovements"
-            >
-            <template #header>
+  <div>
+    <DataTable
+      class="small-datatable"
+      tablStyle="min-width:100%"
+      scrollable
+      scrollHeight="80vh"
+      sortMode="multiple"
+      :value="stockMovementStore.stockMovements"
+    >
+      <template #header>
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
@@ -18,7 +18,7 @@
                 :exercises="exerciseStore.exercises"
                 @range-selected="filterMovements"
               />
-            </div>           
+            </div>
           </div>
           <div class="datatable-buttons">
             <Button
@@ -38,27 +38,37 @@
           </div>
         </div>
       </template>
-      <Column header="Data moviment" :sortable="true" style="width:10%">
+      <Column header="Data moviment" :sortable="true" style="width: 10%">
         <template #body="slotProps">
           {{ formatDate(slotProps.data.movementDate) }}
         </template>
       </Column>
-      <Column header="Producte" :sortable="true" style="width:20%">
+      <Column header="Producte" :sortable="true" style="width: 20%">
         <template #body="slotProps">
-        {{ getReferenceNameById(slotProps.data.referenceId) }}
-      </template></Column>
-      <Column field="width" header="Ample (x) mm"  style="width:5%"></Column>
+          {{ getReferenceNameById(slotProps.data.referenceId) }}
+        </template></Column
+      >
+      <Column field="width" header="Ample (x) mm" style="width: 5%"></Column>
       <Column field="length" header="Llarg (y) mm" style="width: 5%"></Column>
-      <Column field="height" header="Alt (z) mm" style="width:5%"></Column>
+      <Column field="height" header="Alt (z) mm" style="width: 5%"></Column>
       <Column field="diameter" header="Diámetre mm" style="width: 5%"></Column>
-      <Column field="thickness" header="Gruix mm" style="width: 5%"></Column>      
-      <Column field="description" header="Descripció" :sortable="true" style="width:25%"></Column>
-      <Column field="movementType" header="Tipus de moviment" :sortable="true" style="width:10%"></Column>
-      <Column field="quantity" header="Quantitat" style="width:10%"></Column>
-      
-      </DataTable>
-    </div>
-</template> 
+      <Column field="thickness" header="Gruix mm" style="width: 5%"></Column>
+      <Column
+        field="description"
+        header="Descripció"
+        :sortable="true"
+        style="width: 25%"
+      ></Column>
+      <Column
+        field="movementType"
+        header="Tipus de moviment"
+        :sortable="true"
+        style="width: 10%"
+      ></Column>
+      <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
+    </DataTable>
+  </div>
+</template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { v4 as uuidv4 } from "uuid";
@@ -86,24 +96,22 @@ const referenceStore = useReferenceStore();
 const exerciseStore = useExerciseStore();
 
 const filter = ref({
-    exercise: undefined as Exercise | undefined,
+  exercise: undefined as Exercise | undefined,
 });
 
 onMounted(async () => {
-    store.setMenuItem({
-        icon: PrimeIcons.MAP,
-        title: "Moviments de magatzem",
-    });
-    await exerciseStore.fetchAll();
-    await referenceStore.fetchReferences();
-    setCurrentYear();
+  store.setMenuItem({
+    icon: PrimeIcons.MAP,
+    title: "Moviments de magatzem",
+  });
+  await exerciseStore.fetchAll();
+  await referenceStore.fetchReferences();
+  setCurrentYear();
 });
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
-  const currentExercise = exerciseStore.exercises?.find(
-    (e) => e.name === year
-  );
+  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
 
   if (currentExercise) {
     store.exercisePicker.exercise = currentExercise;
@@ -126,10 +134,7 @@ const filterMovements = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await stockMovementStore.GetBetweenDates(
-      startTime,
-      endTime
-    );
+    await stockMovementStore.GetBetweenDates(startTime, endTime);
 
     localStorage.setItem(filterLocalStorageKey, JSON.stringify(filter.value));
   } else {
@@ -147,5 +152,4 @@ const getReferenceNameById = (id: string) => {
   if (reference) return reference.description;
   else return "";
 };
-
 </script>

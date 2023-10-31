@@ -25,9 +25,9 @@ export const useReferenceStore = defineStore({
         sales: this.module === "sales",
         purchase: this.module === "purchase",
         production: this.module === "production",
-        referenceFormatId: "",
+        referenceTypeId: null,
+        referenceFormatId: null,
         density: 0,
-        formatId: 0,
         lastPurchaseCost: 0,
       } as Reference;
     },
@@ -48,7 +48,6 @@ export const useReferenceStore = defineStore({
     },
     async createReference(reference: Reference) {
       const result = await referenceService.create(reference);
-      console.log("createReference", this.module, result);
       if (result) await this.fetchReferencesByModule(this.module);
       return result;
     },

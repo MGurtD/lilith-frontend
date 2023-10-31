@@ -77,7 +77,7 @@
       </template>
       <TableConsolidatedExpenses
         scrollable
-        scrollHeight="75vh"
+        scrollHeight="80vh"
         :expenses="consolidatedExpenses"
       />
     </TabPanel>

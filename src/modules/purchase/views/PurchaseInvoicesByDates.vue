@@ -4,7 +4,7 @@
       class="small-datatable"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="70vh"
+      scrollHeight="80vh"
       sortMode="multiple"
       :value="purchaseInvoiceStore.purchaseInvoices"
       v-model:selection="selectedInvoices"

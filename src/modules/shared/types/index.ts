@@ -67,12 +67,22 @@ export interface Reference {
   cost: number;
   price: number;
   disabled: boolean;
-  referenceFormatId: string;
+  referenceTypeId: string | null;
+  referenceFormatId: string | null;
   density: number;
   lastPurchaseCost: number;
   sales: boolean;
   purchase: boolean;
   production: boolean;
+}
+
+export interface ReferenceType {
+  id: string;
+  name: string;
+  description: string;
+  primaryColor: string;
+  secondaryColor: string;
+  disabled: boolean;
 }
 
 export interface ReferenceFormat {

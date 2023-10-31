@@ -1,0 +1,1 @@
+import{B as s}from"./base.service-f5b02259.js";class i extends s{async getByModule(e){const t=await this.apiClient.get(`${this.resource}/${e}`);if(t.status===200)return t.data}async getReferenceFormats(){const e=await this.apiClient.get(`${this.resource}/Formats`);if(e.status===200)return e.data}}export{i as R};
