@@ -210,6 +210,17 @@ export const applicationMenus = [
           },
         ],
       },
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Costs",
+        child: [
+          {
+            icon: PrimeIcons.BUILDING,
+            title: "Per màquina",
+            href: "/workcentercost",
+          },          
+        ],
+      },
     ],
   },
   {

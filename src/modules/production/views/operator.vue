@@ -1,5 +1,6 @@
 <template>
-  <FormOperator v-if="operator" :operator="operator" @submit="submitForm" />
+  <FormOperator v-if="operator" 
+  :operator="operator" @submit="submitForm" />
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";

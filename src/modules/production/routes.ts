@@ -1,23 +1,23 @@
 import { RouteRecordRaw } from "vue-router";
 
-const Enterprise = () => import("./views/Enterprise.vue");
-const Enterprises = () => import("./views/Enterprises.vue");
-const Site = () => import("./views/Site.vue");
-const Sites = () => import("./views/Sites.vue");
-const Area = () => import("./views/Area.vue");
-const Areas = () => import("./views/Areas.vue");
-const WorkcenterType = () => import("./views/WorkcenterType.vue");
-const WorkcenterTypes = () => import("./views/WorkcenterTypes.vue");
-const Workcenter = () => import("./views/Workcenter.vue");
-const Workcenters = () => import("./views/Workcenters.vue");
-const Workcentercost = () => import("./views/WorkcenterCost.vue");
-const Workcentercosts = () => import("./views/WorkcenterCosts.vue");
-const MachineStatus = () => import("./views/MachineStatus.vue");
-const MachineStatuses = () => import("./views/MachineStatuses.vue");
-const Operator = () => import("./views/Operator.vue");
-const Operators = () => import("./views/Operators.vue");
-const OperatorType = () => import("./views/OperatorType.vue");
-const OperatorTypes = () => import("./views/OperatorTypes.vue");
+const Enterprise = () => import("./views/enterprise.vue");
+const Enterprises = () => import("./views/enterprises.vue");
+const Site = () => import("./views/site.vue");
+const Sites = () => import("./views/sites.vue");
+const Area = () => import("./views/area.vue");
+const Areas = () => import("./views/areas.vue");
+const WorkcenterType = () => import("./views/workcentertype.vue");
+const WorkcenterTypes = () => import("./views/workcentertypes.vue");
+const Workcenter = () => import("./views/workcenter.vue");
+const Workcenters = () => import("./views/workcenters.vue");
+const Workcentercost = () => import("./views/workcentercost.vue");
+const Workcentercosts = () => import("./views/workcentercosts.vue");
+const MachineStatus = () => import("./views/machinestatus.vue");
+const MachineStatuses = () => import("./views/machinestatuses.vue");
+const Operator = () => import("./views/operator.vue");
+const Operators = () => import("./views/operators.vue");
+const OperatorType = () => import("./views/operatortype.vue");
+const OperatorTypes = () => import("./views/operatortypes.vue");
 
 export default [
   {

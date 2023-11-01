@@ -75,13 +75,6 @@ export interface OperatorType {
   id: string;
   name: string;
   description: string;
-  disabled: boolean;
-}
-
-export interface OperatorCost {
-  id: string;
-  operatorTypeId: string;
-  machineStatusId: string;
   cost: number;
   disabled: boolean;
 }

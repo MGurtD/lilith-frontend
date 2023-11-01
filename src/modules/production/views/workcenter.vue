@@ -1,4 +1,4 @@
-<template>
+</template>
   <FormWorkcenter
     v-if="workcenter"
     :workcenter="workcenter"
