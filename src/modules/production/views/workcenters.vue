@@ -1,6 +1,6 @@
 <template>
   <DataTable
-    :value="plantmodelStore.workcenters"
+    :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
@@ -11,13 +11,45 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Màquines</span>
-        <Button
-          :icon="PrimeIcons.PLUS"
-          rounded
-          raised
-          @click="createButtonClick"
-        />
+        <div class="datatable-filter">
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Tipus</label>
+            <Dropdown
+              v-model="filter.workcenterTypeId"
+              editable
+              :options="plantmodelStore.workcenterTypes"
+              optionValue="id"
+              optionLabel="name"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Àrea</label>
+            <Dropdown
+              v-model="filter.areaId"
+              editable
+              :options="plantmodelStore.areas"
+              optionValue="id"
+              optionLabel="name"
+              class="w-full"
+            />
+          </div>
+        </div>
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+        </div>
       </div>
     </template>
     <Column field="name" header="Nom" style="width: 20%"></Column>
@@ -53,12 +85,13 @@ import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { usePlantModelStore } from "../store/plantmodel";
-import { onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { Workcenter } from "../types";
+import { AreaService } from "../services";
 
 const router = useRouter();
 const store = useStore();
@@ -77,20 +110,34 @@ onMounted(async () => {
   });
 });
 
-const createButtonClick = () => {
-  router.push({ path: `/workcenter/${uuidv4()}` });
-};
+// Filter data
+const filter = ref({
+  areaId: undefined as undefined | string,
+  workcenterTypeId: undefined as undefined | string,
+});
 
-const editRow = (row: DataTableRowClickEvent) => {
-  if (
-    !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
-    )
-  ) {
-    router.push({ path: `/workcenter/${row.data.id}` });
+const filteredData = computed(() => {
+  if (!plantmodelStore.workcenters) return [];
+
+  let filteredWc = plantmodelStore.workcenters;
+  if (filter.value.areaId) {
+    filteredWc = filteredWc.filter((w) => w.areaId === filter.value.areaId);
   }
+  if (filter.value.workcenterTypeId) {
+    filteredWc = filteredWc.filter(
+      (w) => w.workcenterTypeId === filter.value.workcenterTypeId
+    );
+  }
+
+  return filteredWc;
+});
+
+const cleanFilter = () => {
+  filter.value.areaId = undefined;
+  filter.value.workcenterTypeId = undefined;
 };
 
+// Format columns
 const getAreaNameById = (id: string) => {
   const type = plantmodelStore.areas?.find((s) => s.id === id);
   if (type) return type.name;
@@ -100,6 +147,20 @@ const getWorkcenterTypeNameById = (id: string) => {
   const type = plantmodelStore.workcenterTypes?.find((s) => s.id === id);
   if (type) return type.name;
   else return "";
+};
+
+// Actions
+const createButtonClick = () => {
+  router.push({ path: `/workcenter/${uuidv4()}` });
+};
+const editRow = (row: DataTableRowClickEvent) => {
+  if (
+    !(row.originalEvent.target as any).className.includes(
+      "grid_delete_column_button"
+    )
+  ) {
+    router.push({ path: `/workcenter/${row.data.id}` });
+  }
 };
 const deleteButton = (event: any, entity: Workcenter) => {
   confirm.require({
