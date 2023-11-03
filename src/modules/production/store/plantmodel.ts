@@ -8,7 +8,6 @@ import {
   OperatorService,
   OperatorTypeService,
   MachineStatusService,
-  OperatorCostService,
   WorkcenterCostService,
 } from "../services";
 import {
@@ -19,7 +18,6 @@ import {
   Enterprise,
   Site,
   Operator,
-  OperatorCost,
   OperatorType,
   MachineStatus,
 } from "../types";
@@ -32,7 +30,6 @@ const siteService = new SiteService("/site");
 const enterpriseService = new EnterpriseService("/enterprise");
 const operatorService = new OperatorService("/operator");
 const operatorTypeService = new OperatorTypeService("/operatortype");
-const operatorCostService = new OperatorCostService("/operatorcost");
 const machineStatusService = new MachineStatusService("/machinestatus");
 
 export const usePlantModelStore = defineStore({
@@ -54,8 +51,6 @@ export const usePlantModelStore = defineStore({
     operators: undefined as Array<Operator> | undefined,
     operatorType: undefined as OperatorType | undefined,
     operatorTypes: undefined as Array<OperatorType> | undefined,
-    operatorCost: undefined as OperatorCost | undefined,
-    operatorCosts: undefined as Array<OperatorCost> | undefined,
     machineStatus: undefined as MachineStatus | undefined,
     machineStatuses: undefined as Array<MachineStatus> | undefined,
   }),
@@ -314,36 +309,6 @@ export const usePlantModelStore = defineStore({
     async deleteOperatorType(id: string) {
       const result = await operatorTypeService.delete(id);
       if (result) await this.fetchOperatorTypes();
-      return result;
-    },
-    setNewOperatorCost(id: string) {
-      this.operatorCost = {
-        id: id,
-        operatorTypeId: "",
-        machineStatusId: "",
-        cost: 0.0,
-        disabled: false,
-      };
-    },
-    async fetchOperatorCosts() {
-      this.operatorCosts = await operatorCostService.getAll();
-    },
-    async fetchOperatorCost(id: string) {
-      this.operatorCost = await operatorCostService.getById(id);
-    },
-    async createOperatorCost(operatorCost: OperatorCost) {
-      const result = await operatorCostService.create(operatorCost);
-      if (result) await this.fetchOperatorCosts();
-      return result;
-    },
-    async updateOperatorCost(id: string, operatorCost: OperatorCost) {
-      const result = await operatorCostService.update(id, operatorCost);
-      if (result) await this.fetchOperatorCosts();
-      return result;
-    },
-    async deleteOperatorCost(id: string) {
-      const result = await operatorCostService.delete(id);
-      if (result) await this.fetchOperatorCosts();
       return result;
     },
     setNewMachineStatus(id: string) {

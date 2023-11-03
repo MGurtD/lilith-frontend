@@ -7,7 +7,6 @@ import {
   MachineStatus,
   Operator,
   OperatorType,
-  OperatorCost,
   WorkcenterCost,
 } from "../types";
 import BaseService from "../../../api/base.service";
@@ -21,4 +20,3 @@ export class WorkcenterCostService extends BaseService<WorkcenterCost> {}
 export class MachineStatusService extends BaseService<MachineStatus> {}
 export class OperatorService extends BaseService<Operator> {}
 export class OperatorTypeService extends BaseService<OperatorType> {}
-export class OperatorCostService extends BaseService<OperatorCost> {}

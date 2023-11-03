@@ -22,7 +22,6 @@
           @update:modelValue="calcAmounts()"
         />
       </div>
-      
     </section>
     <section class="two-columns">
       <BaseInput
@@ -60,7 +59,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { BaseInputType, FormActionMode } from "../../../types/component";
-import { ceil, isNumber, round } from "lodash";
+import { isNumber, round } from "lodash";
 
 const purchaseMasterData = usePurchaseMasterDataStore();
 const toast = useToast();
@@ -94,9 +93,7 @@ const calcAmounts = () => {
 };
 
 const schema = Yup.object().shape({
-  baseAmount: Yup.number()
-    .required("L'import base és obligatori")
-    .min(1, "L'import base ha de ser un número positiu"),
+  baseAmount: Yup.number().required("L'import base és obligatori"),
 });
 const validation = ref({
   result: false,

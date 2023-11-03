@@ -1,4 +1,4 @@
-</template>
+<template>
   <FormWorkcenter
     v-if="workcenter"
     :workcenter="workcenter"
@@ -17,7 +17,6 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import router from "../../../router";
-import FormWorkcenter from "../components/FormWorkcenter.vue";
 import { usePlantModelStore } from "../store/plantmodel";
 
 const formMode = ref(FormActionMode.EDIT);
