@@ -7,6 +7,8 @@ const SalesOrders = () => import("./views/SalesOrders.vue");
 const SalesOrder = () => import("./views/SalesOrder.vue");
 const SalesInvoices = () => import("./views/SalesInvoices.vue");
 const SalesInvoice = () => import("./views/SalesInvoice.vue");
+const DeliveryNotes = () => import("./views/DeliveryNotes.vue");
+const DeliveryNote = () => import("./views/DeliveryNote.vue");
 
 export default [
   {
@@ -31,4 +33,6 @@ export default [
   },
   { path: "/salesorder", name: "SalesOrders", component: SalesOrders },
   { path: "/salesorder/:id", name: "SalesOrder", component: SalesOrder },
+  { path: "/deliverynote", name: "DeliveryNotes", component: DeliveryNotes },
+  { path: "/deliverynote/:id", name: "DeliveryNote", component: DeliveryNote },
 ] as Array<RouteRecordRaw>;

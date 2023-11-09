@@ -142,6 +142,11 @@ export const applicationMenus = [
         href: "/salesorder",
       },
       {
+        icon: PrimeIcons.TRUCK,
+        title: "Albarans d'entrega",
+        href: "/deliverynote",
+      },
+      {
         icon: PrimeIcons.WALLET,
         title: "Factures",
         href: "/sales-invoice",
@@ -218,7 +223,7 @@ export const applicationMenus = [
             icon: PrimeIcons.BUILDING,
             title: "Per màquina",
             href: "/workcentercost",
-          },          
+          },
         ],
       },
     ],

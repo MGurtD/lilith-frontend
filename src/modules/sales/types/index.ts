@@ -111,6 +111,7 @@ export interface CreateSalesHeaderRequest {
   date: string | Date;
   exerciseId: string;
   customerId: string;
+  initialStatusId?: string;
 }
 
 export interface SalesInvoice {
@@ -201,4 +202,29 @@ export interface SalesInvoiceImport {
   baseAmount: number;
   taxAmount: number;
   netAmount: number;
+}
+
+export interface DeliveryNote {
+  number: string;
+  deliveryDate: string;
+  exerciseId: string;
+  customerId: string;
+  siteId: string;
+  statusId: string;
+  details: Array<DeliveryNoteDetail>;
+  id: string;
+  disabled: string;
+}
+
+export interface DeliveryNoteDetail {
+  id: string;
+  deliveryNoteId: string;
+  salesOrderDetailId: string;
+  referenceId: string;
+  description: string;
+  quantity: number;
+  unitCost: number;
+  unitPrice: number;
+  totalCost: number;
+  amount: number;
 }
