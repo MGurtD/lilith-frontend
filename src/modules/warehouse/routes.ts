@@ -4,6 +4,7 @@ const Warehouse = () => import("./views/Warehouse.vue");
 const Warehouses = () => import("./views/Warehouses.vue");
 const Stocks = () => import("./views/Stocks.vue");
 const StockMovements = () => import("./views/StockMovements.vue");
+const Inventory = () => import("./views/Inventory.vue");
 
 export default [
   {
@@ -25,5 +26,10 @@ export default [
     path: "/stockmovement",
     name:"stockMovements",
     component: StockMovements,
+  },
+  {
+    path: "/inventory",
+    name:"inventory",
+    component: Inventory,
   }
 ] as Array<RouteRecordRaw>;

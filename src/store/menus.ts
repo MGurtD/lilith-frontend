@@ -248,6 +248,11 @@ export const applicationMenus = [
         title: "Moviments de magatzem",
         href: "/stockmovement",
       },
+      {
+        icon: PrimeIcons.MAP,
+        title: "Inventari",
+        href: "/inventory",
+      },
     ],
   },
 ];
