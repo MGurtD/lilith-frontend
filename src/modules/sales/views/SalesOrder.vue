@@ -211,6 +211,10 @@ const onFormSalesOrderReferenceSubmit = async (
     await salesOrderStore.UpdateDetail(salesOrderDetail);
   }
   isDialogVisible.value = false;
+
+  salesOrder.value!.salesOrderDate = formatDate(
+    salesOrder.value!.salesOrderDate
+  );
 };
 
 const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
@@ -222,6 +226,10 @@ const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
   );
   salesOrder.value!.salesOrderDetails = afterDelete;
   isDialogVisible.value = false;
+
+  salesOrder.value!.salesOrderDate = formatDate(
+    salesOrder.value!.salesOrderDate
+  );
 };
 
 const onFormReferenceSubmit = async (reference: Reference) => {

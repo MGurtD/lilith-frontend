@@ -11,6 +11,7 @@ export const useSalesOrderStore = defineStore({
   state: () => ({
     salesOrder: undefined as SalesOrderHeader | undefined,
     salesOrders: undefined as Array<SalesOrderHeader> | undefined,
+    salesOrdersToDeliver: undefined as Array<SalesOrderHeader> | undefined,
   }),
   getters: {},
   actions: {
@@ -36,11 +37,14 @@ export const useSalesOrderStore = defineStore({
         );
       }
     },
-
-    async GetBetweenDates(startTime: string, endTime: string) {
-      this.salesOrders = await SalesServices.SalesOrder.GetBetweenDates(
-        startTime,
-        endTime
+    async GetByDeliveryNote(deliveryNoteId: string) {
+      this.salesOrders = await SalesServices.SalesOrder.GetByDeliveryNote(
+        deliveryNoteId
+      );
+    },
+    async GetToDeliver(customerId: string) {
+      this.salesOrdersToDeliver = await SalesServices.SalesOrder.GetToDeliver(
+        customerId
       );
     },
     async Update(id: string, salesOrder: SalesOrderHeader) {

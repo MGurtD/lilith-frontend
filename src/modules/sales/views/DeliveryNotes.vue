@@ -1,6 +1,6 @@
 <template>
   <DataTable
-    :value="salesOrderStore.salesOrders"
+    :value="deliveryNoteStore.deliveryNotes"
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
@@ -15,8 +15,8 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <ExerciseDatePicker
-              :exercises="sharedStore.exercises"
-              @range-selected="filterSalesOrder"
+              :exercises="sharedDataStore.exercises"
+              @range-selected="filterData"
             />
           </div>
           <div class="filter-field">
@@ -37,7 +37,7 @@
             :icon="PrimeIcons.FILTER"
             rounded
             raised
-            @click="filterSalesOrder"
+            @click="filterData"
           />
           <Button
             class="datatable-button mr-2"
@@ -55,22 +55,27 @@
         </div>
       </div>
     </template>
-    <Column
-      field="salesOrderNumber"
-      header="Número"
-      style="width: 15%"
-    ></Column>
-    <Column header="Data" style="width: 15%">
+    <Column field="number" header="Número" style="width: 15%"></Column>
+    <Column header="Data Creació" style="width: 15%">
       <template #body="slotProps">
-        {{ formatDate(slotProps.data.salesOrderDate) }}
+        {{ formatDate(slotProps.data.createdOn) }}
       </template>
     </Column>
-    <Column
-      field="customerComercialName"
-      header="Client"
-      style="width: 40%"
-    ></Column>
-    <Column header="Estat" style="width: 20%">
+    <Column header="Data Entrega" style="width: 15%">
+      <template #body="slotProps">
+        {{
+          slotProps.data.deliveryDate
+            ? formatDate(slotProps.data.deliveryDate)
+            : ""
+        }}
+      </template>
+    </Column>
+    <Column header="Client" style="width: 30%">
+      <template #body="slotProps">
+        {{ getCustomerById(slotProps.data.customerId) }}
+      </template>
+    </Column>
+    <Column header="Estat" style="width: 30%">
       <template #body="slotProps">
         {{ getStatusNameById(slotProps.data.statusId) }}
       </template>
@@ -98,7 +103,7 @@
   >
     <FormCreateOrderOrInvoice
       :create-request="createRequest"
-      @submit="createOrder"
+      @submit="createDeliveryNote"
     />
   </Dialog>
 </template>
@@ -109,7 +114,6 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
-import { useSalesOrderStore } from "../store/salesOrder";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
@@ -122,15 +126,17 @@ import {
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
-import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
+import { useExerciseStore } from "../../shared/store/exercise";
+import { useDeliveryNoteStore } from "../store/deliveryNote";
+import { useSharedDataStore } from "../../shared/store/masterData";
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 const store = useStore();
-const sharedStore = useSharedDataStore();
-const salesOrderStore = useSalesOrderStore();
+const sharedDataStore = useSharedDataStore();
+const deliveryNoteStore = useDeliveryNoteStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
@@ -141,20 +147,20 @@ const filter = ref({
 });
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear comanda",
+  title: "Crear albarà",
   closable: true,
   position: "center",
   modal: true,
 } as DialogOptions);
 
 onMounted(async () => {
-  lifecycleStore.fetchOneByName("SalesOrder");
+  lifecycleStore.fetchOneByName("DeliveryNote");
   referenceStore.fetchReferences();
   customerStore.fetchCustomers();
-  await sharedStore.fetchMasterData();
+  await sharedDataStore.fetchMasterData();
 
   setCurrentYear();
-  await filterSalesOrder();
+  await filterData();
 
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
@@ -164,7 +170,9 @@ onMounted(async () => {
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
-  const currentExercise = sharedStore.exercises?.find((e) => e.name === year);
+  const currentExercise = sharedDataStore.exercises?.find(
+    (e) => e.name === year
+  );
 
   if (currentExercise) {
     store.exercisePicker.exercise = currentExercise;
@@ -195,14 +203,14 @@ const createButtonClick = () => {
   dialogOptions.visible = true;
 };
 
-const filterSalesOrder = async () => {
+const filterData = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
       store.exercisePicker.dates[0]
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await salesOrderStore.GetFiltered(
+    await deliveryNoteStore.GetFiltered(
       startTime,
       endTime,
       filter.value.customerId
@@ -223,11 +231,17 @@ const getStatusNameById = (id: string) => {
   else return "";
 };
 
-const createOrder = async () => {
+const getCustomerById = (id: string) => {
+  const status = customerStore.customers?.find((s) => s.id === id);
+  if (status) return status.comercialName;
+  else return "";
+};
+
+const createDeliveryNote = async () => {
   dialogOptions.visible = false;
-  const created = await salesOrderStore.Create(createRequest.value);
+  const created = await deliveryNoteStore.Create(createRequest.value);
   if (created) {
-    router.push({ path: `/salesorder/${createRequest.value.id}` });
+    router.push({ path: `/deliverynote/${createRequest.value.id}` });
   }
 };
 
@@ -237,18 +251,18 @@ const editRow = (row: DataTableRowClickEvent) => {
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/salesorder/${row.data.id}` });
+    router.push({ path: `/deliverynote/${row.data.id}` });
   }
 };
 
 const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
   confirm.require({
-    message: `Està segur que vol eliminar la comanda?`,
+    message: `Està segur que vol eliminar l'albarà?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await salesOrderStore.Delete(order.id);
+      const deleted = await deliveryNoteStore.Delete(order.id);
       if (deleted) {
         toast.add({
           severity: "success",
@@ -256,7 +270,7 @@ const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
           life: 3000,
         });
 
-        await filterSalesOrder();
+        await filterData();
       }
     },
   });
