@@ -107,7 +107,7 @@ const getReferenceInfo = () => {
   if (reference) {
     props.salesOrderDetail.description = `${reference.code} (${reference.version}) - ${reference.description}`;
     props.salesOrderDetail.isInvoiced = false;
-    props.salesOrderDetail.isServed = false;
+    props.salesOrderDetail.isDelivered = false;
     props.salesOrderDetail.unitCost = reference?.cost;
     props.salesOrderDetail.unitPrice = reference?.price;
     updateImports();

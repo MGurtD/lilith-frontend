@@ -82,7 +82,7 @@ const onSelectedClick = () => {
       salesOrderHeaderId: sd.salesOrderId,
       description: sd.description,
       isInvoiced: true,
-      isServed: sd.isServed,
+      isDelivered: sd.isServed,
       quantity: sd.quantity,
       referenceId: sd.referenceId,
       id: sd.id,

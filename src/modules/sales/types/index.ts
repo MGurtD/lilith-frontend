@@ -18,7 +18,7 @@ export interface SalesOrderDetail {
   totalCost: number;
   amount: number;
   estimatedDeliveryDate: Date;
-  isServerd: boolean;
+  isDelivered: boolean;
   isInvoiced: boolean;
 }
 
@@ -97,7 +97,7 @@ export interface SalesOrderDetail {
   unitPrice: number;
   totalCost: number;
   amount: number;
-  isServed: boolean;
+  isDelivered: boolean;
   isInvoiced: boolean;
 }
 

@@ -17,7 +17,7 @@
   <TableDeliveryNoteDetails
     v-if="deliveryNote"
     :orders="salesOrderStore.salesOrders"
-    :canDelete="true"
+    :canDelete="canModifyDetails"
     @delete="deleteSalesOrder"
   >
     <template #header>
@@ -27,6 +27,7 @@
         <span class="text-l text-900 font-bold">Linies de l'albarà</span>
         <div>
           <Button
+            :disabled="!canModifyDetails"
             :size="'small'"
             label="Afegir comanda"
             @click="openSalesOrderSelector()"
@@ -54,7 +55,7 @@
 import SelectorOrders from "../components/SelectorOrders.vue";
 import FormDeliveryNote from "../components/FormDeliveryNote.vue";
 import TableDeliveryNoteDetails from "../components/TableDeliveryNoteDetails.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
@@ -68,6 +69,7 @@ import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { DeliveryNote, DeliveryNoteDetail, SalesOrderHeader } from "../types";
 import { formatDate } from "../../../utils/functions";
 import { useSalesOrderStore } from "../store/salesOrder";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const deliveryNoteForm = ref();
 
@@ -80,18 +82,35 @@ const salesOrderStore = useSalesOrderStore();
 const customerStore = useCustomersStore();
 const plantModelStore = usePlantModelStore();
 const referenceStore = useReferenceStore();
+const lifecycleStore = useLifecyclesStore();
 const { deliveryNote } = storeToRefs(deliveryNoteStore);
 
 const dialogTitle = "Selector de comandes";
 const isDialogVisible = ref(false);
+const initialStatusId = ref("");
+
+const canModifyDetails = computed(() => {
+  if (!lifecycleStore.lifecycle) return false;
+  if (!lifecycleStore.lifecycle.statuses) return false;
+
+  const deliveredStatus = lifecycleStore.lifecycle.statuses.find(
+    (s) => s.name === "Entregat"
+  );
+  if (!deliveredStatus) return false;
+
+  return deliveredStatus.id !== initialStatusId.value;
+});
 
 const loadView = async () => {
   const id = route.params.id as string;
   await deliveryNoteStore.GetById(id);
+  initialStatusId.value = deliveryNoteStore.deliveryNote!.statusId;
   await salesOrderStore.GetByDeliveryNote(id);
   referenceStore.fetchReferencesByModule("sales");
   plantModelStore.fetchSites();
-  customerStore.fetchCustomers();
+
+  if (!customerStore.customers) customerStore.fetchCustomers();
+  if (!lifecycleStore.lifecycle) lifecycleStore.fetchOneByName("DeliveryNote");
 
   let pageTitle = "";
   if (deliveryNote.value) {

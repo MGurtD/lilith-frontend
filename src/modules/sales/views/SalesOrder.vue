@@ -167,7 +167,7 @@ const openReferencesForm = (
       salesOrderHeaderId: "",
       description: "",
       estimatedDeliveryDate: new Date(),
-      isServerd: false,
+      isDelivered: false,
       isInvoiced: false,
     } as SalesOrderDetail;
 
