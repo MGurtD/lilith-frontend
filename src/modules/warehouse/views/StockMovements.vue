@@ -1,11 +1,12 @@
 <template>
   <div>
     <DataTable
-      class="small-datatable"
-      tablStyle="min-width:100%"
+      class="p-datatable-sm"
+      tableStyle="min-width:100%"
       scrollable
       scrollHeight="80vh"
-      sortMode="multiple"
+      sortField="movementDate"
+      :sortOrder="1"
       :value="stockMovementStore.stockMovements"
     >
       <template #header>
@@ -38,12 +39,15 @@
           </div>
         </div>
       </template>
-      <Column header="Data moviment" :sortable="true" style="width: 10%">
+      <Column header="Data" field="movementDate" sortable style="width: 15%">
         <template #body="slotProps">
-          {{ formatDate(slotProps.data.movementDate) }}
+          {{ formatDateTime(slotProps.data.movementDate) }}
         </template>
       </Column>
-      <Column header="Producte" :sortable="true" style="width: 20%">
+      <Column
+        header="Referència"
+        style="width: 20%"
+      >
         <template #body="slotProps">
           {{ getReferenceNameById(slotProps.data.referenceId) }}
         </template></Column
@@ -56,13 +60,11 @@
       <Column
         field="description"
         header="Descripció"
-        :sortable="true"
         style="width: 25%"
       ></Column>
       <Column
         field="movementType"
         header="Tipus de moviment"
-        :sortable="true"
         style="width: 10%"
       ></Column>
       <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
@@ -71,10 +73,7 @@
 </template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
-import { v4 as uuidv4 } from "uuid";
-import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useStockMovementStore } from "../store/stockMovement";
 import { useReferenceStore } from "../../shared/store/reference";
@@ -84,12 +83,10 @@ import { PrimeIcons } from "primevue/api";
 import { Exercise } from "../../shared/types";
 import {
   formatDateForQueryParameter,
-  formatDate,
+  formatDateTime,
 } from "../../../utils/functions";
 
 const toast = useToast();
-const confirm = useConfirm();
-const router = useRouter();
 const store = useStore();
 const stockMovementStore = useStockMovementStore();
 const referenceStore = useReferenceStore();

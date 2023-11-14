@@ -43,6 +43,7 @@ export interface SalesOrderHeader {
   country: string;
   vatNumber: string;
   statusId: string;
+  deliveryNoteId: string;
   salesOrderDetails: Array<SalesOrderDetail> | undefined;
 }
 export interface Customer {

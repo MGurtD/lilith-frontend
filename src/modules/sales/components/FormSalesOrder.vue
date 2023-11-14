@@ -29,7 +29,7 @@
           <label class="block text-900 mb-2">Data Comanda</label>
           <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
         </div>
-        <div class="mt-1">
+        <div class="mt-2">
           <label class="block text-900 mb-2">Estat</label>
           <Dropdown
             v-model="salesOrder.statusId"
@@ -44,8 +44,8 @@
           />
         </div>
       </section>
-      <section class="three-columns">
-        <div class="mt-1">
+      <section class="four-columns">
+        <div class="mt-2">
           <label class="block text-900 mb-2">Origen</label>
           <Dropdown
             v-model="salesOrder.siteId"
@@ -60,7 +60,7 @@
             @update:modelValue="updateSite()"
           />
         </div>
-        <div class="mt-1">
+        <div class="mt-2">
           <label class="block text-900 mb-2">Client</label>
           <Dropdown
             v-model="salesOrder.customerId"
@@ -75,7 +75,7 @@
             @update:modelValue="updateCustomer()"
           />
         </div>
-        <div class="mt-1">
+        <div class="mt-2">
           <BaseInput
             :type="BaseInputType.TEXT"
             label="Comanda Client"
@@ -83,12 +83,21 @@
             v-model="salesOrder.customerSalesOrderNumber"
           />
         </div>
+        <div class="mt-2">
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            :disabled="true"
+            label="Albarà Entrega"
+            id="deliveryNote"
+            v-model="deliveryNoteNumber"
+          />
+        </div>
       </section>
     </form>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useSalesOrderStore } from "../store/salesOrder";
 import { useCustomersStore } from "../store/customers";
@@ -106,6 +115,7 @@ import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
 import { convertDateTimeToJSON } from "../../../utils/functions";
+import { useDeliveryNoteStore } from "../store/deliveryNote";
 
 const emit = defineEmits<{
   (e: "submit", salesOrder: SalesOrderHeader): void;
@@ -117,10 +127,16 @@ const customerStore = useCustomersStore();
 const plantModelStore = usePlantModelStore();
 const exerciseStore = useExerciseStore();
 const lifeCycleStore = useLifecyclesStore();
-const referenceStore = useReferenceStore();
+const deliveryNoteStore = useDeliveryNoteStore();
 const toast = useToast();
 
 const { salesOrder } = storeToRefs(salesOrderStore);
+
+const deliveryNoteNumber = computed(() => {
+  return deliveryNoteStore.deliveryNote
+    ? deliveryNoteStore.deliveryNote.number
+    : "";
+});
 
 const schema = Yup.object().shape({
   siteId: Yup.string().required("L'origen es obligatori"),

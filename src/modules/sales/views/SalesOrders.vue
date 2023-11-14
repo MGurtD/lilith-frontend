@@ -68,7 +68,12 @@
     <Column
       field="customerComercialName"
       header="Client"
-      style="width: 40%"
+      style="width: 30%"
+    ></Column>
+    <Column
+      field="customerOrderNumber"
+      header="Número Client"
+      style="width: 20%"
     ></Column>
     <Column header="Estat" style="width: 20%">
       <template #body="slotProps">

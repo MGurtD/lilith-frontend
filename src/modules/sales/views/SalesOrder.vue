@@ -28,6 +28,7 @@
             <span class="text-l text-900 font-bold">Linies de la comanda</span>
             <div>
               <Button
+                :disabled="deliveryNoteStore.deliveryNote !== undefined"
                 :size="'small'"
                 label="Afegir línea"
                 @click="openReferencesForm(FormActionMode.CREATE, {} as any)"
@@ -95,6 +96,7 @@ import FormSalesOrderDetail from "../components/FormSalesOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FormReference from "../../shared/components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
+import { useDeliveryNoteStore } from "../store/deliveryNote";
 
 const salesOrderForm = ref();
 
@@ -108,6 +110,7 @@ const plantModelStore = usePlantModelStore();
 const exerciseStore = useExerciseStore();
 const lifeCycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
+const deliveryNoteStore = useDeliveryNoteStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
 const dialogTitle = "Línia de comanda";
@@ -133,6 +136,13 @@ const loadView = async () => {
     salesOrder.value.salesOrderDate = formatDate(
       salesOrder.value.salesOrderDate
     );
+
+    // Get the related DeliveryNote info
+    if (salesOrder.value.deliveryNoteId) {
+      deliveryNoteStore.GetById(salesOrder.value.deliveryNoteId);
+    } else if (deliveryNoteStore.deliveryNote) {
+      deliveryNoteStore.deliveryNote = undefined;
+    }
   }
 
   store.setMenuItem({
