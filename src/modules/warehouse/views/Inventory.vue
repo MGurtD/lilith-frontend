@@ -10,8 +10,16 @@
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
         <span class="text-xl text-900 font-bold">Inventari</span>
-        <Button :icon="PrimeIcons.PLUS" rounded raised @click="newMovement" />
-        <Button :icon="PrimeIcons.SAVE" rounded raised @click="saveMovement" />
+        <div>
+          <Button :icon="PrimeIcons.PLUS" rounded raised @click="newMovement" />
+          &nbsp;
+          <Button
+            :icon="PrimeIcons.SAVE"
+            rounded
+            raised
+            @click="saveMovement"
+          />
+        </div>
       </div>
     </template>
     <Column header="Producte" style="width: 28%">
