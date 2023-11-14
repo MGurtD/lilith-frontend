@@ -36,8 +36,11 @@
     <Column field="diameter" header="Diàmetre mm" style="width: 12%"></Column>
     <Column field="thickness" header="Gruix mm" style="width: 12%"></Column>
   </DataTable>
-  <Dialog :closable="true" v-model:visible="isDialogVisible" position="center">
-    <FormInventoryNewMovements :newStock="newStockMovement" />
+  <Dialog :closable="true" v-model:visible="isDialogVisible" :modal="true">
+    <FormInventoryNewMovements
+      :newMovement="newStockMovement"
+      @submit="submitDetailForm"
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -58,6 +61,7 @@ import { Warehouse, Inventory, StockMovement } from "../types";
 import { useStockMovementStore } from "../store/stockMovement";
 import router from "../../../router";
 import FormInventoryNewMovements from "../components/FormInventoryNewMovements.vue";
+import { getNewUuid } from "../../../utils/functions";
 
 const store = useStore();
 
@@ -68,7 +72,16 @@ const stockMovementStore = useStockMovementStore();
 const toast = useToast();
 
 onMounted(async () => {
-  await stockStore.fetchStocks();
+  refreshData();
+  await referenceStore.fetchReferences();
+  store.setMenuItem({
+    icon: PrimeIcons.BOX,
+    title: "Inventari",
+  });
+});
+
+const refreshData = () => {
+  stockStore.fetchStocks();
   inventoryStore.inventories = [];
   stockStore.stocks?.forEach((stock) => {
     let invent = {
@@ -88,13 +101,7 @@ onMounted(async () => {
     } as Inventory;
     inventoryStore.inventories?.push(invent);
   });
-
-  await referenceStore.fetchReferences();
-  store.setMenuItem({
-    icon: PrimeIcons.BOX,
-    title: "Inventari",
-  });
-});
+};
 
 const getReferenceNameById = (id: string) => {
   const reference = referenceStore.references?.find((s) => s.id === id);
@@ -102,10 +109,30 @@ const getReferenceNameById = (id: string) => {
   else return "";
 };
 const isDialogVisible = ref(false);
-const newStockMovement = ref(undefined as undefined | Inventory);
+const newStockMovement = ref({} as Inventory);
+
+const submitDetailForm = (inventory: Inventory) => {
+  inventoryStore.inventories?.push(inventory);
+  isDialogVisible.value = false;
+};
 
 const newMovement = () => {
   isDialogVisible.value = true;
+  newStockMovement.value = {
+    id: getNewUuid(),
+    stockId: getNewUuid(),
+    movementType: "",
+    locationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    referenceId: "",
+    oldQuantity: 0,
+    newQuantity: 0,
+    width: 0,
+    length: 0,
+    height: 0,
+    diameter: 0,
+    thickness: 0,
+    movementDate: new Date(),
+  } as Inventory;
 };
 
 const saveMovement = () => {
@@ -167,12 +194,13 @@ const saveMovement = () => {
         console.log(result);
       });
 
-      if (result == false) {
+      if (result === false) {
         toast.add({
           severity: "error",
           summary: "Error al crear el moviment de magatzem",
           life: 2500,
         });
+        refreshData();
         return;
       }
     });
@@ -184,5 +212,6 @@ const saveMovement = () => {
     });
     router.push({ path: `/stock` });
   }
+  refreshData();
 };
 </script>

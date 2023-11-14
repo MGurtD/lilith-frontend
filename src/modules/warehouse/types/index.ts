@@ -22,7 +22,7 @@ export interface StockMovement {
   id: string;
   stockId: string;
   movementType: string;
-  locationId: string;
+  locationId: null | string;
   referenceId: string;
   quantity: number;
   width: number;
