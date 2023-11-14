@@ -91,6 +91,7 @@ import { useCustomersStore } from "../store/customers";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useTaxesStore } from "../../shared/store/tax";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import FormSalesOrderDetail from "../components/FormSalesOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
@@ -111,6 +112,7 @@ const exerciseStore = useExerciseStore();
 const lifeCycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const deliveryNoteStore = useDeliveryNoteStore();
+const taxesStore = useTaxesStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
 const dialogTitle = "Línia de comanda";
@@ -127,6 +129,7 @@ const loadView = async () => {
   plantModelStore.fetchSites();
   exerciseStore.fetchAll();
   customerStore.fetchCustomers();
+  taxesStore.fetchAll();
 
   let pageTitle = "";
   if (salesOrder.value) {
