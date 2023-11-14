@@ -13,7 +13,7 @@
 <script setup lang="ts">
 defineProps<{
   value: boolean;
-  showColor: boolean;
+  showColor?: boolean;
 }>();
 </script>
 

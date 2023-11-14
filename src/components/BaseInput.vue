@@ -8,7 +8,7 @@ defineProps<{
   label?: string;
   icon?: string;
   decimals?: number;
-  modelValue: string | number;
+  modelValue: string | number | null;
 }>();
 
 const emit = defineEmits<{

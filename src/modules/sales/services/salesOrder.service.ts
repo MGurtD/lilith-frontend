@@ -14,9 +14,6 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
     return response.status === 200;
-    //if (response.status === 200) {
-    //  return response.data as GenericResponse<SalesOrderHeader>;
-    //}
   }
 
   async GetBetweenDates(
@@ -36,6 +33,24 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     customerId: string
   ): Promise<Array<SalesOrderHeader> | undefined> {
     const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<SalesOrderHeader>;
+    }
+  }
+
+  async GetByDeliveryNote(deliveryNoteId: string) {
+    const endpoint = `${this.resource}/DeliveryNote/${deliveryNoteId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<SalesOrderHeader>;
+    }
+  }
+
+  async GetToDeliver(
+    customerId: string
+  ): Promise<Array<SalesOrderHeader> | undefined> {
+    const endpoint = `${this.resource}/ToDeliver?&customerId=${customerId}`;
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<SalesOrderHeader>;

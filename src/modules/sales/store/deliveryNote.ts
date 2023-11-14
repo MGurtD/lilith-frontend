@@ -3,8 +3,10 @@ import {
   DeliveryNote,
   DeliveryNoteDetail,
   CreateSalesHeaderRequest,
+  SalesOrderHeader,
 } from "../types";
 import SalesServices from "../services";
+import { GenericResponse } from "../../../types";
 
 export const useDeliveryNoteStore = defineStore({
   id: "deliveryNote",
@@ -51,20 +53,20 @@ export const useDeliveryNoteStore = defineStore({
       const deleted = await SalesServices.DeliveryNote.delete(id);
       return deleted;
     },
-    async CreateDetail(detail: DeliveryNoteDetail): Promise<boolean> {
-      const response = await SalesServices.DeliveryNote.CreateDetail(detail);
-      if (response.result) await this.GetById(response.content!.deliveryNoteId);
-      return response.result;
+
+    async AddOrder(
+      id: string,
+      order: SalesOrderHeader
+    ): Promise<GenericResponse<any>> {
+      const response = await SalesServices.DeliveryNote.AddOrder(id, order);
+      return response;
     },
-    async UpdateDetail(detail: DeliveryNoteDetail): Promise<boolean> {
-      const response = await SalesServices.DeliveryNote.UpdateDetail(detail);
-      if (response.result) await this.GetById(response.content!.deliveryNoteId);
-      return response.result;
-    },
-    async DeleteDetail(detail: DeliveryNoteDetail): Promise<boolean> {
-      const response = await SalesServices.DeliveryNote.DeleteDetail(detail);
-      if (response.result) await this.GetById(response.content!.deliveryNoteId);
-      return response.result;
+    async DeleteOrder(
+      id: string,
+      order: SalesOrderHeader
+    ): Promise<GenericResponse<any>> {
+      const response = await SalesServices.DeliveryNote.DeleteOrder(id, order);
+      return response;
     },
   },
 });

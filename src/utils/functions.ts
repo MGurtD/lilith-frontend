@@ -43,7 +43,12 @@ export const formatDate = (date: string | Date) => {
     timeZone: "Europe/Madrid",
   });
 
-  return formatter.format(new Date(date));
+  let formattedDate = "";
+  try {
+    formattedDate = formatter.format(new Date(date));
+  } catch (err) {}
+
+  return formattedDate;
 };
 
 export const convertDateTimeToJSON = (dateTime: any): any => {

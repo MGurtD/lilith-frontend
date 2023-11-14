@@ -2,6 +2,7 @@ import {
   CreateSalesHeaderRequest,
   DeliveryNote,
   DeliveryNoteDetail,
+  SalesOrderHeader,
 } from "../types";
 import apiClient from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
@@ -39,27 +40,20 @@ export class DeliveryNoteService extends BaseService<DeliveryNote> {
     }
   }
 
-  async CreateDetail(
-    request: DeliveryNoteDetail
-  ): Promise<GenericResponse<DeliveryNoteDetail>> {
-    const endpoint = `${this.resource}/Detail`;
-    const response = await apiClient.post(endpoint, request);
-    return response.data as GenericResponse<DeliveryNoteDetail>;
+  async AddOrder(
+    id: string,
+    order: SalesOrderHeader
+  ): Promise<GenericResponse<any>> {
+    const endpoint = `${this.resource}/${id}/AddOrder`;
+    const response = await apiClient.post(endpoint, order);
+    return response.data as GenericResponse<any>;
   }
-
-  async UpdateDetail(
-    request: DeliveryNoteDetail
-  ): Promise<GenericResponse<DeliveryNoteDetail>> {
-    const endpoint = `${this.resource}/Detail/${request.id}`;
-    const response = await apiClient.put(endpoint, request);
-    return response.data as GenericResponse<DeliveryNoteDetail>;
-  }
-
-  async DeleteDetail(
-    request: DeliveryNoteDetail
-  ): Promise<GenericResponse<DeliveryNoteDetail>> {
-    const endpoint = `${this.resource}/Detail/${request.id}`;
-    const response = await apiClient.delete(endpoint);
-    return response.data as GenericResponse<DeliveryNoteDetail>;
+  async DeleteOrder(
+    id: string,
+    order: SalesOrderHeader
+  ): Promise<GenericResponse<any>> {
+    const endpoint = `${this.resource}/${id}/RemoveOrder`;
+    const response = await apiClient.post(endpoint, order);
+    return response.data as GenericResponse<any>;
   }
 }
