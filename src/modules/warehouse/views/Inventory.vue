@@ -80,7 +80,26 @@ const stockMovementStore = useStockMovementStore();
 const toast = useToast();
 
 onMounted(async () => {
-  refreshData();
+  await stockStore.fetchStocks();
+  inventoryStore.inventories = [];
+  stockStore.stocks?.forEach((stock) => {
+    let invent = {
+      id: uuidv4(),
+      stockId: stock.id,
+      movementType: "bal",
+      locationId: stock.locationId,
+      referenceId: stock.referenceId,
+      oldQuantity: stock.quantity,
+      newQuantity: stock.quantity,
+      width: stock.width,
+      length: stock.length,
+      height: stock.height,
+      diameter: stock.diameter,
+      thickness: stock.thickness,
+      movementDate: new Date(),
+    } as Inventory;
+    inventoryStore.inventories?.push(invent);
+  });
   await referenceStore.fetchReferences();
   store.setMenuItem({
     icon: PrimeIcons.BOX,
@@ -143,7 +162,7 @@ const newMovement = () => {
   } as Inventory;
 };
 
-const saveMovement = () => {
+const saveMovement = async () => {
   let stock = {
     id: "",
     stockId: "",
@@ -162,7 +181,7 @@ const saveMovement = () => {
   let result = false;
   inventoryStore.inventories
     ?.filter((el) => el.newQuantity != el.oldQuantity)
-    .forEach((m) => {
+    .forEach(async (m) => {
       if (m.newQuantity < m.oldQuantity) {
         stock = {
           id: m.id,
@@ -197,29 +216,21 @@ const saveMovement = () => {
         };
       }
 
-      stockMovementStore.Create(stock).then((value) => {
-        result = value;
-        console.log(result);
-      });
-
-      if (result === false) {
+      result = await stockMovementStore.Create(stock);
+      if (result) {
+        toast.add({
+          severity: "success",
+          summary: "Inventari creat correctament",
+          life: 5000,
+        });
+        router.push({ path: `/inventory` });
+      } else {
         toast.add({
           severity: "error",
-          summary: "Error al crear el moviment de magatzem",
-          life: 2500,
+          summary: "Error al crear el moviment d'inventari",
+          life: 5000,
         });
-        refreshData();
-        return;
       }
     });
-  if (result) {
-    toast.add({
-      severity: "success",
-      summary: "Inventari creat correctament",
-      life: 5000,
-    });
-    router.push({ path: `/stock` });
-  }
-  refreshData();
 };
 </script>
