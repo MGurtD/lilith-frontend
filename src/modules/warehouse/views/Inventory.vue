@@ -53,21 +53,17 @@
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from "vue-router";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useStore } from "../../../store";
 import { useStockStore } from "../store/stock";
 import { useInventoryStore } from "../store/inventory";
 import { useReferenceStore } from "../../shared/store/reference";
 
-import { nextTick, onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-import { useConfirm } from "primevue/useconfirm";
-import { DataTableRowClickEvent } from "primevue/datatable";
-import { Warehouse, Inventory, StockMovement } from "../types";
+import { Inventory, StockMovement } from "../types";
 import { useStockMovementStore } from "../store/stockMovement";
-import router from "../../../router";
 import FormInventoryNewMovements from "../components/FormInventoryNewMovements.vue";
 import { getNewUuid } from "../../../utils/functions";
 
@@ -80,6 +76,15 @@ const stockMovementStore = useStockMovementStore();
 const toast = useToast();
 
 onMounted(async () => {
+  store.setMenuItem({
+    icon: PrimeIcons.BOX,
+    title: "Inventari",
+  });
+
+  await refreshData();
+});
+
+const refreshData = async () => {
   await stockStore.fetchStocks();
   inventoryStore.inventories = [];
   stockStore.stocks?.forEach((stock) => {
@@ -101,33 +106,6 @@ onMounted(async () => {
     inventoryStore.inventories?.push(invent);
   });
   await referenceStore.fetchReferences();
-  store.setMenuItem({
-    icon: PrimeIcons.BOX,
-    title: "Inventari",
-  });
-});
-
-const refreshData = () => {
-  stockStore.fetchStocks();
-  inventoryStore.inventories = [];
-  stockStore.stocks?.forEach((stock) => {
-    let invent = {
-      id: uuidv4(),
-      stockId: stock.id,
-      movementType: "bal",
-      locationId: stock.locationId,
-      referenceId: stock.referenceId,
-      oldQuantity: stock.quantity,
-      newQuantity: stock.quantity,
-      width: stock.width,
-      length: stock.length,
-      height: stock.height,
-      diameter: stock.diameter,
-      thickness: stock.thickness,
-      movementDate: new Date(),
-    } as Inventory;
-    inventoryStore.inventories?.push(invent);
-  });
 };
 
 const getReferenceNameById = (id: string) => {
@@ -179,6 +157,8 @@ const saveMovement = async () => {
     description: "",
   } as StockMovement;
   let result = false;
+  let promises = [] as Array<Promise<boolean>>;
+
   inventoryStore.inventories
     ?.filter((el) => el.newQuantity != el.oldQuantity)
     .forEach(async (m) => {
@@ -216,21 +196,25 @@ const saveMovement = async () => {
         };
       }
 
-      result = await stockMovementStore.Create(stock);
-      if (result) {
-        toast.add({
-          severity: "success",
-          summary: "Inventari creat correctament",
-          life: 5000,
-        });
-        router.push({ path: `/inventory` });
-      } else {
-        toast.add({
-          severity: "error",
-          summary: "Error al crear el moviment d'inventari",
-          life: 5000,
-        });
-      }
+      promises.push(stockMovementStore.Create(stock));
     });
+
+  const results = await Promise.all(promises);
+  console.log(results);
+  if (results.filter((p) => p === true).length === promises.length) {
+    toast.add({
+      severity: "success",
+      summary: "Inventari creat correctament",
+      life: 5000,
+    });
+
+    refreshData();
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al crear el moviment d'inventari",
+      life: 5000,
+    });
+  }
 };
 </script>
