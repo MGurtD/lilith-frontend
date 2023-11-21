@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { useSalesOrderStore } from "../store/salesOrder";
+import { useSalesOrderStore } from "../store/order";
 import { useCustomersStore } from "../store/customers";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";

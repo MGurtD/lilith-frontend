@@ -55,7 +55,7 @@
 import SelectorOrders from "../components/SelectorOrders.vue";
 import FormDeliveryNote from "../components/FormDeliveryNote.vue";
 import TableDeliveryNoteDetails from "../components/TableDeliveryNoteDetails.vue";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
@@ -66,9 +66,9 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
-import { DeliveryNote, DeliveryNoteDetail, SalesOrderHeader } from "../types";
+import { DeliveryNote, SalesOrderHeader } from "../types";
 import { formatDate } from "../../../utils/functions";
-import { useSalesOrderStore } from "../store/salesOrder";
+import { useSalesOrderStore } from "../store/order";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const deliveryNoteForm = ref();
@@ -93,6 +93,14 @@ const canModifyDetails = computed(() => {
   if (!lifecycleStore.lifecycle) return false;
   if (!lifecycleStore.lifecycle.statuses) return false;
 
+  // When delivery note is associated to an invoice, could not modify it's detail
+  if (
+    deliveryNote.value &&
+    deliveryNote.value.salesInvoiceId &&
+    deliveryNote.value.salesInvoiceId !== null
+  )
+    return false;
+
   const deliveredStatus = lifecycleStore.lifecycle.statuses.find(
     (s) => s.name === "Entregat"
   );
@@ -115,7 +123,7 @@ const loadView = async () => {
   let pageTitle = "";
   if (deliveryNote.value) {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Albará d'entrega ${deliveryNote.value.number}`;
+    pageTitle = `Albarà d'entrega ${deliveryNote.value.number}`;
 
     if (deliveryNote.value.deliveryDate) {
       deliveryNote.value.deliveryDate = formatDate(
@@ -167,11 +175,6 @@ const openSalesOrderSelector = async () => {
   isDialogVisible.value = true;
 };
 
-const deleteSalesOrder = async (order: SalesOrderHeader) => {
-  await deliveryNoteStore.DeleteOrder(deliveryNote.value!.id, order);
-  loadView();
-};
-
 const addSalesOrdersToDeliveryNote = async (
   orders: Array<SalesOrderHeader>
 ) => {
@@ -181,6 +184,11 @@ const addSalesOrdersToDeliveryNote = async (
   }
 
   isDialogVisible.value = false;
+  loadView();
+};
+
+const deleteSalesOrder = async (order: SalesOrderHeader) => {
+  await deliveryNoteStore.DeleteOrder(deliveryNote.value!.id, order);
   loadView();
 };
 </script>

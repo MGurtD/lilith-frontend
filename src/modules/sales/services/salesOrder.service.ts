@@ -50,7 +50,7 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
   async GetToDeliver(
     customerId: string
   ): Promise<Array<SalesOrderHeader> | undefined> {
-    const endpoint = `${this.resource}/ToDeliver?&customerId=${customerId}`;
+    const endpoint = `${this.resource}/ToDeliver?customerId=${customerId}`;
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<SalesOrderHeader>;

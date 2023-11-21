@@ -7,6 +7,7 @@ import {
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
   CreateSalesHeaderRequest,
+  DeliveryNote,
   InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
@@ -67,17 +68,21 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     return response.status === 200;
   }
 
-  async GetInvoiceableOrderDetails(
-    customerId: string
-  ): Promise<Array<InvoiceableOrderDetail> | undefined> {
-    const startTime = formatDateForQueryParameter(createDateFromNow(0, 0, -1));
-    const endTime = formatDateForQueryParameter(new Date());
-
-    const endpoint = `${this.resource}/InvoiceableOrderDetails?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;
-    const response = await this.apiClient.get(endpoint);
-    if (response.status === 200) {
-      return response.data as Array<InvoiceableOrderDetail>;
-    }
+  async AddDeliveryNote(
+    id: string,
+    deliveryNote: DeliveryNote
+  ): Promise<GenericResponse<any>> {
+    const endpoint = `${this.resource}/${id}/AddDeliveryNote`;
+    const response = await this.apiClient.post(endpoint, deliveryNote);
+    return response.data as GenericResponse<any>;
+  }
+  async RemoveDeliveryNote(
+    id: string,
+    deliveryNote: DeliveryNote
+  ): Promise<GenericResponse<any>> {
+    const endpoint = `${this.resource}/${id}/RemoveDeliveryNote`;
+    const response = await this.apiClient.post(endpoint, deliveryNote);
+    return response.data as GenericResponse<any>;
   }
 
   async CreateDetail(
@@ -86,14 +91,6 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     const endpoint = `${this.resource}/Detail`;
     const response = await this.apiClient.post(endpoint, request);
     return response.data;
-  }
-
-  async CreateInvoiceDetailsFromOrderDetails(
-    request: CreateInvoiceDetailsFromOrderDetailsRequest
-  ) {
-    const endpoint = `${this.resource}/Detail/FromOrderDetails`;
-    const response = await this.apiClient.post(endpoint, request);
-    return response.status === 200;
   }
 
   async UpdateDetail(request: SalesInvoiceDetail) {

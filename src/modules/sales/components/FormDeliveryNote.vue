@@ -19,17 +19,24 @@
         <div class="mt-1">
           <BaseInput
             :type="BaseInputType.TEXT"
-            label="Num. Comanda"
+            label="Número Albarà"
             id="salesOrderNumber"
             v-model="deliveryNote.number"
             disabled
           />
         </div>
-        <div class="mt-2">
-          <BaseInput
-            v-model="deliveryNote.deliveryDate"
-            label="Data Entrega"
-            :disabled="true"
+        <div class="mt-1">
+          <label class="block text-900 mb-2">Client</label>
+          <Dropdown
+            v-model="deliveryNote.customerId"
+            editable
+            :options="customerStore.customers"
+            optionValue="id"
+            optionLabel="comercialName"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.customerId,
+            }"
           />
         </div>
       </section>
@@ -49,31 +56,17 @@
           />
         </div>
         <div class="mt-2">
-          <label class="block text-900 mb-2">Origen</label>
-          <Dropdown
-            v-model="deliveryNote.siteId"
-            editable
-            :options="plantModelStore.sites"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.siteId,
-            }"
+          <BaseInput
+            v-model="deliveryNote.deliveryDate"
+            label="Data Entrega"
+            :disabled="true"
           />
         </div>
         <div class="mt-2">
-          <label class="block text-900 mb-2">Client</label>
-          <Dropdown
-            v-model="deliveryNote.customerId"
-            editable
-            :options="customerStore.customers"
-            optionValue="id"
-            optionLabel="comercialName"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.customerId,
-            }"
+          <BaseInput
+            v-model="salesInvoiceNumber"
+            label="Número de factura"
+            :disabled="true"
           />
         </div>
       </section>
@@ -81,10 +74,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useCustomersStore } from "../store/customers";
-import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { DeliveryNote } from "../types";
@@ -107,10 +99,15 @@ const emit = defineEmits<{
 }>();
 
 const customerStore = useCustomersStore();
-const plantModelStore = usePlantModelStore();
 const sharedDataStore = useSharedDataStore();
 const lifeCycleStore = useLifecyclesStore();
 const toast = useToast();
+
+const salesInvoiceNumber = computed(() => {
+  if (props.deliveryNote && props.deliveryNote.salesInvoice)
+    return props.deliveryNote.salesInvoice.invoiceNumber;
+  return "";
+});
 
 const schema = Yup.object().shape({
   siteId: Yup.string().required("L'origen es obligatori"),

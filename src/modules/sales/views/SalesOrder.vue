@@ -85,7 +85,7 @@ import { useStore } from "../../../store";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
-import { useSalesOrderStore } from "../store/salesOrder";
+import { useSalesOrderStore } from "../store/order";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useExerciseStore } from "../../shared/store/exercise";

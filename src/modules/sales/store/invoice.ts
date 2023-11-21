@@ -5,6 +5,7 @@ import {
   SalesInvoiceDetail,
   CreateSalesHeaderRequest,
   CreateInvoiceDetailsFromOrderDetailsRequest,
+  DeliveryNote,
 } from "../types";
 import { GenericResponse } from "../../../types";
 
@@ -49,7 +50,6 @@ export const useSalesInvoiceStore = defineStore({
           startDate,
           endDate
         );
-        console.log("GetFiltered", this.invoices);
       }
     },
     async Update(invoice: SalesInvoice) {
@@ -64,24 +64,34 @@ export const useSalesInvoiceStore = defineStore({
       return deleted;
     },
 
-    async CreateInvoiceDetailsFromOrderDetails(
-      createRequest: CreateInvoiceDetailsFromOrderDetailsRequest
-    ): Promise<boolean> {
-      const created =
-        await SalesService.SalesInvoice.CreateInvoiceDetailsFromOrderDetails(
-          createRequest
-        );
-      return created;
+    async AddDeliveryNote(
+      id: string,
+      deliveryNote: DeliveryNote
+    ): Promise<GenericResponse<any>> {
+      const response = await SalesService.SalesInvoice.AddDeliveryNote(
+        id,
+        deliveryNote
+      );
+      return response;
     },
+    async RemoveDeliveryNote(
+      id: string,
+      deliveryNote: DeliveryNote
+    ): Promise<GenericResponse<any>> {
+      const response = await SalesService.SalesInvoice.RemoveDeliveryNote(
+        id,
+        deliveryNote
+      );
+      return response;
+    },
+
     async CreateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<GenericResponse<any>> {
       const response = await SalesService.SalesInvoice.CreateDetail(
         invoiceDetail
       );
-      console.log("CreateInvoiceDetail before", invoiceDetail);
       await this.GetById(invoiceDetail.salesInvoiceId);
-      console.log("CreateInvoiceDetail after", this.invoice);
       return response;
     },
     async UpdateInvoiceDetail(

@@ -1,7 +1,6 @@
 import {
   CreateSalesHeaderRequest,
   DeliveryNote,
-  DeliveryNoteDetail,
   SalesOrderHeader,
 } from "../types";
 import apiClient from "../../../api/api.client";
@@ -34,6 +33,24 @@ export class DeliveryNoteService extends BaseService<DeliveryNote> {
     customerId: string
   ): Promise<Array<DeliveryNote> | undefined> {
     const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}&customerId=${customerId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<DeliveryNote>;
+    }
+  }
+
+  async GetByInvoiceId(invoiceId: string) {
+    const endpoint = `${this.resource}/Invoice/${invoiceId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<DeliveryNote>;
+    }
+  }
+
+  async GetToInvoice(
+    customerId: string
+  ): Promise<Array<DeliveryNote> | undefined> {
+    const endpoint = `${this.resource}/ToInvoice?customerId=${customerId}`;
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<DeliveryNote>;

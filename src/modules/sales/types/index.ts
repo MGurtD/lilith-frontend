@@ -177,7 +177,7 @@ export interface InvoiceableOrderDetail {
 export interface SalesInvoiceDetail {
   id: string;
   salesInvoiceId: string;
-  salesOrderDetailId: string;
+  deliveryNoteDetailId: string;
   taxId: string;
   referenceId: string;
   reference: Reference;
@@ -187,6 +187,7 @@ export interface SalesInvoiceDetail {
   unitPrice: number;
   totalCost: number;
   amount: number;
+  deliveryNoteDetail?: DeliveryNoteDetail;
 }
 
 export interface SalesInvoiceDueDate {
@@ -212,7 +213,9 @@ export interface DeliveryNote {
   customerId: string;
   siteId: string;
   statusId: string;
+  salesInvoiceId: string;
   details: Array<DeliveryNoteDetail>;
+  salesInvoice?: SalesInvoice;
   id: string;
   disabled: string;
 }
