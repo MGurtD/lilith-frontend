@@ -73,7 +73,7 @@ import { useCustomersStore } from "../store/customers";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { PrimeIcons } from "primevue/api";
-import { formatDate } from "../../../utils/functions";
+import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { DialogOptions } from "../../../types/component";
 import SplitButton from "primevue/splitbutton";
@@ -143,9 +143,15 @@ const loadView = async () => {
 };
 
 const updateInvoice = async () => {
-  const updated = await invoiceStore.Update(invoice.value!);
-  if (updated) {
-    router.back();
+  if (invoice.value) {
+    invoice.value.invoiceDate = convertDateTimeToJSON(
+      invoice.value.invoiceDate
+    );
+
+    const updated = await invoiceStore.Update(invoice.value);
+    if (updated) {
+      router.back();
+    }
   }
 };
 

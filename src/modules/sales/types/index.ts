@@ -231,4 +231,5 @@ export interface DeliveryNoteDetail {
   unitPrice: number;
   totalCost: number;
   amount: number;
+  isInvoiced: boolean;
 }
