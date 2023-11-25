@@ -67,6 +67,12 @@ export const usePlantModelStore = defineStore({
         disabled: false,
       } as Workcenter;
     },
+    async fetchActiveModel() {
+      this.workcenterTypes = await workcenterTypeService.getActive();
+      this.workcenters = await workcenterService.getActive();
+      this.machineStatuses = await machineStatusService.getActive();
+      this.operatorTypes = await operatorTypeService.getActive();
+    },
     async fetchWorkcenters() {
       this.workcenters = await workcenterService.getAll();
     },

@@ -1,3 +1,6 @@
+import { integer } from "@vuelidate/validators";
+import { Reference } from "../../shared/types";
+
 export interface Enterprise {
   id: string;
   name: string;
@@ -77,4 +80,45 @@ export interface OperatorType {
   description: string;
   cost: number;
   disabled: boolean;
+}
+
+export interface WorkMaster {
+  id: string;
+  referenceId: string;
+  reference?: Reference;
+  baseQuantity: number;
+  disabled: boolean;
+  phases: Array<WorkMasterPhase>;
+}
+
+export interface WorkMasterPhase {
+  id: string;
+  phaseCode: string;
+  phaseDescription: string;
+  workMasterId: string;
+  disabled: boolean;
+  details?: Array<WorkMasterPhaseDetail>;
+  billOfMaterials?: Array<WorkMasterPhaseBillOfMaterials>;
+}
+
+export interface WorkMasterPhaseDetail {
+  id: string;
+  workMasterPhaseId: string;
+  workcenterTypeId: string;
+  preferredWorkcenterId?: string | null;
+  operatorTypeId: string;
+  machineStatusId: string;
+  estimatedTime: number;
+  isCycleTime: boolean;
+  isExternalWork: boolean;
+  externalWorkCost: number;
+}
+
+export interface WorkMasterPhaseBillOfMaterials {
+  id: string;
+  workMasterPhaseId: string;
+  referenceId: string;
+  quantity: number;
+  wasteReferenceId?: string;
+  waste: number;
 }

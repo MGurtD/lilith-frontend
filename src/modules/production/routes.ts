@@ -1,23 +1,27 @@
 import { RouteRecordRaw } from "vue-router";
 
-const Enterprise = () => import("./views/enterprise.vue");
-const Enterprises = () => import("./views/enterprises.vue");
-const Site = () => import("./views/site.vue");
-const Sites = () => import("./views/sites.vue");
-const Area = () => import("./views/area.vue");
-const Areas = () => import("./views/areas.vue");
-const WorkcenterType = () => import("./views/workcentertype.vue");
-const WorkcenterTypes = () => import("./views/workcentertypes.vue");
-const Workcenter = () => import("./views/workcenter.vue");
-const Workcenters = () => import("./views/workcenters.vue");
-const Workcentercost = () => import("./views/workcentercost.vue");
-const Workcentercosts = () => import("./views/workcentercosts.vue");
-const MachineStatus = () => import("./views/machinestatus.vue");
-const MachineStatuses = () => import("./views/machinestatuses.vue");
-const Operator = () => import("./views/operator.vue");
-const Operators = () => import("./views/operators.vue");
-const OperatorType = () => import("./views/operatortype.vue");
-const OperatorTypes = () => import("./views/operatortypes.vue");
+const Enterprises = () => import("./views/Enterprises.vue");
+const Enterprise = () => import("./views/Enterprise.vue");
+const Sites = () => import("./views/Sites.vue");
+const Site = () => import("./views/Site.vue");
+const Areas = () => import("./views/Areas.vue");
+const Area = () => import("./views/Area.vue");
+const WorkcenterTypes = () => import("./views/WorkcenterTypes.vue");
+const WorkcenterType = () => import("./views/WorkcenterType.vue");
+const Workcenters = () => import("./views/Workcenters.vue");
+const Workcenter = () => import("./views/Workcenter.vue");
+const Workcentercosts = () => import("./views/WorkcenterCosts.vue");
+const Workcentercost = () => import("./views/WorkcenterCost.vue");
+const MachineStatuses = () => import("./views/MachineStatuses.vue");
+const MachineStatus = () => import("./views/MachineStatus.vue");
+const Operators = () => import("./views/Operators.vue");
+const Operator = () => import("./views/Operator.vue");
+const OperatorTypes = () => import("./views/OperatorTypes.vue");
+const OperatorType = () => import("./views/OperatorType.vue");
+
+const Workmasters = () => import("./views/Workmasters.vue");
+const Workmaster = () => import("./views/Workmaster.vue");
+const WorkmasterPhase = () => import("./views/WorkmasterPhase.vue");
 
 export default [
   {
@@ -109,5 +113,20 @@ export default [
     path: "/machinestatus",
     name: "MachineStatuses",
     component: MachineStatuses,
+  },
+  {
+    path: "/workmaster",
+    name: "Workmasters",
+    component: Workmasters,
+  },
+  {
+    path: "/workmaster/:id",
+    name: "Workmaster",
+    component: Workmaster,
+  },
+  {
+    path: "/workmaster/:id/phase/:phaseid",
+    name: "WorkmasterPhase",
+    component: WorkmasterPhase,
   },
 ] as Array<RouteRecordRaw>;

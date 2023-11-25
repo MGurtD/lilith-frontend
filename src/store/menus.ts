@@ -216,15 +216,9 @@ export const applicationMenus = [
         ],
       },
       {
-        icon: PrimeIcons.WALLET,
-        title: "Costs",
-        child: [
-          {
-            icon: PrimeIcons.BUILDING,
-            title: "Per màquina",
-            href: "/workcentercost",
-          },
-        ],
+        icon: PrimeIcons.LINK,
+        title: "Rutes fabricació",
+        href: "/workmaster",
       },
     ],
   },

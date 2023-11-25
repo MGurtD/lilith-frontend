@@ -11,7 +11,22 @@ export const useReferenceStore = defineStore({
     referenceFormats: undefined as Array<ReferenceFormat> | undefined,
     module: "" as string,
   }),
-  getters: {},
+  getters: {
+    getFullName: (state) => {
+      return (reference: Reference) => {
+        if (!reference) return "";
+
+        if (reference.description.length >= 30)
+          reference.description = reference.description.substring(0, 29);
+
+        if (state.module === "sales") {
+          return `${reference.code} - ${reference.description} (${reference.version})`;
+        } else {
+          return `${reference.code} - ${reference.description}`;
+        }
+      };
+    },
+  },
   actions: {
     setNewReference(id: string) {
       this.reference = {

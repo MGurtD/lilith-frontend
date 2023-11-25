@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
@@ -17,7 +17,6 @@ import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
-import router from "../../../router";
 import FormReference from "../components/FormReference.vue";
 import { useReferenceStore } from "../store/reference";
 import { useTaxesStore } from "../store/tax";
@@ -25,6 +24,7 @@ import { useReferenceTypeStore } from "../store/referenceType";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
+const router = useRouter();
 const store = useStore();
 const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
