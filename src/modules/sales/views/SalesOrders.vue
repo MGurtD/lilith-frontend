@@ -71,7 +71,7 @@
       style="width: 30%"
     ></Column>
     <Column
-      field="customerOrderNumber"
+      field="customerSalesOrderNumber"
       header="Número Client"
       style="width: 20%"
     ></Column>
