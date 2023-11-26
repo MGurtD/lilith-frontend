@@ -13,6 +13,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Quantitat a consumir"
           v-model="bomItem.quantity"
           :class="{
@@ -31,6 +32,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Quantitat de rebuig"
           v-model="bomItem.waste"
           :class="{
