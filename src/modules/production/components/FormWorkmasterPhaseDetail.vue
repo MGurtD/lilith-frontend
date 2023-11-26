@@ -59,6 +59,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
+          :decimals="2"
           label="Temps estimat (min)"
           v-model="detail.estimatedTime"
           :class="{
