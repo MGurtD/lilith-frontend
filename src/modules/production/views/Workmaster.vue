@@ -58,6 +58,7 @@ onMounted(async () => {
 });
 
 const loadViewData = async () => {
+  await referenceStore.fetchReferencesByModule("sales");
   await workmasterStore.fetchOne(id.value);
 };
 
