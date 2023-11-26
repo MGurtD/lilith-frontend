@@ -137,7 +137,7 @@ export const applicationMenus = [
         href: "/reference/sales",
       },
       {
-        icon: PrimeIcons.APPLE,
+        icon: PrimeIcons.MICREPHONE,
         title: "Comandes",
         href: "/salesorder",
       },
@@ -195,7 +195,7 @@ export const applicationMenus = [
         href: "/machinestatus",
       },
       {
-        icon: PrimeIcons.BUILDING,
+        icon: PrimeIcons.EURO,
         title: "Costs de màquina",
         href: "/workcentercost",
       },
@@ -216,7 +216,7 @@ export const applicationMenus = [
         ],
       },
       {
-        icon: PrimeIcons.LINK,
+        icon: PrimeIcons.REPLY,
         title: "Rutes fabricació",
         href: "/workmaster",
       },
