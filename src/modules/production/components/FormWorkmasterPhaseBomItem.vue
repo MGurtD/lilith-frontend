@@ -2,19 +2,13 @@
   <form v-if="bomItem">
     <section class="two-columns">
       <div>
-        <label class="block text-900 mb-2">Material de consum</label>
-        <Dropdown
+        <DropdownReference
+          label="Material de consum"
           v-model="bomItem.referenceId"
-          showClear
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="code"
-          class="w-full"
           :class="{
             'p-invalid': validation.errors.referenceId,
           }"
-        />
+        ></DropdownReference>
       </div>
       <div>
         <BaseInput
@@ -29,16 +23,10 @@
     </section>
     <section class="two-columns mt-2">
       <div>
-        <label class="block text-900 mb-2">Material de rebuig</label>
-        <Dropdown
+        <DropdownReference
+          label="Material de rebuig"
           v-model="bomItem.wasteReferenceId"
-          showClear
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="code"
-          class="w-full"
-        />
+        ></DropdownReference>
       </div>
       <div>
         <BaseInput
@@ -65,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { ref } from "vue";
 import { WorkMasterPhaseBillOfMaterials } from "../types";
 import * as Yup from "yup";

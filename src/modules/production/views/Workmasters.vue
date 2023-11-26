@@ -41,7 +41,7 @@
     </template>
     <Column header="Referencia" style="width: 50%">
       <template #body="slotProps">
-        {{ getReferenceDefinition(slotProps.data.reference) }}
+        {{ referenceStore.getFullName(slotProps.data.reference) }}
       </template>
     </Column>
     <Column
@@ -65,12 +65,33 @@
     </Column>
   </DataTable>
 
-  
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <div>
+      <DropdownReference
+        label="Referència"
+        v-model="workmasterStore.workmaster!.referenceId"
+      ></DropdownReference>
+    </div>
+    <br />
+    <div>
+      <Button
+        label="Crear"
+        style="float: right"
+        @click="onCreateSubmit"
+      ></Button>
+    </div>
+  </Dialog>
 </template>
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
@@ -78,14 +99,14 @@ import { useConfirm } from "primevue/useconfirm";
 import { useWorkMasterStore } from "../store/workmaster";
 import { useReferenceStore } from "../../shared/store/reference";
 import { WorkMaster } from "../types";
-import { Reference } from "../../shared/types";
 import { getNewUuid } from "../../../utils/functions";
+import { DialogOptions } from "../../../types/component";
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
 const confirm = useConfirm();
-const workMasterStore = useWorkMasterStore();
+const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
 
 const filter = ref({
@@ -96,22 +117,24 @@ const cleanFilter = () => {
 };
 
 const filteredData = computed(() => {
-  if (!workMasterStore.workmasters) return [];
-  if (!filter.value.referenceId) return workMasterStore.workmasters;
+  if (!workmasterStore.workmasters) return [];
+  if (!filter.value.referenceId) return workmasterStore.workmasters;
 
-  return workMasterStore.workmasters!.filter(
+  return workmasterStore.workmasters!.filter(
     (w) => w.id === filter.value.referenceId
   );
 });
 
-const getReferenceDefinition = (reference: Reference) => {
-  if (!reference) return "";
-
-  return `${reference.code} - ${reference.description} (${reference.version})`;
-};
+const dialogOptions = reactive({
+  visible: false,
+  title: "Crear ruta",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 onMounted(async () => {
-  await workMasterStore.fetchAll();
+  await workmasterStore.fetchAll();
   await referenceStore.fetchReferencesByModule("sales");
 
   store.setMenuItem({
@@ -122,9 +145,9 @@ onMounted(async () => {
 
 const createButtonClick = () => {
   const newId = getNewUuid();
-  workMasterStore.setNew(newId);
+  workmasterStore.setNew(newId);
 
-  router.push({ path: `/workmaster/${newId}` });
+  dialogOptions.visible = true;
 };
 
 const editRow = (row: DataTableRowClickEvent) => {
@@ -136,6 +159,15 @@ const editRow = (row: DataTableRowClickEvent) => {
     router.push({ path: `/workmaster/${row.data.id}` });
   }
 };
+
+const onCreateSubmit = async () => {
+  if (!workmasterStore.workmaster) return;
+
+  const created = await workmasterStore.create(workmasterStore.workmaster);
+  if (created)
+    router.push({ path: `/workmaster/${workmasterStore.workmaster.id}` });
+};
+
 const deleteButton = (event: any, workmaster: WorkMaster) => {
   confirm.require({
     target: event.currentTarget,
@@ -146,7 +178,7 @@ const deleteButton = (event: any, workmaster: WorkMaster) => {
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await workMasterStore.delete(workmaster.id);
+      const deleted = await workmasterStore.delete(workmaster.id);
 
       if (deleted) {
         toast.add({
@@ -154,7 +186,7 @@ const deleteButton = (event: any, workmaster: WorkMaster) => {
           summary: "Eliminada",
           life: 3000,
         });
-        await workMasterStore.fetchAll();
+        await workmasterStore.fetchAll();
       }
     },
   });

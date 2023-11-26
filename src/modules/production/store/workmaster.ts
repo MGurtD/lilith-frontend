@@ -34,7 +34,7 @@ export const useWorkMasterStore = defineStore({
     },
     async create(model: WorkMaster) {
       const result = await Services.WorkMaster.create(model);
-      if (result) await this.fetchAll();
+      if (result) await this.fetchOne(model.id);
       return result;
     },
     async update(id: string, model: WorkMaster) {

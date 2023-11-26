@@ -30,8 +30,6 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
-import { BaseInputType } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -43,12 +41,9 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
-const referenceStore = useReferenceStore();
-
 const toast = useToast();
 const schema = Yup.object().shape({
   phaseCode: Yup.string().required("El codi és obligatori"),
-  phaseDescription: Yup.string().required("La descripció és obligatoria"),
 });
 const validation = ref({
   result: false,
