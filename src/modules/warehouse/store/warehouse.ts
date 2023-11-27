@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import Services from "../services";
-import { Warehouse } from "../types";
+import { Warehouse, Location } from "../types";
 
 export const useWarehouseStore = defineStore({
   id: "warehouse",
@@ -10,12 +10,13 @@ export const useWarehouseStore = defineStore({
   }),
   getters: {},
   actions: {
-    //Warehouse
+    // Warehouse
     setNewWarehouse(id: string) {
       this.warehouse = {
         id: id,
         name: "",
         description: "",
+        defaultLocationId: "",
         siteId: "",
         disabled: false,
       } as Warehouse;
@@ -39,6 +40,22 @@ export const useWarehouseStore = defineStore({
     async deleteWarehouse(id: string) {
       const result = await Services.Warehouse.delete(id);
       if (result) await this.fetchWarehouses();
+      return result;
+    },
+
+    async createLocation(location: Location) {
+      const result = await Services.Warehouse.CreateLocation(location);
+      if (result) await this.fetchWarehouse(location.warehouseId);
+      return result;
+    },
+    async updateLocation(id: string, location: Location) {
+      const result = await Services.Warehouse.UpdateLocation(id, location);
+      if (result) await this.fetchWarehouse(location.warehouseId);
+      return result;
+    },
+    async deleteLocation(id: string) {
+      const result = await Services.Warehouse.DeleteLocation(id);
+      if (result) await this.fetchWarehouse(id);
       return result;
     },
   },
