@@ -25,8 +25,13 @@
     </template>
     <Column field="salesOrderNumber" header="Comanda" style="width: 5%" />
     <Column field="" header="" style="width: 5%" />
-    <Column field="quantity" header="Quantitat" style="width: 10%" />
-    <Column field="description" header="Descripció" style="width: 25%" />
+    <Column field="quantity" header="Quantitat" style="width: 5%" />
+    <Column header="Referència" style="width: 10%">
+      <template #body="slotProps">
+        {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
+      </template>
+    </Column>
+    <Column field="description" header="Descripció" style="width: 30%" />
     <Column field="unitPrice" header="Preu un." style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
     </Column>
@@ -40,11 +45,14 @@ import { PrimeIcons } from "primevue/api";
 import { SalesOrderHeader } from "../types";
 import { computed } from "vue";
 import { formatDate } from "../../../utils/functions";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   orders: Array<SalesOrderHeader> | undefined;
   canDelete: boolean;
 }>();
+
+const referenceStore = useReferenceStore();
 
 const treeTableData = computed(() => {
   if (!props.orders) return [];
