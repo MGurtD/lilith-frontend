@@ -73,7 +73,7 @@
         </template>
       </Column>
       <Column
-        header="Número Proveïdor"
+        header="Número Albarà"
         style="width: 15%"
         field="supplierNumber"
       ></Column>

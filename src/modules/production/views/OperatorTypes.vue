@@ -2,6 +2,8 @@
   <DataTable
     :value="plantmodelStore.operatorTypes"
     tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="80vh"
     @row-click="editRow"
   >
     <template #header>
