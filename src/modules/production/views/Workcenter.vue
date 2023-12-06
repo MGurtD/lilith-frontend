@@ -6,6 +6,7 @@
   />
 </template>
 <script setup lang="ts">
+import FormWorkcenter from "../components/FormWorkcenter.vue";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { PrimeIcons } from "primevue/api";

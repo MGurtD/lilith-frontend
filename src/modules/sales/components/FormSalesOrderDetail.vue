@@ -7,7 +7,7 @@
         editable
         :options="referenceStore.references"
         optionValue="id"
-        optionLabel="description"
+        optionLabel="code"
         class="w-full"
         :class="{
           'p-invalid': validation.errors.referenceId,
@@ -28,6 +28,20 @@
         </template>
       </Dropdown>
     </div>
+
+    <section>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Descripció"
+          v-model="salesOrderDetail.description"
+          :type="BaseInputType.TEXT"
+          :class="{
+            'p-invalid': validation.errors.description,
+          }"
+        ></BaseInput>
+      </div>
+    </section>
     <section class="two-columns">
       <div>
         <BaseInput
@@ -51,19 +65,6 @@
             'p-invalid': validation.errors.amount,
           }"
           disabled
-        ></BaseInput>
-      </div>
-    </section>
-    <section>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Descripció línea"
-          v-model="salesOrderDetail.description"
-          :type="BaseInputType.TEXT"
-          :class="{
-            'p-invalid': validation.errors.description,
-          }"
         ></BaseInput>
       </div>
     </section>
@@ -105,7 +106,7 @@ const getReferenceInfo = () => {
     (r) => r.id === props.salesOrderDetail.referenceId
   );
   if (reference) {
-    props.salesOrderDetail.description = `${reference.code} (${reference.version}) - ${reference.description}`;
+    props.salesOrderDetail.description = reference.description;
     props.salesOrderDetail.isInvoiced = false;
     props.salesOrderDetail.isDelivered = false;
     props.salesOrderDetail.unitCost = reference?.cost;

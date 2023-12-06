@@ -20,7 +20,7 @@ export const useReferenceStore = defineStore({
           reference.description = reference.description.substring(0, 29);
 
         if (state.module === "sales") {
-          return `${reference.code} - ${reference.description} (${reference.version})`;
+          return `${reference.code} (${reference.version})`;
         } else {
           return `${reference.code} - ${reference.description}`;
         }
@@ -28,6 +28,11 @@ export const useReferenceStore = defineStore({
     },
   },
   actions: {
+    getFullNameById(id: string) {
+      const ref = this.references?.find((r) => r.id === id);
+      if (!ref) return "";
+      return this.getFullName(ref);
+    },
     setNewReference(id: string) {
       this.reference = {
         id: id,

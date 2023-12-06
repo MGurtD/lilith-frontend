@@ -82,6 +82,7 @@ import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const items = [
   {
@@ -99,6 +100,7 @@ const customersStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
 const deliveryNoteStore = useDeliveryNoteStore();
+const referenceStore = useReferenceStore();
 const { invoice } = storeToRefs(invoiceStore);
 
 const dialogType = {
@@ -120,6 +122,7 @@ onMounted(async () => {
 
   sharedData.fetchMasterData();
   customersStore.fetchCustomers();
+  await referenceStore.fetchReferencesByModule("sales");
   await loadView();
 
   store.setMenuItem({

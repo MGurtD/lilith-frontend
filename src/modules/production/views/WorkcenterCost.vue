@@ -11,7 +11,7 @@ import { useRoute } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
-import { Area, WorkcenterCost } from "../types";
+import { WorkcenterCost } from "../types";
 import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
@@ -35,7 +35,7 @@ const loadView = async () => {
     pageTitle = "Alta de cost per màquina";
   } else {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Cost per màquina ${workcentercost.value.id}`;
+    pageTitle = `Editar cost per màquina`;
   }
 
   store.setMenuItem({

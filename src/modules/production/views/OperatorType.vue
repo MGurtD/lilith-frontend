@@ -27,7 +27,7 @@ const plantmodelStore = usePlantModelStore();
 const { operatorType } = storeToRefs(plantmodelStore);
 
 const loadView = async () => {
-  await plantmodelStore.fetchWorkcenterType(route.params.id as string);
+  await plantmodelStore.fetchOperatorType(route.params.id as string);
   let pageTitle = "";
   if (!operatorType.value) {
     formMode.value = FormActionMode.CREATE;

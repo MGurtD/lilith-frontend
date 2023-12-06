@@ -28,6 +28,15 @@
     <Column header="" field="" style="width: 5%" />
 
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
+    <Column header="Referència" style="width: 10%">
+      <template #body="slotProps">
+        {{
+          referenceStore.getFullNameById(
+            slotProps.data.deliveryNoteDetail.referenceId
+          )
+        }}
+      </template>
+    </Column>
     <Column header="Descripció" field="description" style="width: 40%"></Column>
     <Column header="Preu unitat" field="unitCost" style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitCost }} € </template>
@@ -60,10 +69,12 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { formatDate } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const confirm = useConfirm();
 const lifecycleStore = useLifecyclesStore();
 const sharedData = useSharedDataStore();
+const referenceStore = useReferenceStore();
 
 const props = defineProps<{
   details: Array<SalesInvoiceDetail> | undefined;

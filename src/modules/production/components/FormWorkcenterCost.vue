@@ -2,7 +2,7 @@
   <form v-if="workcentercost">
     <section class="four-columns">
       <div>
-        <label class="block text-900 mb-2">Màquina:</label>
+        <label class="block text-900 mb-2">Màquina</label>
         <Dropdown
           v-model="workcentercost.workcenterId"
           editable
@@ -16,7 +16,7 @@
         />
       </div>
       <div>
-        <label class="block text-900 mb-2">Estat de màquina:</label>
+        <label class="block text-900 mb-2">Estat de màquina</label>
         <Dropdown
           v-model="workcentercost.machineStatusId"
           editable
@@ -31,7 +31,7 @@
       </div>
       <BaseInput
         class="mb-2 w-full"
-        label="Preu hora:"
+        label="Preu hora"
         v-model="workcentercost.cost"
         :type="BaseInputType.CURRENCY"
         :class="{

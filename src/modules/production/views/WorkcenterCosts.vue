@@ -1,7 +1,11 @@
 <template>
   <DataTable
-    :value="plantmodelStore.workcentercosts"
+    :value="mappedWorkcenterCosts"
     tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="80vh"
+    sort-field="workcenterName"
+    :sort-order="1"
     @row-click="editRow"
   >
     <template #header>
@@ -17,17 +21,17 @@
         />
       </div>
     </template>
-    <Column header="Màquina" style="width: 30%">
-      <template #body="slotProps">
-        <span>{{ getWorkcenterById(slotProps.data.workcenterId) }}</span>
-      </template>
+    <Column field="workcenterName" header="Màquina" style="width: 30%" sortable>
     </Column>
-    <Column header="Estat de màquina" style="width: 30%">
-      <template #body="slotProps">
-        <span>{{ getMachineStatusById(slotProps.data.machineStatusId) }}</span>
-      </template>
+    <Column
+      field="machineStatusName"
+      header="Estat de màquina"
+      style="width: 30%"
+    >
     </Column>
-    <Column field="cost" header="Cost" style="width: 30%"></Column>
+    <Column field="cost" header="Cost" style="width: 30%">
+      <template #body="slotProps"> {{ slotProps.data.cost }} € </template>
+    </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
@@ -51,7 +55,7 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkcenterCost } from "../types";
@@ -70,6 +74,18 @@ onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,
     title: "Costs per màquina",
+  });
+});
+
+const mappedWorkcenterCosts = computed(() => {
+  if (!plantmodelStore.workcentercosts) return [];
+
+  return plantmodelStore.workcentercosts.map((c) => {
+    return {
+      workcenterName: getWorkcenterById(c.workcenterId),
+      machineStatusName: getMachineStatusById(c.machineStatusId),
+      ...c,
+    };
   });
 });
 
