@@ -69,7 +69,7 @@
         <div class="mt-1">
           <BaseInput
             :type="BaseInputType.TEXT"
-            label="Número Proveïdor"
+            label="Número Albarà"
             id="supplierNumber"
             v-model="receipt.supplierNumber"
           />
