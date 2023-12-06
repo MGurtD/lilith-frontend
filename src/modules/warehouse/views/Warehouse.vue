@@ -66,9 +66,19 @@ const submitForm = async () => {
   let message = "";
 
   if (formMode.value === FormActionMode.CREATE) {
+    data.defaultLocationId = null;
     result = await warehouseStore.createWarehouse(data);
     message = "Magatzem creat correctament";
   } else {
+    if (!data.defaultLocationId) {
+      toast.add({
+        severity: "warn",
+        summary: "Seleccioni una ubicació per defecte",
+        life: 5000,
+      });
+      return;
+    }
+
     result = await warehouseStore.updateWarehouse(data.id, data);
     message = "Magatzem actualizat correctament";
   }
@@ -79,7 +89,7 @@ const submitForm = async () => {
       summary: message,
       life: 5000,
     });
-    router.back();
+    if (formMode.value === FormActionMode.EDIT) router.back();
   }
 };
 
@@ -90,6 +100,17 @@ const onEditLocation = (location: Location): void => {
   warehouseStore.updateLocation(location.id, location);
 };
 const onDeleteLocation = (location: Location): void => {
+  if (warehouse.value && location.id === warehouse.value.defaultLocationId) {
+    toast.add({
+      severity: "warn",
+      summary: "Ubicació amb dependencies",
+      detail:
+        "La ubicació que intenta eliminar és la ubicació per defecte del magatzem",
+      life: 6000,
+    });
+    return;
+  }
+
   warehouseStore.deleteLocation(location.id);
 };
 </script>

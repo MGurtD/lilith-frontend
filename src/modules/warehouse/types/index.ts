@@ -3,7 +3,7 @@ export interface Warehouse {
   name: string;
   description: string;
   siteId: string;
-  defaultLocationId: string;
+  defaultLocationId: string | null;
   disabled: boolean;
   locations: Array<Location>;
 }

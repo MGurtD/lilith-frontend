@@ -105,9 +105,6 @@ const schema = Yup.object().shape({
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
   siteId: Yup.string().required("El local es obligatori"),
-  defaultLocationId: Yup.string().required(
-    "La ubicació per defecte és obligatori"
-  ),
 });
 const validation = ref({
   result: false,

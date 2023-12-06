@@ -14,11 +14,12 @@
         </div>
       </template>
       <Column field="name" header="Nom" style="width: 25%"></Column>
-      <Column
-        field="description"
-        header="Descripció"
-        style="width: 65%"
-      ></Column>
+      <Column field="description" header="Descripció" style="width: 60%"></Column>
+      <Column header="Desactivada" style="width: 10%">
+        <template #body="slotProps">
+          <BooleanColumn :value="slotProps.data.disabled"></BooleanColumn>
+        </template>
+      </Column>
       <Column style="width: 10%">
         <template #body="slotProps">
           <i
@@ -77,10 +78,9 @@ const dialogOptions = reactive({
 const confirm = useConfirm();
 
 const selectedLocation = ref(undefined as Location | undefined);
-let formAction = FormActionMode.CREATE;
+const formAction = ref(FormActionMode.CREATE);
 
 const onAddClick = () => {
-  formAction = FormActionMode.CREATE;
   openDialog(FormActionMode.CREATE, {
     id: getNewUuid(),
     warehouseId: props.warehouse.id,
@@ -98,17 +98,17 @@ const onEditRow = (row: DataTableRowClickEvent) => {
     openDialog(FormActionMode.EDIT, row.data);
   }
 };
-const openDialog = (formAction: FormActionMode, location: Location) => {
-  formAction = formAction;
+const openDialog = (action: FormActionMode, location: Location) => {
+  formAction.value = action;
   selectedLocation.value = location;
   dialogOptions.visible = true;
   dialogOptions.title =
-    formAction === FormActionMode.CREATE ? "Crear ubicació" : "Actualitzar";
+    action === FormActionMode.CREATE ? "Crear ubicació" : "Actualitzar";
 };
 const onLocationSubmit = (location: Location) => {
-  if (formAction === FormActionMode.CREATE) {
+  if (formAction.value === FormActionMode.CREATE) {
     emit("add", location);
-  } else if (formAction === FormActionMode.EDIT) {
+  } else if (formAction.value === FormActionMode.EDIT) {
     emit("edit", location);
   }
   dialogOptions.visible = false;

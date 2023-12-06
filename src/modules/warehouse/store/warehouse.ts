@@ -55,7 +55,8 @@ export const useWarehouseStore = defineStore({
     },
     async deleteLocation(id: string) {
       const result = await Services.Warehouse.DeleteLocation(id);
-      if (result) await this.fetchWarehouse(id);
+      if (result && this.warehouse)
+        await this.fetchWarehouse(this.warehouse.id);
       return result;
     },
   },
