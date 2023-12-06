@@ -69,7 +69,6 @@ import {
   WorkMasterPhaseDetail,
 } from "../types";
 import { DialogOptions, FormActionMode } from "../../../types/component";
-import { useDeliveryNoteStore } from "../../sales/store/deliveryNote";
 
 const route = useRoute();
 const router = useRouter();

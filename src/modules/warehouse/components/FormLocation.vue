@@ -1,19 +1,11 @@
 <template>
-  <form v-if="warehouse">
-    <div class="pb-4">
-      <Button
-        label="Guardar"
-        size="small"
-        class="grid_add_row_button"
-        @click="submitForm"
-      />
-    </div>
-    <section class="two-columns">
+  <form v-if="location">
+    <section class="three-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
         id="name"
-        v-model="warehouse.name"
+        v-model="location.name"
         :class="{
           'p-invalid': validation.errors.name,
         }"
@@ -22,70 +14,44 @@
         class="mb-2"
         label="Descripció"
         id="description"
-        v-model="warehouse.description"
+        v-model="location.description"
         :class="{
           'p-invalid': validation.errors.description,
         }"
       ></BaseInput>
-    </section>
-    <section class="three-columns">
-      <div>
-        <label class="block text-900 mb-2">Local</label>
-        <Dropdown
-          v-model="warehouse.siteId"
-          editable
-          :options="plantmodelStore.sites"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.siteId,
-          }"
-        />
-      </div>
-      <div>
-        <label class="block text-900 mb-2">Ubicació predeterminada</label>
-        <Dropdown
-          v-model="warehouse.defaultLocationId"
-          editable
-          :options="warehouse.locations"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.defaultLocationId,
-          }"
-        />
-      </div>
       <div>
         <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox v-model="warehouse.disabled" class="w-full" :binary="true" />
+        <Checkbox v-model="location.disabled" class="w-full" :binary="true" />
       </div>
     </section>
+    <div class="pt-4">
+      <Button
+        label="Guardar"
+        size="small"
+        style="float: right"
+        @click="submitForm"
+      />
+    </div>
   </form>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { Warehouse } from "../types";
+import { Location } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { storeToRefs } from "pinia";
-import { useWarehouseStore } from "../store/warehouse";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 
 const toast = useToast();
-const warehouseStore = useWarehouseStore();
 const plantmodelStore = usePlantModelStore();
-const { warehouse } = storeToRefs(warehouseStore);
 
 const props = defineProps<{
-  warehouse: Warehouse;
+  location: Location;
 }>();
 
 onMounted(async () => {
@@ -93,7 +59,7 @@ onMounted(async () => {
 });
 
 const emit = defineEmits<{
-  (e: "submit", warehouse: Warehouse): void;
+  (e: "submit", location: Location): void;
   (e: "cancel"): void;
 }>();
 
@@ -104,7 +70,6 @@ const schema = Yup.object().shape({
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
-  siteId: Yup.string().required("El local es obligatori"),
 });
 const validation = ref({
   result: false,
@@ -113,13 +78,13 @@ const validation = ref({
 
 const validate = () => {
   const formValidation = new FormValidation(schema);
-  validation.value = formValidation.validate(props.warehouse);
+  validation.value = formValidation.validate(props.location);
 };
 
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    emit("submit", props.warehouse);
+    emit("submit", props.location);
   } else {
     let errors = "";
     Object.entries(validation.value.errors).forEach((e) => {

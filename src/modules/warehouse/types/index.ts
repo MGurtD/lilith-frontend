@@ -3,6 +3,16 @@ export interface Warehouse {
   name: string;
   description: string;
   siteId: string;
+  defaultLocationId: string | null;
+  disabled: boolean;
+  locations: Array<Location>;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  description: string;
+  warehouseId: string;
   disabled: boolean;
 }
 
