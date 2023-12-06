@@ -161,6 +161,7 @@ import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useReferenceTypeStore } from "../store/referenceType";
+import { DropdownChangeEvent } from "primevue/dropdown";
 
 const props = defineProps<{
   module: string;
@@ -186,6 +187,15 @@ const toast = useToast();
 const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
+
+const updateReferenceCode = (event: DropdownChangeEvent) => {
+  const referenceType = referenceTypeStore.referenceTypes?.find(
+    (t) => t.id === event.value
+  );
+  if (referenceType && !props.reference.code.includes(referenceType.name)) {
+    props.reference.code = `${props.reference.code} (${referenceType.name})`;
+  }
+};
 
 const schema = Yup.object().shape({
   code: Yup.string()
