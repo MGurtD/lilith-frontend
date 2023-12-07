@@ -70,15 +70,7 @@
           }"
         />
       </div>
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.NUMERIC"
-          :decimals="2"
-          label="Densitat"
-          id="density"
-          v-model="reference.density"
-        />
-      </div>
+      <div class="mt-1"></div>
 
       <div class="mt-1">
         <BaseInput

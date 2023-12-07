@@ -1,6 +1,6 @@
 <template>
   <form v-if="referenceType">
-    <section class="three-columns">
+    <section class="four-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -25,6 +25,15 @@
           v-model="referenceType.disabled"
           class="w-full"
           :binary="true"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Densitat g/cm^3"
+          id="density"
+          v-model="referenceType.density"
         />
       </div>
     </section>
@@ -65,6 +74,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
+import { BaseInputType } from "../../../types/component";
 import { ReferenceType } from "../types";
 import * as Yup from "yup";
 import {

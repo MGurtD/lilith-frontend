@@ -69,7 +69,6 @@ export interface Reference {
   disabled: boolean;
   referenceTypeId: string | null;
   referenceFormatId: string | null;
-  density: number;
   lastPurchaseCost: number;
   sales: boolean;
   purchase: boolean;
@@ -82,6 +81,7 @@ export interface ReferenceType {
   description: string;
   primaryColor: string;
   secondaryColor: string;
+  density: number;
   disabled: boolean;
 }
 
