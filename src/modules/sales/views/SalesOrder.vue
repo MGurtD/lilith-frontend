@@ -168,6 +168,8 @@ const openReferencesForm = (
   formMode: FormActionMode,
   salesOrderDetail: SalesOrderDetail
 ) => {
+  referenceStore.setNewReference(getNewUuid());
+
   if (formMode === FormActionMode.CREATE) {
     salesOrderDetail = {
       id: getNewUuid(),
@@ -183,8 +185,6 @@ const openReferencesForm = (
       isDelivered: false,
       isInvoiced: false,
     } as SalesOrderDetail;
-
-    referenceStore.setNewReference(getNewUuid());
   }
 
   salesOrderDetail.salesOrderHeaderId = salesOrder.value!.id;
