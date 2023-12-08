@@ -20,8 +20,13 @@
       </div>
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
-    <Column field="description" header="Descripció" style="width: 50%"></Column>
-    <Column header="Desactivada" style="width: 20%">
+    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column
+      field="density"
+      header="Densitat (cm/m3)"
+      style="width: 15%"
+    ></Column>
+    <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
