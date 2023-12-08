@@ -1,6 +1,6 @@
 <template>
   <form v-if="referenceType">
-    <section class="four-columns">
+    <section class="three-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -19,14 +19,7 @@
           'p-invalid': validation.errors.description,
         }"
       ></BaseInput>
-      <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox
-          v-model="referenceType.disabled"
-          class="w-full"
-          :binary="true"
-        />
-      </div>
+
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -62,6 +55,14 @@
             'p-invalid': validation.errors.color,
           }"
         ></ColorPicker>
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Desactivat</label>
+        <Checkbox
+          v-model="referenceType.disabled"
+          class="w-full"
+          :binary="true"
+        />
       </div>
     </section>
 
