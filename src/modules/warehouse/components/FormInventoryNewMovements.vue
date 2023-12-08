@@ -2,25 +2,14 @@
   <form v-if="newMovement">
     <section class="two-columns-7525">
       <div>
-        <label class="block text-900 mb-2">Material</label>
-        <Dropdown
+        <DropdownReference
+          label="Material"
+          :fullName="true"
           v-model="newMovement.referenceId"
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
           :class="{
             'p-invalid': validation.errors.referenceId,
           }"
-        >
-          <template #option="slotProps">
-            <div v-if="slotProps.option" class="flex align-items-center">
-              {{ slotProps.option.code }} -
-              {{ slotProps.option.description }}
-            </div>
-          </template>
-        </Dropdown>
+        ></DropdownReference>
       </div>
       <div>
         <BaseInput
@@ -77,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { ref } from "vue";
 import { Inventory } from "../types";
 import * as Yup from "yup";

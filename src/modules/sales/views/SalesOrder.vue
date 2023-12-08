@@ -17,6 +17,7 @@
     <TabPanel header="Detall">
       <TableSalesOrderDetails
         v-if="salesOrder"
+        :salesOrder="salesOrder"
         :salesOrderDetails="salesOrder.salesOrderDetails"
         @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
         @delete="deleteSalesOrderDetails"

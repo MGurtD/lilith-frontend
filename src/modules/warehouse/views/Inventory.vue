@@ -24,7 +24,7 @@
     </template>
     <Column header="Producte" style="width: 28%">
       <template #body="slotProps">
-        {{ getReferenceNameById(slotProps.data.referenceId) }}
+        {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
       </template>
     </Column>
     <Column field="oldQuantity" header="Uds." style="width: 12%"></Column>
@@ -108,11 +108,6 @@ const refreshData = async () => {
   await referenceStore.fetchReferences();
 };
 
-const getReferenceNameById = (id: string) => {
-  const reference = referenceStore.references?.find((s) => s.id === id);
-  if (reference) return reference.description;
-  else return "";
-};
 const isDialogVisible = ref(false);
 const newStockMovement = ref({} as Inventory);
 

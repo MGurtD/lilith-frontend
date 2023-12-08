@@ -44,12 +44,9 @@
           {{ formatDateTime(slotProps.data.movementDate) }}
         </template>
       </Column>
-      <Column
-        header="Referència"
-        style="width: 20%"
-      >
+      <Column header="Referència" style="width: 20%">
         <template #body="slotProps">
-          {{ getReferenceNameById(slotProps.data.referenceId) }}
+          {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
         </template></Column
       >
       <Column field="width" header="Ample (x) mm" style="width: 5%"></Column>

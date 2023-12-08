@@ -13,15 +13,11 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <label class="block text-900 mb-2">Referència</label>
-            <Dropdown
+            <DropdownReference
+              label=""
               v-model="filter.referenceId"
-              showClear
-              editable
-              :options="referenceStore.references"
-              optionValue="id"
-              optionLabel="description"
-              class="w-full"
-            />
+              :fullName="true"
+            ></DropdownReference>
           </div>
         </div>
         <div class="datatable-buttons">
@@ -77,6 +73,7 @@
       <DropdownReference
         label="Referència"
         v-model="workmasterStore.workmaster!.referenceId"
+        :fullName="true"
       ></DropdownReference>
     </div>
     <br />

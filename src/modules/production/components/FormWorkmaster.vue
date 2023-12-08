@@ -11,24 +11,11 @@
     </div>
     <section class="three-columns">
       <div>
-        <label class="block text-900 mb-2">Referència</label>
-        <Dropdown
+        <DropdownReference
+          label="Referència"
           v-model="workmaster.referenceId"
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.referenceId,
-          }"
-        >
-          <template #option="slotProps">
-            <div v-if="slotProps.option" class="flex align-items-center">
-              {{ referenceStore.getFullName(slotProps.option) }}
-            </div>
-          </template>
-        </Dropdown>
+          :fullName="true"
+        ></DropdownReference>
       </div>
       <div>
         <BaseInput
@@ -47,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { ref } from "vue";
 import { WorkMaster } from "../types";
 import * as Yup from "yup";

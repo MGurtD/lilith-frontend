@@ -1,32 +1,12 @@
 <template>
   <form v-if="salesOrderDetail">
     <div class="mb-2">
-      <label class="block text-900 mb-2">Referència</label>
-      <Dropdown
+      <DropdownReference
+        label="Referència"
         v-model="salesOrderDetail.referenceId"
-        editable
-        :options="referenceStore.references"
-        optionValue="id"
-        optionLabel="code"
-        class="w-full"
-        :class="{
-          'p-invalid': validation.errors.referenceId,
-        }"
+        :fullName="true"
         @update:modelValue="getReferenceInfo()"
-      >
-        <template #value="slotProps">
-          <div v-if="slotProps.value" class="flex align-items-center">
-            {{ slotProps.value.code }} ({{ slotProps.value.version }}) -
-            {{ slotProps.value.description }}
-          </div>
-        </template>
-        <template #option="slotProps">
-          <div v-if="slotProps.option" class="flex align-items-center">
-            {{ slotProps.option.code }} ({{ slotProps.option.version }}) -
-            {{ slotProps.option.description }}
-          </div>
-        </template>
-      </Dropdown>
+      ></DropdownReference>
     </div>
 
     <section>
@@ -76,6 +56,7 @@
   </form>
 </template>
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { computed, ref } from "vue";
 import { SalesOrderDetail } from "../types";
 import * as Yup from "yup";

@@ -19,10 +19,24 @@ export const useReferenceStore = defineStore({
         if (reference.description.length >= 30)
           reference.description = reference.description.substring(0, 29);
 
-        if (state.module === "sales") {
-          return `${reference.code} (${reference.version})`;
+        if (reference.sales) {
+          return `${reference.code} (v. ${reference.version}) - ${reference.description}`;
         } else {
           return `${reference.code} - ${reference.description}`;
+        }
+      };
+    },
+    getShortName: (state) => {
+      return (reference: Reference) => {
+        if (!reference) return "";
+
+        if (reference.description.length >= 30)
+          reference.description = reference.description.substring(0, 29);
+
+        if (reference.sales) {
+          return `${reference.code} (v. ${reference.version})`;
+        } else {
+          return `${reference.code}`;
         }
       };
     },
@@ -32,6 +46,11 @@ export const useReferenceStore = defineStore({
       const ref = this.references?.find((r) => r.id === id);
       if (!ref) return "";
       return this.getFullName(ref);
+    },
+    getShortNameById(id: string) {
+      const ref = this.references?.find((r) => r.id === id);
+      if (!ref) return "";
+      return this.getShortName(ref);
     },
     setNewReference(id: string) {
       this.reference = {

@@ -28,7 +28,7 @@
     <Column field="quantity" header="Quantitat" style="width: 5%" />
     <Column header="Referència" style="width: 10%">
       <template #body="slotProps">
-        {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
+        {{ referenceStore.getShortName(slotProps.data.reference) }}
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 30%" />
@@ -46,6 +46,7 @@ import { SalesOrderHeader } from "../types";
 import { computed } from "vue";
 import { formatDate } from "../../../utils/functions";
 import { useReferenceStore } from "../../shared/store/reference";
+import { useConfirm } from "primevue/useconfirm";
 
 const props = defineProps<{
   orders: Array<SalesOrderHeader> | undefined;
@@ -79,11 +80,22 @@ const emit = defineEmits<{
   (e: "delete", order: SalesOrderHeader): void;
 }>();
 
+const confirm = useConfirm();
+
 const onDeleteRow = (event: any, clickedOrder: any) => {
   if (!props.orders) return;
   const order = props.orders?.find((o) => o.id === clickedOrder.salesOrderId);
-
   if (!order) return;
-  emit("delete", order);
+
+  confirm.require({
+    target: event.currentTarget,
+    message: `Está segur que vol desassignar la comanda ${order.salesOrderNumber}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: () => {
+      emit("delete", order);
+    },
+  });
 };
 </script>

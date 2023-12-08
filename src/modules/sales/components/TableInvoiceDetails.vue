@@ -31,7 +31,7 @@
     <Column header="Referència" style="width: 10%">
       <template #body="slotProps">
         {{
-          referenceStore.getFullNameById(
+          referenceStore.getShortNameById(
             slotProps.data.deliveryNoteDetail.referenceId
           )
         }}
@@ -70,6 +70,7 @@ import { useSharedDataStore } from "../../shared/store/masterData";
 import { formatDate } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
+import _ from "lodash";
 
 const confirm = useConfirm();
 const lifecycleStore = useLifecyclesStore();
@@ -119,8 +120,8 @@ const groupedDetails = computed(() => {
     });
   if (deliveryNoteDetails.length > 0) grDetails.push(...deliveryNoteDetails);
 
-  console.log(grDetails);
-  return grDetails;
+  console.log(deliveryNoteDetails, grDetails);
+  return _.orderBy(grDetails, (d) => d.deliveryNoteNumber);
 });
 
 onMounted(async () => {

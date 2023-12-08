@@ -9,7 +9,10 @@
       <slot name="header"></slot>
     </template>
     <Column field="quantity" header="Quantitat" style="width: 10%" />
-    <Column field="reference.code" header="Referencia" style="width: 15%">
+    <Column header="Referencia" style="width: 15%">
+      <template #body="slotProps">
+        {{ referenceStore.getShortNameById(slotProps.data.referenceId) }}
+      </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 40%" />
     <Column field="unitPrice" header="Preu un." style="width: 10%">
@@ -18,7 +21,7 @@
     <Column field="amount" header="Total" style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
     </Column>
-    <Column style="width: 10%">
+    <Column style="width: 10%" v-if="!salesOrder.deliveryNoteId">
       <template #body="slotProps">
         <i
           v-if="!slotProps.data.isDelivered"
@@ -33,9 +36,12 @@
 <script setup lang="ts">
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { SalesOrderDetail } from "../types";
+import { SalesOrderHeader, SalesOrderDetail } from "../types";
+import { useReferenceStore } from "../../shared/store/reference";
+import { useConfirm } from "primevue/useconfirm";
 
 const props = defineProps<{
+  salesOrder: SalesOrderHeader;
   salesOrderDetails: Array<SalesOrderDetail> | undefined;
 }>();
 
@@ -44,7 +50,12 @@ const emit = defineEmits<{
   (e: "delete", salesOrderDetail: SalesOrderDetail): void;
 }>();
 
+const confirm = useConfirm();
+const referenceStore = useReferenceStore();
+
 const onEditRow = (row: DataTableRowClickEvent) => {
+  if (props.salesOrder.deliveryNoteId) return;
+
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
@@ -55,6 +66,15 @@ const onEditRow = (row: DataTableRowClickEvent) => {
 };
 
 const onDeleteRow = (event: any, salesOrderDetail: SalesOrderDetail) => {
-  emit("delete", salesOrderDetail);
+  confirm.require({
+    target: event.currentTarget,
+    message: `Está segur que vol eliminar la referència?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: () => {
+      emit("delete", salesOrderDetail);
+    },
+  });
 };
 </script>
