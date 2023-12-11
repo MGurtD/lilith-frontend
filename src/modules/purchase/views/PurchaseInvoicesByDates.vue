@@ -76,12 +76,10 @@
         <template #body="slotProps">
           <span
             :class="{
-              'managed-status': isManagedStatus(
-                slotProps.data.purchaseInvoiceStatusId
-              ),
+              'managed-status': isManagedStatus(slotProps.data.statusId),
             }"
           >
-            {{ getStatusNameById(slotProps.data.purchaseInvoiceStatusId) }}
+            {{ getStatusNameById(slotProps.data.statusId) }}
           </span>
         </template>
       </Column>
@@ -131,10 +129,12 @@ import {
   formatDate,
   formatDateForQueryParameter,
 } from "../../../utils/functions";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const toast = useToast();
 const store = useStore();
 const purchaseStore = usePurchaseMasterDataStore();
+const lifecycleStore = useLifecyclesStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
 const filter = ref({
@@ -142,9 +142,11 @@ const filter = ref({
   excludeManaged: false,
 });
 const selectedInvoices = ref([] as Array<PurchaseInvoice>);
+const lifecycleName = "PurchaseInvoice";
 
 onMounted(async () => {
   purchaseStore.fetchMasterData();
+  lifecycleStore.fetchOneByName(lifecycleName);
 
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
@@ -159,7 +161,7 @@ const getSupplierNameById = (id: string) => {
 };
 
 const getStatusNameById = (id: string) => {
-  const status = purchaseStore.masterData.statuses?.find((s) => s.id === id);
+  const status = lifecycleStore.lifecycle?.statuses?.find((s) => s.id === id);
   if (status) return status.name;
   else return "";
 };
@@ -179,7 +181,7 @@ const getLastDueDate = (invoice: PurchaseInvoice): string => {
 };
 
 const isManagedStatus = (statusId: string): boolean => {
-  const managedStatus = purchaseStore.masterData.statuses?.find(
+  const managedStatus = lifecycleStore.lifecycle?.statuses?.find(
     (s) => s.name === "Gestionada"
   );
 
@@ -190,7 +192,7 @@ const filterInvoices = async () => {
   if (filter.value.dates) {
     let managedStatus = undefined;
     if (filter.value.excludeManaged === true) {
-      managedStatus = purchaseStore.masterData.statuses?.find(
+      managedStatus = lifecycleStore.lifecycle?.statuses?.find(
         (s) => s.name === "Gestionada"
       );
     }
@@ -216,7 +218,7 @@ const filterInvoices = async () => {
 };
 
 const updateSelectedInvoiceStatusToManaged = async () => {
-  const statusTo = purchaseStore.masterData.statuses?.find(
+  const statusTo = lifecycleStore.lifecycle?.statuses?.find(
     (s) => s.name === "Gestionada"
   );
   if (statusTo) {

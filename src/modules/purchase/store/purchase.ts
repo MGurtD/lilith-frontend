@@ -16,7 +16,6 @@ export const usePurchaseMasterDataStore = defineStore({
     masterData: {
       paymentMethods: [] as Array<PaymentMethod>,
       series: [] as Array<PurchaseInvoiceSerie>,
-      statuses: [] as Array<PurchaseInvoiceStatus>,
       suppliers: [] as Array<Supplier>,
       taxes: [] as Array<Tax>,
       exercises: [] as Array<Exercise>,
@@ -27,16 +26,14 @@ export const usePurchaseMasterDataStore = defineStore({
   actions: {
     async fetchMasterData() {
       this.masterData.series =
-        await PurchaseServices.PurchaseInvoiceSerie.getAll();
-      this.masterData.statuses =
-        await PurchaseServices.PurchaseInvoiceStatus.getAll();
+        await PurchaseServices.PurchaseInvoiceSerie.getActive();
       this.masterData.series =
-        await PurchaseServices.PurchaseInvoiceSerie.getAll();
-      this.masterData.suppliers = await PurchaseServices.Supplier.getAll();
+        await PurchaseServices.PurchaseInvoiceSerie.getActive();
+      this.masterData.suppliers = await PurchaseServices.Supplier.getActive();
       this.masterData.paymentMethods =
-        await SharedServices.PaymentMethod.getAll();
-      this.masterData.exercises = await SharedServices.Exercice.getAll();
-      this.masterData.taxes = await SharedServices.Tax.getAll();
+        await SharedServices.PaymentMethod.getActive();
+      this.masterData.exercises = await SharedServices.Exercice.getActive();
+      this.masterData.taxes = await SharedServices.Tax.getActive();
     },
   },
 });

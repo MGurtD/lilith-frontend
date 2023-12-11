@@ -4,45 +4,11 @@ import {
   PurchaseInvoiceDueDate,
   PurchaseInvoice,
   PurchaseInvoiceSerie,
-  PurchaseInvoiceStatus,
-  PurchaseInvoiceTransition,
   PurchaseInvoiceUpdateStatues,
   PurchaseInvoiceImport,
 } from "../types";
 
 export class PurchaseInvoiceSerieService extends BaseService<PurchaseInvoiceSerie> {}
-
-export class PurchaseInvoiceStatusService extends BaseService<PurchaseInvoiceStatus> {
-  async addTransition(model: PurchaseInvoiceTransition): Promise<boolean> {
-    let result: boolean = false;
-    try {
-      const response = await this.apiClient.post(
-        `${this.resource}/Transition`,
-        model
-      );
-      if (response.status === 200 || response.status === 201) {
-        result = true;
-      }
-    } catch (err) {
-      logException(err);
-    }
-    return result;
-  }
-  async removeTransition(model: PurchaseInvoiceTransition): Promise<boolean> {
-    let result: boolean = false;
-    try {
-      const response = await this.apiClient.delete(
-        `${this.resource}/Transition/${model.fromStatusId}/${model.toStatusId}`
-      );
-      if (response.status === 200 || response.status === 201) {
-        result = true;
-      }
-    } catch (err) {
-      logException(err);
-    }
-    return result;
-  }
-}
 
 export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
   async GetBetweenDates(
