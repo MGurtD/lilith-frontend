@@ -18,6 +18,7 @@ import TableReferences from "../components/TableReferences.vue";
 import { Reference } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import { GenericResponse } from "../../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -57,15 +58,31 @@ const deleteReference = (reference: Reference) => {
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await referenceStore.deleteReference(reference.id);
-      if (deleted) {
-        toast.add({
-          severity: "success",
-          summary: "Eliminat",
-          life: 3000,
-        });
+      const response = await referenceStore.deleteReference(reference.id);
+      console.log(response);
+      if (!response.result) {
+        ShowResponseErrorToast(response);
+      } else {
+        ShowToast();
       }
     },
+  });
+};
+
+const ShowResponseErrorToast = (response: GenericResponse<Reference>) => {
+  toast.add({
+    severity: "error",
+    summary: response.errors[0],
+    life: 3000,
+    closable: true,
+  });
+};
+
+const ShowToast = () => {
+  toast.add({
+    severity: "success",
+    summary: "Eliminat",
+    life: 3000,
   });
 };
 </script>

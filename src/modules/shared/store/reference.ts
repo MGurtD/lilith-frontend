@@ -96,9 +96,11 @@ export const useReferenceStore = defineStore({
       return result;
     },
     async deleteReference(id: string) {
-      const result = await referenceService.delete(id);
-      if (result) await this.fetchReferencesByModule(this.module);
-      return result;
+      const response = await referenceService.deleteReference(id);
+      if (response.result) {
+        await this.fetchReferencesByModule(this.module);
+      }
+      return response;
     },
   },
 });

@@ -55,7 +55,7 @@
         />
       </div>
     </section>
-    <section class="four-columns" v-if="isPurchase">
+    <section class="three-columns" v-if="isPurchase">
       <div class="mt-1">
         <label class="block text-900 mb-2">Format</label>
         <Dropdown
@@ -70,8 +70,6 @@
           }"
         />
       </div>
-      <div class="mt-1"></div>
-
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
