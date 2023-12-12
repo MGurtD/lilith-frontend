@@ -18,12 +18,11 @@
       </template>
     </Column>
     <Column field="quantity" header="Consum" style="width: 15%"></Column>
-    <Column header="Material rebuig" style="width: 30%">
-      <template #body="slotProps">
-        {{ getReference(slotProps.data.wasteReferenceId) }}
-      </template>
-    </Column>
-    <Column field="waste" header="Rebuig" style="width: 15%"></Column>
+    <Column field="width" header="Ample (x) mm" style="width: 12%"></Column>
+    <Column field="length" header="Llarg (y) mm" style="width: 12%"></Column>
+    <Column field="height" header="Alt (z) mm" style="width: 12%"></Column>
+    <Column field="diameter" header="Diàmetre mm" style="width: 12%"></Column>
+    <Column field="thickness" header="Gruix mm" style="width: 12%"></Column>
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -71,7 +70,11 @@ const onAdd = () => {
     workMasterPhaseId: props.workmasterPhase.id,
     referenceId: "",
     quantity: 0,
-    waste: 0,
+    width: 0,
+    diameter: 0,
+    height: 0,
+    length: 0,
+    thickness: 0,
   } as WorkMasterPhaseBillOfMaterials;
   emit("add", defaultInstance);
 };

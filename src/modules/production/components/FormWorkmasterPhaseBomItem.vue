@@ -5,6 +5,7 @@
         <DropdownReference
           label="Material de consum"
           v-model="bomItem.referenceId"
+          :full-name="true"
           :class="{
             'p-invalid': validation.errors.referenceId,
           }"
@@ -22,22 +23,37 @@
         />
       </div>
     </section>
-    <section class="two-columns mt-2">
+    <section class="four-columns mt-2">
       <div>
-        <DropdownReference
-          label="Material de rebuig"
-          v-model="bomItem.wasteReferenceId"
-        ></DropdownReference>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Amplada"
+          :decimals="2"
+          v-model="bomItem.width"
+        />
       </div>
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Quantitat de rebuig"
-          v-model="bomItem.waste"
-          :class="{
-            'p-invalid': validation.errors.waste,
-          }"
+          label="Alçada"
+          v-model="bomItem.height"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Longitud"
+          v-model="bomItem.length"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Diàmetre"
+          v-model="bomItem.diameter"
         />
       </div>
     </section>
