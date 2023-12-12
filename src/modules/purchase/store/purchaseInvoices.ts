@@ -17,7 +17,7 @@ export const usePurchaseInvoiceStore = defineStore({
     setNewPurchaseInvoice(id: string) {
       this.purchaseInvoice = {
         id: id,
-        number: 0,
+        number: "0",
         supplierNumber: "--",
         purchaseInvoiceDate: new Date(),
         baseAmount: 0.0,

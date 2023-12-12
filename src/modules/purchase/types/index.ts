@@ -79,7 +79,7 @@ export interface PurchaseInvoiceImport {
 
 export interface PurchaseInvoice {
   id: string;
-  number: number;
+  number: string;
   supplierNumber: string;
   purchaseInvoiceDate: Date | string;
   baseAmount: number;
