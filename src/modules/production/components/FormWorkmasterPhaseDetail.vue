@@ -2,31 +2,6 @@
   <form v-if="detail">
     <section class="three-columns">
       <div>
-        <label class="block text-900 mb-2">Tipus de màquina</label>
-        <Dropdown
-          v-model="detail.workcenterTypeId"
-          editable
-          :options="plantModelStore.workcenterTypes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.workcenterTypeId,
-          }"
-        />
-      </div>
-      <div>
-        <label class="block text-900 mb-2">Màquina preferida</label>
-        <Dropdown
-          v-model="detail.preferredWorkcenterId"
-          editable
-          :options="plantModelStore.workcenters"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-        />
-      </div>
-      <div>
         <label class="block text-900 mb-2">Estat</label>
         <Dropdown
           v-model="detail.machineStatusId"
@@ -37,22 +12,6 @@
           class="w-full"
           :class="{
             'p-invalid': validation.errors.machineStatusId,
-          }"
-        />
-      </div>
-    </section>
-    <section class="three-columns mt-2">
-      <div>
-        <label class="block text-900 mb-2">Tipus d'operari</label>
-        <Dropdown
-          v-model="detail.operatorTypeId"
-          editable
-          :options="plantModelStore.operatorTypes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.operatorTypeId,
           }"
         />
       </div>
@@ -89,6 +48,16 @@
           :disabled="!detail.isExternalWork"
           :class="{
             'p-invalid': validation.errors.externalWorkCost,
+          }"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Ordre"
+          v-model="detail.order"
+          :class="{
+            'p-invalid': validation.errors.order,
           }"
         />
       </div>
@@ -151,10 +120,6 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    if (props.detail.preferredWorkcenterId === "") {
-      props.detail.preferredWorkcenterId = null;
-    }
-
     emit("submit", props.detail);
   } else {
     let errors = "";
