@@ -17,6 +17,47 @@
         <BaseInput label="Descripció" v-model="phase.phaseDescription" />
       </div>
     </section>
+    <section class="three-columns">
+      <div>
+        <label class="block text-900 mb-2">Tipus de màquina</label>
+        <Dropdown
+          v-model="phase.workcenterTypeId"
+          editable
+          :options="plantModelStore.workcenterTypes"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.workcenterTypeId,
+          }"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Màquina preferida</label>
+        <Dropdown
+          v-model="phase.preferredWorkcenterId"
+          editable
+          :options="plantModelStore.workcenters"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Tipus d'operari</label>
+        <Dropdown
+          v-model="phase.operatorTypeId"
+          editable
+          :options="plantModelStore.operatorTypes"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.operatorTypeId,
+          }"
+        />
+      </div>
+    </section>
   </form>
 </template>
 
@@ -30,6 +71,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
+import { usePlantModelStore } from "../store/plantmodel";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -42,6 +84,8 @@ const emit = defineEmits<{
 }>();
 
 const toast = useToast();
+const plantModelStore = usePlantModelStore();
+
 const schema = Yup.object().shape({
   phaseCode: Yup.string().required("El codi és obligatori"),
 });
@@ -58,6 +102,10 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
+    if (props.phase.preferredWorkcenterId === "") {
+      props.phase.preferredWorkcenterId = null;
+    }
+
     emit("submit", props.phase);
   } else {
     let errors = "";
