@@ -1,5 +1,5 @@
 import { PrimeIcons } from "primevue/api";
-import { Role, User } from "../types";
+import { User } from "../types";
 
 const header = {
   header: "TEMGES",
@@ -78,24 +78,13 @@ export const applicationMenus = [
       },
       {
         icon: PrimeIcons.MONEY_BILL,
-        title: "Factures",
-        child: [
-          {
-            icon: PrimeIcons.FLAG,
-            title: "Estats de factures",
-            href: "/purchaseinvoicestatus",
-          },
-          {
-            icon: PrimeIcons.MONEY_BILL,
-            title: "Factures de compra",
-            href: "/purchaseinvoice",
-          },
-          {
-            icon: PrimeIcons.MONEY_BILL,
-            title: "Gestió de factures",
-            href: "/purchaseinvoices-by-period",
-          },
-        ],
+        title: "Factures de compra",
+        href: "/purchaseinvoice",
+      },
+      {
+        icon: PrimeIcons.MONEY_BILL,
+        title: "Gestió de factures",
+        href: "/purchaseinvoices-by-period",
       },
       {
         icon: PrimeIcons.WALLET,
@@ -108,7 +97,7 @@ export const applicationMenus = [
           },
           {
             icon: PrimeIcons.WALLET,
-            title: "Declaració de despeses",
+            title: "Declaració despeses",
             href: "/expense",
           },
         ],

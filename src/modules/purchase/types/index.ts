@@ -94,7 +94,7 @@ export interface PurchaseInvoice {
   exerciceId: string;
   purchaseInvoiceSerieId: string;
   paymentMethodId: string;
-  purchaseInvoiceStatusId: string;
+  statusId: string;
   extraTaxPercentatge: number;
   extraTaxAmount: number;
   purchaseInvoiceDueDates: Array<PurchaseInvoiceDueDate>;

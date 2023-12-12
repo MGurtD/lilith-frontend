@@ -7,9 +7,6 @@ const Receipts = () => import("./views/Receipts.vue");
 const Receipt = () => import("./views/Receipt.vue");
 const PurchaseInvoiceSeries = () => import("./views/PurchaseInvoiceSeries.vue");
 const PurchaseInvoiceSerie = () => import("./views/PurchaseInvoiceSerie.vue");
-const PurchaseInvoiceStatuses = () =>
-  import("./views/PurchaseInvoiceStatuses.vue");
-const PurchaseInvoiceStatus = () => import("./views/PurchaseInvoiceStatus.vue");
 const PurchaseInvoicesByDates = () =>
   import("./views/PurchaseInvoicesByDates.vue");
 const PurchaseInvoices = () => import("./views/PurchaseInvoices.vue");
@@ -55,17 +52,6 @@ export default [
     path: "/purchaseinvoiceserie/:id",
     name: "PurchaseInvoiceSerie",
     component: PurchaseInvoiceSerie,
-    props: true,
-  },
-  {
-    path: "/purchaseinvoicestatus",
-    name: "PurchaseInvoiceStatuses",
-    component: PurchaseInvoiceStatuses,
-  },
-  {
-    path: "/purchaseinvoicestatus/:id",
-    name: "PurchaseInvoiceStatus",
-    component: PurchaseInvoiceStatus,
     props: true,
   },
   {
