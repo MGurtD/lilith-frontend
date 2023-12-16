@@ -9,7 +9,7 @@
       />
       <br />
     </div>
-    <section class="three-columns">
+    <section class="three-columns mb-2">
       <div>
         <BaseInput label="Codi de la fase" v-model="phase.phaseCode" />
       </div>
@@ -17,7 +17,7 @@
         <BaseInput label="Descripció" v-model="phase.phaseDescription" />
       </div>
     </section>
-    <section class="three-columns">
+    <section class="three-columns mb-2">
       <div>
         <label class="block text-900 mb-2">Tipus de màquina</label>
         <Dropdown
@@ -37,9 +37,9 @@
         <Dropdown
           v-model="phase.preferredWorkcenterId"
           editable
-          :options="plantModelStore.workcenters"
+          :options="preferredWorkcenters"
           optionValue="id"
-          optionLabel="name"
+          optionLabel="description"
           class="w-full"
         />
       </div>
@@ -50,7 +50,7 @@
           editable
           :options="plantModelStore.operatorTypes"
           optionValue="id"
-          optionLabel="name"
+          optionLabel="description"
           class="w-full"
           :class="{
             'p-invalid': validation.errors.operatorTypeId,
@@ -85,6 +85,10 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const plantModelStore = usePlantModelStore();
+
+const preferredWorkcenters = computed(() => {
+  return plantModelStore.getWorkcentersByTypeId(props.phase.workcenterTypeId);
+})
 
 const schema = Yup.object().shape({
   phaseCode: Yup.string().required("El codi és obligatori"),
