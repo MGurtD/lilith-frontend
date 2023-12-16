@@ -3,9 +3,11 @@
     :value="salesOrderStore.salesOrders"
     class="small-datatable"
     tableStyle="min-width: 100%"
+    sort-field="salesOrderNumber"
+    sort-mode="single"
+    :sort-order="1"
     scrollable
     scrollHeight="80vh"
-    sortMode="multiple"
     @row-click="editRow"
   >
     <template #header>
@@ -58,9 +60,10 @@
     <Column
       field="salesOrderNumber"
       header="Número"
+      sortable
       style="width: 15%"
     ></Column>
-    <Column header="Data" style="width: 15%">
+    <Column field="salesOrderDate" header="Data" style="width: 15%" sortable>
       <template #body="slotProps">
         {{ formatDate(slotProps.data.salesOrderDate) }}
       </template>

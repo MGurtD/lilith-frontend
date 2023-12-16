@@ -18,6 +18,8 @@ export interface Exercise {
   purchaseInvoiceCounter: number;
   salesInvoiceCounter: number;
   salesOrderCounter: number;
+  receiptCounter: number;
+  deliveryNoteCounter: number | string;
   disabled: boolean;
 }
 
