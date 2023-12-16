@@ -9,7 +9,7 @@
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
         <span class="text-xl text-900 font-bold">Fases de la ruta</span>
-        <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAdd" />
+        <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
     <Column field="phaseCode" header="Codi" style="width: 15%"></Column>
@@ -43,6 +43,20 @@
       </template>
     </Column>
   </DataTable>
+
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormWorkmasterPhase
+      v-if="newPhase"
+      :workmaster="workmaster"
+      :phase="newPhase"
+      @submit="onAddHandler"
+    ></FormWorkmasterPhase>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -52,6 +66,9 @@ import { WorkMaster, WorkMasterPhase } from "../types";
 import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
+import FormWorkmasterPhase from "./FormWorkmasterPhase.vue";
+import { DialogOptions } from "../../../types/component";
+import { reactive, ref } from "vue";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -63,6 +80,14 @@ const emit = defineEmits<{
   (e: "edit", phase: WorkMasterPhase): void;
   (e: "delete", phase: WorkMasterPhase): void;
 }>();
+
+const dialogOptions = reactive({
+  visible: false,
+  title: "Nova fase",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 const confirm = useConfirm();
 const plantModelStore = usePlantModelStore();
@@ -86,8 +111,9 @@ const getOperatorType = (id: string) => {
   return entity.name;
 };
 
-const onAdd = () => {
-  const defaultImport = {
+const newPhase = ref({} as WorkMasterPhase);
+const onAddClick = () => {
+  newPhase.value = {
     id: getNewUuid(),
     workMasterId: props.workmaster.id,
     disabled: false,
@@ -99,7 +125,13 @@ const onAdd = () => {
     workmasterPhaseDetails: [],
     workmasterPhaseBillOfMaterials: [],
   } as WorkMasterPhase;
-  emit("add", defaultImport);
+
+  dialogOptions.visible = true;
+};
+
+const onAddHandler = (phase: WorkMasterPhase) => {
+  dialogOptions.visible = false;
+  emit("add", phase);
 };
 
 const onEditRow = (row: DataTableRowClickEvent) => {
