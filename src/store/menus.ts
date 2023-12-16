@@ -218,21 +218,21 @@ export const applicationMenus = [
     child: [
       {
         icon: PrimeIcons.BOX,
-        title: "Magatzem",
+        title: "Magatzems",
         href: "/warehouse",
       },
       {
-        icon: PrimeIcons.WRENCH,
+        icon: PrimeIcons.BARS,
         title: "Estocs",
         href: "/stocks",
       },
       {
-        icon: PrimeIcons.MAP,
-        title: "Moviments de magatzem",
+        icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT,
+        title: "Moviments",
         href: "/stockmovement",
       },
       {
-        icon: PrimeIcons.MAP,
+        icon: PrimeIcons.SORT_ALT,
         title: "Inventari",
         href: "/inventory",
       },
