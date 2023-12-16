@@ -61,7 +61,12 @@
       field="salesOrderNumber"
       header="Número"
       sortable
-      style="width: 15%"
+      style="width: 10%"
+    ></Column>
+    <Column
+      field="budgetNumber"
+      header="Pressupost"
+      style="width: 10%"
     ></Column>
     <Column field="salesOrderDate" header="Data" style="width: 15%" sortable>
       <template #body="slotProps">
@@ -75,8 +80,8 @@
     ></Column>
     <Column
       field="customerSalesOrderNumber"
-      header="Número Client"
-      style="width: 20%"
+      header="Comanda client"
+      style="width: 15%"
     ></Column>
     <Column header="Estat" style="width: 20%">
       <template #body="slotProps">
