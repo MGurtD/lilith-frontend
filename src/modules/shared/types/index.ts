@@ -15,11 +15,12 @@ export interface Exercise {
   description: string;
   startDate: Date;
   endDate: Date;
-  purchaseInvoiceCounter: number;
-  salesInvoiceCounter: number;
-  salesOrderCounter: number;
-  receiptCounter: number;
-  deliveryNoteCounter: number | string;
+  budgetCounter: string;
+  salesOrderCounter: string;
+  receiptCounter: string;
+  salesInvoiceCounter: string;
+  deliveryNoteCounter: string;
+  purchaseInvoiceCounter: string;
   disabled: boolean;
 }
 

@@ -19,7 +19,7 @@
     </template>
 
     <Column field="name" header="Nom" style="width: 15%"></Column>
-    <Column field="description" header="Descripció" style="width: 20%"></Column>
+    <Column field="description" header="Descripció" style="width: 25%"></Column>
     <Column header="Data d'inici" style="width: 20%">
       <template #body="slotProps">
         {{ formatDate(slotProps.data.startDate) }}
@@ -30,12 +30,7 @@
         {{ formatDate(slotProps.data.endDate) }}
       </template>
     </Column>
-    <Column
-      field="purchaseInvoiceCounter"
-      header="Factures de compra"
-      style="width: 15%"
-    ></Column>
-    <Column header="Desactivada" style="width: 10%">
+    <Column header="Desactivat" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
       </template>

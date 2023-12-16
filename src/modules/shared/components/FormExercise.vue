@@ -41,9 +41,13 @@
           }"
         />
       </div>
+      
     </div>
 
-    <section class="three-columns">
+    <section class="four-columns">
+      <div>
+        <BaseInput label="Pressupostos" v-model="exercise.budgetCounter" />
+      </div>
       <div>
         <BaseInput
           label="Comandes de venta"
@@ -64,7 +68,7 @@
       </div>
     </section>
 
-    <div class="three-columns mt-2">
+    <div class="four-columns mt-2">
       <div>
         <BaseInput
           label="Albarans de recepció"
@@ -78,7 +82,7 @@
         />
       </div>
       <div>
-        <label class="block text-900  mb-2">Desactivat</label>
+        <label class="block text-900 mb-2">Desactivat</label>
         <Checkbox v-model="exercise.disabled" class="w-full" :binary="true" />
       </div>
     </div>
@@ -142,8 +146,6 @@ const submitForm = async () => {
   if (validation.value.result) {
     props.exercise.startDate = convertDateTimeToJSON(props.exercise.startDate);
     props.exercise.endDate = convertDateTimeToJSON(props.exercise.endDate);
-    props.exercise.deliveryNoteCounter =
-      props.exercise.deliveryNoteCounter.toString();
 
     emit("submit", props.exercise);
   } else {
