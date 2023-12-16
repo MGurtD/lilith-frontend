@@ -2,36 +2,15 @@
   <form v-if="detail">
     <section class="three-columns">
       <div>
-        <label class="block text-900 mb-2">Estat</label>
-        <Dropdown
-          v-model="detail.machineStatusId"
-          editable
-          :options="plantModelStore.machineStatuses"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.machineStatusId,
-          }"
-        />
-      </div>
-      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          :decimals="2"
-          label="Temps estimat (min)"
-          v-model="detail.estimatedTime"
+          label="Ordre"
+          v-model="detail.order"
           :class="{
-            'p-invalid': validation.errors.estimatedTime,
+            'p-invalid': validation.errors.order,
           }"
         />
       </div>
-      <div>
-        <label class="block text-900v mb-1">Temps de cicle</label>
-        <Checkbox v-model="detail.isCycleTime" class="w-full" :binary="true" />
-      </div>
-    </section>
-    <section class="three-columns mt-2">
       <div>
         <label class="block text-900 mt-1 mb-1">Extern</label>
         <Checkbox
@@ -51,17 +30,41 @@
           }"
         />
       </div>
+    </section>
+    <section class="three-columns mt-3">
+      <div>
+        <label class="block text-900 mb-2">Estat</label>
+        <Dropdown
+          v-model="detail.machineStatusId"
+          editable
+          :options="plantModelStore.machineStatuses"
+          optionValue="id"
+          optionLabel="description"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.machineStatusId,
+          }"
+        />
+      </div>
+      <div>
+        <label class="block text-900v mb-1">Temps de cicle</label>
+        <Checkbox v-model="detail.isCycleTime" class="w-full" :binary="true" />
+      </div>
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Ordre"
-          v-model="detail.order"
+          :decimals="2"
+          label="Temps estimat (min)"
+          v-model="detail.estimatedTime"
           :class="{
-            'p-invalid': validation.errors.order,
+            'p-invalid': validation.errors.estimatedTime,
           }"
         />
       </div>
     </section>
+    <div class="mt-3">
+      <BaseInput label="Comentari fabricació" v-model="detail.comment" />
+    </div>
 
     <br />
     <div>
@@ -101,9 +104,9 @@ const plantModelStore = usePlantModelStore();
 
 const toast = useToast();
 const schema = Yup.object().shape({
-  workcenterTypeId: Yup.string().required("El tipus de màquina és obligatoria"),
-  machineStatusId: Yup.string().required("L'estat de màquina és obligatori"),
-  operatorTypeId: Yup.string().required("El tipus d'operari és obligatori"),
+  order: Yup.number()
+    .required("L'ordre és obligatori")
+    .positive("L'ordre ha de ser positiu"),
   estimatedTime: Yup.number().required("El temps estimat és obligatori"),
   externalWorkCost: Yup.number().required("El cost extern és obligatori"),
 });

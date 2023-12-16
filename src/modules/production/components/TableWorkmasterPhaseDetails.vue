@@ -3,6 +3,8 @@
     @row-click="onEditRow"
     :value="details"
     tableStyle="min-width: 100%"
+    sort-field="order"
+    :sort-order="1"
   >
     <template #header>
       <div
@@ -12,18 +14,25 @@
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAdd" />
       </div>
     </template>
-    
+
+    <Column sortable field="order" header="Ordre" style="width: 10%"></Column>
+
     <Column header="Estat de màquina" style="width: 25%">
       <template #body="slotProps">
         {{ getMachineStatus(slotProps.data.machineStatusId) }}
       </template>
     </Column>
-    
+
     <Column
       field="estimatedTime"
       header="Temps (min)"
       style="width: 25%"
     ></Column>
+    <Column header="Temps de cicle" style="width: 25%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isCycleTime"></BooleanColumn>
+      </template>
+    </Column>
     <Column header="Extern" style="width: 25%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isExternalWork"></BooleanColumn>
@@ -49,6 +58,7 @@ import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
 import BooleanColumn from "../../../components/tables/BooleanColumn.vue";
+import { useWorkMasterStore } from "../store/workmaster";
 
 const props = defineProps<{
   workmasterPhase: WorkMasterPhase;
@@ -62,6 +72,7 @@ const emit = defineEmits<{
 }>();
 
 const confirm = useConfirm();
+const workmasterStore = useWorkMasterStore();
 const plantModelStore = usePlantModelStore();
 
 const getMachineStatus = (id: string) => {
@@ -81,9 +92,18 @@ const onAdd = () => {
     externalWorkCost: 0,
     machineStatusId: "",
     comment: "",
-    order: 0,
+    order: getNextOrderNumber(),
   } as WorkMasterPhaseDetail;
   emit("add", defaultInstance);
+};
+
+const getNextOrderNumber = () => {
+  let defaultOrder = 10;
+  if (props.details) {
+    return (props.details.length + 1) * 10;
+  }
+
+  return defaultOrder;
 };
 
 const onEditRow = (row: DataTableRowClickEvent) => {
