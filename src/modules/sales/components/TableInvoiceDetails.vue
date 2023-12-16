@@ -30,11 +30,14 @@
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
     <Column header="Referència" style="width: 10%">
       <template #body="slotProps">
-        {{
-          referenceStore.getShortNameById(
-            slotProps.data.deliveryNoteDetail.referenceId
-          )
-        }}
+        <span v-if="slotProps.data.deliveryNoteDetail">
+          {{
+            referenceStore.getShortNameById(
+              slotProps.data.deliveryNoteDetail.referenceId
+            )
+          }}
+        </span>
+        <span v-else>--</span>
       </template>
     </Column>
     <Column header="Descripció" field="description" style="width: 40%"></Column>
