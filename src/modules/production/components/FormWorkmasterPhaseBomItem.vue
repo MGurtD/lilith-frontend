@@ -1,33 +1,28 @@
 <template>
   <form v-if="bomItem">
-    <section class="two-columns">
-      <div>
+    <div>
         <DropdownReference
-          label="Material de consum"
+          label="Material"
+          :fullName="true"
           v-model="bomItem.referenceId"
-          :full-name="true"
           :class="{
             'p-invalid': validation.errors.referenceId,
           }"
         ></DropdownReference>
       </div>
+
+    <section class="three-columns">      
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          :decimals="2"
-          label="Quantitat a consumir"
+          label="Quantitat"
           v-model="bomItem.quantity"
-          :class="{
-            'p-invalid': validation.errors.quantity,
-          }"
         />
       </div>
-    </section>
-    <section class="four-columns mt-2">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Amplada"
+          label="Amplada (mm)"
           :decimals="2"
           v-model="bomItem.width"
         />
@@ -36,24 +31,36 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Alçada"
+          label="Alçada (mm)"
           v-model="bomItem.height"
         />
       </div>
-      <div>
+    </section>
+
+    <section class="three-columns">
+     
+      <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Longitud"
+          label="Longitud (mm)"
           v-model="bomItem.length"
         />
       </div>
-      <div>
+      <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Diàmetre"
+          label="Diàmetre (mm)"
           v-model="bomItem.diameter"
+        />
+      </div>
+      <div class="mt-2">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Gruix (mm)"
+          v-model="bomItem.thickness"
         />
       </div>
     </section>
