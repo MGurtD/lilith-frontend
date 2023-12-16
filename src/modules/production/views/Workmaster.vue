@@ -29,12 +29,14 @@ import { useWorkMasterStore } from "../store/workmaster";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { WorkMaster, WorkMasterPhase } from "../types";
+import { usePlantModelStore } from "../store/plantmodel";
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const workmasterStore = useWorkMasterStore();
+const plantModelStore = usePlantModelStore();
 const { workmaster } = storeToRefs(workmasterStore);
 const id = ref("");
 
@@ -60,6 +62,7 @@ onMounted(async () => {
 const loadViewData = async () => {
   await referenceStore.fetchReferencesByModule("sales");
   await workmasterStore.fetchOne(id.value);
+  plantModelStore.fetchActiveModel();
 };
 
 const onWorkmasterSubmit = async (workmaster: WorkMaster) => {
