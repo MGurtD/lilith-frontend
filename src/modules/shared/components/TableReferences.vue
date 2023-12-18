@@ -27,7 +27,7 @@
       v-if="isSales"
       field="version"
       header="Versió"
-      style="width: 15%"
+      style="width: 10%"
     ></Column>
     <Column
       v-if="isSales"
@@ -41,6 +41,11 @@
       header="Preu"
       style="width: 20%"
     ></Column>
+    <Column header="Servei" v-if="isSales" style="width: 10%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isService" />
+      </template>
+    </Column>
     <Column
       v-if="isPurchase"
       field="referenceTypeId"
@@ -75,6 +80,7 @@
       header="Última Compra"
       style="width: 15%"
     ></Column>
+    
     <Column header="Desc." style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />

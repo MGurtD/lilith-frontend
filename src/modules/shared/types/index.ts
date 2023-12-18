@@ -76,7 +76,7 @@ export interface Reference {
   sales: boolean;
   purchase: boolean;
   production: boolean;
-  issales: boolean;
+  isService: boolean;
 }
 
 export interface ReferenceType {

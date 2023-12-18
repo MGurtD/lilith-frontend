@@ -68,6 +68,7 @@ export const useReferenceStore = defineStore({
         referenceFormatId: null,
         density: 0,
         lastPurchaseCost: 0,
+        isService: false,
       } as Reference;
     },
     async fetchReferences() {

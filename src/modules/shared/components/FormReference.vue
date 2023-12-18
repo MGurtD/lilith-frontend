@@ -126,7 +126,7 @@
       </div>
       <div class="mt-1">
         <label class="block text-900 mb-2">Servei</label>
-        <Checkbox v-model="reference.issales" class="w-full" :binary="true" />
+        <Checkbox v-model="reference.isService" class="w-full" :binary="true" />
       </div>
     </section>
     <section>
@@ -203,7 +203,7 @@ const schema = Yup.object().shape({
     .max(20, "La versió pot superar els 20 carácters"),
   cost: Yup.number().required("El cost es obligatori"),
   price: Yup.number().required("El preu es obligatori"),
-  density: Yup.number().required("La densitat és obligatoria"),
+  //density: Yup.number().required("La densitat és obligatoria"),
   taxId: Yup.string().required("El tipus d'iva es obligatori"),
 });
 const validation = ref({
