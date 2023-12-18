@@ -73,6 +73,7 @@ export interface Reference {
   sales: boolean;
   purchase: boolean;
   production: boolean;
+  issales: boolean;
 }
 
 export interface ReferenceType {

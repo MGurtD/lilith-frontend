@@ -93,7 +93,7 @@
         />
       </div>
     </section>
-    <section class="three-columns" v-if="isSales">
+    <section class="four-columns" v-if="isSales">
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
@@ -123,6 +123,10 @@
             'p-invalid': validation.errors.taxid,
           }"
         />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Servei</label>
+        <Checkbox v-model="reference.issales" class="w-full" :binary="true" />
       </div>
     </section>
     <section>
