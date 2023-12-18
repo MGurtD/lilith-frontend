@@ -27,7 +27,8 @@ export interface SalesOrderHeader {
   customerId: string;
   exerciseId: string;
   salesOrderDate: string;
-  salesOrderNumber: number;
+  salesOrderNumber: string;
+  budgetNumber: string | null;
   customerCode: string;
   customerComercialName: string;
   customerSalesOrderNumber: string;

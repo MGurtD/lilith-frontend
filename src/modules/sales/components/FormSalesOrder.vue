@@ -1,8 +1,26 @@
 <template>
   <div>
     <form v-if="salesOrder">
-      <section class="four-columns">
-        <div class="mt-1">
+      <section class="four-columns mt-2">
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Num. Comanda"
+            id="salesOrderNumber"
+            v-model="salesOrder.salesOrderNumber"
+            disabled
+          />
+        </div>
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Num. Pressupost"
+            id="budgetNumber"
+            v-model="salesOrder.budgetNumber"
+            disabled
+          />
+        </div>
+        <div>
           <label class="block text-900 mb-2">Exercici</label>
           <Dropdown
             v-model="salesOrder.exerciseId"
@@ -16,20 +34,14 @@
             }"
           />
         </div>
-        <div class="mt-1">
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            label="Num. Comanda"
-            id="salesOrderNumber"
-            v-model="salesOrder.salesOrderNumber"
-            disabled
-          />
-        </div>
-        <div class="mt-1">
+        <div>
           <label class="block text-900 mb-2">Data Comanda</label>
           <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
         </div>
-        <div class="mt-2">
+        
+      </section>
+      <section class="four-columns mt-2">
+        <div>
           <label class="block text-900 mb-2">Estat</label>
           <Dropdown
             v-model="salesOrder.statusId"
@@ -43,24 +55,7 @@
             }"
           />
         </div>
-      </section>
-      <section class="four-columns">
-        <div class="mt-2">
-          <label class="block text-900 mb-2">Origen</label>
-          <Dropdown
-            v-model="salesOrder.siteId"
-            editable
-            :options="plantModelStore.sites"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.siteId,
-            }"
-            @update:modelValue="updateSite()"
-          />
-        </div>
-        <div class="mt-2">
+        <div>
           <label class="block text-900 mb-2">Client</label>
           <Dropdown
             v-model="salesOrder.customerId"
@@ -75,7 +70,7 @@
             @update:modelValue="updateCustomer()"
           />
         </div>
-        <div class="mt-2">
+        <div>
           <BaseInput
             :type="BaseInputType.TEXT"
             label="Comanda Client"
@@ -83,7 +78,7 @@
             v-model="salesOrder.customerSalesOrderNumber"
           />
         </div>
-        <div class="mt-2">
+        <div>
           <BaseInput
             :type="BaseInputType.TEXT"
             :disabled="true"
