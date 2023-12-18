@@ -1,7 +1,6 @@
 <template>
   <form v-if="newMovement">
-    <section class="two-columns-7525">
-      <div>
+    <div>
         <DropdownReference
           label="Material"
           :fullName="true"
@@ -11,6 +10,8 @@
           }"
         ></DropdownReference>
       </div>
+
+    <section class="three-columns">      
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -18,30 +19,31 @@
           v-model="newMovement.newQuantity"
         />
       </div>
-    </section>
-
-    <section class="four-columns">
-      <div class="mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Amplada"
+          label="Amplada (mm)"
           :decimals="2"
           v-model="newMovement.width"
         />
       </div>
-      <div class="mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Alçada"
+          label="Alçada (mm)"
           v-model="newMovement.height"
         />
       </div>
+    </section>
+
+    <section class="three-columns">
+     
       <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Longitud"
+          label="Longitud (mm)"
           v-model="newMovement.length"
         />
       </div>
@@ -49,8 +51,16 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Diàmetre"
+          label="Diàmetre (mm)"
           v-model="newMovement.diameter"
+        />
+      </div>
+      <div class="mt-2">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Gruix (mm)"
+          v-model="newMovement.thickness"
         />
       </div>
     </section>

@@ -5,7 +5,9 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
-    sortMode="multiple"
+    sortMode="single"
+    sortField="number"
+    :sort-order="1"
     @row-click="editRow"
   >
     <template #header>
@@ -55,8 +57,8 @@
         </div>
       </div>
     </template>
-    <Column field="number" header="Número" style="width: 15%"></Column>
-    <Column header="Data Creació" style="width: 15%">
+    <Column field="number" header="Número" sortable style="width: 15%"></Column>
+    <Column field="createdOn" header="Data Creació" sortable style="width: 15%">
       <template #body="slotProps">
         {{ formatDate(slotProps.data.createdOn) }}
       </template>

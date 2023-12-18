@@ -54,7 +54,15 @@ export const usePlantModelStore = defineStore({
     machineStatus: undefined as MachineStatus | undefined,
     machineStatuses: undefined as Array<MachineStatus> | undefined,
   }),
-  getters: {},
+  getters: {
+    getWorkcentersByTypeId: (state) => {
+      return (typeId: string) => {
+        if (!state.workcenters) return [];
+
+        return state.workcenters.filter((w) => w.workcenterTypeId === typeId);
+      };
+    },
+  },
   actions: {
     //workcenter
     setNewWorkcenter(id: string) {

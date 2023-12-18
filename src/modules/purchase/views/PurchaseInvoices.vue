@@ -84,7 +84,7 @@
       ></Column>
       <Column header="Estat" style="width: 15%">
         <template #body="slotProps">
-          {{ getStatusNameById(slotProps.data.purchaseInvoiceStatusId) }}
+          {{ getStatusNameById(slotProps.data.statusId) }}
         </template>
       </Column>
       <Column header="Venciment" style="width: 10%">
@@ -100,10 +100,7 @@
       <Column style="width: 5%">
         <template #body="slotProps">
           <i
-            v-if="
-              getStatusNameById(slotProps.data.purchaseInvoiceStatusId) ===
-              'Nova'
-            "
+            v-if="getStatusNameById(slotProps.data.statusId) === 'Nova'"
             :class="PrimeIcons.TIMES"
             class="grid_delete_column_button"
             @click="deletePurchaseInvoice($event, slotProps.data)"
@@ -131,11 +128,14 @@ import {
 } from "../../../utils/functions";
 import { PurchaseInvoice } from "../types";
 import { Exercise } from "../../shared/types";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
+const lifecycleName = "PurchaseInvoice";
+const lifecycleStore = useLifecyclesStore();
 const puchaseMasterDataStore = usePurchaseMasterDataStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
@@ -150,6 +150,7 @@ onMounted(async () => {
     title: "Factures de compra",
   });
 
+  await lifecycleStore.fetchOneByName(lifecycleName);
   await puchaseMasterDataStore.fetchMasterData();
   setCurrentYear();
 
@@ -212,9 +213,7 @@ const getSupplierNameById = (id: string) => {
 };
 
 const getStatusNameById = (id: string) => {
-  const status = puchaseMasterDataStore.masterData.statuses?.find(
-    (s) => s.id === id
-  );
+  const status = lifecycleStore.lifecycle?.statuses?.find((s) => s.id === id);
   if (status) return status.name;
   else return "";
 };

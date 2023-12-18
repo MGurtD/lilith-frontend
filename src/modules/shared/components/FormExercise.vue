@@ -30,7 +30,6 @@
             'p-invalid': validation.errors.startDate,
           }"
         />
-        <!--<InputNumber v-model="paymentMethod.dueDays" class="w-full mb-2" />-->
       </div>
       <div>
         <label class="block text-900 mb-2">Data fi</label>
@@ -41,20 +40,45 @@
             'p-invalid': validation.errors.endDate,
           }"
         />
-        <!--<InputNumber v-model="paymentMethod.paymentDay" class="w-full mb-2" />-->
       </div>
     </div>
 
-    <div class="two-columns">
+    <section class="three-columns">
       <div>
-        <label class="block text-900 mb-2">Comptador factures de compra</label>
-        <InputNumber
-          v-model="exercise.purchaseInvoiceCounter"
-          class="w-full mb-2"
+        <BaseInput
+          label="Comandes de venta"
+          v-model="exercise.salesOrderCounter"
         />
       </div>
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
+        <BaseInput
+          label="Albarans de venta"
+          v-model="exercise.deliveryNoteCounter"
+        />
+      </div>
+      <div>
+        <BaseInput
+          label="Factures de venta"
+          v-model="exercise.salesInvoiceCounter"
+        />
+      </div>
+    </section>
+
+    <div class="three-columns mt-2">
+      <div>
+        <BaseInput
+          label="Albarans de recepció"
+          v-model="exercise.receiptCounter"
+        />
+      </div>
+      <div>
+        <BaseInput
+          label="Factures de compra"
+          v-model="exercise.purchaseInvoiceCounter"
+        />
+      </div>
+      <div>
+        <label class="block text-900  mb-2">Desactivat</label>
         <Checkbox v-model="exercise.disabled" class="w-full" :binary="true" />
       </div>
     </div>
@@ -118,6 +142,8 @@ const submitForm = async () => {
   if (validation.value.result) {
     props.exercise.startDate = convertDateTimeToJSON(props.exercise.startDate);
     props.exercise.endDate = convertDateTimeToJSON(props.exercise.endDate);
+    props.exercise.deliveryNoteCounter =
+      props.exercise.deliveryNoteCounter.toString();
 
     emit("submit", props.exercise);
   } else {

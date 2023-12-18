@@ -1,43 +1,66 @@
 <template>
   <form v-if="bomItem">
-    <section class="two-columns">
-      <div>
+    <div>
         <DropdownReference
-          label="Material de consum"
+          label="Material"
+          :fullName="true"
           v-model="bomItem.referenceId"
           :class="{
             'p-invalid': validation.errors.referenceId,
           }"
         ></DropdownReference>
       </div>
+
+    <section class="three-columns">      
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Quantitat"
+          v-model="bomItem.quantity"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Amplada (mm)"
+          :decimals="2"
+          v-model="bomItem.width"
+        />
+      </div>
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Quantitat a consumir"
-          v-model="bomItem.quantity"
-          :class="{
-            'p-invalid': validation.errors.quantity,
-          }"
+          label="Alçada (mm)"
+          v-model="bomItem.height"
         />
       </div>
     </section>
-    <section class="two-columns mt-2">
-      <div>
-        <DropdownReference
-          label="Material de rebuig"
-          v-model="bomItem.wasteReferenceId"
-        ></DropdownReference>
-      </div>
-      <div>
+
+    <section class="three-columns">
+     
+      <div class="mt-2">
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Quantitat de rebuig"
-          v-model="bomItem.waste"
-          :class="{
-            'p-invalid': validation.errors.waste,
-          }"
+          label="Longitud (mm)"
+          v-model="bomItem.length"
+        />
+      </div>
+      <div class="mt-2">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Diàmetre (mm)"
+          v-model="bomItem.diameter"
+        />
+      </div>
+      <div class="mt-2">
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Gruix (mm)"
+          v-model="bomItem.thickness"
         />
       </div>
     </section>

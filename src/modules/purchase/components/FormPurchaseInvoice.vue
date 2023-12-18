@@ -39,14 +39,14 @@
         <div>
           <label class="block text-900 mb-2">Estat</label>
           <Dropdown
-            v-model="purchaseInvoice.purchaseInvoiceStatusId"
+            v-model="purchaseInvoice.statusId"
             editable
-            :options="purchaseMasterData.masterData.statuses"
+            :options="lifecycleStore.lifecycle?.statuses"
             optionValue="id"
             optionLabel="name"
             class="w-full"
             :class="{
-              'p-invalid': validation.errors.purchaseInvoiceStatusId,
+              'p-invalid': validation.errors.statusId,
             }"
           />
         </div>
@@ -164,6 +164,7 @@ import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { BaseInputType } from "../../../types/component";
 import { convertDateTimeToJSON } from "../../../utils/functions";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const emit = defineEmits<{
   (e: "submit", purchaseInvoice: PurchaseInvoice): void;
@@ -171,6 +172,7 @@ const emit = defineEmits<{
 }>();
 
 const purchaseStore = usePurchaseInvoiceStore();
+const lifecycleStore = useLifecyclesStore();
 const purchaseMasterData = usePurchaseMasterDataStore();
 const { purchaseInvoice } = storeToRefs(purchaseStore);
 
@@ -188,6 +190,7 @@ onMounted(() => {
 const schema = Yup.object().shape({
   exerciceId: Yup.string().required("L'exercici es obligatori"),
   supplierId: Yup.string().required("El proveïdor es obligatori"),
+  statusId: Yup.string().required("L'estat és obligatori"),
 });
 
 const validation = ref({

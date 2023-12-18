@@ -97,6 +97,9 @@ export interface WorkMasterPhase {
   phaseDescription: string;
   workMasterId: string;
   disabled: boolean;
+  workcenterTypeId: string;
+  preferredWorkcenterId?: string | null;
+  operatorTypeId: string;
   details?: Array<WorkMasterPhaseDetail>;
   billOfMaterials?: Array<WorkMasterPhaseBillOfMaterials>;
 }
@@ -104,14 +107,13 @@ export interface WorkMasterPhase {
 export interface WorkMasterPhaseDetail {
   id: string;
   workMasterPhaseId: string;
-  workcenterTypeId: string;
-  preferredWorkcenterId?: string | null;
-  operatorTypeId: string;
   machineStatusId: string;
   estimatedTime: number;
   isCycleTime: boolean;
   isExternalWork: boolean;
   externalWorkCost: number;
+  order: number;
+  comment: string;
 }
 
 export interface WorkMasterPhaseBillOfMaterials {
@@ -119,6 +121,9 @@ export interface WorkMasterPhaseBillOfMaterials {
   workMasterPhaseId: string;
   referenceId: string;
   quantity: number;
-  wasteReferenceId?: string;
-  waste: number;
+  width: number;
+  length: number;
+  height: number;
+  diameter: number;
+  thickness: number;
 }

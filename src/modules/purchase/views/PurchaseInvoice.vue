@@ -88,6 +88,7 @@ import FormPurchaseInvoiceImport from "../components/FormPurchaseInvoiceImport.v
 import TablePurchaseInvoiceImports from "../components/TablePurchaseInvoiceImports.vue";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { useToast } from "primevue/usetoast";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const purchaseInvoiceForm = ref();
 
@@ -95,6 +96,7 @@ const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const lifecycleStore = useLifecyclesStore();
 const purchaseMasterDataStore = usePurchaseMasterDataStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
 const { purchaseInvoice } = storeToRefs(purchaseInvoiceStore);
@@ -149,10 +151,10 @@ const setDefaultValues = () => {
     );
     if (serie) purchaseInvoice.value.purchaseInvoiceSerieId = serie.id;
 
-    const status = purchaseMasterDataStore.masterData.statuses?.find(
+    const status = lifecycleStore.lifecycle?.statuses?.find(
       (s) => s.name === "Nova"
     );
-    if (status) purchaseInvoice.value.purchaseInvoiceStatusId = status.id;
+    if (status) purchaseInvoice.value.statusId = status.id;
   }
 };
 

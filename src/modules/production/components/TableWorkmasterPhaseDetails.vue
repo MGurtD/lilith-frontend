@@ -3,6 +3,8 @@
     @row-click="onEditRow"
     :value="details"
     tableStyle="min-width: 100%"
+    sort-field="order"
+    :sort-order="1"
   >
     <template #header>
       <div
@@ -12,31 +14,25 @@
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAdd" />
       </div>
     </template>
-    <Column header="Tipus de màquina" style="width: 25%">
-      <template #body="slotProps">
-        {{ getWorkcenterType(slotProps.data.workcenterTypeId) }}
-      </template>
-    </Column>
+
+    <Column sortable field="order" header="Ordre" style="width: 10%"></Column>
+
     <Column header="Estat de màquina" style="width: 25%">
       <template #body="slotProps">
         {{ getMachineStatus(slotProps.data.machineStatusId) }}
       </template>
     </Column>
-    <Column header="Màquina preferida" style="width: 25%">
-      <template #body="slotProps">
-        {{ getWorkcenter(slotProps.data.preferredWorkcenterId) }}
-      </template>
-    </Column>
-    <Column header="Tipus d'operari" style="width: 25%">
-      <template #body="slotProps">
-        {{ getOperatorType(slotProps.data.operatorTypeId) }}
-      </template>
-    </Column>
+
     <Column
       field="estimatedTime"
       header="Temps (min)"
       style="width: 25%"
     ></Column>
+    <Column header="Temps de cicle" style="width: 25%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isCycleTime"></BooleanColumn>
+      </template>
+    </Column>
     <Column header="Extern" style="width: 25%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isExternalWork"></BooleanColumn>
@@ -62,7 +58,7 @@ import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
 import BooleanColumn from "../../../components/tables/BooleanColumn.vue";
-import { onMounted } from "vue";
+import { useWorkMasterStore } from "../store/workmaster";
 
 const props = defineProps<{
   workmasterPhase: WorkMasterPhase;
@@ -76,26 +72,9 @@ const emit = defineEmits<{
 }>();
 
 const confirm = useConfirm();
+const workmasterStore = useWorkMasterStore();
 const plantModelStore = usePlantModelStore();
 
-const getWorkcenterType = (id: string) => {
-  if (!plantModelStore.workcenterTypes) return "";
-  const entity = plantModelStore.workcenterTypes?.find((e) => id === e.id);
-  if (!entity) return "";
-  return entity.name;
-};
-const getWorkcenter = (id: string) => {
-  if (!plantModelStore.workcenters) return "";
-  const entity = plantModelStore.workcenters?.find((e) => id === e.id);
-  if (!entity) return "";
-  return entity.name;
-};
-const getOperatorType = (id: string) => {
-  if (!plantModelStore.operatorTypes) return "";
-  const entity = plantModelStore.operatorTypes?.find((e) => id === e.id);
-  if (!entity) return "";
-  return entity.name;
-};
 const getMachineStatus = (id: string) => {
   if (!plantModelStore.machineStatuses) return "";
   const entity = plantModelStore.machineStatuses?.find((e) => id === e.id);
@@ -112,10 +91,19 @@ const onAdd = () => {
     isExternalWork: false,
     externalWorkCost: 0,
     machineStatusId: "",
-    operatorTypeId: "",
-    workcenterTypeId: "",
+    comment: "",
+    order: getNextOrderNumber(),
   } as WorkMasterPhaseDetail;
   emit("add", defaultInstance);
+};
+
+const getNextOrderNumber = () => {
+  let defaultOrder = 10;
+  if (props.details) {
+    return (props.details.length + 1) * 10;
+  }
+
+  return defaultOrder;
 };
 
 const onEditRow = (row: DataTableRowClickEvent) => {

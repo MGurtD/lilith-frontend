@@ -9,25 +9,30 @@
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
         <span class="text-xl text-900 font-bold">Fases de la ruta</span>
-        <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAdd" />
+        <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
-    <Column field="phaseCode" header="Codi" style="width: 25%"></Column>
+    <Column field="phaseCode" header="Codi" style="width: 15%"></Column>
     <Column
       field="phaseDescription"
       header="Descripció"
-      style="width: 65%"
+      style="width: 30%"
     ></Column>
-    <!-- <Column header="Núm. Detalls" style="width: 25%">
+    <Column header="Tipus de màquina" style="width: 15%">
       <template #body="slotProps">
-        {{ slotProps.data.details.length }}
+        {{ getWorkcenterType(slotProps.data.workcenterTypeId) }}
       </template>
     </Column>
-    <Column header="Núm. Materials" style="width: 25%">
+    <Column header="Màquina preferida" style="width: 15%">
       <template #body="slotProps">
-        {{ slotProps.data.billOfMaterials.length }}
+        {{ getWorkcenter(slotProps.data.preferredWorkcenterId) }}
       </template>
-    </Column> -->
+    </Column>
+    <Column header="Tipus d'operari" style="width: 15%">
+      <template #body="slotProps">
+        {{ getOperatorType(slotProps.data.operatorTypeId) }}
+      </template>
+    </Column>
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -38,6 +43,20 @@
       </template>
     </Column>
   </DataTable>
+
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormWorkmasterPhase
+      v-if="newPhase"
+      :workmaster="workmaster"
+      :phase="newPhase"
+      @submit="onAddHandler"
+    ></FormWorkmasterPhase>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +65,10 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
+import { usePlantModelStore } from "../store/plantmodel";
+import FormWorkmasterPhase from "./FormWorkmasterPhase.vue";
+import { DialogOptions } from "../../../types/component";
+import { reactive, ref } from "vue";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -58,19 +81,57 @@ const emit = defineEmits<{
   (e: "delete", phase: WorkMasterPhase): void;
 }>();
 
-const confirm = useConfirm();
+const dialogOptions = reactive({
+  visible: false,
+  title: "Nova fase",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
-const onAdd = () => {
-  const defaultImport = {
+const confirm = useConfirm();
+const plantModelStore = usePlantModelStore();
+
+const getWorkcenterType = (id: string) => {
+  if (!plantModelStore.workcenterTypes) return "";
+  const entity = plantModelStore.workcenterTypes?.find((e) => id === e.id);
+  if (!entity) return "";
+  return entity.name;
+};
+const getWorkcenter = (id: string) => {
+  if (!plantModelStore.workcenters) return "";
+  const entity = plantModelStore.workcenters?.find((e) => id === e.id);
+  if (!entity) return "";
+  return entity.name;
+};
+const getOperatorType = (id: string) => {
+  if (!plantModelStore.operatorTypes) return "";
+  const entity = plantModelStore.operatorTypes?.find((e) => id === e.id);
+  if (!entity) return "";
+  return entity.name;
+};
+
+const newPhase = ref({} as WorkMasterPhase);
+const onAddClick = () => {
+  newPhase.value = {
     id: getNewUuid(),
     workMasterId: props.workmaster.id,
     disabled: false,
     phaseCode: "",
     phaseDescription: "",
+    operatorTypeId: "",
+    workcenterTypeId: "",
+    preferredWorkcenterId: null,
     workmasterPhaseDetails: [],
     workmasterPhaseBillOfMaterials: [],
   } as WorkMasterPhase;
-  emit("add", defaultImport);
+
+  dialogOptions.visible = true;
+};
+
+const onAddHandler = (phase: WorkMasterPhase) => {
+  dialogOptions.visible = false;
+  emit("add", phase);
 };
 
 const onEditRow = (row: DataTableRowClickEvent) => {
