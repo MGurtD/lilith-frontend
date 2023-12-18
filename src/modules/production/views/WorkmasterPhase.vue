@@ -117,7 +117,7 @@ const loadViewData = async () => {
 
 const onWorkmasterPhaseSubmit = async (phase: WorkMasterPhase) => {
   const updated = await workmasterStore.updatePhase(phaseId.value, phase);
-  if (updated) router.back();
+  //if (updated) router.back();
 };
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref(undefined as WorkMasterPhaseDetail | undefined);
