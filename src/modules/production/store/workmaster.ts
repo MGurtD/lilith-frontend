@@ -20,7 +20,7 @@ export const useWorkMasterStore = defineStore({
     setNew(id: string) {
       this.workmaster = {
         id: id,
-        baseQuantity: 0,
+        baseQuantity: 1,
         referenceId: "",
         disabled: false,
         phases: [],
