@@ -117,7 +117,7 @@ const onAddClick = () => {
     id: getNewUuid(),
     workMasterId: props.workmaster.id,
     disabled: false,
-    phaseCode: "",
+    phaseCode: ((props.workmaster.phases.length + 1) * 10).toString(),
     phaseDescription: "",
     operatorTypeId: "",
     workcenterTypeId: "",
