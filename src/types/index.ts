@@ -1,7 +1,7 @@
 export interface GenericResponse<T> {
   result: boolean;
   errors: Array<string>;
-  content?: T;
+  content?: T | null;
 }
 
 export interface AuthenticationResponse {
