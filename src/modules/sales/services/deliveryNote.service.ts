@@ -57,6 +57,14 @@ export class DeliveryNoteService extends BaseService<DeliveryNote> {
     }
   }
 
+  async GetReportDataById(id: string) {
+    const endpoint = `${this.resource}/Report/${id}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as SalesOrderReport;
+    }
+  }
+
   async AddOrder(
     id: string,
     order: SalesOrderHeader

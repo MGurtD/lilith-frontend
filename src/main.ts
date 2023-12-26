@@ -39,6 +39,7 @@ import TabPanel from "primevue/tabpanel";
 import Textarea from "primevue/textarea";
 import RadioButton from "primevue/radiobutton";
 import ColorPicker from "primevue/colorpicker";
+import SplitButton from "primevue/splitbutton";
 import ConfirmPopup from "primevue/confirmpopup";
 import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
@@ -55,6 +56,7 @@ app.use(ConfirmationService);
 app
   .component("Toast", Toast)
   .component("Button", Button)
+  .component("SplitButton", SplitButton)
   .component("Card", Card)
   .component("Chart", Chart)
   .component("Calendar", Calendar)

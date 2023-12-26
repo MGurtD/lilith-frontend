@@ -1,9 +1,10 @@
 <template>
-  <Button
+  <SplitButton
     label="Guardar"
-    class="grid_add_row_button"
-    :size="'small'"
     @click="submitForm"
+    :model="items"
+    :size="'small'"
+    class="grid_add_row_button"
   />
 
   <FormDeliveryNote
@@ -67,9 +68,14 @@ import { useCustomersStore } from "../store/customers";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { DeliveryNote, SalesOrderHeader } from "../types";
-import { formatDate } from "../../../utils/functions";
+import {
+  createBlobAndDownloadFile,
+  formatDate,
+} from "../../../utils/functions";
 import { useSalesOrderStore } from "../store/order";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import Services from "../services";
+import { ReportService } from "../../../api/services/report.service";
 
 const deliveryNoteForm = ref();
 
@@ -84,6 +90,41 @@ const plantModelStore = usePlantModelStore();
 const referenceStore = useReferenceStore();
 const lifecycleStore = useLifecyclesStore();
 const { deliveryNote } = storeToRefs(deliveryNoteStore);
+
+const items = [
+  {
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(),
+  },
+];
+
+const printInvoice = async () => {
+  const deliveryNoteReport = await Services.DeliveryNote.GetReportDataById(
+    deliveryNote.value!.id
+  );
+
+  if (deliveryNoteReport) {
+    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      deliveryNoteReport,
+      "DeliveryNote",
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
+  }
+};
 
 const dialogTitle = "Selector de comandes";
 const isDialogVisible = ref(false);

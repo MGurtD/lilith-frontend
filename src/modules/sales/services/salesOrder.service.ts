@@ -2,10 +2,10 @@ import {
   CreateSalesHeaderRequest,
   SalesOrderDetail,
   SalesOrderHeader,
+  SalesOrderReport,
 } from "../types";
 import apiClient from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
-import { GenericResponse } from "../../../types";
 
 export class SalesOrderDetailService extends BaseService<SalesOrderDetail> {}
 
@@ -36,6 +36,14 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<SalesOrderHeader>;
+    }
+  }
+
+  async GetReportDataById(id: string) {
+    const endpoint = `${this.resource}/Report/${id}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as SalesOrderReport;
     }
   }
 

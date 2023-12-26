@@ -1,9 +1,10 @@
 <template>
-  <Button
+  <SplitButton
     label="Guardar"
-    class="grid_add_row_button"
-    :size="'small'"
     @click="submitForm"
+    :model="items"
+    :size="'small'"
+    class="grid_add_row_button"
   />
 
   <FormSalesOrder
@@ -83,7 +84,11 @@ import { storeToRefs } from "pinia";
 import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import { Reference } from "../../shared/types";
 import { useStore } from "../../../store";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import {
+  createBlobAndDownloadFile,
+  formatDate,
+  getNewUuid,
+} from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import { useSalesOrderStore } from "../store/order";
@@ -99,6 +104,9 @@ import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FormReference from "../../shared/components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
+import { ReportService } from "../../../api/services/report.service";
+import services from "../services";
+import { toPadding } from "chart.js/dist/helpers/helpers.options";
 
 const salesOrderForm = ref();
 
@@ -115,6 +123,41 @@ const referenceStore = useReferenceStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const taxesStore = useTaxesStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
+
+const items = [
+  {
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(),
+  },
+];
+
+const printInvoice = async () => {
+  const orderReport = await services.SalesOrder.GetReportDataById(
+    salesOrder.value!.id
+  );
+
+  if (orderReport) {
+    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      orderReport,
+      "SalesOrder",
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
+  }
+};
 
 const dialogTitle = "Línia de comanda";
 const isDialogVisible = ref(false);

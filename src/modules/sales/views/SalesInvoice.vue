@@ -76,7 +76,6 @@ import { PrimeIcons } from "primevue/api";
 import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { DialogOptions } from "../../../types/component";
-import SplitButton from "primevue/splitbutton";
 import FormSalesInvoice from "../components/FormSalesInvoice.vue";
 import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";

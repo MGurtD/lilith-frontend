@@ -1,3 +1,4 @@
+import { Site } from "../../production/types";
 import { Reference } from "../../shared/types";
 
 export interface CustomerType {
@@ -20,6 +21,13 @@ export interface SalesOrderDetail {
   estimatedDeliveryDate: Date;
   isDelivered: boolean;
   isInvoiced: boolean;
+}
+
+export interface SalesOrderReport {
+  customer: Customer;
+  site: Site;
+  order: SalesOrderHeader;
+  total: number;
 }
 
 export interface SalesOrderHeader {
@@ -205,6 +213,14 @@ export interface SalesInvoiceImport {
   baseAmount: number;
   taxAmount: number;
   netAmount: number;
+}
+
+export interface DeliveryNoteReport {
+  customer: Customer;
+  site: Site;
+  deliveryNote: DeliveryNote;
+  orders: Array<SalesOrderHeader>;
+  total: number;
 }
 
 export interface DeliveryNote {
