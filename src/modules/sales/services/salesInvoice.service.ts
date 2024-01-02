@@ -56,6 +56,14 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     }
   }
 
+  async GetReportDataById(id: string) {
+    const endpoint = `${this.resource}/Report/${id}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as any;
+    }
+  }
+
   async Update(request: SalesInvoice) {
     const endpoint = `${this.resource}/${request.id}`;
     const response = await this.apiClient.put(endpoint, request);

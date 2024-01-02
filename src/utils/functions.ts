@@ -1,4 +1,6 @@
+import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import { DatetimeFormat } from "vue-i18n";
 
 export const convertDDMMYYYYToDate = (strDate: string): any => {
   const strDateParts = strDate.split("/");
@@ -69,8 +71,13 @@ export const convertDateTimeToJSON = (dateTime: any): any => {
     const hoursDiff = dateTime.getHours() - dateTime.getTimezoneOffset() / 60;
     dateTime.setHours(hoursDiff);
     return dateTime.toISOString();
-  } else {
-    return convertDateTimeToJSON(convertDDMMYYYYToDate(dateTime));
+  } else if (_.isString(dateTime)) {
+    try {
+      var dateTimeInstance = new Date(dateTime);
+      return convertDateTimeToJSON(dateTimeInstance);
+    } catch (err) {
+      return convertDateTimeToJSON(convertDDMMYYYYToDate(dateTime));
+    }
   }
 };
 

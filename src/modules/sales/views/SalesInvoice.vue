@@ -73,7 +73,11 @@ import { useCustomersStore } from "../store/customers";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { PrimeIcons } from "primevue/api";
-import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
+import {
+  convertDateTimeToJSON,
+  createBlobAndDownloadFile,
+  formatDate,
+} from "../../../utils/functions";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { DialogOptions } from "../../../types/component";
 import FormSalesInvoice from "../components/FormSalesInvoice.vue";
@@ -82,11 +86,14 @@ import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useReferenceStore } from "../../shared/store/reference";
+import Services from "../services";
+import { ReportService } from "../../../api/services/report.service";
+import { useToast } from "primevue/usetoast";
 
 const items = [
   {
-    label: "Generar factura",
-    icon: PrimeIcons.FILE_PDF,
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
     command: () => printInvoice(),
   },
 ];
@@ -94,6 +101,7 @@ const items = [
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const toast = useToast();
 const sharedData = useSharedDataStore();
 const customersStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
@@ -158,7 +166,32 @@ const updateInvoice = async () => {
 };
 
 // Report print
-const printInvoice = () => {};
+const printInvoice = async () => {
+  const invoiceReport = await Services.SalesInvoice.GetReportDataById(
+    invoice.value!.id
+  );
+
+  if (invoiceReport) {
+    const fileName = `Factura_${invoice.value?.invoiceNumber}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      invoiceReport,
+      "SalesInvoice",
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
+  }
+};
 
 // Invoice details
 const openDeliveryNoteSelector = async () => {
