@@ -61,7 +61,7 @@ export class DeliveryNoteService extends BaseService<DeliveryNote> {
     const endpoint = `${this.resource}/Report/${id}`;
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
-      return response.data as SalesOrderReport;
+      return response.data;
     }
   }
 
