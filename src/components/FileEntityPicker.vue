@@ -91,7 +91,11 @@ const deleteFile = async (file: File) => {
         <div class="file-viewer-item-type">
           <i
             v-if="file.type === 0"
-            :class="PrimeIcons.FILE_PDF"
+            :class="
+              file.originalName.endsWith('docx')
+                ? PrimeIcons.FILE_WORD
+                : PrimeIcons.FILE_PDF
+            "
             style="font-size: 3.5rem"
           />
           <i
