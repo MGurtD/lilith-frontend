@@ -172,7 +172,7 @@ const printInvoice = async () => {
   );
 
   if (invoiceReport) {
-    const fileName = `Factura_${invoice.value?.invoiceNumber}`;
+    const fileName = `Factura_${invoice.value?.invoiceNumber}.docx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(

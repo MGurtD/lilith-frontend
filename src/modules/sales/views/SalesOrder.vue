@@ -138,7 +138,7 @@ const printInvoice = async () => {
   );
 
   if (orderReport) {
-    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}`;
+    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(

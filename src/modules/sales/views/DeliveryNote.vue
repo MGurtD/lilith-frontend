@@ -105,7 +105,7 @@ const printInvoice = async () => {
   );
 
   if (deliveryNoteReport) {
-    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}`;
+    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}.docx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
