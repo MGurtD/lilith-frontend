@@ -104,7 +104,7 @@ import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FormReference from "../../shared/components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
-import { ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
 import services from "../services";
 import { toPadding } from "chart.js/dist/helpers/helpers.options";
 
@@ -138,12 +138,12 @@ const printInvoice = async () => {
   );
 
   if (orderReport) {
-    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
+    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
       orderReport,
-      "SalesOrder",
+      REPORTS.Order,
       fileName
     );
 

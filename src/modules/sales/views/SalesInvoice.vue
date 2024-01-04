@@ -87,7 +87,7 @@ import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useReferenceStore } from "../../shared/store/reference";
 import Services from "../services";
-import { ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
 import { useToast } from "primevue/usetoast";
 
 const items = [
@@ -172,12 +172,12 @@ const printInvoice = async () => {
   );
 
   if (invoiceReport) {
-    const fileName = `Factura_${invoice.value?.invoiceNumber}.docx`;
+    const fileName = `Factura_${invoice.value?.invoiceNumber}`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
       invoiceReport,
-      "SalesInvoice",
+      REPORTS.Invoice,
       fileName
     );
 

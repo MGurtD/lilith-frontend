@@ -1,6 +1,11 @@
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import { DatetimeFormat } from "vue-i18n";
+
+Date.prototype.toJSON = function () {
+  const hoursDiff = this.getHours() - this.getTimezoneOffset() / 60;
+  this.setHours(hoursDiff);
+  return this.toISOString();
+};
 
 export const convertDDMMYYYYToDate = (strDate: string): any => {
   const strDateParts = strDate.split("/");

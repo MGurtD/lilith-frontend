@@ -75,7 +75,7 @@ import {
 import { useSalesOrderStore } from "../store/order";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import Services from "../services";
-import { ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
 
 const deliveryNoteForm = ref();
 
@@ -105,12 +105,12 @@ const printInvoice = async () => {
   );
 
   if (deliveryNoteReport) {
-    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}.docx`;
+    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
       deliveryNoteReport,
-      "DeliveryNote",
+      REPORTS.DeliveryNote,
       fileName
     );
 
