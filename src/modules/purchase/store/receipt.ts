@@ -78,5 +78,11 @@ export const useReceiptsStore = defineStore({
       }
       return response;
     },
+    async calculateDetailWeightAndPrice(detail: ReceiptDetail) {
+      const response = await Services.Receipt.calculateDetailWeightAndPrice(
+        detail
+      );
+      if (response.result) return response.content!;
+    },
   },
 });
