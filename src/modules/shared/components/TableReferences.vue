@@ -70,17 +70,11 @@
     </Column>
     <Column
       v-if="isPurchase"
-      field="density"
-      header="Densitat"
-      style="width: 10%"
-    ></Column>
-    <Column
-      v-if="isPurchase"
       field="lastPurchaseCost"
       header="Última Compra"
       style="width: 15%"
     ></Column>
-    
+
     <Column header="Desc." style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
