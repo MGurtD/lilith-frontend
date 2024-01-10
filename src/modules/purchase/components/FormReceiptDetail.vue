@@ -23,7 +23,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           highlightOnFocus
-          label="Amplada"
+          label="Amplada (mm)"
           :decimals="2"
           v-model="detail.width"
         />
@@ -32,7 +32,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Alçada"
+          label="Alçada (mm)"
           highlightOnFocus
           v-model="detail.height"
         />
@@ -41,7 +41,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Longitud"
+          label="Longitud (mm)"
           highlightOnFocus
           v-model="detail.lenght"
         />
@@ -53,7 +53,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Diàmetre"
+          label="Diàmetre (mm)"
           highlightOnFocus
           v-model="detail.diameter"
         />
@@ -62,7 +62,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Gruix"
+          label="Gruix (mm)"
           highlightOnFocus
           v-model="detail.thickness"
         />
@@ -71,7 +71,7 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Pes"
+          label="Pes (kg)"
           v-model="detail.totalWeight"
         />
       </div>
