@@ -2,67 +2,96 @@
   <form v-if="detail">
     <section class="two-columns-7525">
       <div>
-        <label class="block text-900 mb-2">Material</label>
-        <Dropdown
+        <DropdownReference
+          label="Material"
           v-model="detail.referenceId"
-          editable
-          :options="referenceStore.references"
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.referenceId,
-          }"
-        >
-          <template #option="slotProps">
-            <div v-if="slotProps.option" class="flex align-items-center">
-              {{ slotProps.option.code }} -
-              {{ slotProps.option.description }}
-            </div>
-          </template>
-        </Dropdown>
+          :fullName="true"
+        ></DropdownReference>
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
-          label="Quantitat"
-          v-model="detail.quantity"
-          @update:model-value="calcAmount"
+          :type="BaseInputType.CURRENCY"
+          label="Preu / Kilo"
+          highlightOnFocus
+          v-model="detail.kilogramPrice"
         />
       </div>
     </section>
 
-    <section class="four-columns">
-      <div class="mt-2">
+    <section class="three-columns mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Amplada"
+          highlightOnFocus
+          label="Amplada (mm)"
           :decimals="2"
           v-model="detail.width"
         />
       </div>
-      <div class="mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Alçada"
+          label="Alçada (mm)"
+          highlightOnFocus
           v-model="detail.height"
         />
       </div>
-      <div class="mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Longitud"
+          label="Longitud (mm)"
+          highlightOnFocus
           v-model="detail.lenght"
         />
       </div>
-      <div class="mt-2">
+    </section>
+
+    <section class="three-columns mt-2">
+      <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Diàmetre"
+          label="Diàmetre (mm)"
+          highlightOnFocus
           v-model="detail.diameter"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Gruix (mm)"
+          highlightOnFocus
+          v-model="detail.thickness"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Pes (kg)"
+          v-model="detail.totalWeight"
+        />
+      </div>
+    </section>
+
+    <section class="two-columns mt-2">
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Quantitat"
+          highlightOnFocus
+          v-model="detail.quantity"
+        />
+      </div>
+
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Preu"
+          v-model="detail.amount"
         />
       </div>
     </section>
@@ -74,10 +103,18 @@
       :size="'small'"
       class="mt-2"
     />
+    <Button
+      label="Calcular"
+      @click="calculate"
+      style="float: right"
+      :size="'small'"
+      class="mt-2 mr-2"
+    />
   </form>
 </template>
 
 <script setup lang="ts">
+import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { ref } from "vue";
 import { ReceiptDetail } from "../types";
 import * as Yup from "yup";
@@ -89,6 +126,7 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
+import { useReceiptsStore } from "../store/receipt";
 
 const props = defineProps<{
   detail: ReceiptDetail;
@@ -100,10 +138,24 @@ const emit = defineEmits<{
 }>();
 
 const toast = useToast();
-const referenceStore = useReferenceStore();
+const receiptStore = useReceiptsStore();
 
-const calcAmount = () => {
-  const detail = props.detail;
+const calculate = async () => {
+  const detail = await receiptStore.calculateDetailWeightAndPrice(props.detail);
+
+  if (detail) {
+    props.detail.unitWeight = detail.unitWeight;
+    props.detail.totalWeight = detail.totalWeight;
+    props.detail.unitPrice = detail.unitPrice;
+    props.detail.amount = detail.amount;
+  } else {
+    toast.add({
+      summary: "Calculadora de pes/preu",
+      detail: "Hi ha hagut un problema al realitzar el cálcul",
+      severity: "warn",
+      life: 6000,
+    });
+  }
 };
 
 const schema = Yup.object().shape({

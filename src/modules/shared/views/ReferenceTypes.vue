@@ -4,6 +4,9 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
+    sort-mode="single"
+    sort-field="name"
+    :sort-order="1"
     @row-click="editRow"
   >
     <template #header>
@@ -19,8 +22,13 @@
         />
       </div>
     </template>
-    <Column field="name" header="Nom" style="width: 25%"></Column>
-    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column field="name" sortable header="Nom" style="width: 25%"></Column>
+    <Column
+      field="description"
+      sortable
+      header="Descripció"
+      style="width: 40%"
+    ></Column>
     <Column
       field="density"
       header="Densitat (cm/m3)"

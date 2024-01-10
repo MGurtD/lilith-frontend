@@ -42,4 +42,14 @@ export class ReceiptService extends BaseService<Receipt> {
     );
     return response.data as GenericResponse<ReceiptDetail>;
   }
+
+  async calculateDetailWeightAndPrice(
+    model: ReceiptDetail
+  ): Promise<GenericResponse<ReceiptDetail>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/Detail/Calculate`,
+      model
+    );
+    return response.data as GenericResponse<ReceiptDetail>;
+  }
 }

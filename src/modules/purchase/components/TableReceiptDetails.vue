@@ -8,19 +8,25 @@
     <template #header>
       <slot name="header"></slot>
     </template>
-    <Column field="quantity" header="Quantitat" style="width: 10%" />
+    <Column field="quantity" header="Quantitat" style="width: 7.5%" />
     <Column header="Material" style="width: 25%">
       <template #body="slotProps">
         {{ slotProps.data.reference.code }} -
         {{ slotProps.data.reference.description }}
       </template>
     </Column>
-    <Column field="width" header="Amplada" style="width: 10%"></Column>
-    <Column field="height" header="Alçada" style="width: 10%"></Column>
-    <Column field="lenght" header="Longitud" style="width: 10%"></Column>
-    <!-- <Column field="thickness" header="Espessor" style="width: 10%"></Column> -->
-    <Column field="diameter" header="Diàmetre" style="width: 10%"></Column>
-    <Column style="width: 10%">
+    <Column field="width" header="Amplada" style="width: 7.5%"></Column>
+    <Column field="height" header="Alçada" style="width: 7.5%"></Column>
+    <Column field="lenght" header="Longitud" style="width: 7.5%"></Column>
+    <Column field="thickness" header="Gruix" style="width: 7.5%"></Column>
+    <Column field="diameter" header="Diàmetre" style="width: 7.5%"></Column>
+    <Column field="totalWeight" header="Pes" style="width: 7.5%">
+      <template #body="slotProps"> {{ slotProps.data.amount }} KG</template>
+    </Column>
+    <Column field="amount" header="Preu" style="width: 7.5%">
+      <template #body="slotProps"> {{ slotProps.data.amount }} €</template>
+    </Column>
+    <Column style="width: 5%">
       <template #body="slotProps">
         <i
           v-if="slotProps.data.stockMovementId === null"
