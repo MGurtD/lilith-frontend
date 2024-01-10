@@ -18,6 +18,9 @@ export const useReferenceTypeStore = defineStore({
         disabled: false,
       } as ReferenceType;
     },
+    getReferenceTypeById(id: string) {
+      return this.referenceTypes?.find((rt) => rt.id === id);
+    },
     async fetchAll() {
       this.referenceTypes = await Services.ReferenceType.getAll();
     },

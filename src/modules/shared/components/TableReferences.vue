@@ -50,10 +50,15 @@
       v-if="isPurchase"
       field="referenceTypeId"
       header="Tipus"
-      style="width: 10%"
+      style="width: 15%"
     >
       <template #body="slotProps">
         <span>{{ getTypeDescription(slotProps.data.referenceTypeId) }}</span>
+      </template>
+    </Column>
+    <Column v-if="isPurchase" header="Densitat (mm)" style="width: 10%">
+      <template #body="slotProps">
+        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
       </template>
     </Column>
     <Column
@@ -72,7 +77,7 @@
       v-if="isPurchase"
       field="lastPurchaseCost"
       header="Última Compra"
-      style="width: 15%"
+      style="width: 10%"
     ></Column>
 
     <Column header="Desc." style="width: 10%">
@@ -157,6 +162,12 @@ const onDeleteRow = (event: any, reference: Reference) => {
   emit("delete", reference);
 };
 
+const getReferenceTypeDensity = (referenceTypeId: string) => {
+  const referenceType =
+    referenceTypeStore.getReferenceTypeById(referenceTypeId);
+  return referenceType ? referenceType.density : 0;
+};
+
 const getFormatDescription = (formatId: string) => {
   const format = referenceStore.referenceFormats?.find(
     (f) => f.id === formatId
@@ -165,10 +176,10 @@ const getFormatDescription = (formatId: string) => {
   else return "";
 };
 
-const getTypeDescription = (typeId: string) => {
-  const type = referenceTypeStore.referenceTypes?.find((f) => f.id === typeId);
-  if (type) return type.name;
-  else return "";
+const getTypeDescription = (referenceTypeId: string) => {
+  const referenceType =
+    referenceTypeStore.getReferenceTypeById(referenceTypeId);
+  return referenceType ? referenceType.description : "";
 };
 </script>
 <style scoped>

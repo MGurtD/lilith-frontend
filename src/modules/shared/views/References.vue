@@ -19,10 +19,12 @@ import { Reference } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { GenericResponse } from "../../../types";
+import { useReferenceTypeStore } from "../store/referenceType";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const referenceTypeStore = useReferenceTypeStore();
 const referenceStore = useReferenceStore();
 const confirm = useConfirm();
 const toast = useToast();
@@ -31,6 +33,7 @@ const module = ref("");
 onMounted(async () => {
   module.value = route.params.module as string;
   await referenceStore.fetchReferencesByModule(module.value);
+  referenceTypeStore.fetchAll();
 
   let title = "";
   if (module.value === "sales") title = "Referencies de venta";
