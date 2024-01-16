@@ -16,6 +16,12 @@ import {
   WorkMasterPhaseService,
   WorkMasterService,
 } from "./workmaster.service";
+import {
+  WorkOrderService,
+  WorkOrderPhaseService,
+  WorkOrderPhaseDetailService,
+  WorkOrderPhaseBillOfMaterialsService,
+} from "./workorder.service";
 
 export class AreaService extends BaseService<Area> {}
 export class EnterpriseService extends BaseService<Enterprise> {}
@@ -44,5 +50,13 @@ export default {
   ),
   WorkMasterPhaseBillOfMaterials: new WorkMasterPhaseBillOfMaterialsService(
     "/WorkMaster/Phase/BillOfMaterials"
+  ),
+  WorkOrder: new WorkOrderService("/WorkOrder"),
+  WorkOrderPhase: new WorkOrderPhaseService("/WorkOrder/Phase"),
+  WorkOrderPhaseDetail: new WorkOrderPhaseDetailService(
+    "/WorkOrder/Phase/Detail"
+  ),
+  WorkOrderPhaseBillOfMaterials: new WorkOrderPhaseBillOfMaterialsService(
+    "/WorkOrder/Phase/BillOfMaterials"
   ),
 };
