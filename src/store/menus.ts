@@ -209,6 +209,11 @@ export const applicationMenus = [
         title: "Rutes fabricació",
         href: "/workmaster",
       },
+      {
+        icon: PrimeIcons.REPLY,
+        title: "Ordres de fabricació",
+        href: "/workorder",
+      },
     ],
   },
   {
