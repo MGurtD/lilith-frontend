@@ -9,12 +9,12 @@
       />
       <br />
     </div>
-    <section class="three-columns mb-2">
+    <section class="two-columns-7525 mb-2">
       <div>
-        <BaseInput label="Codi de la fase" v-model="phase.phaseCode" />
+        <BaseInput label="Codi de la fase" v-model="phase.code" />
       </div>
       <div>
-        <BaseInput label="Descripció" v-model="phase.phaseDescription" />
+        <BaseInput label="Descripció" v-model="phase.description" />
       </div>
     </section>
     <section class="three-columns mb-2">
@@ -30,6 +30,7 @@
           :class="{
             'p-invalid': validation.errors.workcenterTypeId,
           }"
+          @change="workcenterTypeUpdated"
         />
       </div>
       <div>
@@ -58,6 +59,28 @@
         />
       </div>
     </section>
+    <section class="three-columns mb-2">
+      <div>
+        <label class="block text-900 mt-1 mb-1">Externa</label>
+        <Checkbox
+          v-model="phase.isExternalWork"
+          class="w-full"
+          :binary="true"
+          @change="isExternalWorkChanged"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost extern"
+          v-model="phase.externalWorkCost"
+          :disabled="!phase.isExternalWork"
+          :class="{
+            'p-invalid': validation.errors.externalWorkCost,
+          }"
+        />
+      </div>
+    </section>
   </form>
 </template>
 
@@ -71,6 +94,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
+import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
 
 const props = defineProps<{
@@ -87,11 +111,24 @@ const toast = useToast();
 const plantModelStore = usePlantModelStore();
 
 const preferredWorkcenters = computed(() => {
-  return plantModelStore.getWorkcentersByTypeId(props.phase.workcenterTypeId);
-})
+  return props.phase.workcenterTypeId
+    ? plantModelStore.getWorkcentersByTypeId(props.phase.workcenterTypeId)
+    : [];
+});
+
+const workcenterTypeUpdated = () => {
+  props.phase.preferredWorkcenterId = null;
+};
+const isExternalWorkChanged = () => {
+  if (props.phase.isExternalWork) {
+    props.phase.operatorTypeId = null;
+    props.phase.workcenterTypeId = null;
+    props.phase.preferredWorkcenterId = null;
+  }
+};
 
 const schema = Yup.object().shape({
-  phaseCode: Yup.string().required("El codi és obligatori"),
+  code: Yup.string().required("El codi és obligatori"),
 });
 const validation = ref({
   result: false,

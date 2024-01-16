@@ -1,6 +1,6 @@
 <template>
   <form v-if="detail">
-    <section class="three-columns">
+    <section class="four-columns">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -11,27 +11,6 @@
           }"
         />
       </div>
-      <div>
-        <label class="block text-900 mt-1 mb-1">Extern</label>
-        <Checkbox
-          v-model="detail.isExternalWork"
-          class="w-full"
-          :binary="true"
-        />
-      </div>
-      <div>
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Cost extern"
-          v-model="detail.externalWorkCost"
-          :disabled="!detail.isExternalWork"
-          :class="{
-            'p-invalid': validation.errors.externalWorkCost,
-          }"
-        />
-      </div>
-    </section>
-    <section class="three-columns mt-3">
       <div>
         <label class="block text-900 mb-2">Estat</label>
         <Dropdown
@@ -63,7 +42,8 @@
       </div>
     </section>
     <div class="mt-3">
-      <BaseInput label="Comentari fabricació" v-model="detail.comment" />
+      <label class="block text-900v mb-1">Comentari fabricació</label>
+      <Textarea class="w-full" v-model="detail.comment"></Textarea>
     </div>
 
     <br />
@@ -80,7 +60,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WorkMasterPhase, WorkMasterPhaseDetail } from "../types";
+import { WorkMasterPhaseDetail } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -108,7 +88,6 @@ const schema = Yup.object().shape({
     .required("L'ordre és obligatori")
     .positive("L'ordre ha de ser positiu"),
   estimatedTime: Yup.number().required("El temps estimat és obligatori"),
-  externalWorkCost: Yup.number().required("El cost extern és obligatori"),
 });
 const validation = ref({
   result: false,

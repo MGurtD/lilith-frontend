@@ -45,7 +45,6 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -57,12 +56,11 @@ const emit = defineEmits<{
 }>();
 
 const toast = useToast();
-const referenceStore = useReferenceStore();
 
 const schema = Yup.object().shape({
   baseQuantity: Yup.number()
-    .min(1)
-    .required("La quantitat base ha de ser superior a 1"),
+    .min(1, "La quantitat base ha de ser superior a 0")
+    .required("La quanitat base és obligatoria"),
   referenceId: Yup.string().required("La referència és obligatoria"),
 });
 const validation = ref({

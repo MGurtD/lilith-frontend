@@ -12,12 +12,8 @@
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
-    <Column field="phaseCode" header="Codi" style="width: 15%"></Column>
-    <Column
-      field="phaseDescription"
-      header="Descripció"
-      style="width: 30%"
-    ></Column>
+    <Column field="code" header="Codi" style="width: 10%"></Column>
+    <Column field="description" header="Descripció" style="width: 20%"></Column>
     <Column header="Tipus de màquina" style="width: 15%">
       <template #body="slotProps">
         {{ getWorkcenterType(slotProps.data.workcenterTypeId) }}
@@ -31,6 +27,11 @@
     <Column header="Tipus d'operari" style="width: 15%">
       <template #body="slotProps">
         {{ getOperatorType(slotProps.data.operatorTypeId) }}
+      </template>
+    </Column>
+    <Column header="Extern" style="width: 10%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isExternalWork"></BooleanColumn>
       </template>
     </Column>
     <Column style="width: 10%">
@@ -117,11 +118,13 @@ const onAddClick = () => {
     id: getNewUuid(),
     workMasterId: props.workmaster.id,
     disabled: false,
-    phaseCode: ((props.workmaster.phases.length + 1) * 10).toString(),
-    phaseDescription: "",
-    operatorTypeId: "",
-    workcenterTypeId: "",
+    code: ((props.workmaster.phases.length + 1) * 10).toString(),
+    description: "",
+    operatorTypeId: null,
+    workcenterTypeId: null,
     preferredWorkcenterId: null,
+    isExternalWork: false,
+    externalWorkCost: 0,
     workmasterPhaseDetails: [],
     workmasterPhaseBillOfMaterials: [],
   } as WorkMasterPhase;

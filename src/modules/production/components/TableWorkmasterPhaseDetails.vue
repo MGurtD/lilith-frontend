@@ -33,11 +33,6 @@
         <BooleanColumn :value="slotProps.data.isCycleTime"></BooleanColumn>
       </template>
     </Column>
-    <Column header="Extern" style="width: 25%">
-      <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.isExternalWork"></BooleanColumn>
-      </template>
-    </Column>
     <Column style="width: 25%">
       <template #body="slotProps">
         <i
@@ -88,8 +83,6 @@ const onAdd = () => {
     workMasterPhaseId: props.workmasterPhase.id,
     estimatedTime: 0,
     isCycleTime: false,
-    isExternalWork: false,
-    externalWorkCost: 0,
     machineStatusId: "",
     comment: "",
     order: getNextOrderNumber(),
