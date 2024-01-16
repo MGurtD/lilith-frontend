@@ -20,6 +20,12 @@ body {
   gap: 1rem;
 }
 
+.two-columns-7525 {
+  display: grid;
+  grid-template-columns: 0.33fr 0.68fr;
+  gap: 1rem;
+}
+
 .three-columns {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
