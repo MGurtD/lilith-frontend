@@ -98,7 +98,7 @@ onMounted(async () => {
   if (workmaster.value && workmasterPhase.value) {
     pageTitle = `${pageTitle} ${referenceStore.getFullName(
       workmaster.value.reference!
-    )} - Fase ${workmasterPhase.value.phaseCode}`;
+    )} - Fase ${workmasterPhase.value.code}`;
   }
 
   store.setMenuItem({
