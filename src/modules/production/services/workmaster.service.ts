@@ -3,10 +3,19 @@ import {
   WorkMasterPhase,
   WorkMasterPhaseDetail,
   WorkMasterPhaseBillOfMaterials,
+  WorkMasterToCopy,
 } from "../types";
 import BaseService from "../../../api/base.service";
 
-export class WorkMasterService extends BaseService<WorkMaster> {}
+export class WorkMasterService extends BaseService<WorkMaster> {
+  async copyWorkMaster(workmasterToCopy: WorkMasterToCopy): Promise<boolean> {
+    const response = await this.apiClient.post(
+      `${this.resource}/copy`,
+      workmasterToCopy
+    );
+    return response.status === 200;
+  }
+}
 export class WorkMasterPhaseService extends BaseService<WorkMasterPhase> {
   async getByWorkMasterId(
     workMasterId: string
