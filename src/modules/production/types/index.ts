@@ -127,3 +127,10 @@ export interface WorkMasterPhaseBillOfMaterials {
   diameter: number;
   thickness: number;
 }
+
+export interface WorkMasterToCopy {
+  referenceId: string | null;
+  workmaster: WorkMaster;
+  workmasterId: string;
+  referenceCode: string;
+}
