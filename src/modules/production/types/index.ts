@@ -130,6 +130,7 @@ export interface WorkMasterPhaseBillOfMaterials {
 
 export interface WorkMasterToCopy {
   referenceId: string | null;
+  workmaster: WorkMaster;
   workmasterId: string;
   referenceCode: string;
 }

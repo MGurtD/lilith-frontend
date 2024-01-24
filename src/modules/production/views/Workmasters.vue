@@ -56,7 +56,7 @@
       <template #body="slotProps">
         <i
           :class="PrimeIcons.COPY"
-          class="grid_delete_column_button"
+          class="grid_copy_column_button"
           @click="copyButton($event, slotProps.data)"
         />
       </template>
@@ -106,14 +106,32 @@
     </section>
     <section class="two-columns">
       <div>
-        <BaseInput
+        <p>
+          {{
+            referenceStore.getFullNameById(
+              workmasterStore.workmasterToCopy!.workmaster.referenceId
+            )
+          }}
+        </p>
+        <!--<BaseInput
+          v-if="workmasterStore.workmasterToCopy"
           class="mb-2"
           label="Referència Origen"
-          v-model="workmasterStore.workmaster!.referenceId"
+          :v-model="
+            referenceStore.getFullNameById(
+              workmasterStore.workmasterToCopy.workmaster.referenceId
+            )
+          "
           disabled="true"
-        ></BaseInput>
+        ></BaseInput>-->
       </div>
       <div>
+        <!-- 
+           v-if="
+            workmasterStore.workmasterToCopy &&
+            workmasterStore.workmasterToCopy.referenceId
+          "
+        -->
         <DropdownReference
           label="Referència existent:"
           v-model="workmasterStore.workmasterToCopy!.referenceId"
@@ -211,8 +229,10 @@ const createButtonClick = () => {
 };
 
 const copyButton = (event: any, workmaster: WorkMaster) => {
+  console.log(workmaster);
   workmasterStore.workmasterToCopy = {
     workmasterId: workmaster.id,
+    workmaster,
     referenceId: "",
     referenceCode: "",
   };
@@ -258,7 +278,9 @@ const checkDestinyId = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button",
+      "grid_delete_column_button"
+    ) &&
+    !(row.originalEvent.target as any).className.includes(
       "grid_copy_column_button"
     )
   ) {
