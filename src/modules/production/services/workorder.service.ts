@@ -3,8 +3,10 @@ import {
   WorkOrderPhase,
   WorkOrderPhaseDetail,
   WorkOrderPhaseBillOfMaterials,
+  CreateWorkOrderDto,
 } from "../types";
 import BaseService from "../../../api/base.service";
+import { GenericResponse } from "../../../types";
 
 export class WorkOrderService extends BaseService<WorkOrder> {
   async GetBetweenDatesAndStatus(
@@ -19,6 +21,13 @@ export class WorkOrderService extends BaseService<WorkOrder> {
     if (response.status === 200) {
       return response.data as Array<WorkOrder>;
     }
+  }
+  async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/CreateFromWorkMaster`,
+      dto
+    );
+    return response.data as GenericResponse<WorkOrder>;
   }
 }
 export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {

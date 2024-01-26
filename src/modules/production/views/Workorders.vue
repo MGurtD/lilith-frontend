@@ -89,11 +89,35 @@
     :modal="dialogOptions.modal"
   >
     <div>
-      <DropdownReference
-        label="Referència"
-        v-model="workOrderStore.workorder!.referenceId"
-        :fullName="true"
-      ></DropdownReference>
+      <label class="block text-900 mb-2">Ruta</label>
+      <Dropdown
+        v-model="createWorkOrderDto.workMasterId"
+        editable
+        :options="workMasterStore.workmasters"
+        optionValue="id"
+        :optionLabel="(r) => referenceStore.getShortNameById(r.referenceId)"
+        class="w-full"
+      />
+    </div>
+    <div class="mt-2">
+      <BaseInput
+        class="mb-2 w-full"
+        label="Quantitat"
+        v-model="createWorkOrderDto.plannedQuantity"
+        :type="BaseInputType.NUMERIC"
+      ></BaseInput>
+    </div>
+    <div>
+      <label class="block text-900 mb-2">Data Prevista</label>
+      <Calendar
+        v-model="createWorkOrderDto.plannedDate"
+        dateFormat="dd/mm/yy"
+        class="mt-2"
+      />
+    </div>
+    <div class="mt-2">
+      <label class="block text-900 mb-2">Comentari Fabriació</label>
+      <Textarea class="w-full" v-model="createWorkOrderDto.comment" />
     </div>
     <br />
     <div>
@@ -107,7 +131,7 @@
 </template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
-import DropdownReference from "../../shared/components/DropdownReference.vue";
+import { BaseInputType } from "../../../types/component";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, reactive, ref } from "vue";
@@ -116,7 +140,7 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
-import { WorkOrder } from "../types";
+import { CreateWorkOrderDto, WorkOrder } from "../types";
 import {
   formatDateForQueryParameter,
   formatDateTime,
@@ -126,15 +150,30 @@ import { DialogOptions } from "../../../types/component";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useWorkOrderStore } from "../store/workorder";
+import { useWorkMasterStore } from "../store/workmaster";
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
 const confirm = useConfirm();
+const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 const referenceStore = useReferenceStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
 
 const filter = ref({
   referenceId: undefined,
@@ -144,7 +183,6 @@ const cleanFilter = () => {
   filter.value.referenceId = undefined;
   filter.value.statusId = undefined;
 };
-
 const filterData = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
@@ -169,27 +207,35 @@ const filterData = async () => {
 
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear ruta",
+  title: "Crear ordre",
   closable: true,
   position: "center",
   modal: true,
 } as DialogOptions);
 
+const createWorkOrderDto = ref({
+  workMasterId: "",
+  plannedDate: "",
+  plannedQuantity: 0,
+  comment: "",
+} as CreateWorkOrderDto);
+
 onMounted(async () => {
   await referenceStore.fetchReferencesByModule("sales");
-  exerciseStore.fetchActive();
+  await exerciseStore.fetchActive();
   lifecycleStore.fetchOneByName("WorkOrder");
+  workMasterStore.fetchAllActives();
 
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,
     title: "Ordres de fabricació",
   });
+
+  setCurrentYear();
+  filterData();
 });
 
 const createButtonClick = () => {
-  const newId = getNewUuid();
-  workOrderStore.setNew(newId);
-
   dialogOptions.visible = true;
 };
 
@@ -204,10 +250,10 @@ const editRow = (row: DataTableRowClickEvent) => {
 };
 
 const onCreateSubmit = async () => {
-  if (!workOrderStore.workorder) return;
+  if (!createWorkOrderDto.value) return;
 
-  const created = await workOrderStore.create(workOrderStore.workorder);
-  if (created)
+  const created = await workOrderStore.create(createWorkOrderDto.value);
+  if (created && workOrderStore.workorder)
     router.push({ path: `/workorder/${workOrderStore.workorder.id}` });
 };
 

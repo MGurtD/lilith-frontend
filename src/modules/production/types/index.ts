@@ -185,3 +185,10 @@ export interface WorkOrderPhaseBillOfMaterials {
   diameter: number;
   thickness: number;
 }
+
+export interface CreateWorkOrderDto {
+  workMasterId: string;
+  plannedQuantity: number;
+  plannedDate: string;
+  comment: string;
+}

@@ -29,6 +29,10 @@ export const useWorkMasterStore = defineStore({
     async fetchAll() {
       this.workmasters = await Services.WorkMaster.getAll();
     },
+    async fetchAllActives() {
+      this.workmasters = await Services.WorkMaster.getAll();
+      this.workmasters = this.workmasters?.filter((w) => !w.disabled);
+    },
     async fetchOne(id: string) {
       this.workmaster = await Services.WorkMaster.getById(id);
     },

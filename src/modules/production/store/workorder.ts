@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  CreateWorkOrderDto,
   WorkOrder,
   WorkOrderPhase,
   WorkOrderPhaseBillOfMaterials,
@@ -48,9 +49,9 @@ export const useWorkOrderStore = defineStore({
     async fetchOne(id: string) {
       this.workorder = await Services.WorkOrder.getById(id);
     },
-    async create(model: WorkOrder) {
-      const result = await Services.WorkOrder.create(model);
-      if (result) await this.fetchOne(model.id);
+    async create(model: CreateWorkOrderDto) {
+      const result = await Services.WorkOrder.Create(model);
+      if (result) await this.fetchOne(result.content!.id);
       return result;
     },
     async update(id: string, model: WorkOrder) {
