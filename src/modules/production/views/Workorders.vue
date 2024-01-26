@@ -214,9 +214,7 @@ const onCreateSubmit = async () => {
 const deleteButton = (event: any, workorder: WorkOrder) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Está segur que vol eliminar la ordre ${
-      workorder.reference!.description
-    }?`,
+    message: `Está segur que vol eliminar la ordre ${workorder.code}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",

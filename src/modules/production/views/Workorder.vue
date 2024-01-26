@@ -1,43 +1,45 @@
 <template>
   <header>
-    <FormWorkmaster
-      v-if="workmaster"
-      :workmaster="workmaster"
-      @submit="onWorkmasterSubmit"
-    ></FormWorkmaster>
+    <FormWorkorder
+      v-if="workorder"
+      :workorder="workorder"
+      @submit="onWorkorderSubmit"
+    ></FormWorkorder>
   </header>
   <main class="main">
-    <TableWorkmasterPhases
-      v-if="workmaster && workmaster.phases"
-      :workmaster="workmaster"
-      :workmasterPhases="workmaster.phases"
-      @add="addWorkMasterPhase"
-      @edit="editWorkMasterPhase"
-      @delete="deleteWorkMasterPhase"
-    ></TableWorkmasterPhases>
+    <TableWorkorderPhases
+      v-if="workorder && workorder.phases"
+      :workorder="workorder"
+      :workorderPhases="workorder.phases"
+      @add="addWorkOrderPhase"
+      @edit="editWorkOrderPhase"
+      @delete="deleteWorkOrderPhase"
+    ></TableWorkorderPhases>
   </main>
 </template>
 <script setup lang="ts">
-import FormWorkmaster from "../components/FormWorkmaster.vue";
-import TableWorkmasterPhases from "../components/TableWorkmasterPhases.vue";
+import FormWorkorder from "../components/FormWorkorder.vue";
+import TableWorkorderPhases from "../components/TableWorkorderPhases.vue";
 
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
-import { useWorkMasterStore } from "../store/workmaster";
+import { useWorkOrderStore } from "../store/workorder";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { WorkMaster, WorkMasterPhase } from "../types";
+import { WorkOrder, WorkOrderPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const lifecycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
-const workmasterStore = useWorkMasterStore();
+const workorderStore = useWorkOrderStore();
 const plantModelStore = usePlantModelStore();
-const { workmaster } = storeToRefs(workmasterStore);
+const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
 
 onMounted(async () => {
@@ -45,11 +47,9 @@ onMounted(async () => {
   await loadViewData();
 
   let pageTitle = "";
-  pageTitle = `Ruta de fabricació`;
-  if (workmaster.value) {
-    pageTitle = `${pageTitle} ${referenceStore.getFullName(
-      workmaster.value.reference!
-    )}`;
+  pageTitle = `Ordre de fabricació`;
+  if (workorder.value) {
+    pageTitle = `${pageTitle} ${workorder.value.code}`;
   }
 
   store.setMenuItem({
@@ -61,26 +61,27 @@ onMounted(async () => {
 
 const loadViewData = async () => {
   await referenceStore.fetchReferencesByModule("sales");
-  await workmasterStore.fetchOne(id.value);
+  await workorderStore.fetchOne(id.value);
   plantModelStore.fetchActiveModel();
+  lifecycleStore.fetchOneByName("WorkOrder");
 };
 
-const onWorkmasterSubmit = async (workmaster: WorkMaster) => {
-  const updated = await workmasterStore.update(id.value, workmaster);
+const onWorkorderSubmit = async (workorder: WorkOrder) => {
+  const updated = await workorderStore.update(id.value, workorder);
   if (updated) await loadViewData();
 };
 
 // Phases
-const addWorkMasterPhase = async (phase: WorkMasterPhase) => {
-  const created = await workmasterStore.createPhase(phase);
+const addWorkOrderPhase = async (phase: WorkOrderPhase) => {
+  const created = await workorderStore.createPhase(phase);
   if (created)
-    router.push({ path: `/workmaster/${id.value}/phase/${phase.id}` });
+    router.push({ path: `/workorder/${id.value}/phase/${phase.id}` });
 };
-const editWorkMasterPhase = (phase: WorkMasterPhase) => {
-  router.push({ path: `/workmaster/${id.value}/phase/${phase.id}` });
+const editWorkOrderPhase = (phase: WorkOrderPhase) => {
+  router.push({ path: `/workorder/${id.value}/phase/${phase.id}` });
 };
-const deleteWorkMasterPhase = async (phase: WorkMasterPhase) => {
-  await workmasterStore.deletePhase(phase.id);
+const deleteWorkOrderPhase = async (phase: WorkOrderPhase) => {
+  await workorderStore.deletePhase(phase.id);
 };
 </script>
 <style scoped>
