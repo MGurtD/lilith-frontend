@@ -157,6 +157,9 @@ export interface WorkOrderPhase {
   operatorTypeId?: string | null;
   isExternalWork: boolean;
   externalWorkCost: number;
+  statusId: string;
+  startTime: string | null;
+  endTime: string | null;
   details?: Array<WorkOrderPhaseDetail>;
   billOfMaterials?: Array<WorkOrderPhaseBillOfMaterials>;
 }
