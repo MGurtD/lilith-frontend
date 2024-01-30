@@ -14,7 +14,15 @@ export const useWorkMasterStore = defineStore({
     workmasters: undefined as Array<WorkMaster> | undefined,
     workmasterPhase: undefined as WorkMasterPhase | undefined,
   }),
-  getters: {},
+  getters: {
+    getByReferenceId: (state) => {
+      return (referenceId: string): Array<WorkMaster> => {
+        if (!referenceId || !state.workmasters) return [];
+
+        return state.workmasters.filter((w) => w.referenceId === referenceId);
+      };
+    },
+  },
   actions: {
     // Workmaster
     setNew(id: string) {

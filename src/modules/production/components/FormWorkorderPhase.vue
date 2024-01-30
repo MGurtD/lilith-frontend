@@ -140,6 +140,7 @@ const isExternalWorkChanged = () => {
 
 const schema = Yup.object().shape({
   code: Yup.string().required("El codi és obligatori"),
+  statusId: Yup.string().required("L'estat és obligatori"),
 });
 const validation = ref({
   result: false,

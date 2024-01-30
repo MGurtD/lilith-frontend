@@ -12,6 +12,7 @@ export const useSalesOrderStore = defineStore({
     salesOrder: undefined as SalesOrderHeader | undefined,
     salesOrders: undefined as Array<SalesOrderHeader> | undefined,
     salesOrdersToDeliver: undefined as Array<SalesOrderHeader> | undefined,
+    createWorkOrderDialogVisibility: false,
   }),
   getters: {},
   actions: {
@@ -62,7 +63,7 @@ export const useSalesOrderStore = defineStore({
     },
     async UpdateDetail(detail: SalesOrderDetail): Promise<boolean> {
       const updated = await SalesServices.SalesOrder.UpdateDetail(detail);
-      if (updated) await this.GetById(detail.salesOrderHeaderId);
+      //if (updated) await this.GetById(detail.salesOrderHeaderId);
       return updated;
     },
     async DeleteDetail(detail: SalesOrderDetail): Promise<boolean> {

@@ -88,49 +88,15 @@
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
   >
-    <div>
-      <label class="block text-900 mb-2">Ruta</label>
-      <Dropdown
-        v-model="createWorkOrderDto.workMasterId"
-        editable
-        :options="workMasterStore.workmasters"
-        optionValue="id"
-        :optionLabel="(r) => referenceStore.getShortNameById(r.referenceId)"
-        class="w-full"
-      />
-    </div>
-    <div class="mt-2">
-      <BaseInput
-        class="mb-2 w-full"
-        label="Quantitat"
-        v-model="createWorkOrderDto.plannedQuantity"
-        :type="BaseInputType.NUMERIC"
-      ></BaseInput>
-    </div>
-    <div>
-      <label class="block text-900 mb-2">Data Prevista</label>
-      <Calendar
-        v-model="createWorkOrderDto.plannedDate"
-        dateFormat="dd/mm/yy"
-        class="mt-2"
-      />
-    </div>
-    <div class="mt-2">
-      <label class="block text-900 mb-2">Comentari Fabriació</label>
-      <Textarea class="w-full" v-model="createWorkOrderDto.comment" />
-    </div>
-    <br />
-    <div>
-      <Button
-        label="Crear"
-        style="float: right"
-        @click="onCreateSubmit"
-      ></Button>
-    </div>
+    <FormCreateWorkorder
+      :createWorkOrderDto="createWorkOrderDto"
+      @submit="createWorkOrder"
+    ></FormCreateWorkorder>
   </Dialog>
 </template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
 import { BaseInputType } from "../../../types/component";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
@@ -144,7 +110,6 @@ import { CreateWorkOrderDto, WorkOrder } from "../types";
 import {
   formatDateForQueryParameter,
   formatDateTime,
-  getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { useExerciseStore } from "../../shared/store/exercise";
@@ -249,7 +214,7 @@ const editRow = (row: DataTableRowClickEvent) => {
   }
 };
 
-const onCreateSubmit = async () => {
+const createWorkOrder = async () => {
   if (!createWorkOrderDto.value) return;
 
   const created = await workOrderStore.create(createWorkOrderDto.value);

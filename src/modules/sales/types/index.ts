@@ -1,4 +1,4 @@
-import { Site } from "../../production/types";
+import { CreateWorkOrderDto, Site } from "../../production/types";
 import { Reference } from "../../shared/types";
 
 export interface CustomerType {
@@ -109,6 +109,7 @@ export interface SalesOrderDetail {
   amount: number;
   isDelivered: boolean;
   isInvoiced: boolean;
+  workOrderId: string | null;
 }
 
 export interface CreateInvoiceDetailsFromOrderDetailsRequest {
@@ -249,4 +250,9 @@ export interface DeliveryNoteDetail {
   totalCost: number;
   amount: number;
   isInvoiced: boolean;
+}
+
+export interface CreateWorkOrderFromSalesOrderDto {
+  workOrderDto: CreateWorkOrderDto,
+  orderDetail: SalesOrderDetail
 }

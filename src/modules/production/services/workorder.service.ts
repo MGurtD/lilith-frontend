@@ -22,9 +22,28 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       return response.data as Array<WorkOrder>;
     }
   }
+  async GetBySalesOrderId(
+    salesOrderId: string
+  ): Promise<Array<WorkOrder> | undefined> {
+    let endpoint = `${this.resource}/SalesOrder/${salesOrderId}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<WorkOrder>;
+    }
+  }
   async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
     const response = await this.apiClient.post(
       `${this.resource}/CreateFromWorkMaster`,
+      dto
+    );
+    return response.data as GenericResponse<WorkOrder>;
+  }
+  async CreateFromSalesOrderDetail(
+    dto: CreateWorkOrderDto,
+    salesOrderDetailId: string
+  ): Promise<GenericResponse<WorkOrder>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/CreateFromSalesOrderDetail/${salesOrderDetailId}`,
       dto
     );
     return response.data as GenericResponse<WorkOrder>;

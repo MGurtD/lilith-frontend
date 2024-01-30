@@ -17,6 +17,10 @@ export const useWorkOrderStore = defineStore({
   }),
   getters: {},
   actions: {
+    getWorkOrderCodeById(id: string): string | undefined {
+      const wo = this.workorders?.find((r) => r.id === id);
+      if (wo) return wo.code;
+    },
     // Workorder
     setNew(id: string) {
       this.workorder = {
@@ -49,8 +53,24 @@ export const useWorkOrderStore = defineStore({
     async fetchOne(id: string) {
       this.workorder = await Services.WorkOrder.getById(id);
     },
+    async fetchBySalesOrder(salesOrderId: string) {
+      this.workorders = await Services.WorkOrder.GetBySalesOrderId(
+        salesOrderId
+      );
+    },
     async create(model: CreateWorkOrderDto) {
       const result = await Services.WorkOrder.Create(model);
+      if (result) await this.fetchOne(result.content!.id);
+      return result;
+    },
+    async createAndUpdateSalesOrderDetail(
+      model: CreateWorkOrderDto,
+      detailId: string
+    ) {
+      const result = await Services.WorkOrder.CreateFromSalesOrderDetail(
+        model,
+        detailId
+      );
       if (result) await this.fetchOne(result.content!.id);
       return result;
     },

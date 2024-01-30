@@ -31,10 +31,16 @@ import { PrimeIcons } from "primevue/api";
 import { WorkOrder, WorkOrderPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import {
+  convertDateTimeToJSON,
+  formatDate,
+} from "../../../utils/functions";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const toast = useToast();
 const lifecycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const workorderStore = useWorkOrderStore();
@@ -64,9 +70,21 @@ const loadViewData = async () => {
   await workorderStore.fetchOne(id.value);
   plantModelStore.fetchActiveModel();
   lifecycleStore.fetchOneByName("WorkOrder");
+
+  if (workorderStore.workorder) {
+    workorderStore.workorder.plannedDate = formatDate(
+      workorderStore.workorder.plannedDate
+    );
+  }
 };
 
 const onWorkorderSubmit = async (workorder: WorkOrder) => {
+  if (workorderStore.workorder) {
+    workorderStore.workorder.plannedDate = convertDateTimeToJSON(
+      workorderStore.workorder.plannedDate
+    );
+  }
+
   const updated = await workorderStore.update(id.value, workorder);
   if (updated) await loadViewData();
 };
@@ -74,8 +92,15 @@ const onWorkorderSubmit = async (workorder: WorkOrder) => {
 // Phases
 const addWorkOrderPhase = async (phase: WorkOrderPhase) => {
   const created = await workorderStore.createPhase(phase);
-  if (created)
+  if (created) {
     router.push({ path: `/workorder/${id.value}/phase/${phase.id}` });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al crear la fase",
+      detail: "Revisi el log per a més informació",
+    });
+  }
 };
 const editWorkOrderPhase = (phase: WorkOrderPhase) => {
   router.push({ path: `/workorder/${id.value}/phase/${phase.id}` });
