@@ -4,6 +4,7 @@ import {
   WorkMasterPhase,
   WorkMasterPhaseBillOfMaterials,
   WorkMasterPhaseDetail,
+  WorkMasterToCopy,
 } from "../types";
 import Services from "../services";
 
@@ -13,6 +14,7 @@ export const useWorkMasterStore = defineStore({
     workmaster: undefined as WorkMaster | undefined,
     workmasters: undefined as Array<WorkMaster> | undefined,
     workmasterPhase: undefined as WorkMasterPhase | undefined,
+    workmasterToCopy: undefined as WorkMasterToCopy | undefined,
   }),
   getters: {
     getByReferenceId: (state) => {
@@ -56,6 +58,11 @@ export const useWorkMasterStore = defineStore({
     },
     async delete(id: string) {
       const result = await Services.WorkMaster.delete(id);
+      if (result) await this.fetchAll();
+      return result;
+    },
+    async copy(model: WorkMasterToCopy) {
+      const result = await Services.WorkMaster.copyWorkMaster(model);
       if (result) await this.fetchAll();
       return result;
     },
