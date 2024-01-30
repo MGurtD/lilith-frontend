@@ -22,20 +22,22 @@
         :salesOrderDetails="salesOrder.salesOrderDetails"
         @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
         @delete="deleteSalesOrderDetails"
+        @createWorkOrder="createWorkOrder"
       >
         <template #header>
           <div
             class="flex flex-wrap align-items-center justify-content-between gap-2"
           >
             <span class="text-l text-900 font-bold">Linies de la comanda</span>
-            <div>
+            <section>
               <Button
                 :disabled="deliveryNoteStore.deliveryNote !== undefined"
                 :size="'small'"
                 label="Afegir línea"
                 @click="openReferencesForm(FormActionMode.CREATE, {} as any)"
+                class="mr-2"
               />
-            </div>
+            </section>
           </div>
         </template>
       </TableSalesOrderDetails>
@@ -52,8 +54,8 @@
 
   <Dialog
     :closable="true"
-    v-model:visible="isDialogVisible"
-    :header="dialogTitle"
+    v-model:visible="isDetailDialogVisible"
+    :header="detailDialogTitle"
     :modal="true"
   >
     <TabView v-model:activeIndex="formsActiveIndex">
@@ -81,7 +83,11 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
-import { SalesOrderDetail, SalesOrderHeader } from "../types";
+import {
+  CreateWorkOrderFromSalesOrderDto,
+  SalesOrderDetail,
+  SalesOrderHeader,
+} from "../types";
 import { Reference } from "../../shared/types";
 import { useStore } from "../../../store";
 import {
@@ -106,7 +112,8 @@ import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
 import services from "../services";
-import { toPadding } from "chart.js/dist/helpers/helpers.options";
+import { useWorkOrderStore } from "../../production/store/workorder";
+import { useWorkMasterStore } from "../../production/store/workmaster";
 
 const salesOrderForm = ref();
 
@@ -114,6 +121,7 @@ const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const toast = useToast();
 const salesOrderStore = useSalesOrderStore();
 const customerStore = useCustomersStore();
 const plantModelStore = usePlantModelStore();
@@ -121,6 +129,8 @@ const exerciseStore = useExerciseStore();
 const lifeCycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const deliveryNoteStore = useDeliveryNoteStore();
+const workMasterStore = useWorkMasterStore();
+const workOrderStore = useWorkOrderStore();
 const taxesStore = useTaxesStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
@@ -132,48 +142,26 @@ const items = [
   },
 ];
 
-const printInvoice = async () => {
-  const orderReport = await services.SalesOrder.GetReportDataById(
-    salesOrder.value!.id
-  );
-
-  if (orderReport) {
-    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
-
-    const reportService = new ReportService();
-    const report = await reportService.Download(
-      orderReport,
-      REPORTS.Order,
-      fileName
-    );
-
-    if (report) {
-      createBlobAndDownloadFile(fileName, report);
-    } else {
-      toast.add({
-        severity: "warn",
-        summary: "Error",
-        detail: "No s'ha pugut generar fulla de la comanda",
-      });
-    }
-  }
-};
-
-const dialogTitle = "Línia de comanda";
-const isDialogVisible = ref(false);
+const detailDialogTitle = "Línia de comanda";
+const isDetailDialogVisible = ref(false);
 const formDetailMode = ref(FormActionMode.EDIT);
-
 const selectedSalesOrderDetail = ref(undefined as undefined | SalesOrderDetail);
 const formsActiveIndex = ref(0);
 
 const loadView = async () => {
-  await salesOrderStore.GetById(route.params.id as string);
+  const workOrderId = route.params.id as string;
+  await salesOrderStore.GetById(workOrderId);
   referenceStore.fetchReferencesByModule("sales");
   lifeCycleStore.fetchOneByName("SalesOrder");
   plantModelStore.fetchSites();
   exerciseStore.fetchAll();
   customerStore.fetchCustomers();
   taxesStore.fetchAll();
+  workOrderStore.fetchBySalesOrder(workOrderId);
+
+  if (!workMasterStore.workmasters) {
+    workMasterStore.fetchAllActives();
+  }
 
   let pageTitle = "";
   if (salesOrder.value) {
@@ -234,10 +222,8 @@ const openReferencesForm = (
   salesOrderDetail.salesOrderHeaderId = salesOrder.value!.id;
   selectedSalesOrderDetail.value = salesOrderDetail;
   formDetailMode.value = formMode;
-  isDialogVisible.value = true;
+  isDetailDialogVisible.value = true;
 };
-
-const toast = useToast();
 
 const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
@@ -267,7 +253,7 @@ const onFormSalesOrderReferenceSubmit = async (
   } else if (formDetailMode.value === FormActionMode.EDIT) {
     await salesOrderStore.UpdateDetail(salesOrderDetail);
   }
-  isDialogVisible.value = false;
+  isDetailDialogVisible.value = false;
 
   salesOrder.value!.salesOrderDate = formatDate(
     salesOrder.value!.salesOrderDate
@@ -282,7 +268,7 @@ const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
     (i) => i.id !== detail.id
   );
   salesOrder.value!.salesOrderDetails = afterDelete;
-  isDialogVisible.value = false;
+  isDetailDialogVisible.value = false;
 
   salesOrder.value!.salesOrderDate = formatDate(
     salesOrder.value!.salesOrderDate
@@ -308,6 +294,57 @@ const onFormReferenceSubmit = async (reference: Reference) => {
     referenceStore.setNewReference(getNewUuid());
     // Go to details tab
     formsActiveIndex.value = 0;
+  }
+};
+
+const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
+  const response = await workOrderStore.create(dto.workOrderDto);
+  if (response.result) {
+    dto.orderDetail.workOrderId = response.content!.id;
+
+    const updated = await salesOrderStore.UpdateDetail(dto.orderDetail);
+    if (updated) {
+      toast.add({
+        severity: "success",
+        summary: "Generació OF",
+        detail: `Ordre de fabricació ${response.content!.code} generada`,
+      });
+
+      workOrderStore.fetchBySalesOrder(salesOrder.value!.id);
+    }
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Generació OF",
+      detail: `Error al generar la ordre de fabricació`,
+    });
+  }
+};
+
+const printInvoice = async () => {
+  const orderReport = await services.SalesOrder.GetReportDataById(
+    salesOrder.value!.id
+  );
+
+  if (orderReport) {
+    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      orderReport,
+      REPORTS.Order,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
   }
 };
 </script>

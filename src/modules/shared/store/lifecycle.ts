@@ -19,6 +19,20 @@ export const useLifecyclesStore = defineStore({
       }
       return transitions;
     },
+    getStatusName: (state) => {
+      return (statusId: string) => {
+        if (!statusId) return "";
+
+        let statusName = "";
+        if (state.lifecycle && state.lifecycle.statuses) {
+          const status = state.lifecycle.statuses.find(
+            (s) => s.id === statusId
+          );
+          if (status) statusName = status.name;
+        }
+        return statusName;
+      };
+    },
   },
   actions: {
     setNew(id: string) {

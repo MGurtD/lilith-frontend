@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { WorkMasterPhase, WorkMasterPhaseDetail } from "../types";
+import { WorkOrderPhase, WorkOrderPhaseDetail } from "../types";
 import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
@@ -56,14 +56,14 @@ import BooleanColumn from "../../../components/tables/BooleanColumn.vue";
 import { useWorkMasterStore } from "../store/workmaster";
 
 const props = defineProps<{
-  workmasterPhase: WorkMasterPhase;
-  details: Array<WorkMasterPhaseDetail>;
+  workorderPhase: WorkOrderPhase;
+  details: Array<WorkOrderPhaseDetail>;
 }>();
 
 const emit = defineEmits<{
-  (e: "add", phase: WorkMasterPhaseDetail): void;
-  (e: "edit", phase: WorkMasterPhaseDetail): void;
-  (e: "delete", phase: WorkMasterPhaseDetail): void;
+  (e: "add", phase: WorkOrderPhaseDetail): void;
+  (e: "edit", phase: WorkOrderPhaseDetail): void;
+  (e: "delete", phase: WorkOrderPhaseDetail): void;
 }>();
 
 const confirm = useConfirm();
@@ -80,13 +80,13 @@ const getMachineStatus = (id: string) => {
 const onAdd = () => {
   const defaultInstance = {
     id: getNewUuid(),
-    workMasterPhaseId: props.workmasterPhase.id,
+    workOrderPhaseId: props.workorderPhase.id,
     estimatedTime: 0,
     isCycleTime: false,
     machineStatusId: "",
     comment: "",
     order: getNextOrderNumber(),
-  } as WorkMasterPhaseDetail;
+  } as WorkOrderPhaseDetail;
   emit("add", defaultInstance);
 };
 
@@ -109,7 +109,7 @@ const onEditRow = (row: DataTableRowClickEvent) => {
   }
 };
 
-const onDeleteRow = (event: any, detail: WorkMasterPhaseDetail) => {
+const onDeleteRow = (event: any, detail: WorkOrderPhaseDetail) => {
   confirm.require({
     target: event.currentTarget,
     message: `Está segur que vol eliminar el pas de la fase?`,

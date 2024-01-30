@@ -93,13 +93,15 @@ export interface WorkMaster {
 
 export interface WorkMasterPhase {
   id: string;
-  phaseCode: string;
-  phaseDescription: string;
+  code: string;
+  description: string;
   workMasterId: string;
   disabled: boolean;
-  workcenterTypeId: string;
+  workcenterTypeId?: string | null;
   preferredWorkcenterId?: string | null;
-  operatorTypeId: string;
+  operatorTypeId?: string | null;
+  isExternalWork: boolean;
+  externalWorkCost: number;
   details?: Array<WorkMasterPhaseDetail>;
   billOfMaterials?: Array<WorkMasterPhaseBillOfMaterials>;
 }
@@ -110,8 +112,6 @@ export interface WorkMasterPhaseDetail {
   machineStatusId: string;
   estimatedTime: number;
   isCycleTime: boolean;
-  isExternalWork: boolean;
-  externalWorkCost: number;
   order: number;
   comment: string;
 }
@@ -127,10 +127,74 @@ export interface WorkMasterPhaseBillOfMaterials {
   diameter: number;
   thickness: number;
 }
-
 export interface WorkMasterToCopy {
   referenceId: string | null;
   workmaster: WorkMaster;
   workmasterId: string;
   referenceCode: string;
+}
+
+export interface WorkOrder {
+  id: string;
+  referenceId: string;
+  workMasterId: string;
+  code: string;
+  reference?: Reference;
+  plannedQuantity: number;
+  plannedDate: string;
+  statusId: string;
+  exerciceId: string;
+  startTime: string | null;
+  endTime: string | null;
+  order: number;
+  comment: string;
+  disabled: boolean;
+  phases: Array<WorkOrderPhase>;
+}
+
+export interface WorkOrderPhase {
+  id: string;
+  code: string;
+  description: string;
+  workOrderId: string;
+  disabled: boolean;
+  workcenterTypeId?: string | null;
+  preferredWorkcenterId?: string | null;
+  operatorTypeId?: string | null;
+  isExternalWork: boolean;
+  externalWorkCost: number;
+  statusId: string;
+  startTime: string | null;
+  endTime: string | null;
+  details?: Array<WorkOrderPhaseDetail>;
+  billOfMaterials?: Array<WorkOrderPhaseBillOfMaterials>;
+}
+
+export interface WorkOrderPhaseDetail {
+  id: string;
+  workOrderPhaseId: string;
+  machineStatusId: string;
+  estimatedTime: number;
+  isCycleTime: boolean;
+  order: number;
+  comment: string;
+}
+
+export interface WorkOrderPhaseBillOfMaterials {
+  id: string;
+  workOrderPhaseId: string;
+  referenceId: string;
+  quantity: number;
+  width: number;
+  length: number;
+  height: number;
+  diameter: number;
+  thickness: number;
+}
+
+export interface CreateWorkOrderDto {
+  workMasterId: string;
+  plannedQuantity: number;
+  plannedDate: string;
+  comment: string;
 }

@@ -16,7 +16,15 @@ export const useWorkMasterStore = defineStore({
     workmasterPhase: undefined as WorkMasterPhase | undefined,
     workmasterToCopy: undefined as WorkMasterToCopy | undefined,
   }),
-  getters: {},
+  getters: {
+    getByReferenceId: (state) => {
+      return (referenceId: string): Array<WorkMaster> => {
+        if (!referenceId || !state.workmasters) return [];
+
+        return state.workmasters.filter((w) => w.referenceId === referenceId);
+      };
+    },
+  },
   actions: {
     // Workmaster
     setNew(id: string) {
@@ -30,6 +38,10 @@ export const useWorkMasterStore = defineStore({
     },
     async fetchAll() {
       this.workmasters = await Services.WorkMaster.getAll();
+    },
+    async fetchAllActives() {
+      this.workmasters = await Services.WorkMaster.getAll();
+      this.workmasters = this.workmasters?.filter((w) => !w.disabled);
     },
     async fetchOne(id: string) {
       this.workmaster = await Services.WorkMaster.getById(id);

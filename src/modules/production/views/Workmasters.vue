@@ -4,6 +4,8 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
+    sort-field="reference.code"
+    :sort-order="1"
     @row-click="editRow"
   >
     <template #header>
@@ -37,7 +39,12 @@
         </div>
       </div>
     </template>
-    <Column header="Referencia" style="width: 50%">
+    <Column
+      field="reference.code"
+      sortable
+      header="Referencia"
+      style="width: 50%"
+    >
       <template #body="slotProps">
         {{ referenceStore.getFullName(slotProps.data.reference) }}
       </template>
@@ -191,7 +198,7 @@ const filteredData = computed(() => {
   if (!filter.value.referenceId) return workmasterStore.workmasters;
 
   return workmasterStore.workmasters!.filter(
-    (w) => w.id === filter.value.referenceId
+    (w) => w.referenceId === filter.value.referenceId
   );
 });
 

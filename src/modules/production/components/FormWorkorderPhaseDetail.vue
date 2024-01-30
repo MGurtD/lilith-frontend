@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WorkMasterPhaseDetail } from "../types";
+import { WorkOrderPhaseDetail } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -72,11 +72,11 @@ import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
 
 const props = defineProps<{
-  detail: WorkMasterPhaseDetail;
+  detail: WorkOrderPhaseDetail;
 }>();
 
 const emit = defineEmits<{
-  (e: "submit", phase: WorkMasterPhaseDetail): void;
+  (e: "submit", phase: WorkOrderPhaseDetail): void;
   (e: "cancel"): void;
 }>();
 

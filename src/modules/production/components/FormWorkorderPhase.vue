@@ -9,12 +9,22 @@
       />
       <br />
     </div>
-    <section class="two-columns-7525 mb-2">
+    <section class="three-columns mb-2">
       <div>
         <BaseInput label="Codi de la fase" v-model="phase.code" />
       </div>
       <div>
         <BaseInput label="Descripció" v-model="phase.description" />
+      </div>
+      <div>
+        <DropdownLifecycle
+          label="Estat"
+          v-model="phase.statusId"
+          :class="{
+            'p-invalid': validation.errors.statusId,
+          }"
+        >
+        </DropdownLifecycle>
       </div>
     </section>
     <section class="three-columns mb-2">
@@ -85,8 +95,9 @@
 </template>
 
 <script setup lang="ts">
+import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import { computed, ref } from "vue";
-import { WorkMaster, WorkMasterPhase } from "../types";
+import { WorkOrder, WorkOrderPhase } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -98,12 +109,12 @@ import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
 
 const props = defineProps<{
-  workmaster: WorkMaster;
-  phase: WorkMasterPhase;
+  workorder: WorkOrder;
+  phase: WorkOrderPhase;
 }>();
 
 const emit = defineEmits<{
-  (e: "submit", phase: WorkMasterPhase): void;
+  (e: "submit", phase: WorkOrderPhase): void;
   (e: "cancel"): void;
 }>();
 
@@ -129,6 +140,7 @@ const isExternalWorkChanged = () => {
 
 const schema = Yup.object().shape({
   code: Yup.string().required("El codi és obligatori"),
+  statusId: Yup.string().required("L'estat és obligatori"),
 });
 const validation = ref({
   result: false,

@@ -1,31 +1,31 @@
 <template>
   <header>
-    <FormWorkmasterPhase
-      v-if="workmaster && workmasterPhase"
-      :workmaster="workmaster"
-      :phase="workmasterPhase"
-      @submit="onWorkmasterPhaseSubmit"
-    ></FormWorkmasterPhase>
+    <FormWorkOrderPhase
+      v-if="workorder && workorderPhase"
+      :workorder="workorder"
+      :phase="workorderPhase"
+      @submit="onWorkOrderPhaseSubmit"
+    ></FormWorkOrderPhase>
   </header>
-  <main class="main" v-if="workmasterPhase">
+  <main class="main" v-if="workorderPhase">
     <TabView>
       <TabPanel header="Pasos">
-        <TableWorkmasterPhaseDetails
-          :workmasterPhase="workmasterPhase"
-          :details="workmasterPhase.details!"
+        <TableWorkOrderPhaseDetails
+          :workorderPhase="workorderPhase"
+          :details="workorderPhase.details!"
           @add="onAddDetail"
           @edit="onEditDetail"
           @delete="onDeleteDetail"
-        ></TableWorkmasterPhaseDetails>
+        ></TableWorkOrderPhaseDetails>
       </TabPanel>
       <TabPanel header="Materials">
-        <TableWorkmasterPhaseBillOfMaterials
-          :workmasterPhase="workmasterPhase"
-          :billOfMaterials="workmasterPhase.billOfMaterials!"
+        <TableWorkOrderPhaseBillOfMaterials
+          :workorderPhase="workorderPhase"
+          :billOfMaterials="workorderPhase.billOfMaterials!"
           @add="onAddBomItem"
           @edit="onEditBomItem"
           @delete="onDeleteBomItem"
-        ></TableWorkmasterPhaseBillOfMaterials>
+        ></TableWorkOrderPhaseBillOfMaterials>
       </TabPanel>
     </TabView>
     <Dialog
@@ -35,54 +35,54 @@
       :modal="dialogOptions.modal"
       @hide="cleanSelecteds"
     >
-      <FormWorkmasterPhaseDetail
+      <FormWorkOrderPhaseDetail
         v-if="selectedDetail"
         :detail="selectedDetail"
-        @submit="onWorkmasterPhaseDetailSubmit"
-      ></FormWorkmasterPhaseDetail>
-      <FormWorkmasterPhaseBomItem
+        @submit="onWorkOrderPhaseDetailSubmit"
+      ></FormWorkOrderPhaseDetail>
+      <FormWorkOrderPhaseBomItem
         v-if="selectedBomItem"
         :bomItem="selectedBomItem"
         @submit="onWorkmasterPhasBomItemSubmit"
-      ></FormWorkmasterPhaseBomItem>
+      ></FormWorkOrderPhaseBomItem>
     </Dialog>
   </main>
 </template>
 <script setup lang="ts">
-import FormWorkmasterPhase from "../components/FormWorkmasterPhase.vue";
-import TableWorkmasterPhaseDetails from "../components/TableWorkmasterPhaseDetails.vue";
-import FormWorkmasterPhaseDetail from "../components/FormWorkmasterPhaseDetail.vue";
-import TableWorkmasterPhaseBillOfMaterials from "../components/TableWorkmasterPhaseBillOfMaterials.vue";
-import FormWorkmasterPhaseBomItem from "../components/FormWorkmasterPhaseBomItem.vue";
+import FormWorkOrderPhase from "../components/FormWorkorderPhase.vue";
+import TableWorkOrderPhaseDetails from "../components/TableWorkorderPhaseDetails.vue";
+import FormWorkOrderPhaseDetail from "../components/FormWorkorderPhaseDetail.vue";
+import TableWorkOrderPhaseBillOfMaterials from "../components/TableWorkorderPhaseBillOfMaterials.vue";
+import FormWorkOrderPhaseBomItem from "../components/FormWorkorderPhaseBomItem.vue";
 
 import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
-import { useWorkMasterStore } from "../store/workmaster";
 import { usePlantModelStore } from "../store/plantmodel";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import {
-  WorkMasterPhase,
-  WorkMasterPhaseBillOfMaterials,
-  WorkMasterPhaseDetail,
+  WorkOrderPhase,
+  WorkOrderPhaseBillOfMaterials,
+  WorkOrderPhaseDetail,
 } from "../types";
 import { DialogOptions, FormActionMode } from "../../../types/component";
+import { useWorkOrderStore } from "../store/workorder";
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const plantModelStore = usePlantModelStore();
-const workmasterStore = useWorkMasterStore();
-const { workmaster, workmasterPhase } = storeToRefs(workmasterStore);
+const workorderStore = useWorkOrderStore();
+const { workorder, workorderPhase } = storeToRefs(workorderStore);
 const id = ref("");
 const phaseId = ref("");
 
 const dialogOptions = reactive({
   visible: false,
-  title: "Linea",
+  title: "Fase",
   closable: true,
   position: "center",
   modal: true,
@@ -94,11 +94,9 @@ onMounted(async () => {
   await loadViewData();
 
   let pageTitle = "";
-  pageTitle = `Ruta de fabricació`;
-  if (workmaster.value && workmasterPhase.value) {
-    pageTitle = `${pageTitle} ${referenceStore.getFullName(
-      workmaster.value.reference!
-    )} - Fase ${workmasterPhase.value.code}`;
+  pageTitle = `Ordre de fabricació`;
+  if (workorder.value && workorderPhase.value) {
+    pageTitle = `${pageTitle} ${workorder.value.code} - Fase ${workorderPhase.value.code}`;
   }
 
   store.setMenuItem({
@@ -112,17 +110,17 @@ onMounted(async () => {
 });
 
 const loadViewData = async () => {
-  await workmasterStore.fetchPhaseById(phaseId.value);
+  await workorderStore.fetchPhaseById(phaseId.value);
 };
 
-const onWorkmasterPhaseSubmit = async (phase: WorkMasterPhase) => {
-  const updated = await workmasterStore.updatePhase(phaseId.value, phase);
+const onWorkOrderPhaseSubmit = async (phase: WorkOrderPhase) => {
+  const updated = await workorderStore.updatePhase(phaseId.value, phase);
   //if (updated) router.back();
 };
 const formAction = ref(FormActionMode.CREATE);
-const selectedDetail = ref(undefined as WorkMasterPhaseDetail | undefined);
+const selectedDetail = ref(undefined as WorkOrderPhaseDetail | undefined);
 const selectedBomItem = ref(
-  undefined as WorkMasterPhaseBillOfMaterials | undefined
+  undefined as WorkOrderPhaseBillOfMaterials | undefined
 );
 const cleanSelecteds = () => {
   selectedDetail.value = undefined;
@@ -130,30 +128,30 @@ const cleanSelecteds = () => {
 };
 
 // Details
-const onAddDetail = (detail: WorkMasterPhaseDetail) => {
+const onAddDetail = (detail: WorkOrderPhaseDetail) => {
   formAction.value = FormActionMode.CREATE;
   selectedDetail.value = detail;
 
   dialogOptions.title = "Afegir pas de fabricació";
   dialogOptions.visible = true;
 };
-const onEditDetail = (detail: WorkMasterPhaseDetail) => {
+const onEditDetail = (detail: WorkOrderPhaseDetail) => {
   formAction.value = FormActionMode.EDIT;
   selectedDetail.value = detail;
 
   dialogOptions.title = "Modificar pas de fabricació";
   dialogOptions.visible = true;
 };
-const onDeleteDetail = (detail: WorkMasterPhaseDetail) => {
-  workmasterStore.deletePhaseDetail(detail.id);
+const onDeleteDetail = (detail: WorkOrderPhaseDetail) => {
+  workorderStore.deletePhaseDetail(detail.id);
 };
 
-const onWorkmasterPhaseDetailSubmit = async (detail: WorkMasterPhaseDetail) => {
+const onWorkOrderPhaseDetailSubmit = async (detail: WorkOrderPhaseDetail) => {
   let promise;
   if (formAction.value === FormActionMode.CREATE) {
-    promise = workmasterStore.createPhaseDetail(detail);
+    promise = workorderStore.createPhaseDetail(detail);
   } else if (formAction.value === FormActionMode.EDIT) {
-    promise = workmasterStore.updatePhaseDetail(detail.id, detail);
+    promise = workorderStore.updatePhaseDetail(detail.id, detail);
   }
   const result = await promise;
 
@@ -163,32 +161,32 @@ const onWorkmasterPhaseDetailSubmit = async (detail: WorkMasterPhaseDetail) => {
 };
 
 // Bill of materials
-const onAddBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
+const onAddBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
   formAction.value = FormActionMode.CREATE;
   selectedBomItem.value = bomItem;
 
   dialogOptions.title = "Afegir material";
   dialogOptions.visible = true;
 };
-const onEditBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
+const onEditBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
   formAction.value = FormActionMode.EDIT;
   selectedBomItem.value = bomItem;
 
   dialogOptions.title = "Modificar material";
   dialogOptions.visible = true;
 };
-const onDeleteBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
-  workmasterStore.deletePhaseBomItem(bomItem.id);
+const onDeleteBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
+  workorderStore.deletePhaseBomItem(bomItem.id);
 };
 
 const onWorkmasterPhasBomItemSubmit = async (
-  bomItem: WorkMasterPhaseBillOfMaterials
+  bomItem: WorkOrderPhaseBillOfMaterials
 ) => {
   let promise;
   if (formAction.value === FormActionMode.CREATE) {
-    promise = workmasterStore.createPhaseBomItem(bomItem);
+    promise = workorderStore.createPhaseBomItem(bomItem);
   } else if (formAction.value === FormActionMode.EDIT) {
-    promise = workmasterStore.updatePhaseBomItem(bomItem.id, bomItem);
+    promise = workorderStore.updatePhaseBomItem(bomItem.id, bomItem);
   }
   const result = await promise;
 

@@ -1,19 +1,19 @@
 <template>
   <DataTable
     @row-click="onEditRow"
-    :value="workmasterPhases"
+    :value="workorderPhases"
     tableStyle="min-width: 100%"
   >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Fases de la ruta</span>
+        <span class="text-xl text-900 font-bold">Fases</span>
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
     <Column field="code" header="Codi" style="width: 10%"></Column>
-    <Column field="description" header="Descripció" style="width: 20%"></Column>
+    <Column field="description" header="Descripció" style="width: 15%"></Column>
     <Column header="Tipus de màquina" style="width: 15%">
       <template #body="slotProps">
         {{ getWorkcenterType(slotProps.data.workcenterTypeId) }}
@@ -29,12 +29,17 @@
         {{ getOperatorType(slotProps.data.operatorTypeId) }}
       </template>
     </Column>
-    <Column header="Extern" style="width: 10%">
+    <Column header="Estat" style="width: 15%">
+      <template #body="slotProps">
+        {{ getStatus(slotProps.data.statusId) }}
+      </template>
+    </Column>
+    <Column header="Extern" style="width: 5%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isExternalWork"></BooleanColumn>
       </template>
     </Column>
-    <Column style="width: 10%">
+    <Column style="width: 5%">
       <template #body="slotProps">
         <i
           :class="PrimeIcons.TIMES"
@@ -51,35 +56,36 @@
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
   >
-    <FormWorkmasterPhase
+    <FormWorkOrderPhase
       v-if="newPhase"
-      :workmaster="workmaster"
+      :workorder="workorder"
       :phase="newPhase"
       @submit="onAddHandler"
-    ></FormWorkmasterPhase>
+    ></FormWorkOrderPhase>
   </Dialog>
 </template>
 
 <script setup lang="ts">
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { WorkMaster, WorkMasterPhase } from "../types";
+import { WorkOrder, WorkOrderPhase } from "../types";
 import { getNewUuid } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
-import FormWorkmasterPhase from "./FormWorkmasterPhase.vue";
+import FormWorkOrderPhase from "./FormWorkorderPhase.vue";
 import { DialogOptions } from "../../../types/component";
 import { reactive, ref } from "vue";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
 const props = defineProps<{
-  workmaster: WorkMaster;
-  workmasterPhases: Array<WorkMasterPhase>;
+  workorder: WorkOrder;
+  workorderPhases: Array<WorkOrderPhase>;
 }>();
 
 const emit = defineEmits<{
-  (e: "add", phase: WorkMasterPhase): void;
-  (e: "edit", phase: WorkMasterPhase): void;
-  (e: "delete", phase: WorkMasterPhase): void;
+  (e: "add", phase: WorkOrderPhase): void;
+  (e: "edit", phase: WorkOrderPhase): void;
+  (e: "delete", phase: WorkOrderPhase): void;
 }>();
 
 const dialogOptions = reactive({
@@ -92,6 +98,7 @@ const dialogOptions = reactive({
 
 const confirm = useConfirm();
 const plantModelStore = usePlantModelStore();
+const lifecycleStore = useLifecyclesStore();
 
 const getWorkcenterType = (id: string) => {
   if (!plantModelStore.workcenterTypes) return "";
@@ -111,28 +118,38 @@ const getOperatorType = (id: string) => {
   if (!entity) return "";
   return entity.name;
 };
+const getStatus = (id: string) => {
+  if (!lifecycleStore.lifecycle || !lifecycleStore.lifecycle.statuses)
+    return "";
+  const entity = lifecycleStore.lifecycle.statuses?.find((s) => id === s.id);
+  if (!entity) return "";
+  return entity.name;
+};
 
-const newPhase = ref({} as WorkMasterPhase);
+const newPhase = ref({} as WorkOrderPhase);
 const onAddClick = () => {
   newPhase.value = {
     id: getNewUuid(),
-    workMasterId: props.workmaster.id,
+    workOrderId: props.workorder.id,
     disabled: false,
-    code: ((props.workmaster.phases.length + 1) * 10).toString(),
+    code: ((props.workorder.phases.length + 1) * 10).toString(),
     description: "",
     operatorTypeId: null,
     workcenterTypeId: null,
     preferredWorkcenterId: null,
     isExternalWork: false,
     externalWorkCost: 0,
-    workmasterPhaseDetails: [],
-    workmasterPhaseBillOfMaterials: [],
-  } as WorkMasterPhase;
+    statusId: "",
+    startTime: null,
+    endTime: null,
+    workOrderPhaseDetails: [],
+    workOrderPhaseBillOfMaterials: [],
+  } as WorkOrderPhase;
 
   dialogOptions.visible = true;
 };
 
-const onAddHandler = (phase: WorkMasterPhase) => {
+const onAddHandler = (phase: WorkOrderPhase) => {
   dialogOptions.visible = false;
   emit("add", phase);
 };
@@ -147,7 +164,7 @@ const onEditRow = (row: DataTableRowClickEvent) => {
   }
 };
 
-const onDeleteRow = (event: any, phase: WorkMasterPhase) => {
+const onDeleteRow = (event: any, phase: WorkOrderPhase) => {
   confirm.require({
     target: event.currentTarget,
     message: `Está segur que vol eliminar la fase?`,

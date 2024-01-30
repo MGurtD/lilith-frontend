@@ -24,6 +24,10 @@ export const useExerciseStore = defineStore({
     async fetchAll() {
       this.exercises = await Services.Exercice.getAll();
     },
+    async fetchActive() {
+      this.exercises = await Services.Exercice.getAll();
+      this.exercises = this.exercises?.filter((e) => !e.disabled);
+    },
     async fetchOne(id: string) {
       this.exercise = await Services.Exercice.getById(id);
     },
