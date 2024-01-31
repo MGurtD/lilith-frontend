@@ -37,7 +37,7 @@ import { Reference } from "../types";
 
 const props = defineProps<{
   label: string;
-  modelValue: string | undefined;
+  modelValue: string | null | undefined;
   fullName: boolean;
 }>();
 

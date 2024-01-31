@@ -128,7 +128,7 @@ export interface WorkMasterPhaseBillOfMaterials {
   thickness: number;
 }
 export interface WorkMasterToCopy {
-  referenceId: string | null;
+  referenceId: string | null | undefined;
   workmaster: WorkMaster;
   workmasterId: string;
   referenceCode: string;
