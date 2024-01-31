@@ -3,6 +3,7 @@
     <FormWorkmaster
       v-if="workmaster"
       :workmaster="workmaster"
+      @calculateCost="calculateCostSubmit"
       @submit="onWorkmasterSubmit"
     ></FormWorkmaster>
   </header>
@@ -30,10 +31,12 @@ import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const toast = useToast();
 const referenceStore = useReferenceStore();
 const workmasterStore = useWorkMasterStore();
 const plantModelStore = usePlantModelStore();
@@ -68,6 +71,27 @@ const loadViewData = async () => {
 const onWorkmasterSubmit = async (workmaster: WorkMaster) => {
   const updated = await workmasterStore.update(id.value, workmaster);
   if (updated) await loadViewData();
+};
+
+const calculateCostSubmit = async (workmaster: WorkMaster) => {
+  const response = await workmasterStore.calculate(workmaster.id);
+  if (response.result) {
+    toast.add({
+      severity: "success",
+      summary: "Cálcul de cost",
+      detail: `${response.content} €`,
+    });
+  } else {
+    toast.add({
+      severity: "warn",
+      summary: "Cálcul de cost",
+      detail:
+        response.errors.length > 0
+          ? response.errors[0]
+          : "Errors detectats durant el cálcul",
+      life: 10000,
+    });
+  }
 };
 
 // Phases

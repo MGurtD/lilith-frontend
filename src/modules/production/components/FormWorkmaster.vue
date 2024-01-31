@@ -1,12 +1,9 @@
 <template>
   <form v-if="workmaster">
-    <div>
-      <Button
-        label="Guardar Ruta"
-        class="grid_add_row_button"
-        size="small"
-        @click="submitForm"
-      />
+    <div class="grid_add_row_button">
+      <Button label="Calcular Cost" size="small" @click="calculateCost" />
+      &nbsp;
+      <Button label="Guardar" size="small" @click="submitForm" />
       <br />
     </div>
     <section class="three-columns">
@@ -52,6 +49,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "submit", workmaster: WorkMaster): void;
+  (e: "calculateCost", workmaster: WorkMaster): void;
   (e: "cancel"): void;
 }>();
 
@@ -77,6 +75,24 @@ const submitForm = async () => {
   validate();
   if (validation.value.result) {
     emit("submit", props.workmaster);
+  } else {
+    let errors = "";
+    Object.entries(validation.value.errors).forEach((e) => {
+      errors += `${e[1].map((e) => e)}.   `;
+    });
+    toast.add({
+      severity: "warn",
+      summary: "Formulari inválid",
+      detail: errors,
+      life: 5000,
+    });
+  }
+};
+
+const calculateCost = () => {
+  validate();
+  if (validation.value.result) {
+    emit("calculateCost", props.workmaster);
   } else {
     let errors = "";
     Object.entries(validation.value.errors).forEach((e) => {
