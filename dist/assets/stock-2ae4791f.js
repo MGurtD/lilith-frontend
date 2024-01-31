@@ -1,1 +1,0 @@
-import{J as t}from"./index-61ceac46.js";import{S as o}from"./index-7f3e371f.js";const c=t({id:"stock",state:()=>({stocks:void 0}),getters:{},actions:{async fetchStocks(){this.stocks=await o.Stock.getAll()}}});export{c as u};
