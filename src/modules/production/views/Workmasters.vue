@@ -249,7 +249,7 @@ const copyButton = (event: any, workmaster: WorkMaster) => {
 const onCopySubmit = async () => {
   if (
     workmasterStore.workmasterToCopy &&
-    workmasterStore.workmasterToCopy.referenceId !== null
+    workmasterStore.workmasterToCopy.referenceId
   ) {
     workmasterStore.workmasterToCopy.referenceId =
       workmasterStore.workmasterToCopy.referenceId.trim() === ""
