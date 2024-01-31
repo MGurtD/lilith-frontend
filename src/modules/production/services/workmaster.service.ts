@@ -6,6 +6,7 @@ import {
   WorkMasterToCopy,
 } from "../types";
 import BaseService from "../../../api/base.service";
+import { GenericResponse } from "../../../types";
 
 export class WorkMasterService extends BaseService<WorkMaster> {
   async copyWorkMaster(workmasterToCopy: WorkMasterToCopy): Promise<boolean> {
@@ -14,6 +15,10 @@ export class WorkMasterService extends BaseService<WorkMaster> {
       workmasterToCopy
     );
     return response.status === 200;
+  }
+  async calculateCost(id: string): Promise<GenericResponse<number>> {
+    const response = await this.apiClient.get(`${this.resource}/cost/${id}`);
+    return response.data;
   }
 }
 export class WorkMasterPhaseService extends BaseService<WorkMasterPhase> {

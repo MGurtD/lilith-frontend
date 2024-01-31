@@ -7,6 +7,7 @@ import {
   WorkMasterToCopy,
 } from "../types";
 import Services from "../services";
+import { GenericResponse } from "../../../types";
 
 export const useWorkMasterStore = defineStore({
   id: "workmaster",
@@ -59,6 +60,10 @@ export const useWorkMasterStore = defineStore({
     async delete(id: string) {
       const result = await Services.WorkMaster.delete(id);
       if (result) await this.fetchAll();
+      return result;
+    },
+    async calculate(id: string): Promise<GenericResponse<number>> {
+      const result = await Services.WorkMaster.calculateCost(id);
       return result;
     },
     async copy(model: WorkMasterToCopy) {
