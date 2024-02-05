@@ -236,25 +236,18 @@ const createButtonClick = () => {
 };
 
 const copyButton = (event: any, workmaster: WorkMaster) => {
-  console.log(workmaster);
   workmasterStore.workmasterToCopy = {
     workmasterId: workmaster.id,
     workmaster,
-    referenceId: "",
+    referenceId: null,
     referenceCode: "",
   };
   copyDialogOptions.visible = true;
 };
 
 const onCopySubmit = async () => {
-  if (
-    workmasterStore.workmasterToCopy &&
-    workmasterStore.workmasterToCopy.referenceId
-  ) {
-    workmasterStore.workmasterToCopy.referenceId =
-      workmasterStore.workmasterToCopy.referenceId.trim() === ""
-        ? null
-        : workmasterStore.workmasterToCopy.referenceId;
+  if (workmasterStore.workmasterToCopy!.referenceId === "") {
+    workmasterStore.workmasterToCopy!.referenceId = null;
   }
   const copied = await workmasterStore.copy(workmasterStore.workmasterToCopy!);
   await workmasterStore.fetchAll();
