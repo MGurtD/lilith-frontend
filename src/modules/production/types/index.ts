@@ -198,3 +198,13 @@ export interface CreateWorkOrderDto {
   plannedDate: string;
   comment: string;
 }
+
+export interface ProductionPart {
+  id: string;
+  workOrderPhaseDetailId: string;
+  workCenterId: string;
+  operatorId: string;
+  date: Date;
+  quantity: number;
+  time: number;
+}
