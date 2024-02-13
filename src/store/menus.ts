@@ -205,6 +205,11 @@ export const applicationMenus = [
         ],
       },
       {
+        icon: PrimeIcons.BUILDING,
+        title: "Tíquets de producció",
+        href: "/productionpart",
+      },
+      {
         icon: PrimeIcons.REPLY,
         title: "Rutes de fabricació",
         href: "/workmaster",

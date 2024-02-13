@@ -24,12 +24,12 @@ export default [
   },
   {
     path: "/stockmovement",
-    name:"stockMovements",
+    name: "stockMovements",
     component: StockMovements,
   },
   {
     path: "/inventory",
-    name:"inventory",
+    name: "inventory",
     component: Inventory,
-  }
+  },
 ] as Array<RouteRecordRaw>;
