@@ -6,6 +6,7 @@ export const useReceiptsStore = defineStore({
   id: "receipts",
   state: () => ({
     receipts: undefined as Array<Receipt> | undefined,
+    selectorReceipts: undefined as Array<Receipt> | undefined,
     receipt: undefined as Receipt | undefined,
   }),
   getters: {},
@@ -21,6 +22,7 @@ export const useReceiptsStore = defineStore({
         supplierId: "",
         supplierNumber: "",
         number: "",
+        purchaseInvoiceId: null,
       } as Receipt;
     },
     async fetchFiltered(
@@ -34,6 +36,12 @@ export const useReceiptsStore = defineStore({
         endDate,
         supplierId
       );
+    },
+    async fetchInvoiceableBySupplier(supplierId: string) {
+      this.selectorReceipts = await Services.Receipt.GetInvoiceable(supplierId);
+    },
+    async fetchByInvoice(invoiceId: string) {
+      this.receipts = await Services.Receipt.GetByInvoice(invoiceId);
     },
     async fetchReceipts() {
       this.receipts = await Services.Receipt.getAll();
@@ -49,6 +57,16 @@ export const useReceiptsStore = defineStore({
     async updateReceipt(id: string, receipt: Receipt) {
       const result = await Services.Receipt.update(id, receipt);
       if (result) await this.fetchReceipts();
+      return result;
+    },
+    async associateInvoice(receipt: Receipt, invoiceId: string) {
+      receipt.purchaseInvoiceId = invoiceId;
+      const result = await Services.Receipt.update(receipt.id, receipt);
+      return result;
+    },
+    async unassociateInvoice(receipt: Receipt, invoiceId: string) {
+      receipt.purchaseInvoiceId = null;
+      const result = await Services.Receipt.update(receipt.id, receipt);
       return result;
     },
     async deleteReceipt(id: string) {
