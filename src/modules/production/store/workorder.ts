@@ -14,6 +14,9 @@ export const useWorkOrderStore = defineStore({
     workorder: undefined as WorkOrder | undefined,
     workorders: undefined as Array<WorkOrder> | undefined,
     workorderPhase: undefined as WorkOrderPhase | undefined,
+    workorderPhases: undefined as Array<WorkOrderPhase> | undefined,
+    workorderPhaseDetail: undefined as WorkOrderPhaseDetail | undefined,
+    workorderPhaseDetails: undefined as Array<WorkOrderPhaseDetail> | undefined,
   }),
   getters: {},
   actions: {
