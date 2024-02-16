@@ -37,6 +37,7 @@ export interface SalesOrderHeader {
   salesOrderDate: string;
   salesOrderNumber: string;
   budgetNumber: string | null;
+  expectedDate: string | null;
   customerCode: string;
   customerComercialName: string;
   customerSalesOrderNumber: string;
@@ -253,6 +254,6 @@ export interface DeliveryNoteDetail {
 }
 
 export interface CreateWorkOrderFromSalesOrderDto {
-  workOrderDto: CreateWorkOrderDto,
-  orderDetail: SalesOrderDetail
+  workOrderDto: CreateWorkOrderDto;
+  orderDetail: SalesOrderDetail;
 }

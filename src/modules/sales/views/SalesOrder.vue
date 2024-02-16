@@ -168,9 +168,13 @@ const loadView = async () => {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
 
+    // Parse date on the form
     salesOrder.value.salesOrderDate = formatDate(
       salesOrder.value.salesOrderDate
     );
+    if (salesOrder.value.expectedDate) {
+      salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
+    }
 
     // Get the related DeliveryNote info
     if (salesOrder.value.deliveryNoteId) {

@@ -20,6 +20,17 @@
             disabled
           />
         </div>
+
+        <div>
+          <label class="block text-900 mb-2">Data Alta</label>
+          <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
+        </div>
+        <div>
+          <label class="block text-900 mb-2">Data Entrega</label>
+          <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
+        </div>
+
+        <!-- 
         <div>
           <label class="block text-900 mb-2">Exercici</label>
           <Dropdown
@@ -33,12 +44,8 @@
               'p-invalid': validation.errors.exerciseId,
             }"
           />
-        </div>
-        <div>
-          <label class="block text-900 mb-2">Data Comanda</label>
-          <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
-        </div>
-        
+        </div> 
+        -->
       </section>
       <section class="four-columns mt-2">
         <div>
@@ -92,25 +99,21 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import BaseInput from "../../../components/BaseInput.vue";
-import { useSalesOrderStore } from "../store/order";
-import { useCustomersStore } from "../store/customers";
-import { useExerciseStore } from "../../shared/store/exercise";
-import { usePlantModelStore } from "../../production/store/plantmodel";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { useReferenceStore } from "../../shared/store/reference";
-import { SalesOrderHeader } from "../types";
+import { computed, ref } from "vue";
+import { storeToRefs } from "pinia";
 import * as Yup from "yup";
 import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { storeToRefs } from "pinia";
+import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useSalesOrderStore } from "../store/order";
+import { useCustomersStore } from "../store/customers";
+import { useDeliveryNoteStore } from "../store/deliveryNote";
+import { SalesOrderHeader } from "../types";
 import { BaseInputType } from "../../../types/component";
 import { convertDateTimeToJSON } from "../../../utils/functions";
-import { useDeliveryNoteStore } from "../store/deliveryNote";
 
 const emit = defineEmits<{
   (e: "submit", salesOrder: SalesOrderHeader): void;
@@ -119,8 +122,6 @@ const emit = defineEmits<{
 
 const salesOrderStore = useSalesOrderStore();
 const customerStore = useCustomersStore();
-const plantModelStore = usePlantModelStore();
-const exerciseStore = useExerciseStore();
 const lifeCycleStore = useLifecyclesStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const toast = useToast();
@@ -139,6 +140,7 @@ const schema = Yup.object().shape({
   statusId: Yup.string().required("L'estat es obligatori"),
   exerciseId: Yup.string().required("L'exercici es obligatori"),
 });
+
 const validation = ref({
   result: false,
   errors: {},
@@ -152,9 +154,7 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    salesOrder.value!.salesOrderDate = convertDateTimeToJSON(
-      salesOrder.value!.salesOrderDate
-    );
+    parseEntityDates();
     emit("submit", salesOrder.value!);
   } else {
     let errors = "";
@@ -185,21 +185,19 @@ const updateCustomer = () => {
     salesOrder.value.customerVatNumber = customer.vatNumber;
     salesOrder.value.customerAccountNumber = customer.accountNumber;
   }
-  console.log(salesOrder.value);
 };
 
-const updateSite = () => {
-  const site = plantModelStore.sites?.find(
-    (s) => s.id === salesOrder.value?.siteId
+const parseEntityDates = () => {
+  if (!salesOrder.value) return;
+
+  salesOrder.value.salesOrderDate = convertDateTimeToJSON(
+    salesOrder.value.salesOrderDate
   );
-  if (site && salesOrder.value) {
-    salesOrder.value.name = site.name;
-    salesOrder.value.address = site.address;
-    salesOrder.value.city = site.city;
-    salesOrder.value.postalCode = site.postalCode;
-    salesOrder.value.region = site.region;
-    salesOrder.value.country = site.country;
-    salesOrder.value.vatNumber = site.vatNumber;
+
+  if (salesOrder.value.expectedDate) {
+    salesOrder.value.expectedDate = convertDateTimeToJSON(
+      salesOrder.value.expectedDate
+    );
   }
 };
 </script>

@@ -87,6 +87,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useWorkOrderStore } from "../../production/store/workorder";
+import { convertDDMMYYYYToDate } from "../../../utils/functions";
 
 const props = defineProps<{
   salesOrder: SalesOrderHeader;
@@ -156,7 +157,9 @@ const onWorkOrderCreateClick = (salesOrderDetail: SalesOrderDetail) => {
       referenceActiveWorkMasters.value[0].id;
   }
   createWorkOrderDto.value.plannedQuantity = salesOrderDetail.quantity;
-  createWorkOrderDto.value.plannedDate = "";
+  createWorkOrderDto.value.plannedDate = props.salesOrder.expectedDate
+    ? convertDDMMYYYYToDate(props.salesOrder.expectedDate)
+    : "";
   createWorkOrderDto.value.comment = "";
   selectedDetail = salesOrderDetail;
 
