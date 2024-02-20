@@ -62,6 +62,22 @@ export const usePlantModelStore = defineStore({
         return state.workcenters.filter((w) => w.workcenterTypeId === typeId);
       };
     },
+    getWorkcenterNameById: (state) => {
+      return (id: string): string => {
+        if (!state.workcenters) return "";
+
+        const workcenter = state.workcenters.find((w) => w.id === id);
+        return workcenter ? workcenter.description : "";
+      };
+    },
+    getOperatorNameById: (state) => {
+      return (id: string): string => {
+        if (!state.operators) return "";
+
+        const operator = state.operators.find((o) => o.id === id);
+        return operator ? `${operator.name} ${operator.surname}` : "";
+      };
+    },
   },
   actions: {
     //workcenter
@@ -80,6 +96,7 @@ export const usePlantModelStore = defineStore({
       this.workcenters = await workcenterService.getActive();
       this.machineStatuses = await machineStatusService.getActive();
       this.operatorTypes = await operatorTypeService.getActive();
+      this.operators = await operatorService.getActive();
     },
     async fetchWorkcenters() {
       this.workcenters = await workcenterService.getAll();
