@@ -208,3 +208,5 @@ export interface ProductionPart {
   quantity: number;
   time: number;
 }
+
+export interface DetailedWorkOrder {}
