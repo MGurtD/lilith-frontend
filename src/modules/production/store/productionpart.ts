@@ -24,6 +24,11 @@ export const useProductionPartStore = defineStore({
     async fetchAll() {
       this.productionParts = await Services.ProductionPart.getAll();
     },
+    async fetchByWorkOrderId(workOrderId: string) {
+      this.productionParts = await Services.ProductionPart.GetByWorkOrderId(
+        workOrderId
+      );
+    },
     async fetchOne(id: string) {
       this.productionPart = await Services.ProductionPart.getById(id);
     },
