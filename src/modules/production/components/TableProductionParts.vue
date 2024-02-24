@@ -21,16 +21,11 @@
         {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
       </template>
     </Column>
-    <Column field="workOrderPhaseId" header="Fase" style="width: 20%">
+    <Column field="workOrderPhaseId" header="Fase/Estat" style="width: 20%">
       <template #body="slotProps">
-        {{ getWorkOrderPhaseCode(slotProps.data.workOrderPhaseId) }}
+        {{ getWorkOrderPhaseName(slotProps.data) }}
       </template>
     </Column>
-    <!-- <Column
-      field="workOrderPhaseDetailId"
-      header="Detall"
-      style="width: 20%"
-    ></Column> -->
     <Column field="date" header="Data" style="width: 15%">
       <template #body="slotProps">
         {{ formatDateTime(slotProps.data.date) }}
@@ -44,19 +39,21 @@
 <script setup lang="ts">
 import { usePlantModelStore } from "../store/plantmodel";
 import { useProductionPartStore } from "../store/productionpart";
-import { useWorkOrderStore } from "../store/workorder";
 import { formatDateTime } from "../../../utils/functions";
+import { ProductionPart } from "../types";
 
-const workorderStore = useWorkOrderStore();
 const productionPartStore = useProductionPartStore();
 const plantModelStore = usePlantModelStore();
 
-const getWorkOrderPhaseCode = (workOrderPhaseId: string) => {
-  if (!workorderStore.workorder) return "";
+const getWorkOrderPhaseName = (productionPart: ProductionPart) => {
+  if (!productionPart) return "";
 
-  const workOrderPhase = workorderStore.workorder.phases!.find(
-    (wo) => wo.id === workOrderPhaseId
-  );
-  return workOrderPhase?.code;
+  if (productionPart.workOrderPhase && productionPart.workOrderPhaseDetail) {
+    const statusDesc = plantModelStore.getMachineStatusNameById(
+      productionPart.workOrderPhaseDetail.machineStatusId
+    );
+
+    return `(${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
+  }
 };
 </script>

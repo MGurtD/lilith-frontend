@@ -152,5 +152,9 @@ export const useWorkOrderStore = defineStore({
       this.detailedWorkOrders =
         await Services.DetailedWorkOrder.getByWorkcenterId(id);
     },
+    async fetchByWorkOrderId(id: string) {
+      this.detailedWorkOrders =
+        await Services.DetailedWorkOrder.getByWorkOrderId(id);
+    },
   },
 });

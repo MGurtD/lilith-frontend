@@ -40,13 +40,25 @@
       </TabPanel>
     </TabView>
   </main>
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormProductionPart
+      :productionPart="productionPartRequest"
+      @submit="createProductionPart"
+    />
+  </Dialog>
 </template>
 <script setup lang="ts">
+import FormProductionPart from "../components/FormProductionPart.vue";
 import FormWorkorder from "../components/FormWorkorder.vue";
 import TableWorkorderPhases from "../components/TableWorkorderPhases.vue";
 import TableProductionParts from "../components/TableProductionParts.vue";
 
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
@@ -54,11 +66,16 @@ import { useWorkOrderStore } from "../store/workorder";
 import { useProductionPartStore } from "../store/productionpart";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { WorkOrder, WorkOrderPhase } from "../types";
+import { ProductionPart, WorkOrder, WorkOrderPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
+import {
+  convertDateTimeToJSON,
+  formatDate,
+  getNewUuid,
+} from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
+import { DialogOptions } from "../../../types/component";
 
 const route = useRoute();
 const router = useRouter();
@@ -71,6 +88,14 @@ const plantModelStore = usePlantModelStore();
 const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
+
+const dialogOptions = reactive({
+  visible: false,
+  title: "Crear tíquet de producció",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 onMounted(async () => {
   id.value = route.params.id as string;
@@ -134,7 +159,31 @@ const deleteWorkOrderPhase = async (phase: WorkOrderPhase) => {
   await workorderStore.deletePhase(phase.id);
 };
 
-const onProductionPartAddClick = () => {};
+const productionPartRequest = ref({} as ProductionPart);
+const onProductionPartAddClick = () => {
+  productionPartRequest.value = {
+    id: getNewUuid(),
+    workOrderId: id.value,
+    workOrderPhaseId: "",
+    workOrderPhaseDetailId: "",
+    operatorId: "",
+    workCenterId: "",
+    time: 0,
+    quantity: 0,
+    date: new Date(),
+  };
+  if (workorder.value) workorderStore.fetchByWorkOrderId(workorder.value.id);
+
+  dialogOptions.visible = true;
+};
+
+const createProductionPart = async () => {
+  dialogOptions.visible = false;
+  const created = await productionPartStore.create(productionPartRequest.value);
+  if (created) {
+    productionPartStore.fetchByWorkOrderId(id.value);
+  }
+};
 </script>
 <style scoped>
 .main {

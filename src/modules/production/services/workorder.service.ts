@@ -92,4 +92,13 @@ export class DetailedWorkOrderService extends BaseService<DetailedWorkOrder> {
     if (response.status === 200)
       return response.data as Array<DetailedWorkOrder>;
   }
+  async getByWorkOrderId(
+    workOrderId: string
+  ): Promise<Array<DetailedWorkOrder> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/ByWorkOrder/${workOrderId}`
+    );
+    if (response.status === 200)
+      return response.data as Array<DetailedWorkOrder>;
+  }
 }
