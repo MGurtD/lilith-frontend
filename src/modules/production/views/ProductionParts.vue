@@ -24,13 +24,6 @@
             raised
             @click="filterData"
           />
-          <!--<Button
-            class="datatable-button mr-2"
-            :icon="PrimeIcons.FILTER_SLASH"
-            rounded
-            raised
-            @click="cleanFilter"
-          />-->
           <Button
             :icon="PrimeIcons.PLUS"
             rounded
@@ -42,16 +35,28 @@
     </template>
     <template #empty> No s'han trobat tiquets. </template>
     <template #loading> Carregant tiquets. Si us plau espera. </template>
-    <Column field="operatorId" header="Operari" style="width: 15%"></Column>
-    <Column field="workcenterId" header="Màquina" style="width: 20%"></Column>
-    <Column
-      field="workOrderPhaseDetailId"
-      header="OF"
-      style="width: 20%"
-    ></Column>
-    <Column field="date" header="Data" style="width: 15%"></Column>
+    <Column field="operatorId" header="Operari" style="width: 15%">
+      <template #body="slotProps">
+        {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
+      </template>
+    </Column>
+    <Column field="workcenterId" header="Màquina" style="width: 20%">
+      <template #body="slotProps">
+        {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
+      </template>
+    </Column>
+    <Column field="workOrderId" header="OF" style="width: 20%">
+      <template #body="slotProps">
+        {{ getWorkOrderDetailedName(slotProps.data) }}
+      </template>
+    </Column>
+    <Column field="date" header="Data" style="width: 15%">
+      <template #body="slotProps">
+        {{ formatDateTime(slotProps.data.date) }}
+      </template>
+    </Column>
     <Column field="quantity" header="Quantitat" style="width: 15%"></Column>
-    <Column field="time" header="Temps" style="width: 15%"></Column>
+    <Column field="time" header="Temps (min)" style="width: 15%"></Column>
   </DataTable>
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -71,10 +76,8 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
-import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
-import { useConfirm } from "primevue/useconfirm";
-import { ProductionPart, DetailedWorkOrder } from "../types";
+import { ProductionPart } from "../types";
 import {
   formatDateForQueryParameter,
   formatDateTime,
@@ -86,12 +89,10 @@ import { useProductionPartStore } from "../store/productionpart";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useWorkOrderStore } from "../store/workorder";
 import FormProductionPart from "../components/FormProductionPart.vue";
-import { DetailedWorkOrderService } from "../services/workorder.service";
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
-const confirm = useConfirm();
 const productionPartStore = useProductionPartStore();
 const exerciseStore = useExerciseStore();
 const plantModelStore = usePlantModelStore();
@@ -137,16 +138,19 @@ const dialogOptions = reactive({
 } as DialogOptions);
 
 onMounted(async () => {
-  workOrderStore.fetchAll();
-  plantModelStore.fetchWorkcenters();
-  plantModelStore.fetchOperators();
-  exerciseStore.fetchActive();
-
   store.setMenuItem({
     icon: PrimeIcons.CLOUD,
     title: "Tíquets de producció",
   });
+
+  workOrderStore.fetchAll();
+  plantModelStore.fetchWorkcenters();
+  plantModelStore.fetchOperators();
+  plantModelStore.fetchMachineStatuses();
+
+  await exerciseStore.fetchActive();
   setCurrentYear();
+
   filterData();
 });
 
@@ -163,6 +167,20 @@ const generateNewRequest = (): ProductionPart => {
     quantity: 0,
     date: new Date(),
   };
+};
+
+const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
+  if (
+    productionPart.workOrder &&
+    productionPart.workOrderPhase &&
+    productionPart.workOrderPhaseDetail
+  ) {
+    const statusDesc = plantModelStore.getMachineStatusNameById(
+      productionPart.workOrderPhaseDetail.machineStatusId
+    );
+
+    return `${productionPart.workOrder.code} - (${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
+  }
 };
 
 const createButtonClick = () => {

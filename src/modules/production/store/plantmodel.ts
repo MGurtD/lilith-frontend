@@ -78,6 +78,14 @@ export const usePlantModelStore = defineStore({
         return operator ? `${operator.name} ${operator.surname}` : "";
       };
     },
+    getMachineStatusNameById: (state) => {
+      return (id: string): string => {
+        if (!state.machineStatuses) return "";
+
+        const machineStatus = state.machineStatuses.find((o) => o.id === id);
+        return machineStatus ? `${machineStatus.description}` : "";
+      };
+    },
   },
   actions: {
     //workcenter

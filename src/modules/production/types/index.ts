@@ -209,6 +209,9 @@ export interface ProductionPart {
   date: Date;
   quantity: number;
   time: number;
+  workOrder?: WorkOrder;
+  workOrderPhase?: WorkOrderPhase;
+  workOrderPhaseDetail?: WorkOrderPhaseDetail;
 }
 
 export interface DetailedWorkOrder {
