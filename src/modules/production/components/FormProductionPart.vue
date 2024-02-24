@@ -33,49 +33,51 @@
           optionValue="id"
           optionLabel="description"
           class="w-full"
-          :class="{
-            'p-invalid': validation.errors.workcenterid,
-          }"
+          @change="getWorkOrders(productionPart.workCenterId)"
         />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Data Tíquet</label>
+        <Calendar v-model="productionPart.date" dateFormat="dd/mm/yy" />
       </div>
     </section>
     <section class="three-columns">
-      <!--<div class="mt-1">
+      <div class="mt-1">
         <label class="block text-900 mb-2">Ordre Fabricació</label>
         <Dropdown
-          v-model="workOrderStore.workorder?.id"
+          v-model="productionPart.workOrderId"
           editable
-          :options="workOrderStore.workorders"
-          optionValue="id"
-          optionLabel="code"
+          :options="workOrderStore.detailedWorkOrders"
+          optionValue="workOrderId"
+          optionLabel="workOrderCode"
           class="w-full"
           :class="{
-            'p-invalid': validation.errors.workOrderPhaseDetailId,
+            'p-invalid': validation.errors.workOrderId,
           }"
         />
       </div>
       <div class="mt-1">
         <label class="block text-900 mb-2">Fase Ordre Fabricació</label>
         <Dropdown
-          v-model="workOrderStore.workorderPhase?.id"
+          v-model="productionPart.workOrderPhaseId"
           editable
-          :options="workOrderStore.workorderPhases"
-          optionValue="id"
-          optionLabel="workOrderPhaseId"
+          :options="filteredWorkOrderPhases"
+          optionValue="workOrderPhaseId"
+          optionLabel="workOrderPhaseCode"
           class="w-full"
           :class="{
-            'p-invalid': validation.errors.workOrderPhaseDetailId,
+            'p-invalid': validation.errors.workOrderPhaseId,
           }"
         />
-      </div>-->
+      </div>
       <div class="mt-1">
         <label class="block text-900 mb-2">Pas Ordre Fabricació</label>
         <Dropdown
           v-model="productionPart.workOrderPhaseDetailId"
           editable
-          :options="workOrderStore.workorderPhaseDetails"
-          optionValue="id"
-          optionLabel="workOrderPhaseId"
+          :options="filteredWorkOrderPhaseDetails"
+          optionValue="workOrderPhaseDetailId"
+          optionLabel="machineStatusDescription"
           class="w-full"
           :class="{
             'p-invalid': validation.errors.workOrderPhaseDetailId,
@@ -86,7 +88,7 @@
     <section class="two-columns">
       <div class="mt-1">
         <BaseInput
-          :type="BaseInputType.CURRENCY"
+          :type="BaseInputType.NUMERIC"
           label="Quantitat"
           id="quantity"
           v-model="productionPart.quantity"
@@ -94,7 +96,7 @@
       </div>
       <div class="mt-1">
         <BaseInput
-          :type="BaseInputType.CURRENCY"
+          :type="BaseInputType.NUMERIC"
           label="Temps"
           id="time"
           v-model="productionPart.time"
@@ -106,6 +108,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import {
+  DetailedWorkOrder,
   Operator,
   ProductionPart,
   WorkOrderPhaseDetail,
@@ -134,9 +137,46 @@ const toast = useToast();
 const plantModelStore = usePlantModelStore();
 const workOrderStore = useWorkOrderStore();
 
+const filteredWorkOrderPhases = computed((): Array<DetailedWorkOrder> => {
+  if (
+    props.productionPart.workOrderId !== "" &&
+    props.productionPart.workCenterId !== ""
+  ) {
+    let detailedFilter = workOrderStore.detailedWorkOrders?.filter(
+      (wo) =>
+        wo.workOrderId === props.productionPart.workOrderId &&
+        wo.workcenterId === props.productionPart.workCenterId
+    );
+    if (detailedFilter) return detailedFilter;
+    return [];
+  }
+  return [];
+});
+
+const filteredWorkOrderPhaseDetails = computed((): Array<DetailedWorkOrder> => {
+  if (
+    props.productionPart.workOrderId !== "" &&
+    props.productionPart.workCenterId !== "" &&
+    props.productionPart.workOrderPhaseId !== ""
+  ) {
+    let detailedFilter = workOrderStore.detailedWorkOrders?.filter(
+      (wo) =>
+        wo.workOrderId === props.productionPart.workOrderId &&
+        wo.workcenterId === props.productionPart.workCenterId &&
+        wo.workOrderPhaseId === props.productionPart.workOrderPhaseId
+    );
+    if (detailedFilter) return detailedFilter;
+    return [];
+  }
+  return [];
+});
+
 const schema = Yup.object().shape({
   operatorId: Yup.string().required("Escull un operari"),
-  workcenterId: Yup.string().required("Escull una màquina"),
+  workOrderId: Yup.string().required("Escull una ordre de fabricació"),
+  workOrderPhaseId: Yup.string().required(
+    "Escull una fase de l'ordre de fabricació"
+  ),
   workOrderPhaseDetailId: Yup.string().required("Escull un pas d'una fase"),
   quantity: Yup.number()
     .required("Has d'introduir una quantitat entera (pot ser 0)")
@@ -153,6 +193,10 @@ const validation = ref({
 const validate = () => {
   const formValidation = new FormValidation(schema);
   validation.value = formValidation.validate(props.productionPart);
+};
+
+const getWorkOrders = async (id: string) => {
+  await workOrderStore.fetchByWorkcenterId(id);
 };
 
 const submitForm = async () => {

@@ -4,6 +4,7 @@ import {
   WorkOrderPhaseDetail,
   WorkOrderPhaseBillOfMaterials,
   CreateWorkOrderDto,
+  DetailedWorkOrder,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -79,5 +80,16 @@ export class WorkOrderPhaseBillOfMaterialsService extends BaseService<WorkOrderP
     );
     if (response.status === 200)
       return response.data as Array<WorkOrderPhaseBillOfMaterials>;
+  }
+}
+export class DetailedWorkOrderService extends BaseService<DetailedWorkOrder> {
+  async getByWorkcenterId(
+    workcenterId: string
+  ): Promise<Array<DetailedWorkOrder> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/ByWorkcenter/${workcenterId}`
+    );
+    if (response.status === 200)
+      return response.data as Array<DetailedWorkOrder>;
   }
 }

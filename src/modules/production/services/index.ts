@@ -22,6 +22,7 @@ import {
   WorkOrderPhaseService,
   WorkOrderPhaseDetailService,
   WorkOrderPhaseBillOfMaterialsService,
+  DetailedWorkOrderService,
 } from "./workorder.service";
 import { ProductionPartService } from "./productionpart.service";
 
@@ -62,4 +63,5 @@ export default {
     "/WorkOrder/Phase/BillOfMaterials"
   ),
   ProductionPart: new ProductionPartService("/ProductionPart"),
+  DetailedWorkOrder: new DetailedWorkOrderService("/WorkOrder/Detailed"),
 };

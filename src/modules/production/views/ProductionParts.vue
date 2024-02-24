@@ -74,7 +74,7 @@ import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
-import { ProductionPart } from "../types";
+import { ProductionPart, DetailedWorkOrder } from "../types";
 import {
   formatDateForQueryParameter,
   formatDateTime,
@@ -86,6 +86,7 @@ import { useProductionPartStore } from "../store/productionpart";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useWorkOrderStore } from "../store/workorder";
 import FormProductionPart from "../components/FormProductionPart.vue";
+import { DetailedWorkOrderService } from "../services/workorder.service";
 
 const router = useRouter();
 const store = useStore();
@@ -140,6 +141,7 @@ onMounted(async () => {
   plantModelStore.fetchWorkcenters();
   plantModelStore.fetchOperators();
   exerciseStore.fetchActive();
+
   store.setMenuItem({
     icon: PrimeIcons.CLOUD,
     title: "Tíquets de producció",
@@ -154,6 +156,8 @@ const generateNewRequest = (): ProductionPart => {
     id: getNewUuid(),
     operatorId: "",
     workCenterId: "",
+    workOrderId: "",
+    workOrderPhaseId: "",
     workOrderPhaseDetailId: "",
     time: 0,
     quantity: 0,
@@ -170,7 +174,7 @@ const createProductionPart = async () => {
   dialogOptions.visible = false;
   const created = await productionPartStore.create(productionPartRequest.value);
   if (created) {
-    router.push({ path: `/porductionpart` });
+    router.push({ path: `/productionpart` });
   }
 };
 </script>
