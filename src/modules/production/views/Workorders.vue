@@ -97,7 +97,6 @@
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
-import { BaseInputType } from "../../../types/component";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, reactive, ref } from "vue";
@@ -238,7 +237,7 @@ const deleteButton = (event: any, workorder: WorkOrder) => {
           summary: "Eliminada",
           life: 3000,
         });
-        await workOrderStore.fetchAll();
+        filterData();
       }
     },
   });
