@@ -27,6 +27,8 @@ const Workorders = () => import("./views/Workorders.vue");
 const Workorder = () => import("./views/Workorder.vue");
 const WorkorderPhase = () => import("./views/WorkorderPhase.vue");
 
+const ProductionParts = () => import("./views/ProductionParts.vue");
+
 export default [
   {
     path: "/enterprise/:id",
@@ -147,5 +149,10 @@ export default [
     path: "/workorder/:id/phase/:phaseid",
     name: "WorkorderPhase",
     component: WorkorderPhase,
+  },
+  {
+    path: "/productionpart",
+    name: "productionparts",
+    component: ProductionParts,
   },
 ] as Array<RouteRecordRaw>;

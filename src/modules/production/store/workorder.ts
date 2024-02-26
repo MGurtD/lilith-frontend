@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import {
   CreateWorkOrderDto,
+  DetailedWorkOrder,
   WorkOrder,
   WorkOrderPhase,
   WorkOrderPhaseBillOfMaterials,
@@ -14,6 +15,10 @@ export const useWorkOrderStore = defineStore({
     workorder: undefined as WorkOrder | undefined,
     workorders: undefined as Array<WorkOrder> | undefined,
     workorderPhase: undefined as WorkOrderPhase | undefined,
+    workorderPhases: undefined as Array<WorkOrderPhase> | undefined,
+    workorderPhaseDetail: undefined as WorkOrderPhaseDetail | undefined,
+    workorderPhaseDetails: undefined as Array<WorkOrderPhaseDetail> | undefined,
+    detailedWorkOrders: undefined as Array<DetailedWorkOrder> | undefined,
   }),
   getters: {},
   actions: {
@@ -37,6 +42,8 @@ export const useWorkOrderStore = defineStore({
         endTime: null,
         comment: "",
         disabled: false,
+        costMachine: 0,
+        costOperator: 0,
         phases: [],
       } as WorkOrder;
     },
@@ -140,6 +147,16 @@ export const useWorkOrderStore = defineStore({
       const result = await Services.WorkOrderPhaseBillOfMaterials.delete(id);
       if (result) await this.fetchPhaseById(this.workorderPhase!.id);
       return result;
+    },
+
+    //Detailed workorder
+    async fetchByWorkcenterId(id: string) {
+      this.detailedWorkOrders =
+        await Services.DetailedWorkOrder.getByWorkcenterId(id);
+    },
+    async fetchByWorkOrderId(id: string) {
+      this.detailedWorkOrders =
+        await Services.DetailedWorkOrder.getByWorkOrderId(id);
     },
   },
 });

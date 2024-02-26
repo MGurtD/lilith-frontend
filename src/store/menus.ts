@@ -214,6 +214,11 @@ export const applicationMenus = [
         title: "Ordres de fabricació",
         href: "/workorder",
       },
+      {
+        icon: PrimeIcons.STOPWATCH,
+        title: "Tiquets de producció",
+        href: "/productionpart",
+      },
     ],
   },
   {

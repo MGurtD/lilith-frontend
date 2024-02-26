@@ -8,6 +8,7 @@ import {
   Operator,
   OperatorType,
   WorkcenterCost,
+  ProductionPart,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import {
@@ -21,7 +22,9 @@ import {
   WorkOrderPhaseService,
   WorkOrderPhaseDetailService,
   WorkOrderPhaseBillOfMaterialsService,
+  DetailedWorkOrderService,
 } from "./workorder.service";
+import { ProductionPartService } from "./productionpart.service";
 
 export class AreaService extends BaseService<Area> {}
 export class EnterpriseService extends BaseService<Enterprise> {}
@@ -59,4 +62,6 @@ export default {
   WorkOrderPhaseBillOfMaterials: new WorkOrderPhaseBillOfMaterialsService(
     "/WorkOrder/Phase/BillOfMaterials"
   ),
+  ProductionPart: new ProductionPartService("/ProductionPart"),
+  DetailedWorkOrder: new DetailedWorkOrderService("/WorkOrder/Detailed"),
 };

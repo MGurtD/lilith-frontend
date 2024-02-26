@@ -1,0 +1,321 @@
+<template>
+  <DataTable
+    :value="productionPartStore.productionParts"
+    class="p-datatable-sm small-datatable"
+    tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="80vh"
+    paginator
+    :rows="10"
+  >
+    <template #header>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <div class="datatable-filter-3">
+          <div class="filter-field">
+            <ExerciseDatePicker :exercises="exerciseStore.exercises" />
+          </div>
+          <div class="filter-field">
+            <label>Operari</label>
+            <Dropdown
+              v-model="filter.operatorId"
+              editable
+              :filter="true"
+              :options="
+                plantModelStore.operators
+                  ?.sort((a, b) => a.surname.localeCompare(b.surname))
+                  .map((operator) => ({
+                    value: operator.id,
+                    label: operator.surname + ', ' + operator.name,
+                  }))
+              "
+              optionValue="value"
+              optionLabel="label"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
+            <label>Màquina</label>
+            <Dropdown
+              v-model="filter.workcenterId"
+              editable
+              :filter="true"
+              :options="
+                plantModelStore.workcenters?.sort((a, b) =>
+                  a.description.localeCompare(b.description)
+                )
+              "
+              optionValue="id"
+              optionLabel="description"
+              class="w-full"
+            />
+          </div>
+        </div>
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER"
+            rounded
+            raised
+            @click="filterData"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+        </div>
+      </div>
+    </template>
+    <template #empty> No s'han trobat tiquets. </template>
+    <template #loading> Carregant tiquets. Si us plau espera. </template>
+    <Column field="operatorId" header="Operari" style="width: 15%">
+      <template #body="slotProps">
+        {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
+      </template>
+    </Column>
+    <Column field="workcenterId" header="Màquina" style="width: 20%">
+      <template #body="slotProps">
+        {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
+      </template>
+    </Column>
+    <Column field="workOrderId" header="OF" style="width: 20%">
+      <template #body="slotProps">
+        {{ getWorkOrderDetailedName(slotProps.data) }}
+      </template>
+    </Column>
+    <Column field="date" header="Data" style="width: 15%">
+      <template #body="slotProps">
+        {{ formatDateTime(slotProps.data.date) }}
+      </template>
+    </Column>
+    <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
+    <Column field="time" header="Temps (min)" style="width: 15%"></Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deleteProductionPart($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+    <template #footer>
+      <div class="footer">
+        <span>
+          Temps total: {{ totalProductionTime }} minuts / Quantitat total:
+          {{ totalProductionQuantity }}
+        </span>
+      </div>
+    </template>
+  </DataTable>
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormProductionPart
+      :productionPart="productionPartRequest"
+      @submit="createProductionPart"
+    />
+  </Dialog>
+</template>
+<script setup lang="ts">
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import { useRouter } from "vue-router";
+import { useStore } from "../../../store";
+import { useConfirm } from "primevue/useconfirm";
+import { computed, onMounted, reactive, ref } from "vue";
+import { PrimeIcons } from "primevue/api";
+import { useToast } from "primevue/usetoast";
+import { ProductionPart } from "../types";
+import {
+  formatDateForQueryParameter,
+  formatDateTime,
+  getNewUuid,
+} from "../../../utils/functions";
+import { DialogOptions } from "../../../types/component";
+import { useExerciseStore } from "../../shared/store/exercise";
+import { useProductionPartStore } from "../store/productionpart";
+import { usePlantModelStore } from "../store/plantmodel";
+import { useWorkOrderStore } from "../store/workorder";
+import FormProductionPart from "../components/FormProductionPart.vue";
+
+const router = useRouter();
+const store = useStore();
+const toast = useToast();
+const productionPartStore = useProductionPartStore();
+const exerciseStore = useExerciseStore();
+const plantModelStore = usePlantModelStore();
+const workOrderStore = useWorkOrderStore();
+const confirm = useConfirm();
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
+const filter = ref({
+  operatorId: "" as string,
+  workcenterId: "" as string,
+});
+
+const filterData = async () => {
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
+
+    await productionPartStore.fetchFiltered(
+      startTime,
+      endTime,
+      filter.value.workcenterId,
+      filter.value.operatorId
+    );
+  } else {
+    toast.add({
+      severity: "info",
+      summary: "Filtre invàlid",
+      detail: "Seleccioni un període",
+      life: 5000,
+    });
+  }
+};
+
+const cleanFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.workcenterId = "";
+  filter.value.operatorId = "";
+};
+
+const dialogOptions = reactive({
+  visible: false,
+  title: "Crear tíquet de producció",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
+
+onMounted(async () => {
+  store.setMenuItem({
+    icon: PrimeIcons.CLOUD,
+    title: "Tíquets de producció",
+  });
+
+  workOrderStore.fetchAll();
+  plantModelStore.fetchWorkcenters();
+  plantModelStore.fetchOperators();
+  plantModelStore.fetchMachineStatuses();
+
+  await exerciseStore.fetchActive();
+  setCurrentYear();
+
+  filterData();
+});
+
+const totalProductionTime = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.reduce(
+      (acc, productionPart) => acc + productionPart.time,
+      0
+    );
+  }
+});
+const totalProductionQuantity = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.reduce(
+      (acc, productionPart) => acc + productionPart.quantity,
+      0
+    );
+  }
+});
+
+const productionPartRequest = ref({} as ProductionPart);
+const generateNewRequest = (): ProductionPart => {
+  return {
+    id: getNewUuid(),
+    operatorId: "",
+    workCenterId: "",
+    workOrderId: "",
+    workOrderPhaseId: "",
+    workOrderPhaseDetailId: "",
+    time: 0,
+    quantity: 0,
+    date: new Date(),
+  };
+};
+
+const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
+  if (
+    productionPart.workOrder &&
+    productionPart.workOrderPhase &&
+    productionPart.workOrderPhaseDetail
+  ) {
+    const statusDesc = plantModelStore.getMachineStatusNameById(
+      productionPart.workOrderPhaseDetail.machineStatusId
+    );
+
+    return `${productionPart.workOrder.code} - (${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
+  }
+};
+
+const createButtonClick = () => {
+  productionPartRequest.value = generateNewRequest();
+  dialogOptions.visible = true;
+};
+
+const createProductionPart = async () => {
+  dialogOptions.visible = false;
+  const created = await productionPartStore.create(productionPartRequest.value);
+  if (created) {
+    router.push({ path: `/productionpart` });
+    filterData();
+  }
+};
+
+const deleteProductionPart = (event: any, productionPart: ProductionPart) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Està segur que vol eliminar el tíquet de producció: ${productionPart.id}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await productionPartStore.delete(productionPart.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+        await filterData();
+      }
+    },
+  });
+};
+</script>
+
+<style scoped>
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

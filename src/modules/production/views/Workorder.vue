@@ -7,35 +7,75 @@
     ></FormWorkorder>
   </header>
   <main class="main">
-    <TableWorkorderPhases
-      v-if="workorder && workorder.phases"
-      :workorder="workorder"
-      :workorderPhases="workorder.phases"
-      @add="addWorkOrderPhase"
-      @edit="editWorkOrderPhase"
-      @delete="deleteWorkOrderPhase"
-    ></TableWorkorderPhases>
+    <TabView>
+      <TabPanel header="Fases">
+        <TableWorkorderPhases
+          v-if="workorder && workorder.phases"
+          :workorder="workorder"
+          :workorderPhases="workorder.phases"
+          @add="addWorkOrderPhase"
+          @edit="editWorkOrderPhase"
+          @delete="deleteWorkOrderPhase"
+        ></TableWorkorderPhases>
+      </TabPanel>
+      <TabPanel header="Hores">
+        <TableProductionParts
+          v-if="productionPartStore.productionParts"
+          :productionParts="productionPartStore.productionParts"
+        >
+          <template #header>
+            <div
+              class="flex flex-wrap align-items-center justify-content-between gap-2"
+            >
+              <span class="text-xl text-900 font-bold">Hores</span>
+              <Button
+                :icon="PrimeIcons.PLUS"
+                rounded
+                raised
+                @click="onProductionPartAddClick"
+              />
+            </div>
+          </template>
+        </TableProductionParts>
+      </TabPanel>
+    </TabView>
   </main>
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <FormProductionPart
+      :productionPart="productionPartRequest"
+      @submit="createProductionPart"
+    />
+  </Dialog>
 </template>
 <script setup lang="ts">
+import FormProductionPart from "../components/FormProductionPart.vue";
 import FormWorkorder from "../components/FormWorkorder.vue";
 import TableWorkorderPhases from "../components/TableWorkorderPhases.vue";
+import TableProductionParts from "../components/TableProductionParts.vue";
 
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkOrderStore } from "../store/workorder";
+import { useProductionPartStore } from "../store/productionpart";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { WorkOrder, WorkOrderPhase } from "../types";
+import { ProductionPart, WorkOrder, WorkOrderPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import {
   convertDateTimeToJSON,
   formatDate,
+  getNewUuid,
 } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
+import { DialogOptions } from "../../../types/component";
 
 const route = useRoute();
 const router = useRouter();
@@ -45,8 +85,17 @@ const lifecycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const workorderStore = useWorkOrderStore();
 const plantModelStore = usePlantModelStore();
+const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
+
+const dialogOptions = reactive({
+  visible: false,
+  title: "Crear tíquet de producció",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 onMounted(async () => {
   id.value = route.params.id as string;
@@ -70,6 +119,7 @@ const loadViewData = async () => {
   await workorderStore.fetchOne(id.value);
   plantModelStore.fetchActiveModel();
   lifecycleStore.fetchOneByName("WorkOrder");
+  productionPartStore.fetchByWorkOrderId(id.value);
 
   if (workorderStore.workorder) {
     workorderStore.workorder.plannedDate = formatDate(
@@ -107,6 +157,32 @@ const editWorkOrderPhase = (phase: WorkOrderPhase) => {
 };
 const deleteWorkOrderPhase = async (phase: WorkOrderPhase) => {
   await workorderStore.deletePhase(phase.id);
+};
+
+const productionPartRequest = ref({} as ProductionPart);
+const onProductionPartAddClick = () => {
+  productionPartRequest.value = {
+    id: getNewUuid(),
+    workOrderId: id.value,
+    workOrderPhaseId: "",
+    workOrderPhaseDetailId: "",
+    operatorId: "",
+    workCenterId: "",
+    time: 0,
+    quantity: 0,
+    date: new Date(),
+  };
+  if (workorder.value) workorderStore.fetchByWorkOrderId(workorder.value.id);
+
+  dialogOptions.visible = true;
+};
+
+const createProductionPart = async () => {
+  dialogOptions.visible = false;
+  const created = await productionPartStore.create(productionPartRequest.value);
+  if (created) {
+    productionPartStore.fetchByWorkOrderId(id.value);
+  }
 };
 </script>
 <style scoped>

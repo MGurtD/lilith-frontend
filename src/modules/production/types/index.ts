@@ -149,6 +149,8 @@ export interface WorkOrder {
   order: number;
   comment: string;
   disabled: boolean;
+  costOperator: number;
+  costMachine: number;
   phases: Array<WorkOrderPhase>;
 }
 
@@ -197,4 +199,55 @@ export interface CreateWorkOrderDto {
   plannedQuantity: number;
   plannedDate: string;
   comment: string;
+}
+
+export interface ProductionPart {
+  id: string;
+  workOrderId: string;
+  workOrderPhaseId: string;
+  workOrderPhaseDetailId: string;
+  workCenterId: string;
+  operatorId: string;
+  date: Date;
+  quantity: number;
+  time: number;
+  workOrder?: WorkOrder;
+  workOrderPhase?: WorkOrderPhase;
+  workOrderPhaseDetail?: WorkOrderPhaseDetail;
+}
+
+export interface DetailedWorkOrder {
+  workOrderId: string;
+  workOrderCode: string;
+  workOrderStatusCode: string;
+  workOrderStatusDescription: string;
+  plannedQuantity: number;
+  workOrderStartTime: string | null;
+  workOrderEndTime: string | null;
+  workOrderOrder: number;
+  workOrderComment: string;
+  plannedDate: string | null;
+  referenceCode: string;
+  referenceDescription: string;
+  referenceVersion: string;
+  referenceCost: number;
+  workOrderPhaseId: string;
+  workOrderPhaseCode: string;
+  workOrderPhaseDescription: string;
+  workOrderPhaseComment: string;
+  workOrderPhaseStatusCode: string;
+  workOrderPhaseStatusDescription: string;
+  workOrderPhaseStartTime: string | null;
+  workOrderPhaseEndTime: string | null;
+  workOrderPhaseDetailId: string;
+  workOrderPhaseDetailOrder: number;
+  workOrderPhaseDetailEstimatedTime: number;
+  workOrderPhaseDetailComment: string;
+  machineStatusName: string;
+  machineStatusDescription: string;
+  workcenterId: string;
+  workcenterName: string;
+  workcenterDescription: string;
+  workcenterCost: number;
+  preferredWorkcenter: boolean;
 }
