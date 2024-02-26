@@ -101,6 +101,12 @@ table > tbody > tr {
   gap: 2rem;
 }
 
+.datatable-filter-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
 .filter-field {
   display: grid;
   grid-template-columns: 0.4fr 1fr;

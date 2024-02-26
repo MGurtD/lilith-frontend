@@ -1,6 +1,7 @@
 <template>
   <DataTable
     :value="productionPartStore.productionParts"
+    class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
@@ -11,7 +12,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
@@ -20,6 +21,7 @@
             <Dropdown
               v-model="filter.operatorId"
               editable
+              :filter="true"
               :options="
                 plantModelStore.operators
                   ?.sort((a, b) => a.surname.localeCompare(b.surname))
@@ -38,6 +40,7 @@
             <Dropdown
               v-model="filter.workcenterId"
               editable
+              :filter="true"
               :options="
                 plantModelStore.workcenters?.sort((a, b) =>
                   a.description.localeCompare(b.description)
@@ -106,6 +109,14 @@
         />
       </template>
     </Column>
+    <template #footer>
+      <div class="footer">
+        <span>
+          Temps total: {{ totalProductionTime }} minuts / Quantitat total:
+          {{ totalProductionQuantity }}
+        </span>
+      </div>
+    </template>
   </DataTable>
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -124,7 +135,7 @@ import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useConfirm } from "primevue/useconfirm";
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { ProductionPart } from "../types";
@@ -220,6 +231,23 @@ onMounted(async () => {
   filterData();
 });
 
+const totalProductionTime = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.reduce(
+      (acc, productionPart) => acc + productionPart.time,
+      0
+    );
+  }
+});
+const totalProductionQuantity = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.reduce(
+      (acc, productionPart) => acc + productionPart.quantity,
+      0
+    );
+  }
+});
+
 const productionPartRequest = ref({} as ProductionPart);
 const generateNewRequest = (): ProductionPart => {
   return {
@@ -284,3 +312,10 @@ const deleteProductionPart = (event: any, productionPart: ProductionPart) => {
   });
 };
 </script>
+
+<style scoped>
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>
