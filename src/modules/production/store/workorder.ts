@@ -42,6 +42,8 @@ export const useWorkOrderStore = defineStore({
         endTime: null,
         comment: "",
         disabled: false,
+        costMachine: 0,
+        costOperator: 0,
         phases: [],
       } as WorkOrder;
     },

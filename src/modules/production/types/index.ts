@@ -149,6 +149,8 @@ export interface WorkOrder {
   order: number;
   comment: string;
   disabled: boolean;
+  costOperator: number;
+  costMachine: number;
   phases: Array<WorkOrderPhase>;
 }
 
