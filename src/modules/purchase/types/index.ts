@@ -156,6 +156,7 @@ export interface Receipt {
   supplierId: string;
   exerciseId: string;
   statusId: string;
+  purchaseInvoiceId: string | null;
   supplierNumber: string;
   details: Array<ReceiptDetail>;
   id: string;

@@ -42,6 +42,13 @@
             </Column>
           </DataTable>
         </TabPanel>
+        <TabPanel header="Albarans">
+          <TableReceipts
+            :receipts="receiptsStore.receipts"
+            @add="onReceiptAdd"
+            @delete="onReceiptDelete"
+          />
+        </TabPanel>
       </TabView>
     </TabPanel>
     <TabPanel header="Fitxers">
@@ -55,16 +62,24 @@
   </TabView>
 
   <Dialog
-    v-if="selectedInvoiceImport"
     :closable="true"
     v-model:visible="isDialogVisible"
     :header="dialogTitle"
     position="bottom"
+    :style="{ width: '40rem' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+    @after-hide="afterDialogHide"
   >
     <FormPurchaseInvoiceImport
+      v-if="selectedInvoiceImport"
       :formAction="formInvoiceMode"
       :invoiceImport="selectedInvoiceImport"
       @submit="onInvoiceImportSubmit"
+    />
+    <SelectorReceipts
+      v-if="receiptsStore.selectorReceipts"
+      :receipts="receiptsStore.selectorReceipts"
+      @selected="onReceiptsSelected"
     />
   </Dialog>
 </template>
@@ -75,7 +90,7 @@ import { useStore } from "../../../store";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { PurchaseInvoice, PurchaseInvoiceImport } from "../types";
+import { PurchaseInvoice, PurchaseInvoiceImport, Receipt } from "../types";
 import { FormActionMode } from "../../../types/component";
 import {
   convertDateTimeToJSON,
@@ -86,9 +101,12 @@ import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import FormPurchaseInvoice from "../components/FormPurchaseInvoice.vue";
 import FormPurchaseInvoiceImport from "../components/FormPurchaseInvoiceImport.vue";
 import TablePurchaseInvoiceImports from "../components/TablePurchaseInvoiceImports.vue";
+import TableReceipts from "../components/TableReceipts.vue";
+import SelectorReceipts from "../components/SelectorReceipts.vue";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { useToast } from "primevue/usetoast";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useReceiptsStore } from "../store/receipt";
 
 const purchaseInvoiceForm = ref();
 
@@ -99,12 +117,17 @@ const store = useStore();
 const lifecycleStore = useLifecyclesStore();
 const purchaseMasterDataStore = usePurchaseMasterDataStore();
 const purchaseInvoiceStore = usePurchaseInvoiceStore();
+const receiptsStore = useReceiptsStore();
 const { purchaseInvoice } = storeToRefs(purchaseInvoiceStore);
 
 const dialogTitle = computed(() => {
-  return formInvoiceMode.value === FormActionMode.CREATE
-    ? "Introducció import"
-    : "Modificació import";
+  if (receiptsStore.selectorReceipts) {
+    return "Selecció albarans";
+  } else {
+    return formInvoiceMode.value === FormActionMode.CREATE
+      ? "Introducció import"
+      : "Modificació import";
+  }
 });
 const isDialogVisible = ref(false);
 const formInvoiceMode = ref(FormActionMode.EDIT);
@@ -113,13 +136,14 @@ const selectedInvoiceImport = ref(
 );
 
 const loadView = async () => {
+  const invoiceId = route.params.id as string;
   let pageTitle = "";
 
-  await purchaseInvoiceStore.GetById(route.params.id as string);
+  await purchaseInvoiceStore.GetById(invoiceId);
 
   if (!purchaseInvoice.value) {
     formMode.value = FormActionMode.CREATE;
-    purchaseInvoiceStore.setNewPurchaseInvoice(route.params.id as string);
+    purchaseInvoiceStore.setNewPurchaseInvoice(invoiceId);
     pageTitle = "Alta de factures de compra";
 
     setDefaultValues();
@@ -131,6 +155,8 @@ const loadView = async () => {
       purchaseInvoice.value.purchaseInvoiceDate
     );
   }
+  // Get associated receipts
+  receiptsStore.fetchByInvoice(invoiceId);
 
   store.setMenuItem({
     icon: PrimeIcons.POUND,
@@ -244,5 +270,42 @@ const closeDialogAndCalcAmounts = () => {
   const form = purchaseInvoiceForm.value as any;
   form.calcAmounts();
   isDialogVisible.value = false;
+};
+
+const onReceiptAdd = async () => {
+  if (!purchaseInvoice.value) return;
+
+  await receiptsStore.fetchInvoiceableBySupplier(
+    purchaseInvoice.value.supplierId
+  );
+  isDialogVisible.value = true;
+};
+
+const afterDialogHide = () => {
+  selectedInvoiceImport.value = undefined;
+  receiptsStore.selectorReceipts = undefined;
+};
+
+const onReceiptsSelected = async (receipts: Array<Receipt>) => {
+  console.log("onReceiptsSelected", receipts);
+  const promises = [] as Array<Promise<any>>;
+
+  for (let i = 0; i < receipts.length; i++) {
+    promises.push(
+      receiptsStore.associateInvoice(receipts[i], purchaseInvoice.value!.id)
+    );
+  }
+
+  await Promise.all(promises);
+  await receiptsStore.fetchByInvoice(purchaseInvoice.value!.id);
+
+  isDialogVisible.value = false;
+  receiptsStore.selectorReceipts = undefined;
+};
+
+const onReceiptDelete = async (receipt: Receipt) => {
+  receipt.purchaseInvoiceId = null;
+  await receiptsStore.unassociateInvoice(receipt, purchaseInvoice.value!.id);
+  await receiptsStore.fetchByInvoice(purchaseInvoice.value!.id);
 };
 </script>
