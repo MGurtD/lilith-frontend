@@ -259,9 +259,14 @@ const onFormSalesOrderReferenceSubmit = async (
   }
   isDetailDialogVisible.value = false;
 
-  salesOrder.value!.salesOrderDate = formatDate(
-    salesOrder.value!.salesOrderDate
-  );
+  if (salesOrder.value) {
+    salesOrder.value.salesOrderDate = formatDate(
+      salesOrder.value.salesOrderDate
+    );
+    if (salesOrder.value.expectedDate) {
+      salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
+    }
+  }
 };
 
 const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
