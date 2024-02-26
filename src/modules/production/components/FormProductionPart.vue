@@ -15,9 +15,16 @@
         <Dropdown
           v-model="productionPart.operatorId"
           editable
-          :options="plantModelStore.operators"
-          optionValue="id"
-          optionLabel="name"
+          :options="
+            plantModelStore.operators
+              ?.sort((a, b) => a.surname.localeCompare(b.surname))
+              .map((operator) => ({
+                value: operator.id,
+                label: operator.surname + ', ' + operator.name,
+              }))
+          "
+          optionValue="value"
+          optionLabel="label"
           class="w-full"
           :class="{
             'p-invalid': validation.errors.operatorid,
@@ -29,7 +36,11 @@
         <Dropdown
           v-model="productionPart.workCenterId"
           editable
-          :options="plantModelStore.workcenters"
+          :options="
+            plantModelStore.workcenters?.sort((a, b) =>
+              a.description.localeCompare(b.description)
+            )
+          "
           optionValue="id"
           optionLabel="description"
           class="w-full"
@@ -47,9 +58,19 @@
         <Dropdown
           v-model="productionPart.workOrderId"
           editable
-          :options="workOrderStore.detailedWorkOrders"
-          optionValue="workOrderId"
-          optionLabel="workOrderCode"
+          :options="
+            workOrderStore.detailedWorkOrders
+              ?.sort((a, b) => a.workOrderCode.localeCompare(b.workOrderCode))
+              .map((workorder) => ({
+                value: workorder.workOrderId,
+                label:
+                  workorder.workOrderCode +
+                  ' - ' +
+                  workorder.referenceDescription,
+              }))
+          "
+          optionValue="value"
+          optionLabel="label"
           class="w-full"
           :class="{
             'p-invalid': validation.errors.workOrderId,

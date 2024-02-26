@@ -15,6 +15,39 @@
           <div class="filter-field">
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
+          <div class="filter-field">
+            <label>Operari</label>
+            <Dropdown
+              v-model="filter.operatorId"
+              editable
+              :options="
+                plantModelStore.operators
+                  ?.sort((a, b) => a.surname.localeCompare(b.surname))
+                  .map((operator) => ({
+                    value: operator.id,
+                    label: operator.surname + ', ' + operator.name,
+                  }))
+              "
+              optionValue="value"
+              optionLabel="label"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
+            <label>Màquina</label>
+            <Dropdown
+              v-model="filter.workcenterId"
+              editable
+              :options="
+                plantModelStore.workcenters?.sort((a, b) =>
+                  a.description.localeCompare(b.description)
+                )
+              "
+              optionValue="id"
+              optionLabel="description"
+              class="w-full"
+            />
+          </div>
         </div>
         <div class="datatable-buttons">
           <Button
@@ -23,6 +56,13 @@
             rounded
             raised
             @click="filterData"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
           />
           <Button
             :icon="PrimeIcons.PLUS"
@@ -55,8 +95,17 @@
         {{ formatDateTime(slotProps.data.date) }}
       </template>
     </Column>
-    <Column field="quantity" header="Quantitat" style="width: 15%"></Column>
+    <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
     <Column field="time" header="Temps (min)" style="width: 15%"></Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deleteProductionPart($event, slotProps.data)"
+        />
+      </template>
+    </Column>
   </DataTable>
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -74,6 +123,7 @@
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
+import { useConfirm } from "primevue/useconfirm";
 import { onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
@@ -97,6 +147,7 @@ const productionPartStore = useProductionPartStore();
 const exerciseStore = useExerciseStore();
 const plantModelStore = usePlantModelStore();
 const workOrderStore = useWorkOrderStore();
+const confirm = useConfirm();
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
@@ -110,6 +161,10 @@ const setCurrentYear = () => {
     ];
   }
 };
+const filter = ref({
+  operatorId: "" as string,
+  workcenterId: "" as string,
+});
 
 const filterData = async () => {
   if (store.exercisePicker.dates) {
@@ -118,7 +173,12 @@ const filterData = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await productionPartStore.fetchFiltered(startTime, endTime);
+    await productionPartStore.fetchFiltered(
+      startTime,
+      endTime,
+      filter.value.workcenterId,
+      filter.value.operatorId
+    );
   } else {
     toast.add({
       severity: "info",
@@ -127,6 +187,12 @@ const filterData = async () => {
       life: 5000,
     });
   }
+};
+
+const cleanFilter = () => {
+  store.cleanExercisePicker();
+  filter.value.workcenterId = "";
+  filter.value.operatorId = "";
 };
 
 const dialogOptions = reactive({
@@ -193,6 +259,28 @@ const createProductionPart = async () => {
   const created = await productionPartStore.create(productionPartRequest.value);
   if (created) {
     router.push({ path: `/productionpart` });
+    filterData();
   }
+};
+
+const deleteProductionPart = (event: any, productionPart: ProductionPart) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: `Està segur que vol eliminar el tíquet de producció: ${productionPart.id}?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const deleted = await productionPartStore.delete(productionPart.id);
+      if (deleted) {
+        toast.add({
+          severity: "success",
+          summary: "Eliminat",
+          life: 3000,
+        });
+        await filterData();
+      }
+    },
+  });
 };
 </script>

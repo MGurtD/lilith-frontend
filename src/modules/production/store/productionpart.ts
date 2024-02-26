@@ -32,10 +32,17 @@ export const useProductionPartStore = defineStore({
     async fetchOne(id: string) {
       this.productionPart = await Services.ProductionPart.getById(id);
     },
-    async fetchFiltered(startTime: string, endTime: string) {
+    async fetchFiltered(
+      startTime: string,
+      endTime: string,
+      workcenterid: string,
+      operatorid: string
+    ) {
       this.productionParts = await Services.ProductionPart.GetBetweenDates(
         startTime,
-        endTime
+        endTime,
+        workcenterid,
+        operatorid
       );
     },
     async create(model: ProductionPart) {
