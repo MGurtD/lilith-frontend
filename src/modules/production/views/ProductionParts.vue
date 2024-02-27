@@ -274,6 +274,11 @@ const totalProductionQuantity = computed(() => {
   }
 });
 
+const totalPersonalCost = computed(() => {
+  if (this.personalCost) {
+  }
+});
+
 const productionPartRequest = ref({} as ProductionPart);
 const generateNewRequest = (): ProductionPart => {
   return {
