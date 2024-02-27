@@ -118,7 +118,7 @@
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps"
+          label="Temps (minuts)"
           id="time"
           v-model="productionPart.time"
         />

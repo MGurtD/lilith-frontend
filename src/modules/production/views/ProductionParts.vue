@@ -12,7 +12,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter-3">
+        <div class="datatable-filter-4">
           <div class="filter-field">
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
@@ -48,6 +48,18 @@
               "
               optionValue="id"
               optionLabel="description"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
+            <label>Ordre de fabricació</label>
+            <Dropdown
+              v-model="filter.workorderId"
+              editable
+              :filter="true"
+              :options="workOrderStore.workorders"
+              optionValue="id"
+              optionLabel="code"
               class="w-full"
             />
           </div>
@@ -98,8 +110,18 @@
         {{ formatDateTime(slotProps.data.date) }}
       </template>
     </Column>
-    <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
-    <Column field="time" header="Temps (min)" style="width: 15%"></Column>
+    <Column field="quantity" header="Quantitat" style="width: 5%"></Column>
+    <Column field="time" header="Temps (min)" style="width: 10%"></Column>
+    <Column header="Cost Home" style="width: 5%" field="personalCost">
+      <template #body="slotProps">
+        {{ getPersonalCost(slotProps.data) }}
+      </template>
+    </Column>
+    <Column header="Cost Màquina" style="width: 5%" field="workcenterCost">
+      <template #body="slotProps">
+        {{ getWorkCenterCost(slotProps.data) }}
+      </template>
+    </Column>
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
@@ -175,6 +197,7 @@ const setCurrentYear = () => {
 const filter = ref({
   operatorId: "" as string,
   workcenterId: "" as string,
+  workorderId: "" as string,
 });
 
 const filterData = async () => {
@@ -188,8 +211,10 @@ const filterData = async () => {
       startTime,
       endTime,
       filter.value.workcenterId,
-      filter.value.operatorId
+      filter.value.operatorId,
+      filter.value.workorderId
     );
+    await workOrderStore.fetchFiltered(startTime, endTime);
   } else {
     toast.add({
       severity: "info",
@@ -220,10 +245,11 @@ onMounted(async () => {
     title: "Tíquets de producció",
   });
 
-  workOrderStore.fetchAll();
   plantModelStore.fetchWorkcenters();
   plantModelStore.fetchOperators();
+  plantModelStore.fetchOperatorTypes();
   plantModelStore.fetchMachineStatuses();
+  plantModelStore.fetchWorkcenterCosts();
 
   await exerciseStore.fetchActive();
   setCurrentYear();
@@ -275,6 +301,38 @@ const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
 
     return `${productionPart.workOrder.code} - (${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
   }
+};
+
+const getWorkCenterCost = (
+  productionPart: ProductionPart
+): number | undefined => {
+  let machineStatusId = workOrderStore.workorderPhaseDetails?.find(
+    (ms) => ms.id == productionPart.workOrderPhaseDetailId
+  );
+
+  let workcenterStatusCost = plantModelStore.workcentercosts?.find(
+    (wo) =>
+      wo.workcenterId === productionPart.workCenterId &&
+      wo.machineStatusId === machineStatusId?.machineStatusId
+  );
+  if (workcenterStatusCost?.cost)
+    return (productionPart.time * workcenterStatusCost.cost) / 60;
+
+  return 0;
+};
+
+const getPersonalCost = (
+  productionPart: ProductionPart
+): number | undefined => {
+  let operator = plantModelStore.operators?.find(
+    (op) => op.id === productionPart.operatorId
+  );
+  let operatorCost = plantModelStore.operatorTypes?.find(
+    (ot) => ot.id === operator?.operatorTypeId
+  );
+  if (operatorCost) return (operatorCost.cost * productionPart.time) / 60;
+
+  return 0;
 };
 
 const createButtonClick = () => {

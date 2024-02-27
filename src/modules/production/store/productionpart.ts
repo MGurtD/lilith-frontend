@@ -36,13 +36,15 @@ export const useProductionPartStore = defineStore({
       startTime: string,
       endTime: string,
       workcenterid: string,
-      operatorid: string
+      operatorid: string,
+      workorderid: string
     ) {
       this.productionParts = await Services.ProductionPart.GetBetweenDates(
         startTime,
         endTime,
         workcenterid,
-        operatorid
+        operatorid,
+        workorderid
       );
     },
     async create(model: ProductionPart) {
