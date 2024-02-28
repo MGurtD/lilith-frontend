@@ -1,18 +1,20 @@
 <template>
   <DataTable
-    :value="productionPartStore.productionParts"
+    :value="calculatedProductionParts"
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
+    :sort-order="1"
+    sort-field="date"
     paginator
-    :rows="10"
+    :rows="25"
   >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter-4">
+        <div class="datatable-filter-5">
           <div class="filter-field">
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
@@ -52,7 +54,7 @@
             />
           </div>
           <div class="filter-field">
-            <label>Ordre de fabricació</label>
+            <label>OF</label>
             <Dropdown
               v-model="filter.workorderId"
               editable
@@ -63,28 +65,28 @@
               class="w-full"
             />
           </div>
-        </div>
-        <div class="datatable-buttons">
-          <Button
-            class="datatable-button mr-2"
-            :icon="PrimeIcons.FILTER"
-            rounded
-            raised
-            @click="filterData"
-          />
-          <Button
-            class="datatable-button mr-2"
-            :icon="PrimeIcons.FILTER_SLASH"
-            rounded
-            raised
-            @click="cleanFilter"
-          />
-          <Button
-            :icon="PrimeIcons.PLUS"
-            rounded
-            raised
-            @click="createButtonClick"
-          />
+          <div>
+            <Button
+              class="datatable-button mr-2"
+              :icon="PrimeIcons.FILTER"
+              rounded
+              raised
+              @click="filterData"
+            />
+            <Button
+              class="datatable-button mr-2"
+              :icon="PrimeIcons.FILTER_SLASH"
+              rounded
+              raised
+              @click="cleanFilter"
+            />
+            <Button
+              :icon="PrimeIcons.PLUS"
+              rounded
+              raised
+              @click="createButtonClick"
+            />
+          </div>
         </div>
       </div>
     </template>
@@ -95,7 +97,7 @@
         {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
       </template>
     </Column>
-    <Column field="workcenterId" header="Màquina" style="width: 20%">
+    <Column field="workcenterId" header="Màquina" style="width: 15%">
       <template #body="slotProps">
         {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
       </template>
@@ -105,21 +107,21 @@
         {{ getWorkOrderDetailedName(slotProps.data) }}
       </template>
     </Column>
-    <Column field="date" header="Data" style="width: 15%">
+    <Column field="date" header="Data" style="width: 15%" sortable>
       <template #body="slotProps">
         {{ formatDateTime(slotProps.data.date) }}
       </template>
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 5%"></Column>
     <Column field="time" header="Temps (min)" style="width: 10%"></Column>
-    <Column header="Cost Home" style="width: 5%" field="personalCost">
+    <Column header="Cost Home" style="width: 10%" field="personalCost">
       <template #body="slotProps">
-        {{ getPersonalCost(slotProps.data) }}
+        {{ slotProps.data.personalCost }} €
       </template>
     </Column>
-    <Column header="Cost Màquina" style="width: 5%" field="workcenterCost">
+    <Column header="Cost Màquina" style="width: 10%" field="workcenterCost">
       <template #body="slotProps">
-        {{ getWorkCenterCost(slotProps.data) }}
+        {{ slotProps.data.workcenterCost }} €
       </template>
     </Column>
     <Column style="width: 5%">
@@ -132,10 +134,17 @@
       </template>
     </Column>
     <template #footer>
-      <div class="footer">
+      <div
+        class="flex-right"
+        v-if="calculatedProductionParts && calculatedProductionParts.length > 0"
+      >
         <span>
-          Temps total: {{ totalProductionTime }} minuts / Quantitat total:
-          {{ totalProductionQuantity }}
+          Temps: {{ totalProductionTime }} minuts / Quantitat:
+          {{ totalProductionQuantity }} unitats
+          <br />
+          Cost personal: {{ totalPersonalCost }} € / Cost màquina:
+          {{ totalWorkcenterCost }} € =
+          {{ totalPersonalCost! + totalWorkcenterCost! }} €
         </span>
       </div>
     </template>
@@ -148,6 +157,7 @@
   >
     <FormProductionPart
       :productionPart="productionPartRequest"
+      :avoid-work-order-refresh="false"
       @submit="createProductionPart"
     />
   </Dialog>
@@ -172,6 +182,7 @@ import { useProductionPartStore } from "../store/productionpart";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useWorkOrderStore } from "../store/workorder";
 import FormProductionPart from "../components/FormProductionPart.vue";
+import _ from "lodash";
 
 const router = useRouter();
 const store = useStore();
@@ -249,12 +260,25 @@ onMounted(async () => {
   plantModelStore.fetchOperators();
   plantModelStore.fetchOperatorTypes();
   plantModelStore.fetchMachineStatuses();
-  plantModelStore.fetchWorkcenterCosts();
+  await plantModelStore.fetchWorkcenterCosts();
 
   await exerciseStore.fetchActive();
   setCurrentYear();
-
   filterData();
+
+  workOrderStore.detailedWorkOrders = undefined;
+});
+
+const calculatedProductionParts = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.map((productionPart) => {
+      return {
+        ...productionPart,
+        personalCost: getPersonalCost(productionPart),
+        workcenterCost: getWorkCenterCost(productionPart),
+      };
+    });
+  }
 });
 
 const totalProductionTime = computed(() => {
@@ -273,9 +297,29 @@ const totalProductionQuantity = computed(() => {
     );
   }
 });
-
 const totalPersonalCost = computed(() => {
-  if (this.personalCost) {
+  if (
+    calculatedProductionParts.value &&
+    calculatedProductionParts.value.length > 0
+  ) {
+    return calculatedProductionParts.value.reduce(
+      (acc, productionPart) =>
+        acc + (productionPart.personalCost ? productionPart.personalCost : 0),
+      0
+    );
+  }
+});
+const totalWorkcenterCost = computed(() => {
+  if (
+    calculatedProductionParts.value &&
+    calculatedProductionParts.value.length > 0
+  ) {
+    return calculatedProductionParts.value.reduce(
+      (acc, productionPart) =>
+        acc +
+        (productionPart.workcenterCost ? productionPart.workcenterCost : 0),
+      0
+    );
   }
 });
 
@@ -284,7 +328,7 @@ const generateNewRequest = (): ProductionPart => {
   return {
     id: getNewUuid(),
     operatorId: "",
-    workCenterId: "",
+    workcenterId: "",
     workOrderId: "",
     workOrderPhaseId: "",
     workOrderPhaseDetailId: "",
@@ -304,24 +348,26 @@ const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
       productionPart.workOrderPhaseDetail.machineStatusId
     );
 
-    return `${productionPart.workOrder.code} - (${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
+    return `${productionPart.workOrder.code} - ${productionPart.workOrderPhase.code} (${productionPart.workOrderPhase.description}) - ${statusDesc}`;
   }
 };
 
 const getWorkCenterCost = (
   productionPart: ProductionPart
 ): number | undefined => {
-  let machineStatusId = workOrderStore.workorderPhaseDetails?.find(
-    (ms) => ms.id == productionPart.workOrderPhaseDetailId
-  );
+  if (!productionPart.workOrderPhaseDetail) return 0;
 
+  console.log(productionPart);
   let workcenterStatusCost = plantModelStore.workcentercosts?.find(
     (wo) =>
-      wo.workcenterId === productionPart.workCenterId &&
-      wo.machineStatusId === machineStatusId?.machineStatusId
+      wo.workcenterId === productionPart.workcenterId &&
+      wo.machineStatusId ===
+        productionPart.workOrderPhaseDetail!.machineStatusId
   );
-  if (workcenterStatusCost?.cost)
-    return (productionPart.time * workcenterStatusCost.cost) / 60;
+  if (workcenterStatusCost) {
+    const cost = (workcenterStatusCost.cost * productionPart.time) / 60;
+    return _.round(cost, 2);
+  }
 
   return 0;
 };
@@ -375,10 +421,3 @@ const deleteProductionPart = (event: any, productionPart: ProductionPart) => {
   });
 };
 </script>
-
-<style scoped>
-.footer {
-  display: flex;
-  justify-content: flex-end;
-}
-</style>
