@@ -7,7 +7,8 @@ export class ProductionPartService extends BaseService<ProductionPart> {
     startTime: string,
     endTime: string,
     workcenterId?: string,
-    operatorId?: string
+    operatorId?: string,
+    workorderId?: string
   ): Promise<Array<ProductionPart> | undefined> {
     let endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}`;
 
@@ -16,6 +17,9 @@ export class ProductionPartService extends BaseService<ProductionPart> {
     }
     if (operatorId) {
       endpoint += `&operatorId=${operatorId}`;
+    }
+    if (workorderId) {
+      endpoint += `&workorderId=${workorderId}`;
     }
 
     const response = await this.apiClient.get(endpoint);

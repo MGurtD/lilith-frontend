@@ -48,6 +48,7 @@
   >
     <FormProductionPart
       :productionPart="productionPartRequest"
+      :avoid-work-order-refresh="true"
       @submit="createProductionPart"
     />
   </Dialog>
@@ -99,6 +100,7 @@ const dialogOptions = reactive({
 
 onMounted(async () => {
   id.value = route.params.id as string;
+  workorderStore.detailedWorkOrders = undefined;
   await loadViewData();
 
   let pageTitle = "";
@@ -167,7 +169,7 @@ const onProductionPartAddClick = () => {
     workOrderPhaseId: "",
     workOrderPhaseDetailId: "",
     operatorId: "",
-    workCenterId: "",
+    workcenterId: "",
     time: 0,
     quantity: 0,
     date: new Date(),

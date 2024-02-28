@@ -206,7 +206,7 @@ export interface ProductionPart {
   workOrderId: string;
   workOrderPhaseId: string;
   workOrderPhaseDetailId: string;
-  workCenterId: string;
+  workcenterId: string;
   operatorId: string;
   date: Date;
   quantity: number;

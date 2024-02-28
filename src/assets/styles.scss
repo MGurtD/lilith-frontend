@@ -95,6 +95,11 @@ table > tbody > tr {
   font-size: 0.8rem !important;
 }
 
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .datatable-filter {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -104,6 +109,18 @@ table > tbody > tr {
 .datatable-filter-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.datatable-filter-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.datatable-filter-5 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr;
   gap: 2rem;
 }
 
