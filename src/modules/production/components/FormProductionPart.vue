@@ -146,7 +146,7 @@ const setWorkOrderDetail = () => {
 
 const schema = Yup.object().shape({
   operatorId: Yup.string().required("Escull un operari"),
-  workCenterId: Yup.string().required("Escull una màquina"),
+  workcenterId: Yup.string().required("Escull una màquina"),
   workOrderId: Yup.string().required("Escull una ordre de fabricació"),
   workOrderPhaseId: Yup.string().required("Escull una fase"),
   workOrderPhaseDetailId: Yup.string().required("Escull una activitat"),
