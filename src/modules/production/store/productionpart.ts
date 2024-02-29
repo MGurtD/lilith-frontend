@@ -14,9 +14,11 @@ export const useProductionPartStore = defineStore({
       this.productionPart = {
         id,
         date: new Date(),
-        workCenterId: "",
-        workOrderPhaseDetailId: "",
+        workcenterId: "",
         operatorId: "",
+        workOrderId: "",
+        workOrderPhaseId: "",
+        workOrderPhaseDetailId: "",
         quantity: 0,
         time: 0,
       } as ProductionPart;
