@@ -22,6 +22,7 @@
         <TableProductionParts
           v-if="productionPartStore.productionParts"
           :productionParts="productionPartStore.productionParts"
+          @delete="deleteProductionPart"
         >
           <template #header>
             <div
@@ -46,7 +47,7 @@
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
   >
-    <FormProductionPart
+    <FormWorkOrderProductionPart
       :productionPart="productionPartRequest"
       :avoid-work-order-refresh="true"
       @submit="createProductionPart"
@@ -54,7 +55,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import FormProductionPart from "../components/FormProductionPart.vue";
+import FormWorkOrderProductionPart from "../components/FormWorkOrderProductionPart.vue";
 import FormWorkorder from "../components/FormWorkorder.vue";
 import TableWorkorderPhases from "../components/TableWorkorderPhases.vue";
 import TableProductionParts from "../components/TableProductionParts.vue";
@@ -185,6 +186,11 @@ const createProductionPart = async () => {
   if (created) {
     productionPartStore.fetchByWorkOrderId(id.value);
   }
+};
+
+const deleteProductionPart = async (productionPart: ProductionPart) => {
+  await productionPartStore.delete(productionPart.id);
+  productionPartStore.fetchByWorkOrderId(id.value);
 };
 </script>
 <style scoped>
