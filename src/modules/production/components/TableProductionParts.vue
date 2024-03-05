@@ -32,7 +32,7 @@
       </template>
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 15%"></Column>
-    <Column field="time" header="Temps" style="width: 15%"></Column>
+    <Column field="time" header="Temps Total" style="width: 15%"></Column>
   </DataTable>
 </template>
 

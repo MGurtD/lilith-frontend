@@ -92,7 +92,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps (minuts)"
+          label="Temps total (minuts)"
           id="time"
           v-model="productionPart.time"
         />
