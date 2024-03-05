@@ -56,7 +56,6 @@ export const useProductionPartStore = defineStore({
     },
     async delete(id: string) {
       const result = await Services.ProductionPart.delete(id);
-      if (result) await this.fetchAll();
       return result;
     },
     async update(id: string, model: ProductionPart) {
