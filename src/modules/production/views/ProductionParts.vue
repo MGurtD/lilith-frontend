@@ -114,7 +114,7 @@
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 5%"></Column>
     <Column field="time" header="Temps (min)" style="width: 10%"></Column>
-    <Column header="Cost Home" style="width: 10%" field="personalCost">
+    <Column header="Cost Operari" style="width: 10%" field="personalCost">
       <template #body="slotProps">
         {{ slotProps.data.personalCost }} €
       </template>
@@ -142,7 +142,7 @@
           Temps: {{ totalProductionTime }} minuts / Quantitat:
           {{ totalProductionQuantity }} unitats
           <br />
-          Cost personal: {{ totalPersonalCost }} € / Cost màquina:
+          Cost operari: {{ totalPersonalCost }} € / Cost màquina:
           {{ totalWorkcenterCost }} € =
           {{ totalPersonalCost! + totalWorkcenterCost! }} €
         </span>

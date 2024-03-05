@@ -63,7 +63,7 @@
     </Column>
     <Column field="plannedDate" header="Data Prevista" style="width: 10%">
       <template #body="slotProps">
-        {{ formatDateTime(slotProps.data.plannedDate) }}
+        {{ formatDate(slotProps.data.plannedDate) }}
       </template>
     </Column>
     <Column
@@ -108,7 +108,7 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { CreateWorkOrderDto, WorkOrder } from "../types";
 import {
   formatDateForQueryParameter,
-  formatDateTime,
+  formatDate,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { useExerciseStore } from "../../shared/store/exercise";
