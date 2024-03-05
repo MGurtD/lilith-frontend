@@ -21,7 +21,7 @@
         {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
       </template>
     </Column>
-    <Column field="workOrderPhaseId" header="Fase/Estat" style="width: 20%">
+    <Column field="workOrderPhaseId" header="Fase/Estat" style="width: 25%">
       <template #body="slotProps">
         {{ getWorkOrderPhaseName(slotProps.data) }}
       </template>
@@ -31,8 +31,17 @@
         {{ formatDateTime(slotProps.data.date) }}
       </template>
     </Column>
-    <Column field="quantity" header="Quantitat" style="width: 15%"></Column>
-    <Column field="time" header="Temps Total" style="width: 15%"></Column>
+    <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
+    <Column field="time" header="Temps Total (min)" style="width: 15%"></Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="onDeleteRow($event, slotProps.data)"
+        />
+      </template>
+    </Column>
   </DataTable>
 </template>
 
@@ -41,6 +50,7 @@ import { usePlantModelStore } from "../store/plantmodel";
 import { useProductionPartStore } from "../store/productionpart";
 import { formatDateTime } from "../../../utils/functions";
 import { ProductionPart } from "../types";
+import { PrimeIcons } from "primevue/api";
 
 const productionPartStore = useProductionPartStore();
 const plantModelStore = usePlantModelStore();
@@ -55,5 +65,12 @@ const getWorkOrderPhaseName = (productionPart: ProductionPart) => {
 
     return `(${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;
   }
+};
+
+const emits = defineEmits(["delete"]);
+
+const onDeleteRow = (event: Event, productionPart: ProductionPart) => {
+  event.stopPropagation();
+  emits("delete", productionPart);
 };
 </script>
