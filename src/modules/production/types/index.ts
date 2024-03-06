@@ -149,8 +149,12 @@ export interface WorkOrder {
   order: number;
   comment: string;
   disabled: boolean;
-  costOperator: number;
-  costMachine: number;
+  operatorCost: number;
+  machineCost: number;
+  operatorTime: number;
+  machineTime: number;
+  materialCost: number;
+  totalQuantity: number;
   phases: Array<WorkOrderPhase>;
 }
 
