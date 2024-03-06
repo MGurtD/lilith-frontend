@@ -20,13 +20,15 @@
         <div
           v-if="workOrderStore.getWorkOrderCodeById(slotProps.data.workOrderId)"
         >
-          <Tag
-            :icon="PrimeIcons.CHECK_CIRCLE"
+          <Button
+            size="small"
             severity="success"
-            :value="
+            :label="
               workOrderStore.getWorkOrderCodeById(slotProps.data.workOrderId)
             "
-          />
+            @click="openWorkOrder(slotProps.data.workOrderId)"
+          >
+          </Button>
         </div>
         <div v-else>
           <Button
@@ -98,6 +100,7 @@ const emit = defineEmits<{
   (e: "edit", salesOrderDetail: SalesOrderDetail): void;
   (e: "delete", salesOrderDetail: SalesOrderDetail): void;
   (e: "createWorkOrder", dto: CreateWorkOrderFromSalesOrderDto): void;
+  (e: "openWorkOrder", workorderid: string): void;
 }>();
 
 const confirm = useConfirm();
@@ -164,6 +167,12 @@ const onWorkOrderCreateClick = (salesOrderDetail: SalesOrderDetail) => {
   selectedDetail = salesOrderDetail;
 
   dialogOptions.value.visible = true;
+};
+
+const openWorkOrder = (workorderId: string) => {
+  console.log(workorderId);
+  emit("openWorkOrder", workorderId);
+  //router.push({ path: `/customers/${row.data.id}` });
 };
 
 const onWorkOrderCreateSubmit = () => {
