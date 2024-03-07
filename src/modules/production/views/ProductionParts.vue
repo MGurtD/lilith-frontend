@@ -144,7 +144,7 @@
           <br />
           Cost operari: {{ totalPersonalCost }} € / Cost màquina:
           {{ totalWorkcenterCost }} € =
-          {{ totalPersonalCost! + totalWorkcenterCost! }} €
+          {{ (totalPersonalCost! + totalWorkcenterCost!).toFixed(2) }} €
         </span>
       </div>
     </template>
@@ -403,7 +403,7 @@ const createProductionPart = async () => {
 const deleteProductionPart = (event: any, productionPart: ProductionPart) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Està segur que vol eliminar el tíquet de producció: ${productionPart.id}?`,
+    message: `Està segur que vol eliminar el tíquet de producció?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
