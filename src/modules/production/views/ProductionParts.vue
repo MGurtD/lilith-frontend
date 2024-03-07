@@ -142,8 +142,8 @@
           Temps: {{ totalProductionTime }} minuts / Quantitat:
           {{ totalProductionQuantity }} unitats
           <br />
-          Cost operari: {{ totalPersonalCost }} € / Cost màquina:
-          {{ totalWorkcenterCost }} € =
+          Cost operari: {{ totalPersonalCost!.toFixed(2) }} € / Cost màquina:
+          {{ totalWorkcenterCost!.toFixed(2) }} € =
           {{ (totalPersonalCost! + totalWorkcenterCost!).toFixed(2) }} €
         </span>
       </div>
