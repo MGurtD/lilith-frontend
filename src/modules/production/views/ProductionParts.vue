@@ -144,7 +144,7 @@
           <br />
           Cost operari: {{ totalPersonalCost }} € / Cost màquina:
           {{ totalWorkcenterCost }} € =
-          {{ totalPersonalCost! + totalWorkcenterCost! }} €
+          {{ (totalPersonalCost! + totalWorkcenterCost!).toFixed(2) }} €
         </span>
       </div>
     </template>
