@@ -96,7 +96,7 @@ export class DetailedWorkOrderService extends BaseService<DetailedWorkOrder> {
     workOrderId: string
   ): Promise<Array<DetailedWorkOrder> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}/ByWorkOrder/${workOrderId}`
+      `/WorkOrder/${workOrderId}/Detailed`
     );
     if (response.status === 200)
       return response.data as Array<DetailedWorkOrder>;
