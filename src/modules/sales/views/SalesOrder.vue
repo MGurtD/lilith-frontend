@@ -23,6 +23,7 @@
         @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
         @delete="deleteSalesOrderDetails"
         @createWorkOrder="createWorkOrder"
+        @openWorkOrder="openWorkOrder"
       >
         <template #header>
           <div
@@ -328,6 +329,10 @@ const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
       detail: `Error al generar la ordre de fabricació`,
     });
   }
+};
+
+const openWorkOrder = (workorderid: string) => {
+  router.push({ path: `/workorder/${workorderid}` });
 };
 
 const printInvoice = async () => {
