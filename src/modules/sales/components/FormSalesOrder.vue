@@ -7,7 +7,7 @@
             :type="BaseInputType.TEXT"
             label="Num. Comanda"
             id="salesOrderNumber"
-            v-model="salesOrder.salesOrderNumber"
+            v-model="salesOrder.number"
             disabled
           />
         </div>
@@ -16,14 +16,14 @@
             :type="BaseInputType.TEXT"
             label="Num. Pressupost"
             id="budgetNumber"
-            v-model="salesOrder.budgetNumber"
+            v-model="'TODO !!'"
             disabled
           />
         </div>
 
         <div>
           <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar v-model="salesOrder.salesOrderDate" dateFormat="dd/mm/yy" />
+          <Calendar v-model="salesOrder.date" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <label class="block text-900 mb-2">Data Entrega</label>
@@ -82,7 +82,7 @@
             :type="BaseInputType.TEXT"
             label="Comanda Client"
             id="customerSalesOrderNumber"
-            v-model="salesOrder.customerSalesOrderNumber"
+            v-model="salesOrder.customerNumber"
           />
         </div>
         <div>
@@ -190,9 +190,7 @@ const updateCustomer = () => {
 const parseEntityDates = () => {
   if (!salesOrder.value) return;
 
-  salesOrder.value.salesOrderDate = convertDateTimeToJSON(
-    salesOrder.value.salesOrderDate
-  );
+  salesOrder.value.date = convertDateTimeToJSON(salesOrder.value.date);
 
   if (salesOrder.value.expectedDate) {
     salesOrder.value.expectedDate = convertDateTimeToJSON(

@@ -34,13 +34,13 @@ export interface SalesOrderHeader {
   id: string;
   customerId: string;
   exerciseId: string;
-  salesOrderDate: string;
-  salesOrderNumber: string;
-  budgetNumber: string | null;
+  budgetId: string | null;
+  date: string;
+  number: string;
   expectedDate: string | null;
   customerCode: string;
   customerComercialName: string;
-  customerSalesOrderNumber: string;
+  customerNumber: string;
   customerTaxName: string;
   customerVatNumber: string;
   customerAccountNumber: string;

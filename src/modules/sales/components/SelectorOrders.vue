@@ -79,8 +79,8 @@ const filteredOrders = computed(() => {
   if (props.orders) {
     filtered = props.orders.filter(
       (o) =>
-        o.salesOrderNumber.toString().includes(selectedOrder.value) ||
-        o.customerSalesOrderNumber.includes(selectedOrder.value)
+        o.number.toString().includes(selectedOrder.value) ||
+        o.customerNumber.includes(selectedOrder.value)
     );
   }
 

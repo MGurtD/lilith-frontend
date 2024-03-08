@@ -167,12 +167,10 @@ const loadView = async () => {
   let pageTitle = "";
   if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
+    pageTitle = `Comanda ${salesOrder.value.number}`;
 
     // Parse date on the form
-    salesOrder.value.salesOrderDate = formatDate(
-      salesOrder.value.salesOrderDate
-    );
+    salesOrder.value.date = formatDate(salesOrder.value.date);
     if (salesOrder.value.expectedDate) {
       salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
     }
@@ -261,9 +259,7 @@ const onFormSalesOrderReferenceSubmit = async (
   isDetailDialogVisible.value = false;
 
   if (salesOrder.value) {
-    salesOrder.value.salesOrderDate = formatDate(
-      salesOrder.value.salesOrderDate
-    );
+    salesOrder.value.date = formatDate(salesOrder.value.date);
     if (salesOrder.value.expectedDate) {
       salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
     }
@@ -280,9 +276,7 @@ const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
   salesOrder.value!.salesOrderDetails = afterDelete;
   isDetailDialogVisible.value = false;
 
-  salesOrder.value!.salesOrderDate = formatDate(
-    salesOrder.value!.salesOrderDate
-  );
+  salesOrder.value!.date = formatDate(salesOrder.value!.date);
 };
 
 const onFormReferenceSubmit = async (reference: Reference) => {
@@ -341,7 +335,7 @@ const printInvoice = async () => {
   );
 
   if (orderReport) {
-    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
+    const fileName = `Comanda_${salesOrder.value?.number}.docx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
