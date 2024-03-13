@@ -87,6 +87,10 @@ export interface WorkMaster {
   referenceId: string;
   reference?: Reference;
   baseQuantity: number;
+  operatorCost: number;
+  machineCost: number;
+  externalCost: number;
+  materialCost: number;
   disabled: boolean;
   phases: Array<WorkMasterPhase>;
 }
