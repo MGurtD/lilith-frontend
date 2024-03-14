@@ -28,9 +28,29 @@
       </div>
     </section>
     <section class="five-columns">
-      <div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Operari:</label>
+        <span class="summary-field">{{ workmaster.operatorCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Màquina:</label>
+        <span class="summary-field">{{ workmaster.machineCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Material:</label>
+        <span class="summary-field">{{ workmaster.materialCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Extern:</label>
+        <span class="summary-field">{{ workmaster.externalCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Total:</label>
+        <span class="summary-field">{{ totalCost }} €</span>
+      </div>
+      <!--<div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           label="Cost Operari"
           :decimals="2"
           v-model="workmaster.operatorCost"
@@ -39,7 +59,7 @@
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           label="Cost Màquina"
           :decimals="2"
           v-model="workmaster.machineCost"
@@ -48,7 +68,7 @@
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           label="Cost Material"
           :decimals="2"
           v-model="workmaster.materialCost"
@@ -57,7 +77,7 @@
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           label="Cost Extern"
           :decimals="2"
           v-model="workmaster.externalCost"
@@ -66,13 +86,13 @@
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
+          :type="BaseInputType.CURRENCY"
           label="Cost Total"
           :decimals="2"
           v-model="totalCost"
           disabled
         />
-      </div>
+      </div>-->
     </section>
   </form>
 </template>

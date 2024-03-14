@@ -72,7 +72,8 @@ export interface Reference {
   disabled: boolean;
   referenceTypeId: string | null;
   referenceFormatId: string | null;
-  lastPurchaseCost: number;
+  lastCost: number;
+  workMasterCost: number;
   sales: boolean;
   purchase: boolean;
   production: boolean;
