@@ -7,6 +7,7 @@ import {
 } from "../types";
 import SalesServices from "../services";
 import { GenericResponse } from "../../../types";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 export const useSalesOrderStore = defineStore({
   id: "salesOrder",
@@ -25,6 +26,11 @@ export const useSalesOrderStore = defineStore({
     async CreateFromBudget(
       budget: Budget
     ): Promise<GenericResponse<SalesOrderHeader>> {
+      budget.date = convertDateTimeToJSON(budget.date);
+      if (budget.acceptanceDate) {
+        budget.acceptanceDate = convertDateTimeToJSON(budget.acceptanceDate);
+      }
+
       const response = await SalesServices.SalesOrder.CreateFromBudget(budget);
       return response;
     },

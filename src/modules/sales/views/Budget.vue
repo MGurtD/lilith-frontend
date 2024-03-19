@@ -100,6 +100,7 @@ import { useBudgetStore } from "../store/budget";
 import TableBudgetDetails from "../components/TableBudgetDetails.vue";
 import FormBudget from "../components/FormBudget.vue";
 import FormBudgetDetail from "../components/FormBudgetDetail.vue";
+import { useSalesOrderStore } from "../store/order";
 
 const budgetForm = ref();
 
@@ -116,6 +117,7 @@ const lifeCycleStore = useLifecyclesStore();
 const referenceStore = useReferenceStore();
 const workMasterStore = useWorkMasterStore();
 const taxesStore = useTaxesStore();
+const salesOrderStore = useSalesOrderStore();
 const { budget } = storeToRefs(budgetStore);
 
 const items = [
@@ -124,7 +126,35 @@ const items = [
     icon: PrimeIcons.FILE_WORD,
     //command: () => printInvoice(),
   },
+  {
+    label: "Crear comanda",
+    icon: PrimeIcons.FLAG_FILL,
+    command: () => createSalesOrder(),
+  },
 ];
+
+const createSalesOrder = async () => {
+  if (budget.value) {
+    const response = await salesOrderStore.CreateFromBudget(budget.value);
+
+    if (response.result) {
+      toast.add({
+        severity: "success",
+        summary: `Comanda ${response.content?.number} creada correctament`,
+        life: 5000,
+      });
+
+      router.push(`/salesorder/${response.content?.id}`);
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error al crear la comanda ",
+        detail: response.errors[0],
+        life: 5000,
+      });
+    }
+  }
+};
 
 const detailDialogTitle = "Línia del pressupost";
 const isDetailDialogVisible = ref(false);
