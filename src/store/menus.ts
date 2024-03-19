@@ -126,7 +126,12 @@ export const applicationMenus = [
         href: "/reference/sales",
       },
       {
-        icon: PrimeIcons.MICREPHONE,
+        icon: PrimeIcons.FLAG,
+        title: "Pressupostos",
+        href: "/budget",
+      },
+      {
+        icon: PrimeIcons.FLAG_FILL,
         title: "Comandes",
         href: "/salesorder",
       },
