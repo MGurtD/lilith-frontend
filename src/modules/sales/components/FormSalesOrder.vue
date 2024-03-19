@@ -16,7 +16,6 @@
             :type="BaseInputType.TEXT"
             label="Num. Pressupost"
             id="budgetNumber"
-            v-model="'TODO !!'"
             disabled
           />
         </div>
@@ -29,23 +28,6 @@
           <label class="block text-900 mb-2">Data Entrega</label>
           <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
         </div>
-
-        <!-- 
-        <div>
-          <label class="block text-900 mb-2">Exercici</label>
-          <Dropdown
-            v-model="salesOrder.exerciseId"
-            editable
-            :options="exerciseStore.exercises"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.exerciseId,
-            }"
-          />
-        </div> 
-        -->
       </section>
       <section class="four-columns mt-2">
         <div>

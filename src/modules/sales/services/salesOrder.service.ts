@@ -1,4 +1,5 @@
 import {
+  Budget,
   CreateSalesHeaderRequest,
   SalesOrderDetail,
   SalesOrderHeader,
@@ -6,6 +7,7 @@ import {
 } from "../types";
 import apiClient from "../../../api/api.client";
 import BaseService from "../../../api/base.service";
+import { GenericResponse } from "../../../types";
 
 export class SalesOrderDetailService extends BaseService<SalesOrderDetail> {}
 
@@ -14,6 +16,16 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
     return response.status === 200;
+  }
+  async CreateFromBudget(
+    budget: Budget
+  ): Promise<GenericResponse<SalesOrderHeader>> {
+    const endpoint = `${this.resource}`;
+    const response = await this.apiClient.post(
+      `${endpoint}/FromBudget`,
+      budget
+    );
+    return response.data as GenericResponse<SalesOrderHeader>;
   }
 
   async GetBetweenDates(

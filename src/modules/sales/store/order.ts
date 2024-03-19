@@ -3,8 +3,10 @@ import {
   SalesOrderHeader,
   SalesOrderDetail,
   CreateSalesHeaderRequest,
+  Budget,
 } from "../types";
 import SalesServices from "../services";
+import { GenericResponse } from "../../../types";
 
 export const useSalesOrderStore = defineStore({
   id: "salesOrder",
@@ -19,6 +21,12 @@ export const useSalesOrderStore = defineStore({
     async Create(createRequest: CreateSalesHeaderRequest) {
       const created = await SalesServices.SalesOrder.Create(createRequest);
       return created;
+    },
+    async CreateFromBudget(
+      budget: Budget
+    ): Promise<GenericResponse<SalesOrderHeader>> {
+      const response = await SalesServices.SalesOrder.CreateFromBudget(budget);
+      return response;
     },
     async GetById(id: string) {
       this.salesOrder = await SalesServices.SalesOrder.getById(id);
