@@ -57,20 +57,15 @@
         </div>
       </div>
     </template>
-    <Column
-      field="salesOrderNumber"
-      header="Número"
-      sortable
-      style="width: 10%"
-    ></Column>
-    <Column
+    <Column field="number" header="Número" sortable style="width: 10%"></Column>
+    <!-- <Column
       field="budgetNumber"
       header="Pressupost"
       style="width: 10%"
-    ></Column>
-    <Column field="salesOrderDate" header="Data" style="width: 15%" sortable>
+    ></Column> -->
+    <Column field="date" header="Data" style="width: 15%" sortable>
       <template #body="slotProps">
-        {{ formatDate(slotProps.data.salesOrderDate) }}
+        {{ formatDate(slotProps.data.date) }}
       </template>
     </Column>
     <Column
@@ -79,7 +74,7 @@
       style="width: 30%"
     ></Column>
     <Column
-      field="customerSalesOrderNumber"
+      field="customerNumber"
       header="Comanda client"
       style="width: 15%"
     ></Column>

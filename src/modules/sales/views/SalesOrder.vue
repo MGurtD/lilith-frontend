@@ -219,6 +219,7 @@ const openReferencesForm = (
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,
+      workOrderId: "",
     } as SalesOrderDetail;
   }
 
