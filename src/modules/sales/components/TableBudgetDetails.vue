@@ -24,6 +24,7 @@
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
+          v-if="budgetStore.order === undefined"
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
           @click="onDeleteRow($event, slotProps.data)"
@@ -38,6 +39,7 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { Budget, BudgetDetail } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
+import { useBudgetStore } from "../store/budget";
 
 const props = defineProps<{
   budget: Budget;
@@ -50,6 +52,7 @@ const emit = defineEmits<{
 }>();
 
 const confirm = useConfirm();
+const budgetStore = useBudgetStore();
 const referenceStore = useReferenceStore();
 
 const onEditRow = (row: DataTableRowClickEvent) => {

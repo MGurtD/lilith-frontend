@@ -1,11 +1,11 @@
 <template>
   <div>
     <form v-if="budget">
-      <section class="three-columns mt-2">
+      <section class="four-columns mt-2">
         <div>
           <BaseInput
             :type="BaseInputType.TEXT"
-            label="Num. Pressupost"
+            label="Pressupost"
             id="number"
             v-model="budget.number"
             disabled
@@ -18,6 +18,14 @@
         <div>
           <label class="block text-900 mb-2">Data Acceptació</label>
           <Calendar v-model="budget.acceptanceDate" dateFormat="dd/mm/yy" />
+        </div>
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            :disabled="true"
+            label="Comanda"
+            :value="budgetStore.order?.number"
+          />
         </div>
       </section>
       <section class="three-columns mt-2">
@@ -57,15 +65,6 @@
             v-model="budget.deliveryDays"
           />
         </div>
-        <!-- <div>
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            :disabled="true"
-            label="Albarà Entrega"
-            id="deliveryNote"
-            v-model="deliveryNoteNumber"
-          />
-        </div> -->
       </section>
     </form>
   </div>

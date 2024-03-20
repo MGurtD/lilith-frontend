@@ -29,6 +29,7 @@
                 label="Afegir línea"
                 @click="openReferencesForm(FormActionMode.CREATE, {} as any)"
                 class="mr-2"
+                :disabled="budgetStore.order !== undefined"
               />
             </section>
           </div>
@@ -133,29 +134,6 @@ const items = [
   },
 ];
 
-const createSalesOrder = async () => {
-  if (budget.value) {
-    const response = await salesOrderStore.CreateFromBudget(budget.value);
-
-    if (response.result) {
-      toast.add({
-        severity: "success",
-        summary: `Comanda ${response.content?.number} creada correctament`,
-        life: 5000,
-      });
-
-      router.push(`/salesorder/${response.content?.id}`);
-    } else {
-      toast.add({
-        severity: "error",
-        summary: "Error al crear la comanda ",
-        detail: response.errors[0],
-        life: 5000,
-      });
-    }
-  }
-};
-
 const detailDialogTitle = "Línia del pressupost";
 const isDetailDialogVisible = ref(false);
 const formDetailMode = ref(FormActionMode.EDIT);
@@ -163,8 +141,10 @@ const budgetDetail = ref(undefined as undefined | BudgetDetail);
 const formsActiveIndex = ref(0);
 
 const loadView = async () => {
-  const workOrderId = route.params.id as string;
-  await budgetStore.GetById(workOrderId);
+  const budgetId = route.params.id as string;
+  await budgetStore.GetById(budgetId);
+  await budgetStore.GetAssociatedSalesOrders(budgetId);
+
   referenceStore.fetchReferencesByModule("sales");
   lifeCycleStore.fetchOneByName("Budget");
   plantModelStore.fetchSites();
@@ -277,6 +257,38 @@ const onFormReferenceSubmit = async (reference: Reference) => {
     referenceStore.setNewReference(getNewUuid());
     // Go to details tab
     formsActiveIndex.value = 0;
+  }
+};
+
+const createSalesOrder = async () => {
+  if (budgetStore.order) {
+    toast.add({
+      severity: "warn",
+      summary: "Aquest pressupost ja té una comanda associada",
+      life: 5000,
+    });
+    return;
+  }
+
+  if (budget.value) {
+    const response = await salesOrderStore.CreateFromBudget(budget.value);
+
+    if (response.result) {
+      toast.add({
+        severity: "success",
+        summary: `Comanda ${response.content?.number} creada correctament`,
+        life: 5000,
+      });
+
+      router.push(`/salesorder/${response.content?.id}`);
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error al crear la comanda ",
+        detail: response.errors[0],
+        life: 5000,
+      });
+    }
   }
 };
 </script>

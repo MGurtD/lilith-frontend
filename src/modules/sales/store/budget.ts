@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { CreateSalesHeaderRequest, Budget, BudgetDetail } from "../types";
+import {
+  CreateSalesHeaderRequest,
+  Budget,
+  BudgetDetail,
+  SalesOrderHeader,
+} from "../types";
 import SalesServices from "../services";
 import { formatDate } from "../../../utils/functions";
 
@@ -8,7 +13,7 @@ export const useBudgetStore = defineStore({
   state: () => ({
     budget: undefined as Budget | undefined,
     budgets: undefined as Array<Budget> | undefined,
-    createWorkOrderDialogVisibility: false,
+    order: undefined as SalesOrderHeader | undefined,
   }),
   getters: {},
   actions: {
@@ -35,6 +40,9 @@ export const useBudgetStore = defineStore({
           endTime
         );
       }
+    },
+    async GetAssociatedSalesOrders(budgetId: string) {
+      this.order = await SalesServices.SalesOrder.GetFromBudgetId(budgetId);
     },
     async Create(createRequest: CreateSalesHeaderRequest) {
       const created = await SalesServices.Budget.Create(createRequest);
