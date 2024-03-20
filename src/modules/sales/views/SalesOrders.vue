@@ -63,9 +63,23 @@
       header="Pressupost"
       style="width: 10%"
     ></Column> -->
-    <Column field="date" header="Data" style="width: 15%" sortable>
+    <Column field="date" header="Data" style="width: 10%" sortable>
       <template #body="slotProps">
         {{ formatDate(slotProps.data.date) }}
+      </template>
+    </Column>
+    <Column
+      field="expectedDate"
+      header="Data Entrega"
+      style="width: 10%"
+      sortable
+    >
+      <template #body="slotProps">
+        {{
+          slotProps.data.expectedDate
+            ? formatDate(slotProps.data.expectedDate)
+            : ""
+        }}
       </template>
     </Column>
     <Column
