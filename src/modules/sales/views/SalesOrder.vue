@@ -115,6 +115,7 @@ import { REPORTS, ReportService } from "../../../api/services/report.service";
 import services from "../services";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { useWorkMasterStore } from "../../production/store/workmaster";
+import { useBudgetStore } from "../store/budget";
 
 const salesOrderForm = ref();
 
@@ -133,6 +134,7 @@ const deliveryNoteStore = useDeliveryNoteStore();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 const taxesStore = useTaxesStore();
+const budgetStore = useBudgetStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
 const items = [
@@ -180,6 +182,11 @@ const loadView = async () => {
       deliveryNoteStore.GetById(salesOrder.value.deliveryNoteId);
     } else if (deliveryNoteStore.deliveryNote) {
       deliveryNoteStore.deliveryNote = undefined;
+    }
+
+    // Get related budget
+    if (salesOrder.value.budgetId) {
+      await budgetStore.GetById(salesOrder.value.budgetId);
     }
   }
 

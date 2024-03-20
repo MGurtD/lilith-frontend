@@ -28,6 +28,16 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     return response.data as GenericResponse<SalesOrderHeader>;
   }
 
+  async GetFromBudgetId(
+    budgetId: string
+  ): Promise<SalesOrderHeader | undefined> {
+    const endpoint = `${this.resource}/budget/${budgetId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as SalesOrderHeader;
+    }
+  }
+
   async GetBetweenDates(
     startTime: string,
     endTime: string

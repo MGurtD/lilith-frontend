@@ -12,39 +12,6 @@
           />
         </div>
         <div>
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            label="Num. Pressupost"
-            id="budgetNumber"
-            disabled
-          />
-        </div>
-
-        <div>
-          <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar v-model="salesOrder.date" dateFormat="dd/mm/yy" />
-        </div>
-        <div>
-          <label class="block text-900 mb-2">Data Entrega</label>
-          <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
-        </div>
-      </section>
-      <section class="four-columns mt-2">
-        <div>
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
-            v-model="salesOrder.statusId"
-            editable
-            :options="lifeCycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.statusId,
-            }"
-          />
-        </div>
-        <div>
           <label class="block text-900 mb-2">Client</label>
           <Dropdown
             v-model="salesOrder.customerId"
@@ -67,6 +34,40 @@
             v-model="salesOrder.customerNumber"
           />
         </div>
+        <div>
+          <label class="block text-900 mb-2">Estat</label>
+          <Dropdown
+            v-model="salesOrder.statusId"
+            editable
+            :options="lifeCycleStore.lifecycle?.statuses"
+            optionValue="id"
+            optionLabel="name"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.statusId,
+            }"
+          />
+        </div>
+      </section>
+      <section class="four-columns mt-2">
+        <div>
+          <label class="block text-900 mb-2">Data Alta</label>
+          <Calendar v-model="salesOrder.date" dateFormat="dd/mm/yy" />
+        </div>
+        <div>
+          <label class="block text-900 mb-2">Data Entrega</label>
+          <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
+        </div>
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Num. Pressupost"
+            id="budgetNumber"
+            disabled
+            :value="budgetStore.budget?.number"
+          />
+        </div>
+
         <div>
           <BaseInput
             :type="BaseInputType.TEXT"
@@ -96,6 +97,7 @@ import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { SalesOrderHeader } from "../types";
 import { BaseInputType } from "../../../types/component";
 import { convertDateTimeToJSON } from "../../../utils/functions";
+import { useBudgetStore } from "../store/budget";
 
 const emit = defineEmits<{
   (e: "submit", salesOrder: SalesOrderHeader): void;
@@ -106,6 +108,7 @@ const salesOrderStore = useSalesOrderStore();
 const customerStore = useCustomersStore();
 const lifeCycleStore = useLifecyclesStore();
 const deliveryNoteStore = useDeliveryNoteStore();
+const budgetStore = useBudgetStore();
 const toast = useToast();
 
 const { salesOrder } = storeToRefs(salesOrderStore);
