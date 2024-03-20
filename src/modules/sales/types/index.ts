@@ -8,54 +8,6 @@ export interface CustomerType {
   disabled: boolean;
 }
 
-export interface SalesOrderDetail {
-  id: string;
-  salesOrderHeaderId: string;
-  referenceId: string;
-  description: string;
-  quantity: number;
-  unitCost: number;
-  unitPrice: number;
-  totalCost: number;
-  amount: number;
-  estimatedDeliveryDate: Date;
-  isDelivered: boolean;
-  isInvoiced: boolean;
-}
-
-export interface SalesOrderReport {
-  customer: Customer;
-  site: Site;
-  order: SalesOrderHeader;
-  total: number;
-}
-
-export interface SalesOrderHeader {
-  id: string;
-  customerId: string;
-  exerciseId: string;
-  salesOrderDate: string;
-  salesOrderNumber: string;
-  budgetNumber: string | null;
-  expectedDate: string | null;
-  customerCode: string;
-  customerComercialName: string;
-  customerSalesOrderNumber: string;
-  customerTaxName: string;
-  customerVatNumber: string;
-  customerAccountNumber: string;
-  siteId: string;
-  name: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  region: string;
-  country: string;
-  vatNumber: string;
-  statusId: string;
-  deliveryNoteId: string;
-  salesOrderDetails: Array<SalesOrderDetail> | undefined;
-}
 export interface Customer {
   id: string;
   code: string;
@@ -96,6 +48,65 @@ export interface CustomerAddress {
   disabled: boolean;
   observations: string;
   customerId: string;
+}
+
+export interface Budget {
+  id: string;
+  customerId: string;
+  exerciseId: string;
+  date: string;
+  number: string;
+  deliveryDays: number;
+  amount: number;
+  acceptanceDate: string | null;
+  statusId: string;
+  details: Array<BudgetDetail> | undefined;
+}
+
+export interface BudgetDetail {
+  id: string;
+  budgetId: string;
+  referenceId: string;
+  description: string;
+  quantity: number;
+  unitCost: number;
+  unitPrice: number;
+  totalCost: number;
+  amount: number;
+}
+
+export interface SalesOrderHeader {
+  id: string;
+  customerId: string;
+  exerciseId: string;
+  budgetId: string | null;
+  date: string;
+  number: string;
+  expectedDate: string | null;
+  customerCode: string;
+  customerComercialName: string;
+  customerNumber: string;
+  customerTaxName: string;
+  customerVatNumber: string;
+  customerAccountNumber: string;
+  siteId: string;
+  name: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  region: string;
+  country: string;
+  vatNumber: string;
+  statusId: string;
+  deliveryNoteId: string;
+  salesOrderDetails: Array<SalesOrderDetail> | undefined;
+}
+
+export interface SalesOrderReport {
+  customer: Customer;
+  site: Site;
+  order: SalesOrderHeader;
+  total: number;
 }
 
 export interface SalesOrderDetail {

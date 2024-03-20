@@ -115,6 +115,7 @@ import { REPORTS, ReportService } from "../../../api/services/report.service";
 import services from "../services";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { useWorkMasterStore } from "../../production/store/workmaster";
+import { useBudgetStore } from "../store/budget";
 
 const salesOrderForm = ref();
 
@@ -133,6 +134,7 @@ const deliveryNoteStore = useDeliveryNoteStore();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 const taxesStore = useTaxesStore();
+const budgetStore = useBudgetStore();
 const { salesOrder } = storeToRefs(salesOrderStore);
 
 const items = [
@@ -167,12 +169,10 @@ const loadView = async () => {
   let pageTitle = "";
   if (salesOrder.value) {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Comanda ${salesOrder.value.salesOrderNumber}`;
+    pageTitle = `Comanda ${salesOrder.value.number}`;
 
     // Parse date on the form
-    salesOrder.value.salesOrderDate = formatDate(
-      salesOrder.value.salesOrderDate
-    );
+    salesOrder.value.date = formatDate(salesOrder.value.date);
     if (salesOrder.value.expectedDate) {
       salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
     }
@@ -182,6 +182,11 @@ const loadView = async () => {
       deliveryNoteStore.GetById(salesOrder.value.deliveryNoteId);
     } else if (deliveryNoteStore.deliveryNote) {
       deliveryNoteStore.deliveryNote = undefined;
+    }
+
+    // Get related budget
+    if (salesOrder.value.budgetId) {
+      await budgetStore.GetById(salesOrder.value.budgetId);
     }
   }
 
@@ -221,6 +226,7 @@ const openReferencesForm = (
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,
+      workOrderId: "",
     } as SalesOrderDetail;
   }
 
@@ -261,9 +267,7 @@ const onFormSalesOrderReferenceSubmit = async (
   isDetailDialogVisible.value = false;
 
   if (salesOrder.value) {
-    salesOrder.value.salesOrderDate = formatDate(
-      salesOrder.value.salesOrderDate
-    );
+    salesOrder.value.date = formatDate(salesOrder.value.date);
     if (salesOrder.value.expectedDate) {
       salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
     }
@@ -280,9 +284,7 @@ const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
   salesOrder.value!.salesOrderDetails = afterDelete;
   isDetailDialogVisible.value = false;
 
-  salesOrder.value!.salesOrderDate = formatDate(
-    salesOrder.value!.salesOrderDate
-  );
+  salesOrder.value!.date = formatDate(salesOrder.value!.date);
 };
 
 const onFormReferenceSubmit = async (reference: Reference) => {
@@ -341,7 +343,7 @@ const printInvoice = async () => {
   );
 
   if (orderReport) {
-    const fileName = `Comanda_${salesOrder.value?.salesOrderNumber}.docx`;
+    const fileName = `Comanda_${salesOrder.value?.number}.docx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(

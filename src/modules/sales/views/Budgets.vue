@@ -1,6 +1,6 @@
 <template>
   <DataTable
-    :value="salesOrderStore.salesOrders"
+    :value="budgetStore.budgets"
     class="small-datatable"
     tableStyle="min-width: 100%"
     sort-field="salesOrderNumber"
@@ -30,6 +30,7 @@
               optionValue="id"
               optionLabel="comercialName"
               class="w-full"
+              showClear
             />
           </div>
         </div>
@@ -57,46 +58,40 @@
         </div>
       </div>
     </template>
-    <Column field="number" header="Número" sortable style="width: 10%"></Column>
-    <!-- <Column
-      field="budgetNumber"
-      header="Pressupost"
-      style="width: 10%"
-    ></Column> -->
-    <Column field="date" header="Data" style="width: 10%" sortable>
+    <Column field="number" header="Número" style="width: 10%"></Column>
+    <Column field="date" header="Data" style="width: 15%" sortable>
       <template #body="slotProps">
         {{ formatDate(slotProps.data.date) }}
       </template>
     </Column>
-    <Column
-      field="expectedDate"
-      header="Data Entrega"
-      style="width: 10%"
-      sortable
-    >
+    <Column header="Client" style="width: 20%">
       <template #body="slotProps">
-        {{
-          slotProps.data.expectedDate
-            ? formatDate(slotProps.data.expectedDate)
-            : ""
-        }}
+        {{ getCustomerById(slotProps.data.customerId) }}
       </template>
     </Column>
-    <Column
-      field="customerComercialName"
-      header="Client"
-      style="width: 30%"
-    ></Column>
-    <Column
-      field="customerNumber"
-      header="Comanda client"
-      style="width: 15%"
-    ></Column>
     <Column header="Estat" style="width: 20%">
       <template #body="slotProps">
         {{ getStatusNameById(slotProps.data.statusId) }}
       </template>
     </Column>
+    <Column
+      field="acceptanceDate"
+      header="Data d'acceptació"
+      style="width: 15%"
+    >
+      <template #body="slotProps">
+        {{
+          slotProps.data.acceptanceDate
+            ? formatDate(slotProps.data.acceptanceDate)
+            : ""
+        }}
+      </template>
+    </Column>
+    <Column
+      field="deliveryDays"
+      header="Dies d'entrega"
+      style="width: 10%"
+    ></Column>
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
@@ -131,7 +126,6 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
-import { useSalesOrderStore } from "../store/order";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
@@ -146,13 +140,14 @@ import { DialogOptions } from "../../../types/component";
 import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
+import { useBudgetStore } from "../store/budget";
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 const store = useStore();
 const sharedStore = useSharedDataStore();
-const salesOrderStore = useSalesOrderStore();
+const budgetStore = useBudgetStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
@@ -163,14 +158,14 @@ const filter = ref({
 });
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear comanda",
+  title: "Crear pressupost",
   closable: true,
   position: "center",
   modal: true,
 } as DialogOptions);
 
 onMounted(async () => {
-  lifecycleStore.fetchOneByName("SalesOrder");
+  lifecycleStore.fetchOneByName("Budget");
   referenceStore.fetchReferences();
   customerStore.fetchCustomers();
   await sharedStore.fetchMasterData();
@@ -180,7 +175,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
-    title: "Comandes",
+    title: "Pressupostos",
   });
 });
 
@@ -224,11 +219,7 @@ const filterSalesOrder = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await salesOrderStore.GetFiltered(
-      startTime,
-      endTime,
-      filter.value.customerId
-    );
+    await budgetStore.GetFiltered(startTime, endTime, filter.value.customerId);
   } else {
     toast.add({
       severity: "info",
@@ -244,12 +235,17 @@ const getStatusNameById = (id: string) => {
   if (status) return status.name;
   else return "";
 };
+const getCustomerById = (id: string) => {
+  const customer = customerStore.customers?.find((c) => c.id === id);
+  if (customer) return customer.comercialName;
+  else return "";
+};
 
 const createOrder = async () => {
   dialogOptions.visible = false;
-  const created = await salesOrderStore.Create(createRequest.value);
+  const created = await budgetStore.Create(createRequest.value);
   if (created) {
-    router.push({ path: `/salesorder/${createRequest.value.id}` });
+    router.push({ path: `/budget/${createRequest.value.id}` });
   }
 };
 
@@ -259,18 +255,18 @@ const editRow = (row: DataTableRowClickEvent) => {
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/salesorder/${row.data.id}` });
+    router.push({ path: `/budget/${row.data.id}` });
   }
 };
 
 const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
   confirm.require({
-    message: `Està segur que vol eliminar la comanda?`,
+    message: `Està segur que vol eliminar el pressupost?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await salesOrderStore.Delete(order.id);
+      const deleted = await budgetStore.Delete(order.id);
       if (deleted) {
         toast.add({
           severity: "success",

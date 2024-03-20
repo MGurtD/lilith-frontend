@@ -66,8 +66,8 @@ const treeTableData = computed(() => {
     order.salesOrderDetails!.forEach((detail) => {
       salesOrderDetails.push({
         salesOrderId: order.id,
-        salesOrderNumber: order.salesOrderNumber,
-        salesOrderDate: order.salesOrderDate,
+        salesOrderNumber: order.number,
+        salesOrderDate: order.date,
         ...detail,
       });
     });
@@ -89,7 +89,7 @@ const onDeleteRow = (event: any, clickedOrder: any) => {
 
   confirm.require({
     target: event.currentTarget,
-    message: `Está segur que vol desassignar la comanda ${order.salesOrderNumber}?`,
+    message: `Está segur que vol desassignar la comanda ${order.number}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
