@@ -39,6 +39,33 @@
           </template>
         </TableProductionParts>
       </TabPanel>
+      <TabPanel header="Costs" v-if="workorder">
+        <section class="three-columns">
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Temps Operari:</label>
+            <span class="summary-field"
+              >{{ workorder.operatorTime }} mins.</span
+            >
+          </div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Temps Màquina:</label>
+            <span class="summary-field">{{ workorder.machineTime }} mins.</span>
+          </div>
+          <div class="mt-1"></div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Cost Operari:</label>
+            <span class="summary-field">{{ workorder.operatorCost }} €</span>
+          </div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Cost Máquina:</label>
+            <span class="summary-field">{{ workorder.machineCost }} €</span>
+          </div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Cost Material:</label>
+            <span class="summary-field">{{ workorder.materialCost }} €</span>
+          </div>
+        </section>
+      </TabPanel>
     </TabView>
   </main>
   <Dialog

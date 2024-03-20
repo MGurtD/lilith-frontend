@@ -27,12 +27,79 @@
         <Checkbox v-model="workmaster.disabled" class="w-full" :binary="true" />
       </div>
     </section>
+    <section class="five-columns">
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Operari:</label>
+        <span class="summary-field">{{ workmaster.operatorCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Màquina:</label>
+        <span class="summary-field">{{ workmaster.machineCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Material:</label>
+        <span class="summary-field">{{ workmaster.materialCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Extern:</label>
+        <span class="summary-field">{{ workmaster.externalCost }} €</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Cost Total:</label>
+        <span class="summary-field">{{ totalCost }} €</span>
+      </div>
+      <!--<div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Operari"
+          :decimals="2"
+          v-model="workmaster.operatorCost"
+          disabled
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Màquina"
+          :decimals="2"
+          v-model="workmaster.machineCost"
+          disabled
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Material"
+          :decimals="2"
+          v-model="workmaster.materialCost"
+          disabled
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Extern"
+          :decimals="2"
+          v-model="workmaster.externalCost"
+          disabled
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Total"
+          :decimals="2"
+          v-model="totalCost"
+          disabled
+        />
+      </div>-->
+    </section>
   </form>
 </template>
 
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { WorkMaster } from "../types";
 import * as Yup from "yup";
 import {
@@ -54,6 +121,15 @@ const emit = defineEmits<{
 }>();
 
 const toast = useToast();
+
+const totalCost = computed(() => {
+  return (
+    props.workmaster.operatorCost +
+    props.workmaster.machineCost +
+    props.workmaster.materialCost +
+    props.workmaster.externalCost
+  );
+});
 
 const schema = Yup.object().shape({
   baseQuantity: Yup.number()

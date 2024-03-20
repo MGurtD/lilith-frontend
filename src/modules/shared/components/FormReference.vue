@@ -73,9 +73,10 @@
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
-          label="Últim preu de compra"
-          id="lastPurchaseCost"
-          v-model="reference.lastPurchaseCost"
+          label="Últim cost de compra"
+          id="lastCost"
+          v-model="reference.lastCost"
+          disabled
         />
       </div>
       <div class="mt-1">
@@ -93,13 +94,23 @@
         />
       </div>
     </section>
-    <section class="four-columns" v-if="isSales">
+    <section class="five-columns" v-if="isSales">
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
-          label="Cost"
-          id="cost"
-          v-model="reference.cost"
+          label="Cost Teóric Fabricació"
+          id="workMasterCost"
+          v-model="reference.workMasterCost"
+          disabled
+        />
+      </div>
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost Última Fabricació"
+          id="lastCost"
+          v-model="reference.lastCost"
+          disabled
         />
       </div>
       <div class="mt-1">
