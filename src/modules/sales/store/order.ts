@@ -3,8 +3,11 @@ import {
   SalesOrderHeader,
   SalesOrderDetail,
   CreateSalesHeaderRequest,
+  Budget,
 } from "../types";
 import SalesServices from "../services";
+import { GenericResponse } from "../../../types";
+import { convertDateTimeToJSON } from "../../../utils/functions";
 
 export const useSalesOrderStore = defineStore({
   id: "salesOrder",
@@ -19,6 +22,17 @@ export const useSalesOrderStore = defineStore({
     async Create(createRequest: CreateSalesHeaderRequest) {
       const created = await SalesServices.SalesOrder.Create(createRequest);
       return created;
+    },
+    async CreateFromBudget(
+      budget: Budget
+    ): Promise<GenericResponse<SalesOrderHeader>> {
+      budget.date = convertDateTimeToJSON(budget.date);
+      if (budget.acceptanceDate) {
+        budget.acceptanceDate = convertDateTimeToJSON(budget.acceptanceDate);
+      }
+
+      const response = await SalesServices.SalesOrder.CreateFromBudget(budget);
+      return response;
     },
     async GetById(id: string) {
       this.salesOrder = await SalesServices.SalesOrder.getById(id);
