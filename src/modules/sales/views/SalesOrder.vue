@@ -222,6 +222,8 @@ const openReferencesForm = (
       totalCost: 0,
       amount: 0,
       salesOrderHeaderId: "",
+      lastCost: 0,
+      workMasterCost: 0,
       description: "",
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
