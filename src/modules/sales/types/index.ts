@@ -115,6 +115,8 @@ export interface SalesOrderDetail {
   referenceId: string;
   description: string;
   quantity: number;
+  lastCost: number;
+  workMasterCost: number;
   unitCost: number;
   unitPrice: number;
   totalCost: number;

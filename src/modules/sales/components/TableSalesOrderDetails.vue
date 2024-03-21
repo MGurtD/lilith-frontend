@@ -40,6 +40,8 @@
         </div>
       </template>
     </Column>
+    <Column field="workMasterCost" header="Cost Teóric"></Column>
+    <Column field="lastCost" header="Últim Cost"></Column>
     <Column field="unitPrice" header="Preu un." style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
     </Column>

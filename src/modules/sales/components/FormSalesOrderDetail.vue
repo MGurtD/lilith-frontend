@@ -92,6 +92,8 @@ const getReferenceInfo = () => {
     props.salesOrderDetail.isDelivered = false;
     props.salesOrderDetail.unitCost = reference?.cost;
     props.salesOrderDetail.unitPrice = reference?.price;
+    props.salesOrderDetail.lastCost = reference?.lastCost;
+    props.salesOrderDetail.workMasterCost = reference?.workMasterCost;
     updateImports();
   }
 };
@@ -120,6 +122,9 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
+    if (!props.salesOrderDetail.workOrderId) {
+      props.salesOrderDetail.workOrderId = null;
+    }
     emit("submit", props.salesOrderDetail);
   } else {
     let errors = "";
