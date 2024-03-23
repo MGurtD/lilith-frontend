@@ -40,8 +40,16 @@
         </div>
       </template>
     </Column>
-    <Column field="workMasterCost" header="Cost Teóric"></Column>
-    <Column field="lastCost" header="Últim Cost"></Column>
+    <Column field="workMasterCost" header="Cost Teóric" style="width: 10%">
+      <template #body="slotProps">
+        {{ slotProps.data.workMasterCost.toFixed(2) }} €
+      </template>
+    </Column>
+    <Column field="lastCost" header="Últim Cost" style="width: 10%">
+      <template #body="slotProps">
+        {{ slotProps.data.lastCost.toFixed(2) }} €
+      </template>
+    </Column>
     <Column field="unitPrice" header="Preu un." style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
     </Column>
@@ -58,6 +66,11 @@
         />
       </template>
     </Column>
+    <template #footer>
+      <div class="total">
+        <span class="total-text">Total {{ totalAmount.toFixed(2) }} € </span>
+      </div>
+    </template>
   </DataTable>
 
   <Dialog
@@ -75,9 +88,8 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import FormCreateWorkorder from "../../production/components/FormCreateWorkorder.vue";
-import Tag from "primevue/tag";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
@@ -109,6 +121,16 @@ const confirm = useConfirm();
 const referenceStore = useReferenceStore();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
+
+const totalAmount = computed(() => {
+  if (props.salesOrderDetails) {
+    return props.salesOrderDetails.reduce(
+      (acc, detail) => acc + detail.amount,
+      0
+    );
+  }
+  return 0;
+});
 
 var selectedDetail = undefined as SalesOrderDetail | undefined;
 const dialogOptions = ref({
@@ -187,3 +209,9 @@ const onWorkOrderCreateSubmit = () => {
   emit("createWorkOrder", workOrder);
 };
 </script>
+<style scoped>
+.total {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>
