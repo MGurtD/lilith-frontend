@@ -6,6 +6,7 @@ export const REPORTS_ENTITY = "Reports";
 export const REPORTS_ENTITY_ID = "22514ad8-7d58-4add-a49a-4396a6e4bbc5";
 
 export enum REPORTS {
+  Budget = "Budget",
   Order = "SalesOrder",
   DeliveryNote = "DeliveryNote",
   Invoice = "SalesInvoice",
