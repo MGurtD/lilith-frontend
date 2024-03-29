@@ -146,13 +146,14 @@
         v-if="reference"
         title="Documentació"
         entity="referenceMaps"
-        :id="reference.id"
+        :id="(route.params.id as string)"
       />
     </section>
   </form>
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import BaseInput from "../../../components/BaseInput.vue";
 import { Reference } from "../types";
 import * as Yup from "yup";
@@ -177,6 +178,8 @@ const emit = defineEmits<{
   (e: "submit", reference: Reference): void;
   (e: "cancel"): void;
 }>();
+
+const route = useRoute();
 
 const isSales = computed(() => {
   return props.module === "sales";
