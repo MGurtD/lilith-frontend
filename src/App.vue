@@ -9,6 +9,7 @@ import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
+import { getDeviceInfo } from "./utils/functions";
 
 const store = useStore();
 const apiStore = useApiStore();
@@ -18,6 +19,8 @@ const router = useRouter();
 onMounted(() => {
   store.getAuthorization();
   spanishGeography.fetch();
+
+  console.log(getDeviceInfo());
 });
 
 const logout = () => {
@@ -58,8 +61,10 @@ const logout = () => {
 }
 
 .collapsed {
-  left: 50px;
-  width: calc(100vw - var(--side-bar-collapsed-width));
+  left: calc(var(--side-bar-collapsed-width) + var(--collapsed-side-padding));
+  width: calc(
+    100vw - var(--side-bar-collapsed-width) - var(--collapsed-side-padding)
+  );
 }
 
 .spinner {
