@@ -95,7 +95,7 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useTaxesStore } from "../../shared/store/tax";
 import FormReference from "../../shared/components/FormReference.vue";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
-import services from "../services";
+import Services from "../services";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useBudgetStore } from "../store/budget";
 import TableBudgetDetails from "../components/TableBudgetDetails.vue";
@@ -125,7 +125,7 @@ const items = [
   {
     label: "Descarregar",
     icon: PrimeIcons.FILE_WORD,
-    //command: () => printInvoice(),
+    command: () => printInvoice(),
   },
   {
     label: "Crear comanda",
@@ -133,6 +133,33 @@ const items = [
     command: () => createSalesOrder(),
   },
 ];
+
+const printInvoice = async () => {
+  const budgetReport = await Services.Budget.GetReportDataById(
+    budget.value!.id
+  );
+
+  if (budgetReport) {
+    const fileName = `Pressupost_${budget.value?.number}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      budgetReport,
+      REPORTS.Budget,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla del pressupost",
+      });
+    }
+  }
+};
 
 const detailDialogTitle = "Línia del pressupost";
 const isDetailDialogVisible = ref(false);

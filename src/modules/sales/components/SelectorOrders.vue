@@ -32,26 +32,23 @@
     <template #groupheader="slotProps">
       <div class="flex align-items-center gap-2">
         <b
-          >Comanda {{ slotProps.data.salesOrderNumber }} -
-          {{ formatDate(slotProps.data.salesOrderDate) }}</b
+          >Comanda {{ slotProps.data.number }} -
+          {{ formatDate(slotProps.data.date) }}</b
         >
       </div>
     </template>
 
-    <Column
-      header="Número"
-      field="salesOrderNumber"
-      style="width: 10%"
-    ></Column>
+    <Column selectionMode="multiple" style="width: 3%"></Column>
+    <Column header="Número" field="number" style="width: 10%"></Column>
     <Column
       header="Número client"
-      field="customerSalesOrderNumber"
+      field="customerNumber"
       style="width: 20%"
     ></Column>
 
-    <Column header="Data" field="salesOrderDate" style="width: 10%">
+    <Column header="Data" field="date" style="width: 10%">
       <template #body="slotProps">
-        {{ formatDate(slotProps.data.salesOrderDate) }}
+        {{ formatDate(slotProps.data.date) }}
       </template>
     </Column>
   </DataTable>
@@ -74,12 +71,14 @@ const emits = defineEmits<{
 
 const selectedOrder = ref("");
 const filteredOrders = computed(() => {
+  if (selectedOrder.value === "") return props.orders || [];
+
   var filtered = [] as Array<SalesOrderHeader>;
 
   if (props.orders) {
     filtered = props.orders.filter(
       (o) =>
-        o.number.toString().includes(selectedOrder.value) ||
+        o.number.includes(selectedOrder.value) ||
         o.customerNumber.includes(selectedOrder.value)
     );
   }

@@ -54,15 +54,21 @@
           <div class="mt-1"></div>
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Operari:</label>
-            <span class="summary-field">{{ workorder.operatorCost }} €</span>
+            <span class="summary-field"
+              >{{ workorder.operatorCost.toFixed(2) }} €</span
+            >
           </div>
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Máquina:</label>
-            <span class="summary-field">{{ workorder.machineCost }} €</span>
+            <span class="summary-field"
+              >{{ workorder.machineCost.toFixed(2) }} €</span
+            >
           </div>
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Material:</label>
-            <span class="summary-field">{{ workorder.materialCost }} €</span>
+            <span class="summary-field"
+              >{{ workorder.materialCost.toFixed(2) }} €</span
+            >
           </div>
         </section>
       </TabPanel>
@@ -144,18 +150,22 @@ onMounted(async () => {
   });
 });
 
-const loadViewData = async () => {
-  await referenceStore.fetchReferencesByModule("sales");
+const fetchWorkOrder = async () => {
   await workorderStore.fetchOne(id.value);
-  plantModelStore.fetchActiveModel();
-  lifecycleStore.fetchOneByName("WorkOrder");
-  productionPartStore.fetchByWorkOrderId(id.value);
-
   if (workorderStore.workorder) {
     workorderStore.workorder.plannedDate = formatDate(
       workorderStore.workorder.plannedDate
     );
   }
+};
+
+const loadViewData = async () => {
+  referenceStore.fetchReferencesByModule("sales");
+  plantModelStore.fetchActiveModel();
+  lifecycleStore.fetchOneByName("WorkOrder");
+  productionPartStore.fetchByWorkOrderId(id.value);
+
+  await fetchWorkOrder();
 };
 
 const onWorkorderSubmit = async (workorder: WorkOrder) => {
@@ -212,12 +222,14 @@ const createProductionPart = async () => {
   const created = await productionPartStore.create(productionPartRequest.value);
   if (created) {
     productionPartStore.fetchByWorkOrderId(id.value);
+    fetchWorkOrder();
   }
 };
 
 const deleteProductionPart = async (productionPart: ProductionPart) => {
   await productionPartStore.delete(productionPart.id);
   productionPartStore.fetchByWorkOrderId(id.value);
+  fetchWorkOrder();
 };
 </script>
 <style scoped>

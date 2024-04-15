@@ -1,12 +1,12 @@
 {
   "name": "lilith-frontend",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "docker-build": "npm run build && docker-compose down && docker-compose up -d",
+    "build-development": "vue-tsc && vite build --mode development --outDir dist-test",
     "preview": "vite preview"
   },
   "dependencies": {
