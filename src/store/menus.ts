@@ -184,6 +184,11 @@ export const applicationMenus = [
         ],
       },
       {
+        icon: PrimeIcons.CALENDAR,
+        title: "Torns",
+        href: "/shifts",
+      },
+      {
         icon: PrimeIcons.DATABASE,
         title: "Estats de màquina",
         href: "/machinestatus",
