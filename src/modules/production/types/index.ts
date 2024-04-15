@@ -45,6 +45,7 @@ export interface Workcenter {
   description: string;
   workcenterTypeId: string;
   areaId: string;
+  shiftId: string;
   disabled: boolean;
 }
 

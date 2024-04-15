@@ -1,17 +1,23 @@
 <template>
-  <form v-if="shift">
-    <section class="two-columns">
-      <BaseInput
+  <form v-if="shiftdetail">
+    <section class="three-columns">
+      <Calendar
         class="mb-2"
-        label="Nom"
-        v-model="shift.name"
-        :class="{
-          'p-invalid': validation.errors.baseAmount,
-        }"
-      ></BaseInput>
+        label="Inici Torn:"
+        v-model="shiftdetail.startTime"
+        timeOnly
+        hourFormat="24"
+      />
+      <Calendar
+        class="mb-2"
+        label="Fi Torn:"
+        v-model="shiftdetail.endTime"
+        timeOnly
+        hourFormat="24"
+      />
       <div class="mb-4">
-        <label class="block text-900 mb-2">Deshabilitat</label>
-        <Checkbox v-model="shift.disabled" :binary="true" />
+        <label class="block text-900 mb-2">Temps productiu:</label>
+        <Checkbox v-model="shiftdetail.isProductiveTime" :binary="true" />
       </div>
     </section>
     <Button label="Confirmar" @click="submitForm" style="float: right" />
@@ -20,30 +26,27 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { Shift } from "../types";
+import { ShiftDetail } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
+import { extractTime } from "../../../utils/functions";
 
 const props = defineProps<{
-  shift: Shift;
+  shiftdetail: ShiftDetail;
 }>();
 
 const emit = defineEmits<{
-  (e: "submit", shift: Shift): void;
+  (e: "submit", shiftdetail: ShiftDetail): void;
   (e: "cancel"): void;
 }>();
 
 const toast = useToast();
 
-const schema = Yup.object().shape({
-  name: Yup.string()
-    .required("El nom és obligatori")
-    .max(250, "El nom no pot superar els 250 carácters"),
-});
+const schema = Yup.object().shape({});
 const validation = ref({
   result: false,
   errors: {},
@@ -51,14 +54,16 @@ const validation = ref({
 
 const validate = () => {
   const formValidation = new FormValidation(schema);
-  validation.value = formValidation.validate(props.shift);
+  validation.value = formValidation.validate(props.shiftdetail);
 };
 
 const submitForm = async () => {
-  console.log("submit");
+  props.shiftdetail.startTime = extractTime(props.shiftdetail.startTime);
+  props.shiftdetail.endTime = extractTime(props.shiftdetail.endTime);
+  console.log(props.shiftdetail);
   validate();
   if (validation.value.result) {
-    emit("submit", props.shift);
+    emit("submit", props.shiftdetail);
   } else {
     let errors = "";
     Object.entries(validation.value.errors).forEach((e) => {

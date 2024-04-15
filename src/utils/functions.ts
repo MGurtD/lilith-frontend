@@ -104,3 +104,17 @@ export const createBlobAndDownloadFile = (name: string, data: any) => {
 export const getNewUuid = () => {
   return uuidv4();
 };
+
+export const extractTime = (isoString: string | null): string => {
+  if (isoString) {
+    const date = new Date(isoString);
+    // Formatea la hora, minutos y segundos
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = "00";
+    // Retorna la hora en formato HH:mm:ss
+    return `${hours}:${minutes}:${seconds}`;
+  } else {
+    return "";
+  }
+};
