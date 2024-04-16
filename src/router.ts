@@ -4,6 +4,7 @@ import PurchaseRoutes from "./modules/purchase/routes";
 import SalesRoutes from "./modules/sales/routes";
 import ProductionRoutes from "./modules/production/routes";
 import WarehouseRoutes from "./modules/warehouse/routes";
+import ShoopfloorRoutes from "./modules/shoopfloor/routes";
 
 const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
@@ -23,6 +24,7 @@ const router = createRouter({
     ...PurchaseRoutes,
     ...ProductionRoutes,
     ...WarehouseRoutes,
+    ...ShoopfloorRoutes,
   ],
 });
 
