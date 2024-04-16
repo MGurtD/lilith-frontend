@@ -255,16 +255,34 @@ export const applicationMenus = [
   },
 ];
 
+export const managmentMenus = [
+  header,
+  {
+    icon: PrimeIcons.MONEY_BILL,
+    title: "Gestió de factures",
+    href: "/purchaseinvoices-by-period",
+  },
+];
+
+export const shoopflorMenus = [
+  header,
+  {
+    icon: PrimeIcons.COG,
+    title: "Taller",
+    href: "/purchaseinvoices-by-period",
+  },
+  {
+    icon: PrimeIcons.BOX,
+    title: "Recepció de materials",
+    href: "/purchaseinvoices-by-period",
+  },
+];
+
 export const getMenusByRole = (user: User) => {
   if (user && user.username === "gestoria") {
-    return [
-      header,
-      {
-        icon: PrimeIcons.MONEY_BILL,
-        title: "Gestió de factures",
-        href: "/purchaseinvoices-by-period",
-      },
-    ];
+    return managmentMenus;
+  } else if (user && user.username === "planta") {
+    return shoopflorMenus;
   } else {
     return applicationMenus;
   }
