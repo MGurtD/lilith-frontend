@@ -80,6 +80,14 @@ body {
   cursor: pointer;
 }
 
+.p-card .p-card-content {
+  padding: 0.5rem !important;
+}
+
+.p-card .p-card-body {
+  padding: 1rem !important;
+}
+
 .p-password > input {
   width: 100% !important;
 }
