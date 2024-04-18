@@ -1,6 +1,6 @@
 <template>
   <form v-if="workcenter">
-    <section class="two-columns">
+    <section class="three-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -19,6 +19,10 @@
           'p-invalid': validation.errors.description,
         }"
       ></BaseInput>
+      <div>
+        <label class="block text-900 mb-2">Desactivat</label>
+        <Checkbox v-model="workcenter.disabled" class="w-full" :binary="true" />
+      </div>
     </section>
     <section class="three-columns">
       <div>
@@ -50,8 +54,18 @@
         />
       </div>
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox v-model="workcenter.disabled" class="w-full" :binary="true" />
+        <label class="block text-900 mb-2">Torn</label>
+        <Dropdown
+          v-model="workcenter.shiftId"
+          editable
+          :options="shiftStore.shifts"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.shiftId,
+          }"
+        />
       </div>
     </section>
 
@@ -73,6 +87,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { usePlantModelStore } from "../store/plantmodel";
+import { useShiftStore } from "../store/shift";
 
 const props = defineProps<{
   workcenter: Workcenter;
@@ -85,6 +100,7 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const plantModelStore = usePlantModelStore();
+const shiftStore = useShiftStore();
 const { workcenter } = storeToRefs(plantModelStore);
 
 const schema = Yup.object().shape({
@@ -96,6 +112,7 @@ const schema = Yup.object().shape({
     .max(250, "La descripció pot superar els 250 carácters"),
   workcenterTypeId: Yup.string().required("El tipus es obligatori"),
   areaId: Yup.string().required("L'area es obligatoria"),
+  shiftId: Yup.string().required("El torn es obligatori"),
 });
 const validation = ref({
   result: false,

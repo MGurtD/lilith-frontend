@@ -52,12 +52,12 @@
         </div>
       </div>
     </template>
-      <Column field="name" header="Nom" style="width: 20%" ></Column>
-      <Column field="description" header="Descripció" style="width: 40%"></Column>
-      <Column header="Tipus" style="width: 15%">
-        <template #body="slotProps">
-          {{ getWorkcenterTypeNameById(slotProps.data.workcenterTypeId) }}
-        </template>
+    <Column field="name" header="Nom" style="width: 20%"></Column>
+    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column header="Tipus" style="width: 15%">
+      <template #body="slotProps">
+        {{ getWorkcenterTypeNameById(slotProps.data.workcenterTypeId) }}
+      </template>
     </Column>
     <Column header="Area" style="width: 15%">
       <template #body="slotProps">
@@ -92,17 +92,20 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { Workcenter } from "../types";
 import { AreaService } from "../services";
+import { useShiftStore } from "../store/shift";
 
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
 const confirm = useConfirm();
 const plantmodelStore = usePlantModelStore();
+const shiftStore = useShiftStore();
 
 onMounted(async () => {
   await plantmodelStore.fetchWorkcenters();
   await plantmodelStore.fetchWorkcenterTypes();
   await plantmodelStore.fetchAreas();
+  await shiftStore.fetchAllShifts();
 
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,

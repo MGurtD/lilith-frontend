@@ -45,6 +45,7 @@ export interface Workcenter {
   description: string;
   workcenterTypeId: string;
   areaId: string;
+  shiftId: string;
   disabled: boolean;
 }
 
@@ -258,4 +259,19 @@ export interface DetailedWorkOrder {
   workcenterDescription: string;
   workcenterCost: number;
   preferredWorkcenter: boolean;
+}
+
+export interface Shift {
+  id: string;
+  name: string;
+  disabled: boolean;
+  details: Array<ShiftDetail>;
+}
+
+export interface ShiftDetail {
+  id: string;
+  startTime: string | null;
+  endTime: string | null;
+  isProductiveTime: boolean;
+  shiftId: string;
 }
