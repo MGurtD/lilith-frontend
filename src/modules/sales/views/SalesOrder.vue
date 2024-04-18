@@ -187,6 +187,8 @@ const loadView = async () => {
     // Get related budget
     if (salesOrder.value.budgetId) {
       await budgetStore.GetById(salesOrder.value.budgetId);
+    } else {
+      budgetStore.budget = undefined;
     }
   }
 
