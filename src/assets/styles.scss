@@ -2,6 +2,7 @@
   --top-panel-height: 4rem;
   --side-bar-width: 250px;
   --side-bar-collapsed-width: 50px;
+  --collapsed-side-padding: 15px;
 }
 
 body {
@@ -77,6 +78,14 @@ body {
 
 .grid_copy_column_button {
   cursor: pointer;
+}
+
+.p-card .p-card-content {
+  padding: 0.5rem !important;
+}
+
+.p-card .p-card-body {
+  padding: 1rem !important;
 }
 
 .p-password > input {

@@ -58,8 +58,10 @@ const logout = () => {
 }
 
 .collapsed {
-  left: 50px;
-  width: calc(100vw - var(--side-bar-collapsed-width));
+  left: calc(var(--side-bar-collapsed-width) + var(--collapsed-side-padding));
+  width: calc(
+    100vw - var(--side-bar-collapsed-width) - var(--collapsed-side-padding)
+  );
 }
 
 .spinner {
