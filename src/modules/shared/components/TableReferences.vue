@@ -138,7 +138,9 @@ const filteredData = computed(() => {
   if (!props.references) return [];
 
   if (filter.value.code.length > 0) {
-    return props.references.filter((r) => r.code.includes(filter.value.code));
+    return props.references.filter((r) =>
+      r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+    );
   } else {
     return referenceStore.references;
   }
