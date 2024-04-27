@@ -13,12 +13,22 @@
         <span>Clients</span>
       </template>
       <DataTable
-        :value="customerStore.customers"
+        :value="filteredData"
         tableStyle="min-width: 100%"
+        sort-field="comercialName"
+        :sort-order="1"
         scrollable
         scrollHeight="80vh"
         @row-click="editCustomer"
       >
+        <template #header>
+          <div class="references-header">
+            <div class="references-filter">
+              <label>Nom comercial</label>
+              <BaseInput v-model="filter.code" />
+            </div>
+          </div>
+        </template>
         <Column
           field="comercialName"
           header="Nom comercial"
@@ -95,7 +105,7 @@ import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useCustomersStore } from "../store/customers";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Customer, CustomerType } from "../types";
@@ -107,6 +117,22 @@ const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
 const customerStore = useCustomersStore();
+
+const filter = ref({
+  code: "",
+});
+
+const filteredData = computed(() => {
+  if (!customerStore.customers) return [];
+
+  if (filter.value.code.length > 0) {
+    return customerStore.customers.filter((r: Customer) =>
+      r.comercialName.toLowerCase().includes(filter.value.code.toLowerCase())
+    );
+  } else {
+    return customerStore.customers;
+  }
+});
 
 onMounted(async () => {
   await customerStore.fetchCustomers();
@@ -197,3 +223,15 @@ const createButtonClick = () => {
   }
 };
 </script>
+<style scoped>
+.references-header {
+  display: grid;
+  grid-template-columns: 3fr 0.1fr;
+}
+.references-filter {
+  display: grid;
+  grid-template-columns: 0.3fr 0.7fr;
+  align-items: center;
+  width: 25vw;
+}
+</style>
