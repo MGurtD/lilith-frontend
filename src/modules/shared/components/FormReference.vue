@@ -9,7 +9,7 @@
     <br />
   </div>
   <form v-if="reference">
-    <section class="three-columns">
+    <section class="four-columns">
       <div class="mt-1">
         <BaseInput
           class="mb-2"
@@ -39,6 +39,9 @@
           id="version"
           v-model="reference.version"
         />
+      </div>
+      <div class="mt-1" v-if="isSales">
+        <DropdownCustomers label="Client" v-model="reference.customerId" />
       </div>
       <div class="mt-1" v-if="isPurchase">
         <label class="block text-900 mb-2">Tipus de material</label>
@@ -161,6 +164,7 @@ import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
+import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../../types/component";

@@ -7,7 +7,7 @@
   >
     <template #filter>
       <div
-        class="flex flex-wrap align-items-center justify-content-between gap-2"
+        class="flex flex-wrap align-items-center justify-content-between gap-1"
       >
         <div class="datatable-filter">
           <div class="filter-field">
