@@ -4,6 +4,8 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
+    paginator
+    :rows="12"
     @row-click="editRow"
   >
     <template #header>
@@ -15,7 +17,7 @@
             <label>Codi</label>
             <BaseInput v-model="filter.code" />
           </div>
-          <div class="filter-field">
+          <div class="filter-field" v-if="isSales">
             <label>Client</label>
             <DropdownCustomers label="" v-model="filter.customerId" />
           </div>
