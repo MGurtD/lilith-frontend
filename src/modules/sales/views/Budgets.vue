@@ -18,7 +18,7 @@
           <div class="filter-field">
             <ExerciseDatePicker
               :exercises="sharedStore.exercises"
-              @range-selected="filterSalesOrder"
+              @range-selected="filterBudget"
             />
           </div>
           <div class="filter-field">
@@ -40,7 +40,7 @@
             :icon="PrimeIcons.FILTER"
             rounded
             raised
-            @click="filterSalesOrder"
+            @click="filterBudget"
           />
           <Button
             class="datatable-button mr-2"
@@ -101,7 +101,7 @@
           "
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
-          @click="deleteSalesInvoice($event, slotProps.data)"
+          @click="deleteBudget($event, slotProps.data)"
         />
       </template>
     </Column>
@@ -137,7 +137,7 @@ import {
   getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
-import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
+import { Budget, CreateSalesHeaderRequest } from "../types";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
 import { useBudgetStore } from "../store/budget";
@@ -171,7 +171,7 @@ onMounted(async () => {
   await sharedStore.fetchMasterData();
 
   setCurrentYear();
-  await filterSalesOrder();
+  await filterBudget();
 
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
@@ -212,7 +212,7 @@ const createButtonClick = () => {
   dialogOptions.visible = true;
 };
 
-const filterSalesOrder = async () => {
+const filterBudget = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
       store.exercisePicker.dates[0]
@@ -259,14 +259,26 @@ const editRow = (row: DataTableRowClickEvent) => {
   }
 };
 
-const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
+const deleteBudget = async (event: any, budget: Budget) => {
+  await budgetStore.GetAssociatedSalesOrders(budget.id);
+
+  if (budgetStore.order) {
+    toast.add({
+      severity: "warn",
+      summary: "No es pot eliminar",
+      detail: `El pressupost té la comanda ${budgetStore.order.number} associada`,
+      life: 5000,
+    });
+    return;
+  }
+
   confirm.require({
     message: `Està segur que vol eliminar el pressupost?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await budgetStore.Delete(order.id);
+      const deleted = await budgetStore.Delete(budget.id);
       if (deleted) {
         toast.add({
           severity: "success",
@@ -274,7 +286,7 @@ const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
           life: 3000,
         });
 
-        await filterSalesOrder();
+        await filterBudget();
       }
     },
   });
