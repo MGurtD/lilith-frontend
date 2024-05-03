@@ -54,6 +54,7 @@
   </TabView>
 
   <Dialog
+    v-if="salesOrder"
     :closable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
@@ -64,6 +65,7 @@
         <FormSalesOrderDetail
           v-if="selectedSalesOrderDetail"
           :formAction="formDetailMode"
+          :salesOrder="salesOrder"
           :salesOrderDetail="selectedSalesOrderDetail"
           @submit="onFormSalesOrderReferenceSubmit"
         />
@@ -73,6 +75,7 @@
           v-if="referenceStore.reference"
           :module="'sales'"
           :reference="referenceStore.reference"
+          :defaultCustomerId="salesOrder.customerId"
           @submit="onFormReferenceSubmit"
         />
       </TabPanel>
