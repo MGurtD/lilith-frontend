@@ -6,7 +6,7 @@
       filter
       :filter-fields="['code', 'description']"
       editable
-      :options="referenceStore.references"
+      :options="filteredReferences"
       placeholder="Selecciona..."
       optionValue="id"
       :optionLabel="(r) => referenceStore.getShortNameById(r.id)"
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { computed } from "vue";
 import { useReferenceStore } from "../store/reference";
 import { Reference } from "../types";
 
@@ -39,6 +40,7 @@ const props = defineProps<{
   label: string;
   modelValue: string | null | undefined;
   fullName: boolean;
+  customerId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -52,4 +54,16 @@ const getReferenceName = (reference: Reference) => {
     ? referenceStore.getFullName(reference)
     : referenceStore.getShortName(reference);
 };
+
+const filteredReferences = computed(() => {
+  if (!referenceStore.references) return [];
+  if (!props.customerId) return referenceStore.references;
+
+  return referenceStore.references.filter((r) => {
+    return (
+      (props.customerId && r.customerId === props.customerId) ||
+      r.customerId === null
+    );
+  });
+});
 </script>

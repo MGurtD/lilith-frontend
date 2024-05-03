@@ -51,12 +51,14 @@
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
     :modal="true"
+    v-if="budget"
   >
     <TabView v-model:activeIndex="formsActiveIndex">
       <TabPanel header="Línea">
         <FormBudgetDetail
-          v-if="budgetDetail"
+          v-if="budget && budgetDetail"
           :formAction="formDetailMode"
+          :budget="budget"
           :detail="budgetDetail"
           @submit="onFormSalesOrderReferenceSubmit"
         />
@@ -66,6 +68,7 @@
           v-if="referenceStore.reference"
           :module="'sales'"
           :reference="referenceStore.reference"
+          :default-customer-id="budget.customerId"
           @submit="onFormReferenceSubmit"
         />
       </TabPanel>

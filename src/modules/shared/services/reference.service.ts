@@ -1,4 +1,3 @@
-import { Ref } from "vue";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 import { Reference, ReferenceFormat } from "../types";
@@ -6,6 +5,16 @@ import { Reference, ReferenceFormat } from "../types";
 export class ReferenceService extends BaseService<Reference> {
   async getByModule(module: string): Promise<Array<Reference> | undefined> {
     const response = await this.apiClient.get(`${this.resource}/${module}`);
+    if (response.status === 200) {
+      return response.data as Array<Reference>;
+    }
+  }
+  async getSalesReferencesByCustomer(
+    customerId: string
+  ): Promise<Array<Reference> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/sales/customer/${customerId}`
+    );
     if (response.status === 200) {
       return response.data as Array<Reference>;
     }

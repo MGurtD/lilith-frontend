@@ -70,6 +70,7 @@ export interface Reference {
   cost: number;
   price: number;
   disabled: boolean;
+  customerId: string;
   referenceTypeId: string | null;
   referenceFormatId: string | null;
   lastCost: number;
