@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { computed, ref } from "vue";
-import { Budget, BudgetDetail, SalesOrderDetail } from "../types";
+import { Budget, BudgetDetail } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,

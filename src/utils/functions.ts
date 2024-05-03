@@ -71,6 +71,14 @@ export const formatDateTime = (dateTime: string) => {
   return formatter.format(new Date(dateTime));
 };
 
+export const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+
+    currency: "EUR",
+  }).format(value);
+};
+
 export const convertDateTimeToJSON = (dateTime: any): any => {
   if (dateTime instanceof Date) {
     const hoursDiff = dateTime.getHours() - dateTime.getTimezoneOffset() / 60;

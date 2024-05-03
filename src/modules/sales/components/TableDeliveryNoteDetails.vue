@@ -5,6 +5,8 @@
     class="p-datatable-sm"
     rowGroupMode="subheader"
     groupRowsBy="salesOrderNumber"
+    sortMode="multiple"
+    :sortOrder="1"
   >
     <template #header>
       <slot name="header"></slot>
@@ -26,34 +28,41 @@
     <Column field="salesOrderNumber" header="Comanda" style="width: 5%" />
     <Column field="" header="" style="width: 5%" />
     <Column field="quantity" header="Quantitat" style="width: 5%" />
-    <Column header="Referència" style="width: 10%">
+    <Column
+      header="Referència"
+      field="reference.code"
+      sortable
+      style="width: 10%"
+    >
       <template #body="slotProps">
-        {{ referenceStore.getShortName(slotProps.data.reference) }}
+        <LinkReference :id="slotProps.data.referenceId" />
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 30%" />
     <Column field="unitPrice" header="Preu un." style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitPrice) }}
+      </template>
     </Column>
     <Column field="amount" header="Total" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.amount) }}
+      </template>
     </Column>
   </DataTable>
 </template>
 <script setup lang="ts">
+import LinkReference from "../../shared/components/LinkReference.vue";
 import { PrimeIcons } from "primevue/api";
 import { SalesOrderHeader } from "../types";
 import { computed } from "vue";
-import { formatDate } from "../../../utils/functions";
-import { useReferenceStore } from "../../shared/store/reference";
+import { formatDate, formatCurrency } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 
 const props = defineProps<{
   orders: Array<SalesOrderHeader> | undefined;
   canDelete: boolean;
 }>();
-
-const referenceStore = useReferenceStore();
 
 const treeTableData = computed(() => {
   if (!props.orders) return [];
