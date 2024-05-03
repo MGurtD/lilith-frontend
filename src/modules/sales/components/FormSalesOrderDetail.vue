@@ -4,6 +4,7 @@
       <DropdownReference
         label="Referència"
         v-model="salesOrderDetail.referenceId"
+        :customerId="salesOrder.customerId"
         :fullName="true"
         @update:modelValue="getReferenceInfo()"
       ></DropdownReference>
@@ -58,7 +59,7 @@
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { computed, ref } from "vue";
-import { SalesOrderDetail } from "../types";
+import { SalesOrderDetail, SalesOrderHeader } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -72,6 +73,7 @@ const referenceStore = useReferenceStore();
 const toast = useToast();
 const props = defineProps<{
   formAction: FormActionMode;
+  salesOrder: SalesOrderHeader;
   salesOrderDetail: SalesOrderDetail;
 }>();
 const emit = defineEmits<{
