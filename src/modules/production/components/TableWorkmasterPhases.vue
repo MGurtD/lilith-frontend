@@ -3,6 +3,8 @@
     @row-click="onEditRow"
     :value="workmasterPhases"
     tableStyle="min-width: 100%"
+    sort-field="code"
+    :sort-order="1"
   >
     <template #header>
       <div
@@ -12,7 +14,7 @@
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
-    <Column field="code" header="Codi" style="width: 10%"></Column>
+    <Column field="code" header="Codi" sortable style="width: 10%"></Column>
     <Column field="description" header="Descripció" style="width: 20%"></Column>
     <Column header="Tipus de màquina" style="width: 15%">
       <template #body="slotProps">
