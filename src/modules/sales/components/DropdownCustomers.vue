@@ -35,7 +35,7 @@ onMounted(() => {
 
 const props = defineProps<{
   label: string;
-  modelValue: string | undefined;
+  modelValue: string | null | undefined;
 }>();
 
 const emit = defineEmits<{
