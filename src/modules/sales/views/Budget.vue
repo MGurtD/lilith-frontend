@@ -36,14 +36,6 @@
         </template>
       </TableBudgetDetails>
     </TabPanel>
-    <TabPanel header="Fitxers">
-      <FileEntityPicker
-        v-if="budget"
-        entity="Budget"
-        :id="budget.id"
-        title=""
-      />
-    </TabPanel>
   </TabView>
 
   <Dialog
@@ -284,6 +276,7 @@ const onFormReferenceSubmit = async (reference: Reference) => {
 
   if (result) {
     // Clean reference form
+    referenceStore.reference = undefined;
     referenceStore.setNewReference(getNewUuid());
     // Go to details tab
     formsActiveIndex.value = 0;
