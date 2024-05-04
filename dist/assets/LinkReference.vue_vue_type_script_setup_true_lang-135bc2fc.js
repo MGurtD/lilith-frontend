@@ -1,1 +1,0 @@
-import{u as n}from"./reference-79c88333.js";import{d as s,k as o,a as t,c as a,D as c,l as i}from"./index-1f9e3570.js";const m=["href"],u=s({__name:"LinkReference",props:{id:{}},setup(p){const e=n();return(r,d)=>o(e).module&&r.id?(t(),a("a",{key:0,href:`/reference/${o(e).module}/${r.id}`,class:"p-link"},c(o(e).getShortNameById(r.id)),9,m)):i("",!0)}});export{u as _};
