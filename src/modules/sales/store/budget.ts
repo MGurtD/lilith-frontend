@@ -27,7 +27,12 @@ export const useBudgetStore = defineStore({
         }
       }
     },
-    async GetFiltered(startTime: string, endTime: string, customerId?: string) {
+    async GetFiltered(
+      startTime: string,
+      endTime: string,
+      customerId?: string,
+      statusId?: string
+    ) {
       if (customerId) {
         this.budgets = await SalesServices.Budget.GetBetweenDatesAndCustomer(
           startTime,
@@ -39,6 +44,10 @@ export const useBudgetStore = defineStore({
           startTime,
           endTime
         );
+      }
+
+      if (statusId && this.budgets) {
+        this.budgets = this.budgets.filter((b) => b.statusId === statusId);
       }
     },
     async GetAssociatedSalesOrders(budgetId: string) {

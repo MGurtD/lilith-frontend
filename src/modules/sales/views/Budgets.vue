@@ -14,7 +14,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker
               :exercises="sharedStore.exercises"
@@ -22,16 +22,12 @@
             />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Client</label>
-            <Dropdown
-              v-model="filter.customerId"
-              editable
-              :options="customerStore.customers"
-              optionValue="id"
-              optionLabel="comercialName"
-              class="w-full"
-              showClear
-            />
+            <label class="block text-900">Client</label>
+            <DropdownCustomers label="" v-model="filter.customerId" />
+          </div>
+          <div class="filter-field">
+            <label class="block text-900">Estat</label>
+            <DropdownLifecycle label="" v-model="filter.statusId" />
           </div>
         </div>
         <div class="datatable-buttons">
@@ -122,6 +118,8 @@
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
+import DropdownCustomers from "../components/DropdownCustomers.vue";
+import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -154,7 +152,7 @@ const lifecycleStore = useLifecyclesStore();
 
 const filter = ref({
   customerId: undefined as string | undefined,
-  referenceId: undefined as string | undefined,
+  statusId: undefined as string | undefined,
 });
 const dialogOptions = reactive({
   visible: false,
@@ -193,8 +191,11 @@ const setCurrentYear = () => {
 };
 
 const cleanFilter = () => {
-  store.cleanExercisePicker();
   filter.value.customerId = undefined;
+  filter.value.statusId = undefined;
+  setCurrentYear();
+
+  filterBudget();
 };
 
 const createRequest = ref({} as CreateSalesHeaderRequest);
@@ -219,7 +220,12 @@ const filterBudget = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await budgetStore.GetFiltered(startTime, endTime, filter.value.customerId);
+    await budgetStore.GetFiltered(
+      startTime,
+      endTime,
+      filter.value.customerId,
+      filter.value.statusId
+    );
   } else {
     toast.add({
       severity: "info",

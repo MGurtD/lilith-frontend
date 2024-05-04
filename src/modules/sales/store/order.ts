@@ -37,7 +37,12 @@ export const useSalesOrderStore = defineStore({
     async GetById(id: string) {
       this.salesOrder = await SalesServices.SalesOrder.getById(id);
     },
-    async GetFiltered(startTime: string, endTime: string, customerId?: string) {
+    async GetFiltered(
+      startTime: string,
+      endTime: string,
+      customerId?: string,
+      statusId?: string
+    ) {
       if (customerId) {
         this.salesOrders =
           await SalesServices.SalesOrder.GetBetweenDatesAndCustomer(
@@ -49,6 +54,12 @@ export const useSalesOrderStore = defineStore({
         this.salesOrders = await SalesServices.SalesOrder.GetBetweenDates(
           startTime,
           endTime
+        );
+      }
+
+      if (statusId && this.salesOrders) {
+        this.salesOrders = this.salesOrders.filter(
+          (b) => b.statusId === statusId
         );
       }
     },
