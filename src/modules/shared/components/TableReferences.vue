@@ -24,6 +24,14 @@
         </div>
         <div class="datatable-buttons">
           <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+          <Button
+            class="datatable-button mr-2"
             :icon="PrimeIcons.PLUS"
             rounded
             raised
@@ -131,6 +139,11 @@ const filter = ref({
   code: "",
   customerId: "",
 });
+
+const cleanFilter = () => {
+  filter.value.code = "";
+  filter.value.customerId = "";
+};
 
 const props = defineProps<{
   module: string;
