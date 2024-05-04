@@ -149,7 +149,7 @@
         v-if="reference"
         title="Documentació"
         entity="referenceMaps"
-        :id="(route.params.id as string)"
+        :id="reference.id"
       />
     </section>
   </form>
