@@ -31,18 +31,16 @@
     <Column header="Referència" style="width: 10%">
       <template #body="slotProps">
         <span v-if="slotProps.data.deliveryNoteDetail">
-          {{
-            referenceStore.getShortNameById(
-              slotProps.data.deliveryNoteDetail.referenceId
-            )
-          }}
+          <LinkReference :id="slotProps.data.deliveryNoteDetail.referenceId" />
         </span>
         <span v-else>--</span>
       </template>
     </Column>
     <Column header="Descripció" field="description" style="width: 40%"></Column>
     <Column header="Preu unitat" field="unitCost" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.unitCost }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitCost) }}
+      </template>
     </Column>
     <Column header="IVA" style="width: 10%">
       <template #body="slotProps">
@@ -50,7 +48,9 @@
       </template>
     </Column>
     <Column header="Total" field="totalCost" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.amount) }}
+      </template>
     </Column>
     <Column style="width: 10%">
       <template #body="slotProps">
@@ -65,12 +65,13 @@
   </DataTable>
 </template>
 <script setup lang="ts">
+import LinkReference from "../../shared/components/LinkReference.vue";
 import { computed, onMounted } from "vue";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSharedDataStore } from "../../shared/store/masterData";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, formatCurrency } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
 import _ from "lodash";

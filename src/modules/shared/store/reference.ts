@@ -71,6 +71,7 @@ export const useReferenceStore = defineStore({
         isService: false,
         lastCost: 0,
         workMasterCost: 0,
+        customerId: null,
       } as Reference;
     },
     async fetchReferences() {
@@ -82,6 +83,14 @@ export const useReferenceStore = defineStore({
     async fetchReferencesByModule(module: string) {
       this.module = module;
       this.references = await referenceService.getByModule(module);
+      if (!this.referenceFormats)
+        this.referenceFormats = await referenceService.getReferenceFormats();
+    },
+    async fetchReferencesByCustomer(customerId: string) {
+      this.module = "sales";
+      this.references = await referenceService.getSalesReferencesByCustomer(
+        customerId
+      );
       if (!this.referenceFormats)
         this.referenceFormats = await referenceService.getReferenceFormats();
     },

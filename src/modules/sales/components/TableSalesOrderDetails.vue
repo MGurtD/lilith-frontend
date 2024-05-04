@@ -4,14 +4,22 @@
     :value="salesOrderDetails"
     tableStyle="min-width: 100%"
     class="p-datatable-sm"
+    sortMode="single"
+    sortField="reference.code"
+    :sortOrder="1"
   >
     <template #header>
       <slot name="header"></slot>
     </template>
     <Column field="quantity" header="Quantitat" style="width: 10%" />
-    <Column header="Referencia" style="width: 15%">
+    <Column
+      header="Referencia"
+      field="reference.code"
+      sortable
+      style="width: 15%"
+    >
       <template #body="slotProps">
-        {{ referenceStore.getShortNameById(slotProps.data.referenceId) }}
+        <LinkReference :id="slotProps.data.referenceId" />
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 30%" />
@@ -42,19 +50,23 @@
     </Column>
     <Column field="workMasterCost" header="Cost Teóric" style="width: 10%">
       <template #body="slotProps">
-        {{ slotProps.data.workMasterCost.toFixed(2) }} €
+        {{ formatCurrency(slotProps.data.workMasterCost) }}
       </template>
     </Column>
     <Column field="lastCost" header="Últim Cost" style="width: 10%">
       <template #body="slotProps">
-        {{ slotProps.data.lastCost.toFixed(2) }} €
+        {{ formatCurrency(slotProps.data.lastCost) }}
       </template>
     </Column>
     <Column field="unitPrice" header="Preu un." style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.unitPrice }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitPrice) }}
+      </template>
     </Column>
     <Column field="amount" header="Total" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.amount) }}
+      </template>
     </Column>
     <Column style="width: 5%" v-if="!salesOrder.deliveryNoteId">
       <template #body="slotProps">
@@ -68,7 +80,7 @@
     </Column>
     <template #footer>
       <div class="total">
-        <span class="total-text">Total {{ totalAmount.toFixed(2) }} € </span>
+        <span class="total-text">Total {{ formatCurrency(totalAmount) }} </span>
       </div>
     </template>
   </DataTable>
@@ -88,6 +100,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import LinkReference from "../../shared/components/LinkReference.vue";
 import { computed, ref } from "vue";
 import FormCreateWorkorder from "../../production/components/FormCreateWorkorder.vue";
 import { PrimeIcons } from "primevue/api";
@@ -103,7 +116,10 @@ import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useWorkOrderStore } from "../../production/store/workorder";
-import { convertDDMMYYYYToDate } from "../../../utils/functions";
+import {
+  convertDDMMYYYYToDate,
+  formatCurrency,
+} from "../../../utils/functions";
 
 const props = defineProps<{
   salesOrder: SalesOrderHeader;

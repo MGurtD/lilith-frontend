@@ -69,9 +69,10 @@ import {
 } from "../types";
 import { DialogOptions, FormActionMode } from "../../../types/component";
 import { useWorkOrderStore } from "../store/workorder";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
-const router = useRouter();
+const toast = useToast();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const plantModelStore = usePlantModelStore();
@@ -115,6 +116,15 @@ const loadViewData = async () => {
 
 const onWorkOrderPhaseSubmit = async (phase: WorkOrderPhase) => {
   const updated = await workorderStore.updatePhase(phaseId.value, phase);
+
+  if (updated) {
+    toast.add({
+      severity: "success",
+      summary: "Fase actualitzada",
+      detail: `La fase ${phase.code} ha estat actualitzada correctament`,
+    });
+  }
+
   //if (updated) router.back();
 };
 const formAction = ref(FormActionMode.CREATE);

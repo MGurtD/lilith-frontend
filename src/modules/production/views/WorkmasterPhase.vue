@@ -69,9 +69,10 @@ import {
   WorkMasterPhaseDetail,
 } from "../types";
 import { DialogOptions, FormActionMode } from "../../../types/component";
+import { useToast } from "primevue/usetoast";
 
 const route = useRoute();
-const router = useRouter();
+const toast = useToast();
 const store = useStore();
 const referenceStore = useReferenceStore();
 const plantModelStore = usePlantModelStore();
@@ -117,7 +118,13 @@ const loadViewData = async () => {
 
 const onWorkmasterPhaseSubmit = async (phase: WorkMasterPhase) => {
   const updated = await workmasterStore.updatePhase(phaseId.value, phase);
-  //if (updated) router.back();
+  if (updated) {
+    toast.add({
+      severity: "success",
+      summary: "Fase actualitzada",
+      detail: `La fase ${phase.code} ha estat actualitzada correctament`,
+    });
+  }
 };
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref(undefined as WorkMasterPhaseDetail | undefined);

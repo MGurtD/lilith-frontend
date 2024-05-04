@@ -36,14 +36,6 @@
         </template>
       </TableBudgetDetails>
     </TabPanel>
-    <TabPanel header="Fitxers">
-      <FileEntityPicker
-        v-if="budget"
-        entity="Budget"
-        :id="budget.id"
-        title=""
-      />
-    </TabPanel>
   </TabView>
 
   <Dialog
@@ -51,12 +43,14 @@
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
     :modal="true"
+    v-if="budget"
   >
     <TabView v-model:activeIndex="formsActiveIndex">
       <TabPanel header="Línea">
         <FormBudgetDetail
-          v-if="budgetDetail"
+          v-if="budget && budgetDetail"
           :formAction="formDetailMode"
+          :budget="budget"
           :detail="budgetDetail"
           @submit="onFormSalesOrderReferenceSubmit"
         />
@@ -66,6 +60,7 @@
           v-if="referenceStore.reference"
           :module="'sales'"
           :reference="referenceStore.reference"
+          :default-customer-id="budget.customerId"
           @submit="onFormReferenceSubmit"
         />
       </TabPanel>
@@ -281,6 +276,7 @@ const onFormReferenceSubmit = async (reference: Reference) => {
 
   if (result) {
     // Clean reference form
+    referenceStore.reference = undefined;
     referenceStore.setNewReference(getNewUuid());
     // Go to details tab
     formsActiveIndex.value = 0;

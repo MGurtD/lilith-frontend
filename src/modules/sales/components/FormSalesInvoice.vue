@@ -38,17 +38,23 @@
     <section class="four-columns">
       <div class="mt-1">
         <label class="block text-900 mb-2">Base</label>
-        <span class="summary-field">{{ invoice.baseAmount }} €</span>
+        <span class="summary-field">{{
+          formatCurrency(invoice.baseAmount)
+        }}</span>
       </div>
 
       <div class="mt-1">
         <label class="block text-900 mb-2">Impostos</label>
-        <span class="summary-field">{{ invoice.taxAmount }} €</span>
+        <span class="summary-field">{{
+          formatCurrency(invoice.taxAmount)
+        }}</span>
       </div>
 
       <div class="mt-1">
         <label class="block text-900 mb-2">Total</label>
-        <span class="summary-field">{{ invoice.netAmount }} €</span>
+        <span class="summary-field">{{
+          formatCurrency(invoice.netAmount)
+        }}</span>
       </div>
     </section>
   </form>
@@ -58,6 +64,7 @@
 import { computed, ref } from "vue";
 import { SalesInvoice } from "../types";
 import * as Yup from "yup";
+import { formatCurrency } from "../../../utils/functions";
 import {
   FormValidation,
   FormValidationResult,

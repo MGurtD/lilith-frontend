@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { FileService } from "../api/services/file.service";
 import { File } from "../types";
 import Toolbar from "primevue/toolbar";
@@ -20,12 +20,35 @@ const confirm = useConfirm();
 const service = new FileService();
 const files = ref(undefined as undefined | Array<File>);
 
+// Crea una referencia reactiva para almacenar la prop
+const idRef = ref(props.id);
+
+// Usa la función watch para observar cambios en la prop
+watch(
+  () => props.id,
+  (newValue, oldValue) => {
+    // Actualiza la referencia reactiva
+    idRef.value = newValue;
+
+    // Aquí puedes realizar acciones adicionales cuando la prop cambia
+    console.log(
+      `FileEntityPicker. entity > ${props.entity} | id > ${newValue}`
+    );
+
+    if (newValue && newValue !== oldValue) {
+      fetchData();
+    }
+  }
+);
+
 const fetchData = async () => {
-  files.value = await service.GetEntityFiles(props.entity, props.id);
+  files.value = await service.GetEntityFiles(props.entity, idRef.value);
 };
 
 onMounted(async () => {
-  await fetchData();
+  setTimeout(() => {
+    fetchData();
+  }, 200);
 });
 
 const uploadFile = async () => {

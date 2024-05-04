@@ -40,7 +40,7 @@
         </TableProductionParts>
       </TabPanel>
       <TabPanel header="Costs" v-if="workorder">
-        <section class="three-columns">
+        <section class="four-columns">
           <div class="mt-1">
             <label class="block text-900 mb-2">Temps Operari:</label>
             <span class="summary-field"
@@ -52,23 +52,35 @@
             <span class="summary-field">{{ workorder.machineTime }} mins.</span>
           </div>
           <div class="mt-1"></div>
+        </section>
+        <section class="four-columns mt-4">
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Operari:</label>
-            <span class="summary-field"
-              >{{ workorder.operatorCost.toFixed(2) }} €</span
-            >
+            <span class="summary-field">{{
+              formatCurrency(workorder.operatorCost)
+            }}</span>
           </div>
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Máquina:</label>
-            <span class="summary-field"
-              >{{ workorder.machineCost.toFixed(2) }} €</span
-            >
+            <span class="summary-field">{{
+              formatCurrency(workorder.machineCost)
+            }}</span>
           </div>
           <div class="mt-1">
             <label class="block text-900 mb-2">Cost Material:</label>
-            <span class="summary-field"
-              >{{ workorder.materialCost.toFixed(2) }} €</span
-            >
+            <span class="summary-field">{{
+              formatCurrency(workorder.materialCost)
+            }}</span>
+          </div>
+          <div class="mt-1">
+            <label class="block text-900 mb-2">Cost Total:</label>
+            <span class="summary-field">{{
+              formatCurrency(
+                workorder.machineCost +
+                  workorder.materialCost +
+                  workorder.operatorCost
+              )
+            }}</span>
           </div>
         </section>
       </TabPanel>
@@ -107,6 +119,7 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import {
   convertDateTimeToJSON,
   formatDate,
+  formatCurrency,
   getNewUuid,
 } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";

@@ -14,24 +14,20 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker
               :exercises="sharedStore.exercises"
-              @range-selected="filterSalesOrder"
+              @range-selected="filterBudget"
             />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Client</label>
-            <Dropdown
-              v-model="filter.customerId"
-              editable
-              :options="customerStore.customers"
-              optionValue="id"
-              optionLabel="comercialName"
-              class="w-full"
-              showClear
-            />
+            <label class="block text-900">Client</label>
+            <DropdownCustomers label="" v-model="filter.customerId" />
+          </div>
+          <div class="filter-field">
+            <label class="block text-900">Estat</label>
+            <DropdownLifecycle label="" v-model="filter.statusId" />
           </div>
         </div>
         <div class="datatable-buttons">
@@ -40,7 +36,7 @@
             :icon="PrimeIcons.FILTER"
             rounded
             raised
-            @click="filterSalesOrder"
+            @click="filterBudget"
           />
           <Button
             class="datatable-button mr-2"
@@ -101,7 +97,7 @@
           "
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
-          @click="deleteSalesInvoice($event, slotProps.data)"
+          @click="deleteBudget($event, slotProps.data)"
         />
       </template>
     </Column>
@@ -122,6 +118,8 @@
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
+import DropdownCustomers from "../components/DropdownCustomers.vue";
+import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -137,7 +135,7 @@ import {
   getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
-import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
+import { Budget, CreateSalesHeaderRequest } from "../types";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
 import { useBudgetStore } from "../store/budget";
@@ -154,7 +152,7 @@ const lifecycleStore = useLifecyclesStore();
 
 const filter = ref({
   customerId: undefined as string | undefined,
-  referenceId: undefined as string | undefined,
+  statusId: undefined as string | undefined,
 });
 const dialogOptions = reactive({
   visible: false,
@@ -171,7 +169,7 @@ onMounted(async () => {
   await sharedStore.fetchMasterData();
 
   setCurrentYear();
-  await filterSalesOrder();
+  await filterBudget();
 
   store.setMenuItem({
     icon: PrimeIcons.APPLE,
@@ -193,8 +191,11 @@ const setCurrentYear = () => {
 };
 
 const cleanFilter = () => {
-  store.cleanExercisePicker();
   filter.value.customerId = undefined;
+  filter.value.statusId = undefined;
+  setCurrentYear();
+
+  filterBudget();
 };
 
 const createRequest = ref({} as CreateSalesHeaderRequest);
@@ -212,14 +213,19 @@ const createButtonClick = () => {
   dialogOptions.visible = true;
 };
 
-const filterSalesOrder = async () => {
+const filterBudget = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
       store.exercisePicker.dates[0]
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await budgetStore.GetFiltered(startTime, endTime, filter.value.customerId);
+    await budgetStore.GetFiltered(
+      startTime,
+      endTime,
+      filter.value.customerId,
+      filter.value.statusId
+    );
   } else {
     toast.add({
       severity: "info",
@@ -259,14 +265,26 @@ const editRow = (row: DataTableRowClickEvent) => {
   }
 };
 
-const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
+const deleteBudget = async (event: any, budget: Budget) => {
+  await budgetStore.GetAssociatedSalesOrders(budget.id);
+
+  if (budgetStore.order) {
+    toast.add({
+      severity: "warn",
+      summary: "No es pot eliminar",
+      detail: `El pressupost té la comanda ${budgetStore.order.number} associada`,
+      life: 5000,
+    });
+    return;
+  }
+
   confirm.require({
     message: `Està segur que vol eliminar el pressupost?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await budgetStore.Delete(order.id);
+      const deleted = await budgetStore.Delete(budget.id);
       if (deleted) {
         toast.add({
           severity: "success",
@@ -274,7 +292,7 @@ const deleteSalesInvoice = (event: any, order: SalesOrderHeader) => {
           life: 3000,
         });
 
-        await filterSalesOrder();
+        await filterBudget();
       }
     },
   });

@@ -9,7 +9,7 @@
     <br />
   </div>
   <form v-if="reference">
-    <section class="three-columns">
+    <section class="four-columns">
       <div class="mt-1">
         <BaseInput
           class="mb-2"
@@ -39,6 +39,9 @@
           id="version"
           v-model="reference.version"
         />
+      </div>
+      <div class="mt-1" v-if="isSales">
+        <DropdownCustomers label="Client" v-model="reference.customerId" />
       </div>
       <div class="mt-1" v-if="isPurchase">
         <label class="block text-900 mb-2">Tipus de material</label>
@@ -146,13 +149,13 @@
         v-if="reference"
         title="Documentació"
         entity="referenceMaps"
-        :id="(route.params.id as string)"
+        :id="reference.id"
       />
     </section>
   </form>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import BaseInput from "../../../components/BaseInput.vue";
 import { Reference } from "../types";
@@ -161,17 +164,18 @@ import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
+import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useReferenceTypeStore } from "../store/referenceType";
-import { DropdownChangeEvent } from "primevue/dropdown";
 
 const props = defineProps<{
   module: string;
   reference: Reference;
+  defaultCustomerId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -196,14 +200,12 @@ const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
 
-const updateReferenceCode = (event: DropdownChangeEvent) => {
-  const referenceType = referenceTypeStore.referenceTypes?.find(
-    (t) => t.id === event.value
-  );
-  if (referenceType && !props.reference.code.includes(referenceType.name)) {
-    props.reference.code = `${props.reference.code} (${referenceType.name})`;
+onMounted(() => {
+  // Set customer when optional property is set
+  if (props.defaultCustomerId && props.reference) {
+    props.reference.customerId = props.defaultCustomerId!;
   }
-};
+});
 
 const schema = Yup.object().shape({
   code: Yup.string()
@@ -217,7 +219,6 @@ const schema = Yup.object().shape({
     .max(20, "La versió pot superar els 20 carácters"),
   cost: Yup.number().required("El cost es obligatori"),
   price: Yup.number().required("El preu es obligatori"),
-  //density: Yup.number().required("La densitat és obligatoria"),
   taxId: Yup.string().required("El tipus d'iva es obligatori"),
 });
 const validation = ref({

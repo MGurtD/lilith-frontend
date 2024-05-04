@@ -5,10 +5,11 @@
     }}</label>
     <Dropdown
       showClear
-      :options="lifecycleStore.lifecycle?.statuses"
+      filter
+      :options="customersStore.customers"
       placeholder="Selecciona..."
       optionValue="id"
-      optionLabel="name"
+      optionLabel="comercialName"
       class="w-full"
       v-bind="$attrs"
       v-bind:model-value="(modelValue as string)"
@@ -16,23 +17,30 @@
     >
       <template #option="slotProps">
         <div v-if="slotProps.option" class="flex align-items-center">
-          {{ slotProps.option.name }}
+          {{ slotProps.option.comercialName }}
         </div>
       </template>
     </Dropdown>
   </div>
 </template>
 <script setup lang="ts">
-import { useLifecyclesStore } from "../store/lifecycle";
+import { onMounted } from "vue";
+import { useCustomersStore } from "../store/customers";
+
+const customerStore = useCustomersStore();
+
+onMounted(() => {
+  if (!customerStore.customers) customerStore.fetchCustomers();
+});
 
 const props = defineProps<{
   label: string;
-  modelValue: string | undefined;
+  modelValue: string | null | undefined;
 }>();
 
 const emit = defineEmits<{
   (event: "update:modelValue", payload: string): void;
 }>();
 
-const lifecycleStore = useLifecyclesStore();
+const customersStore = useCustomersStore();
 </script>
