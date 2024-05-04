@@ -71,6 +71,7 @@ export const useReferenceStore = defineStore({
         isService: false,
         lastCost: 0,
         workMasterCost: 0,
+        customerId: null,
       } as Reference;
     },
     async fetchReferences() {
