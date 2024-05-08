@@ -1,24 +1,52 @@
 <template>
   <DataTable
-    :value="mappedWorkcenterCosts"
+    :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
     sort-field="workcenterName"
     :sort-order="1"
     @row-click="editRow"
+    paginator
+    :rows="12"
   >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Cost per màquina</span>
-        <Button
-          :icon="PrimeIcons.PLUS"
-          rounded
-          raised
-          @click="createButtonClick"
-        />
+        <div class="datatable-filter">
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Màquina</label>
+            <Dropdown
+              v-model="filter.workcenterId"
+              editable
+              :options="plantmodelStore.workcenters"
+              optionValue="id"
+              optionLabel="name"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Cost 0</label>
+            <Checkbox v-model="filter.zerocost" />
+          </div>
+        </div>
+        <div class="datatable-buttons">
+          <!--<span class="text-xl text-900 font-bold">Cost per màquina</span>-->
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+        </div>
       </div>
     </template>
     <Column field="workcenterName" header="Màquina" style="width: 30%" sortable>
@@ -55,7 +83,7 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkcenterCost } from "../types";
@@ -88,6 +116,33 @@ const mappedWorkcenterCosts = computed(() => {
     };
   });
 });
+
+// Filter data
+const filter = ref({
+  workcenterId: undefined as undefined | string,
+  zerocost: false,
+});
+
+const filteredData = computed(() => {
+  let results = mappedWorkcenterCosts.value;
+
+  if (filter.value.workcenterId) {
+    results = results.filter(
+      (wc) => wc.workcenterId === filter.value.workcenterId
+    );
+  }
+
+  if (filter.value.zerocost) {
+    results = results.filter((wc) => wc.cost === 0);
+  }
+
+  return results;
+});
+
+const cleanFilter = () => {
+  filter.value.workcenterId = undefined;
+  filter.value.zerocost = false;
+};
 
 const getWorkcenterById = (id: string) => {
   const workcenter = plantmodelStore.workcenters?.find((st) => st.id === id);
