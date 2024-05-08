@@ -28,12 +28,12 @@
           </div>
           <div class="filter-field">
             <label class="block text-900 mb-2">Cost 0</label>
-            <Checkbox v-model="filter.zerocost" />
+            <Checkbox :binary="true" v-model="filter.zerocost" />
           </div>
         </div>
         <div class="datatable-buttons">
-          <!--<span class="text-xl text-900 font-bold">Cost per màquina</span>-->
           <Button
+            class="datatable-button mr-2"
             :icon="PrimeIcons.PLUS"
             rounded
             raised
