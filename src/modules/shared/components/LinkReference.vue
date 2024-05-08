@@ -1,7 +1,7 @@
 <template>
   <span
     v-if="referenceStore.module && id"
-    class="p-link"
+    class="link"
     @click="navegateToReference"
   >
     {{ referenceStore.getShortNameById(id) }}
@@ -25,3 +25,18 @@ const navegateToReference = () => {
   });
 };
 </script>
+<style scoped>
+.link {
+  text-decoration: none; /* Elimina la subrayado predeterminado */
+  color: var(--blue-800); /* Color del texto */
+  font-weight: bold; /* Fuente en negrita */
+  transition: color 0.3s; /* Agrega una transición suave al color del texto */
+}
+
+.link:hover {
+  color: var(
+    --blue-900
+  ); /* Cambia el color del texto al pasar el mouse sobre el enlace */
+  cursor: pointer;
+}
+</style>
