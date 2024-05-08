@@ -1,8 +1,10 @@
 <template>
   <form v-if="workcenter">
-    <section class="three-columns">
+    <div class="grid_add_row_button">
+      <Button label="Guardar" style="float: right" @click="submitForm" />
+    </div>
+    <section class="three-columns mb-2">
       <BaseInput
-        class="mb-2"
         label="Nom"
         id="name"
         v-model="workcenter.name"
@@ -11,7 +13,6 @@
         }"
       ></BaseInput>
       <BaseInput
-        class="mb-2"
         label="Descripció"
         id="description"
         v-model="workcenter.description"
@@ -68,10 +69,6 @@
         />
       </div>
     </section>
-
-    <div class="mt-2">
-      <Button label="Guardar" class="mr-2" @click="submitForm" />
-    </div>
   </form>
 </template>
 
