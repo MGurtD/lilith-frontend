@@ -21,6 +21,13 @@
               :fullName="true"
             ></DropdownReference>
           </div>
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Client</label>
+            <DropdownCustomers
+              label=""
+              v-model="filter.customerId"
+            ></DropdownCustomers>
+          </div>
         </div>
         <div class="datatable-buttons">
           <Button
@@ -47,6 +54,15 @@
     >
       <template #body="slotProps">
         {{ referenceStore.getFullName(slotProps.data.reference) }}
+      </template>
+    </Column>
+    <Column sortable header="Client" style="width: 25%">
+      <template #body="slotProps">
+        {{
+          customersStore.getCustomerNameById(
+            slotProps.data.reference.customerId
+          )
+        }}
       </template>
     </Column>
     <Column
@@ -165,6 +181,7 @@
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
+import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { computed, onMounted, reactive, ref } from "vue";
@@ -174,7 +191,8 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useWorkMasterStore } from "../store/workmaster";
 import { useReferenceStore } from "../../shared/store/reference";
-import { WorkMaster, WorkMasterToCopy } from "../types";
+import { useCustomersStore } from "../../sales/store/customers";
+import { WorkMaster } from "../types";
 import { getNewUuid } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 
@@ -184,22 +202,36 @@ const toast = useToast();
 const confirm = useConfirm();
 const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
+const customersStore = useCustomersStore();
 
 const filter = ref({
   referenceId: undefined,
+  customerId: undefined,
 });
 
 const cleanFilter = () => {
   filter.value.referenceId = undefined;
+  filter.value.customerId = undefined;
 };
 
 const filteredData = computed(() => {
   if (!workmasterStore.workmasters) return [];
-  if (!filter.value.referenceId) return workmasterStore.workmasters;
 
-  return workmasterStore.workmasters!.filter(
-    (w) => w.referenceId === filter.value.referenceId
-  );
+  let filteredWorkmasters = workmasterStore.workmasters;
+
+  if (filter.value.referenceId)
+    filteredWorkmasters = filteredWorkmasters.filter(
+      (w) => w.referenceId === filter.value.referenceId
+    );
+
+  if (filter.value.customerId)
+    filteredWorkmasters = filteredWorkmasters.filter(
+      (w) =>
+        w.reference?.customerId === filter.value.customerId ||
+        w.reference.customerId === null
+    );
+
+  return filteredWorkmasters;
 });
 
 const dialogOptions = reactive({
