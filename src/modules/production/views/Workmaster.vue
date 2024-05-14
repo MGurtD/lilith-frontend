@@ -80,6 +80,7 @@ const calculateCostSubmit = async (workmaster: WorkMaster) => {
       severity: "success",
       summary: "Cálcul de cost",
       detail: `${response.content} €`,
+      life: 10000,
     });
   } else {
     toast.add({
