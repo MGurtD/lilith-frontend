@@ -21,7 +21,13 @@ export const useCustomersStore = defineStore({
     customer: undefined as Customer | undefined,
     customerType: undefined as CustomerType | undefined,
   }),
-  getters: {},
+  getters: {
+    getCustomerNameById: (state) => (id: string) => {
+      const customer = state.customers?.find((customer) => customer.id === id);
+      if (customer) return customer.comercialName;
+      return "";
+    },
+  },
   actions: {
     // Customers
     setNewCustomer(id: string) {
