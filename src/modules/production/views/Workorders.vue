@@ -16,11 +16,11 @@
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Client</label>
+            <label class="block text-900">Client</label>
             <DropdownCustomers label="" v-model="filter.customerId" />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Estat</label>
+            <label class="block text-900">Estat</label>
             <DropdownLifecycle label="" v-model="filter.statusId" />
           </div>
         </div>

@@ -14,7 +14,7 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
-            <label class="block text-900 mb-2">Referència</label>
+            <label class="block text-900">Referència</label>
             <DropdownReference
               label=""
               v-model="filter.referenceId"
@@ -22,7 +22,7 @@
             ></DropdownReference>
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Client</label>
+            <label class="block text-900">Client</label>
             <DropdownCustomers
               label=""
               v-model="filter.customerId"
