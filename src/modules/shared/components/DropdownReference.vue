@@ -1,6 +1,8 @@
 <template>
   <div class="mb-2">
-    <label class="block text-900 mb-2">{{ label }}</label>
+    <label v-if="label.length > 0" class="block text-900 mb-2">{{
+      label
+    }}</label>
     <Dropdown
       showClear
       filter
