@@ -28,7 +28,7 @@ export const useWorkMasterStore = defineStore({
   },
   actions: {
     // Workmaster
-    setNew(id: string) {
+    setNew(id: string, referenceId?: string) {
       this.workmaster = {
         id: id,
         baseQuantity: 1,
@@ -40,6 +40,8 @@ export const useWorkMasterStore = defineStore({
         operatorCost: 0,
         phases: [],
       } as WorkMaster;
+
+      if (referenceId) this.workmaster.referenceId = referenceId;
     },
     async fetchAll() {
       this.workmasters = await Services.WorkMaster.getAll();
@@ -50,6 +52,11 @@ export const useWorkMasterStore = defineStore({
     },
     async fetchOne(id: string) {
       this.workmaster = await Services.WorkMaster.getById(id);
+    },
+    async fetchByReferenceId(referenceId: string) {
+      this.workmasters = await Services.WorkMaster.getByReferenceId(
+        referenceId
+      );
     },
     async create(model: WorkMaster) {
       const result = await Services.WorkMaster.create(model);
