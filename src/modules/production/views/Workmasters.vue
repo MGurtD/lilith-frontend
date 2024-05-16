@@ -70,6 +70,18 @@
       header="Quantitat Base"
       style="width: 25%"
     ></Column>
+    <Column header="Cost" style="width: 25%">
+      <template #body="slotProps">
+        {{
+          formatCurrency(
+            slotProps.data.machineCost +
+              slotProps.data.operatorCost +
+              slotProps.data.materialCost +
+              slotProps.data.externalCost
+          )
+        }}
+      </template>
+    </Column>
     <Column header="Desactivada" style="width: 25%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
@@ -136,25 +148,8 @@
             )
           }}
         </p>
-        <!--<BaseInput
-          v-if="workmasterStore.workmasterToCopy"
-          class="mb-2"
-          label="Referència Origen"
-          :v-model="
-            referenceStore.getFullNameById(
-              workmasterStore.workmasterToCopy.workmaster.referenceId
-            )
-          "
-          disabled="true"
-        ></BaseInput>-->
       </div>
       <div>
-        <!-- 
-           v-if="
-            workmasterStore.workmasterToCopy &&
-            workmasterStore.workmasterToCopy.referenceId
-          "
-        -->
         <DropdownReference
           label="Referència existent:"
           v-model="workmasterStore.workmasterToCopy!.referenceId"
@@ -193,7 +188,7 @@ import { useWorkMasterStore } from "../store/workmaster";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../../sales/store/customers";
 import { WorkMaster } from "../types";
-import { getNewUuid } from "../../../utils/functions";
+import { getNewUuid, formatCurrency } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 
 const router = useRouter();
