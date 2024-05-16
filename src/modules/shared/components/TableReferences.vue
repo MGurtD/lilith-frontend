@@ -59,10 +59,14 @@
       </template>
     </Column>
     <Column v-if="isSales" field="price" header="Preu" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.price }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.price) }}
+      </template>
     </Column>
     <Column v-if="isSales" field="cost" header="Cost" style="width: 10%">
-      <template #body="slotProps"> {{ slotProps.data.cost }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.workMasterCost) }}
+      </template>
     </Column>
     <Column header="Servei" v-if="isSales" style="width: 10%">
       <template #body="slotProps">
@@ -131,6 +135,7 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../types";
 import { useReferenceTypeStore } from "../store/referenceType";
 import { useCustomersStore } from "../../sales/store/customers";
+import { formatCurrency } from "../../../utils/functions";
 
 const referenceTypeStore = useReferenceTypeStore();
 const referenceStore = useReferenceStore();
