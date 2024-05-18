@@ -79,7 +79,7 @@
 <script setup lang="ts">
 import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { computed, ref } from "vue";
+import { computed, ref, onUnmounted, onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../../shared/types";
@@ -90,6 +90,17 @@ const customerStore = useCustomersStore();
 const filter = ref({
   code: "",
   customerId: "",
+});
+
+const filterLocalStoregeKey = "temges.filters.references";
+onMounted(() => {
+  const filterLocalStorage = localStorage.getItem(filterLocalStoregeKey);
+  if (filterLocalStorage) {
+    filter.value = JSON.parse(filterLocalStorage);
+  }
+});
+onUnmounted(() => {
+  localStorage.setItem(filterLocalStoregeKey, JSON.stringify(filter.value));
 });
 
 const cleanFilter = () => {
