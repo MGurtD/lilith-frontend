@@ -6,6 +6,8 @@
     class="p-datatable-sm"
     sortMode="single"
     sortField="reference.code"
+    selectionMode="single"
+    dataKey="id"
     :sortOrder="1"
   >
     <template #header>

@@ -7,7 +7,7 @@
     class="grid_add_row_button"
   />
 
-  <FormBudget class="mt-3 mb-3" ref="budgetForm" @submit="onSalesOrderSubmit" />
+  <FormBudget class="mt-3 mb-3" ref="budgetForm" @submit="onBudgetSubmit" />
 
   <TabView>
     <TabPanel header="Detall">
@@ -15,7 +15,7 @@
         v-if="budget"
         :budget="budget"
         :details="budget?.details"
-        @edit="(det: BudgetDetail) => openReferencesForm(FormActionMode.EDIT, det)"
+        @edit="(det: BudgetDetail) => openBudgetDetailDialog(FormActionMode.EDIT, det)"
         @delete="deleteSalesOrderDetails"
       >
         <template #header>
@@ -23,13 +23,21 @@
             class="flex flex-wrap align-items-center justify-content-between gap-2"
           >
             <span class="text-l text-900 font-bold">Linies del pressupost</span>
-            <section>
+            <section v-if="!budgetStore.order">
+              <Button
+                :size="'small'"
+                severity="secondary"
+                label="Afegir referència"
+                @click="openReferenceDetail()"
+                class="mr-2"
+              />
               <Button
                 :size="'small'"
                 label="Afegir línea"
-                @click="openReferencesForm(FormActionMode.CREATE, {} as any)"
+                @click="
+                  openBudgetDetailDialog(FormActionMode.CREATE, {} as any)
+                "
                 class="mr-2"
-                :disabled="budgetStore.order !== undefined"
               />
             </section>
           </div>
@@ -45,26 +53,13 @@
     :modal="true"
     v-if="budget"
   >
-    <TabView v-model:activeIndex="formsActiveIndex">
-      <TabPanel header="Línea">
-        <FormBudgetDetail
-          v-if="budget && budgetDetail"
-          :formAction="formDetailMode"
-          :budget="budget"
-          :detail="budgetDetail"
-          @submit="onFormSalesOrderReferenceSubmit"
-        />
-      </TabPanel>
-      <TabPanel header="Referencia">
-        <FormReference
-          v-if="referenceStore.reference"
-          :module="'sales'"
-          :reference="referenceStore.reference"
-          :default-customer-id="budget.customerId"
-          @submit="onFormReferenceSubmit"
-        />
-      </TabPanel>
-    </TabView>
+    <FormBudgetDetail
+      v-if="budget && budgetDetail"
+      :formAction="formDetailMode"
+      :budget="budget"
+      :detail="budgetDetail"
+      @submit="onBudgetDetailSubmit"
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -73,11 +68,9 @@ import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import { Budget, BudgetDetail } from "../types";
-import { Reference } from "../../shared/types";
 import { useStore } from "../../../store";
 import {
   createBlobAndDownloadFile,
-  formatDate,
   getNewUuid,
 } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
@@ -88,7 +81,6 @@ import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useTaxesStore } from "../../shared/store/tax";
-import FormReference from "../../shared/components/FormReference.vue";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
 import Services from "../services";
 import { useWorkMasterStore } from "../../production/store/workmaster";
@@ -98,9 +90,9 @@ import FormBudget from "../components/FormBudget.vue";
 import FormBudgetDetail from "../components/FormBudgetDetail.vue";
 import { useSalesOrderStore } from "../store/order";
 
+const formMode = ref(FormActionMode.EDIT);
 const budgetForm = ref();
 
-const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
@@ -129,38 +121,10 @@ const items = [
   },
 ];
 
-const printInvoice = async () => {
-  const budgetReport = await Services.Budget.GetReportDataById(
-    budget.value!.id
-  );
-
-  if (budgetReport) {
-    const fileName = `Pressupost_${budget.value?.number}.docx`;
-
-    const reportService = new ReportService();
-    const report = await reportService.Download(
-      budgetReport,
-      REPORTS.Budget,
-      fileName
-    );
-
-    if (report) {
-      createBlobAndDownloadFile(fileName, report);
-    } else {
-      toast.add({
-        severity: "warn",
-        summary: "Error",
-        detail: "No s'ha pugut generar fulla del pressupost",
-      });
-    }
-  }
-};
-
 const detailDialogTitle = "Línia del pressupost";
 const isDetailDialogVisible = ref(false);
 const formDetailMode = ref(FormActionMode.EDIT);
 const budgetDetail = ref(undefined as undefined | BudgetDetail);
-const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   const budgetId = route.params.id as string;
@@ -200,9 +164,10 @@ const submitForm = () => {
   form.submitForm();
 };
 
-const openReferencesForm = (formMode: FormActionMode, detail: BudgetDetail) => {
-  referenceStore.setNewReference(getNewUuid());
-
+const openBudgetDetailDialog = (
+  formMode: FormActionMode,
+  detail: BudgetDetail
+) => {
   if (formMode === FormActionMode.CREATE) {
     detail = {
       id: getNewUuid(),
@@ -222,7 +187,14 @@ const openReferencesForm = (formMode: FormActionMode, detail: BudgetDetail) => {
   isDetailDialogVisible.value = true;
 };
 
-const onSalesOrderSubmit = async (budget: Budget) => {
+const openReferenceDetail = () => {
+  router.push(`/sales/reference/${getNewUuid()}`);
+  setTimeout(() => {
+    referenceStore.reference!.customerId = budget.value!.customerId;
+  }, 200);
+};
+
+const onBudgetSubmit = async (budget: Budget) => {
   let result = false;
   let message = "";
 
@@ -242,7 +214,7 @@ const onSalesOrderSubmit = async (budget: Budget) => {
   }
 };
 
-const onFormSalesOrderReferenceSubmit = async (detail: BudgetDetail) => {
+const onBudgetDetailSubmit = async (detail: BudgetDetail) => {
   if (formDetailMode.value === FormActionMode.CREATE) {
     await budgetStore.CreateDetail(detail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
@@ -258,29 +230,6 @@ const deleteSalesOrderDetails = async (detail: BudgetDetail) => {
   const afterDelete = budget.value!.details!.filter((i) => i.id !== detail.id);
   budget.value!.details = afterDelete;
   isDetailDialogVisible.value = false;
-};
-
-const onFormReferenceSubmit = async (reference: Reference) => {
-  let result = false;
-  let message = "";
-
-  result = await referenceStore.createReference(reference);
-  if (result) message = "Referència creada correctament";
-  else message = "La referència + versió introduïda ja existeix";
-
-  toast.add({
-    severity: result ? "success" : "warn",
-    summary: message,
-    life: 5000,
-  });
-
-  if (result) {
-    // Clean reference form
-    referenceStore.reference = undefined;
-    referenceStore.setNewReference(getNewUuid());
-    // Go to details tab
-    formsActiveIndex.value = 0;
-  }
 };
 
 const createSalesOrder = async () => {
@@ -310,6 +259,33 @@ const createSalesOrder = async () => {
         summary: "Error al crear la comanda ",
         detail: response.errors[0],
         life: 5000,
+      });
+    }
+  }
+};
+
+const printInvoice = async () => {
+  const budgetReport = await Services.Budget.GetReportDataById(
+    budget.value!.id
+  );
+
+  if (budgetReport) {
+    const fileName = `Pressupost_${budget.value?.number}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      budgetReport,
+      REPORTS.Budget,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla del pressupost",
       });
     }
   }
