@@ -123,7 +123,7 @@ export const applicationMenus = [
       {
         icon: PrimeIcons.TICKET,
         title: "Referències",
-        href: "sales/reference",
+        href: "/sales/reference",
       },
       {
         icon: PrimeIcons.FLAG,
