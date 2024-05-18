@@ -17,8 +17,12 @@ const ExpenseTypes = () => import("./views/ExpenseTypes.vue");
 const Expense = () => import("./views/Expense.vue");
 const Expenses = () => import("./views/Expenses.vue");
 const ExpenseDashboard = () => import("./views/ExpenseDashboard.vue");
+const Materials = () => import("./views/Materials.vue");
+const Material = () => import("./views/Material.vue");
 
 export default [
+  { path: "/material", name: "Materials", component: Materials },
+  { path: "/material/:id", name: "Material", component: Material },
   { path: "/suppliers", name: "Suppliers", component: Suppliers },
   {
     path: "/suppliers/:id",
