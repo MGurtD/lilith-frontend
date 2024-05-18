@@ -67,7 +67,7 @@ export const applicationMenus = [
           {
             icon: PrimeIcons.TICKET,
             title: "Materies primeres",
-            href: "/reference/purchase",
+            href: "/material",
           },
         ],
       },
@@ -123,7 +123,7 @@ export const applicationMenus = [
       {
         icon: PrimeIcons.TICKET,
         title: "Referències",
-        href: "/reference/sales",
+        href: "sales/reference",
       },
       {
         icon: PrimeIcons.FLAG,
