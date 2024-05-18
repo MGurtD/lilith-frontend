@@ -11,7 +11,7 @@
     class="mt-3 mb-3"
     ref="salesOrderForm"
     salesOrder="salesOrder"
-    @submit="onSalesOrderSubmit"
+    @submit="onOrderSubmit"
   />
 
   <TabView>
@@ -20,8 +20,8 @@
         v-if="salesOrder"
         :salesOrder="salesOrder"
         :salesOrderDetails="salesOrder.salesOrderDetails"
-        @edit="(det: SalesOrderDetail) => openReferencesForm(FormActionMode.EDIT, det)"
-        @delete="deleteSalesOrderDetails"
+        @edit="(det: SalesOrderDetail) => openOrderDetailDialog(FormActionMode.EDIT, det)"
+        @delete="deleteOrderDetail"
         @createWorkOrder="createWorkOrder"
         @openWorkOrder="openWorkOrder"
       >
@@ -30,12 +30,18 @@
             class="flex flex-wrap align-items-center justify-content-between gap-2"
           >
             <span class="text-l text-900 font-bold">Linies de la comanda</span>
-            <section>
+            <section v-if="!deliveryNoteStore.deliveryNote">
               <Button
-                :disabled="deliveryNoteStore.deliveryNote !== undefined"
+                :size="'small'"
+                severity="secondary"
+                label="Afegir referència"
+                @click="openReferenceDetail()"
+                class="mr-2"
+              />
+              <Button
                 :size="'small'"
                 label="Afegir línea"
-                @click="openReferencesForm(FormActionMode.CREATE, {} as any)"
+                @click="openOrderDetailDialog(FormActionMode.CREATE, {} as any)"
                 class="mr-2"
               />
             </section>
@@ -60,26 +66,13 @@
     :header="detailDialogTitle"
     :modal="true"
   >
-    <TabView v-model:activeIndex="formsActiveIndex">
-      <TabPanel header="Línea">
-        <FormSalesOrderDetail
-          v-if="selectedSalesOrderDetail"
-          :formAction="formDetailMode"
-          :salesOrder="salesOrder"
-          :salesOrderDetail="selectedSalesOrderDetail"
-          @submit="onFormSalesOrderReferenceSubmit"
-        />
-      </TabPanel>
-      <TabPanel header="Referencia">
-        <FormReference
-          v-if="referenceStore.reference"
-          :module="'sales'"
-          :reference="referenceStore.reference"
-          :defaultCustomerId="salesOrder.customerId"
-          @submit="onFormReferenceSubmit"
-        />
-      </TabPanel>
-    </TabView>
+    <FormSalesOrderDetail
+      v-if="selectedSalesOrderDetail"
+      :formAction="formDetailMode"
+      :salesOrder="salesOrder"
+      :salesOrderDetail="selectedSalesOrderDetail"
+      @submit="onOrderDetailSubmit"
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -211,12 +204,17 @@ const submitForm = () => {
   form.submitForm();
 };
 
-const openReferencesForm = (
+const openReferenceDetail = () => {
+  router.push(`/sales/reference/${getNewUuid()}`);
+  setTimeout(() => {
+    referenceStore.reference!.customerId = salesOrder.value!.customerId;
+  }, 200);
+};
+
+const openOrderDetailDialog = (
   formMode: FormActionMode,
   salesOrderDetail: SalesOrderDetail
 ) => {
-  referenceStore.setNewReference(getNewUuid());
-
   if (formMode === FormActionMode.CREATE) {
     salesOrderDetail = {
       id: getNewUuid(),
@@ -243,7 +241,7 @@ const openReferencesForm = (
   isDetailDialogVisible.value = true;
 };
 
-const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
+const onOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   let result = false;
   let message = "";
 
@@ -263,7 +261,7 @@ const onSalesOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   }
 };
 
-const onFormSalesOrderReferenceSubmit = async (
+const onOrderDetailSubmit = async (
   salesOrderDetail: SalesOrderDetail
 ) => {
   if (formDetailMode.value === FormActionMode.CREATE) {
@@ -281,7 +279,7 @@ const onFormSalesOrderReferenceSubmit = async (
   }
 };
 
-const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
+const deleteOrderDetail = async (detail: SalesOrderDetail) => {
   if (formMode.value === FormActionMode.EDIT) {
     await salesOrderStore.DeleteDetail(detail);
   }
@@ -292,28 +290,6 @@ const deleteSalesOrderDetails = async (detail: SalesOrderDetail) => {
   isDetailDialogVisible.value = false;
 
   salesOrder.value!.date = formatDate(salesOrder.value!.date);
-};
-
-const onFormReferenceSubmit = async (reference: Reference) => {
-  let result = false;
-  let message = "";
-
-  result = await referenceStore.createReference(reference);
-  if (result) message = "Referència creada correctament";
-  else message = "La referència + versió introduïda ja existeix";
-
-  toast.add({
-    severity: result ? "success" : "warn",
-    summary: message,
-    life: 5000,
-  });
-
-  if (result) {
-    // Clean reference form
-    referenceStore.setNewReference(getNewUuid());
-    // Go to details tab
-    formsActiveIndex.value = 0;
-  }
 };
 
 const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
