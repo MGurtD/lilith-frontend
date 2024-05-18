@@ -1,6 +1,6 @@
 <template>
   <form v-if="detail">
-    <section class="four-columns">
+    <section class="three-columns">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -29,19 +29,32 @@
         <label class="block text-900v mb-1">Temps de cicle</label>
         <Checkbox v-model="detail.isCycleTime" class="w-full" :binary="true" />
       </div>
+    </section>
+    <section class="three-columns mt-2">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :decimals="2"
-          label="Temps estimat (min)"
+          label="Temps màquina (min)"
           v-model="detail.estimatedTime"
           :class="{
             'p-invalid': validation.errors.estimatedTime,
           }"
         />
       </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+          label="Temps operari (min)"
+          v-model="detail.estimatedOperatorTime"
+          :class="{
+            'p-invalid': validation.errors.estimatedTime,
+          }"
+        />
+      </div>
     </section>
-    <div class="mt-3">
+    <div class="mt-2">
       <label class="block text-900v mb-1">Comentari fabricació</label>
       <Textarea class="w-full" v-model="detail.comment"></Textarea>
     </div>
