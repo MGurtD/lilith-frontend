@@ -24,13 +24,13 @@
           >
             <span class="text-l text-900 font-bold">Linies del pressupost</span>
             <section v-if="!budgetStore.order">
-              <Button
+              <!-- <Button
                 :size="'small'"
                 severity="secondary"
                 label="Afegir referència"
                 @click="openReferenceDetail()"
                 class="mr-2"
-              />
+              /> -->
               <Button
                 :size="'small'"
                 label="Afegir línea"

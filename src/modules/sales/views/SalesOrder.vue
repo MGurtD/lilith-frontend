@@ -31,13 +31,13 @@
           >
             <span class="text-l text-900 font-bold">Linies de la comanda</span>
             <section v-if="!deliveryNoteStore.deliveryNote">
-              <Button
+              <!-- <Button
                 :size="'small'"
                 severity="secondary"
                 label="Afegir referència"
                 @click="openReferenceDetail()"
                 class="mr-2"
-              />
+              /> -->
               <Button
                 :size="'small'"
                 label="Afegir línea"
@@ -104,7 +104,6 @@ import { useTaxesStore } from "../../shared/store/tax";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
 import FormSalesOrderDetail from "../components/FormSalesOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
-import FormReference from "../../shared/components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
@@ -261,9 +260,7 @@ const onOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   }
 };
 
-const onOrderDetailSubmit = async (
-  salesOrderDetail: SalesOrderDetail
-) => {
+const onOrderDetailSubmit = async (salesOrderDetail: SalesOrderDetail) => {
   if (formDetailMode.value === FormActionMode.CREATE) {
     await salesOrderStore.CreateDetail(salesOrderDetail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
