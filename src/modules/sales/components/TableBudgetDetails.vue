@@ -24,11 +24,27 @@
         <LinkReference :id="slotProps.data.referenceId" />
       </template>
     </Column>
-    <Column field="description" header="Descripció" style="width: 30%" />
+    <Column field="description" header="Descripció" style="width: 25%" />
     <Column field="unitPrice" header="Preu un." style="width: 10%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.unitPrice) }}
       </template>
+    </Column>
+    <Column field="unitCost" header="Cost un." style="width: 10%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitCost) }}
+      </template>
+    </Column>
+    <Column field="totalCost" header="Cost total" style="width: 10%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.totalCost) }}
+      </template>
+    </Column>
+    <Column field="profit" header="Benefici" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.profit }} % </template>
+    </Column>
+    <Column field="profit" header="Descompte" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.discount }} % </template>
     </Column>
     <Column field="amount" header="Total" style="width: 10%">
       <template #body="slotProps">

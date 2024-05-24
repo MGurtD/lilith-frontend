@@ -1,14 +1,104 @@
 <template>
   <form v-if="detail">
-    <div class="mb-2">
-      <DropdownReference
-        label="Referència"
-        v-model="detail.referenceId"
-        :customerId="budget.customerId"
-        :fullName="true"
-        @update:modelValue="getReferenceInfo()"
-      ></DropdownReference>
-    </div>
+    <section class="two-columns-7525">
+      <div class="mb-2">
+        <DropdownReference
+          label="Referència"
+          v-model="detail.referenceId"
+          :customerId="budget.customerId"
+          :fullName="true"
+          @update:modelValue="getReferenceInfo()"
+        ></DropdownReference>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Preu Unitari"
+          v-model="detail.unitPrice"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+    </section>
+
+    <section class="three-columns">
+      <div class="mb-2">
+        <DropdownWorkmasters
+          label="Ruta de fabricació"
+          v-model="detail.workmasterId"
+          :referenceId="detail.referenceId"
+          @update:modelValue="getWorkmasterCost()"
+        ></DropdownWorkmasters>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Unitari"
+          v-model="detail.unitCost"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Total"
+          v-model="detail.totalCost"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+    </section>
+
+    <section class="four-columns">
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Quantitat"
+          v-model="detail.quantity"
+          :type="BaseInputType.NUMERIC"
+          :class="{
+            'p-invalid': validation.errors.quantity,
+          }"
+          @update:modelValue="updateQuantity()"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="% Benefici"
+          v-model="detail.profit"
+          :type="BaseInputType.NUMERIC"
+          @update:modelValue="updateImports()"
+          :class="{
+            'p-invalid': validation.errors.profit,
+          }"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="% Descompte"
+          v-model="detail.discount"
+          :type="BaseInputType.NUMERIC"
+          @update:modelValue="updateImports()"
+          :class="{
+            'p-invalid': validation.errors.discount,
+          }"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Total"
+          v-model="detail.amount"
+          :type="BaseInputType.CURRENCY"
+          :class="{
+            'p-invalid': validation.errors.amount,
+          }"
+        ></BaseInput>
+      </div>
+    </section>
 
     <section>
       <div>
@@ -23,32 +113,7 @@
         ></BaseInput>
       </div>
     </section>
-    <section class="two-columns">
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Quantitat"
-          v-model="detail.quantity"
-          :type="BaseInputType.NUMERIC"
-          :class="{
-            'p-invalid': validation.errors.quantity,
-          }"
-          @update:modelValue="updateImports()"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Total"
-          v-model="detail.amount"
-          :type="BaseInputType.CURRENCY"
-          :class="{
-            'p-invalid': validation.errors.amount,
-          }"
-          disabled
-        ></BaseInput>
-      </div>
-    </section>
+
     <Button
       :label="textActionButton"
       @click="submitForm"
@@ -69,6 +134,10 @@ import { useToast } from "primevue/usetoast";
 import { BaseInputType, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
 
+import DropdownWorkmasters from "../../production/components/DropdownWorkmasters.vue";
+import { useWorkMasterStore } from "../../production/store/workmaster";
+
+const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
 const toast = useToast();
 const props = defineProps<{
@@ -90,20 +159,63 @@ const getReferenceInfo = () => {
   );
   if (reference) {
     props.detail.description = reference.description;
-    props.detail.unitCost = reference?.cost;
-    props.detail.unitPrice = reference?.price;
+    props.detail.unitPrice = reference.price;
+    props.detail.workmasterId = null;
     updateImports();
   }
 };
 
-const updateImports = () => {
-  props.detail.amount = props.detail.unitPrice * props.detail.quantity;
-  props.detail.totalCost = props.detail.unitCost * props.detail.quantity;
+const getWorkmasterCost = async () => {
+  if (props.detail.workmasterId) {
+    const costsResponse = await workmasterStore.calculate(
+      props.detail.workmasterId,
+      props.detail.quantity
+    );
+    props.detail.unitCost = costsResponse.content! / props.detail.quantity;
+    props.detail.totalCost = costsResponse.content!;
+  } else {
+    props.detail.unitCost = 0;
+    props.detail.totalCost = 0;
+  }
 };
+
+const updateQuantity = () => {
+  if (props.detail.workmasterId) {
+    props.detail.totalCost = props.detail.unitCost * props.detail.quantity;
+  }
+
+  updateImports();
+};
+
+const updateImports = () => {
+  const baseImport = props.detail.workmasterId
+    ? props.detail.unitCost
+    : props.detail.unitPrice;
+
+  // apply profit
+  if (props.detail.profit > 0) {
+    props.detail.amount =
+      baseImport * props.detail.quantity * (1 + props.detail.profit / 100);
+  } else {
+    props.detail.amount = props.detail.workmasterId
+      ? props.detail.totalCost
+      : props.detail.unitPrice * props.detail.quantity;
+  }
+  // apply discount
+  if (props.detail.discount > 0)
+    props.detail.amount =
+      props.detail.amount * (1 - props.detail.discount / 100);
+};
+
 const schema = Yup.object().shape({
   quantity: Yup.number()
     .required("La quantitat és obligatoria")
     .min(1, "La quantitat ha de ser un número positiu"),
+  amount: Yup.number()
+    .required("El total és obligatori")
+    .min(1, "El total ha de ser un número positiu"),
+  profit: Yup.number().required("El benefici és obligatori"),
+  discount: Yup.number().required("El descompte és obligatori"),
 });
 const validation = ref({
   result: false,
