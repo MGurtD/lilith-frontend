@@ -67,7 +67,7 @@ export interface BudgetDetail {
   id: string;
   budgetId: string;
   referenceId: string;
-  workmasterId: string | null;
+  workMasterId: string | null;
   description: string;
   quantity: number;
   profit: number;
