@@ -66,11 +66,11 @@
     :header="detailDialogTitle"
     :modal="true"
   >
-    <FormSalesOrderDetail
+    <FormBudgetOrderDetail
       v-if="selectedSalesOrderDetail"
       :formAction="formDetailMode"
-      :salesOrder="salesOrder"
-      :salesOrderDetail="selectedSalesOrderDetail"
+      :header="salesOrder"
+      :detail="selectedSalesOrderDetail"
       @submit="onOrderDetailSubmit"
     />
   </Dialog>
@@ -81,11 +81,11 @@ import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import {
+  BudgetDetail,
   CreateWorkOrderFromSalesOrderDto,
   SalesOrderDetail,
   SalesOrderHeader,
 } from "../types";
-import { Reference } from "../../shared/types";
 import { useStore } from "../../../store";
 import {
   createBlobAndDownloadFile,
@@ -102,7 +102,7 @@ import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useTaxesStore } from "../../shared/store/tax";
 import FormSalesOrder from "../components/FormSalesOrder.vue";
-import FormSalesOrderDetail from "../components/FormSalesOrderDetail.vue";
+import FormBudgetOrderDetail from "../components/FormBudgetOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
@@ -144,7 +144,6 @@ const detailDialogTitle = "Línia de comanda";
 const isDetailDialogVisible = ref(false);
 const formDetailMode = ref(FormActionMode.EDIT);
 const selectedSalesOrderDetail = ref(undefined as undefined | SalesOrderDetail);
-const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   const workOrderId = route.params.id as string;
@@ -263,11 +262,13 @@ const onOrderSubmit = async (salesOrder: SalesOrderHeader) => {
   }
 };
 
-const onOrderDetailSubmit = async (salesOrderDetail: SalesOrderDetail) => {
+const onOrderDetailSubmit = async (detail: BudgetDetail | SalesOrderDetail) => {
+  detail = detail as SalesOrderDetail;
+
   if (formDetailMode.value === FormActionMode.CREATE) {
-    await salesOrderStore.CreateDetail(salesOrderDetail);
+    await salesOrderStore.CreateDetail(detail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
-    await salesOrderStore.UpdateDetail(salesOrderDetail);
+    await salesOrderStore.UpdateDetail(detail);
   }
   isDetailDialogVisible.value = false;
 

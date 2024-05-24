@@ -75,12 +75,14 @@ const onWorkmasterSubmit = async (workmaster: WorkMaster) => {
 };
 
 const calculateCostSubmit = async (workmaster: WorkMaster) => {
+  const updated = await workmasterStore.update(id.value, workmaster);
+
   const response = await workmasterStore.calculate(workmaster.id);
-  if (response.result) {
+  if (updated && response.result) {
     toast.add({
       severity: "success",
       summary: "Cálcul de cost",
-      detail: `${ formatCurrency(response.content!) }`,
+      detail: `${formatCurrency(response.content!)}`,
       life: 10000,
     });
 

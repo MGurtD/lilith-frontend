@@ -53,10 +53,10 @@
     :modal="true"
     v-if="budget"
   >
-    <FormBudgetDetail
+    <FormBudgetOrderDetail
       v-if="budget && budgetDetail"
       :formAction="formDetailMode"
-      :budget="budget"
+      :header="budget"
       :detail="budgetDetail"
       @submit="onBudgetDetailSubmit"
     />
@@ -67,7 +67,7 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
-import { Budget, BudgetDetail } from "../types";
+import { Budget, BudgetDetail, SalesOrderDetail } from "../types";
 import { useStore } from "../../../store";
 import {
   createBlobAndDownloadFile,
@@ -87,7 +87,7 @@ import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useBudgetStore } from "../store/budget";
 import TableBudgetDetails from "../components/TableBudgetDetails.vue";
 import FormBudget from "../components/FormBudget.vue";
-import FormBudgetDetail from "../components/FormBudgetDetail.vue";
+import FormBudgetOrderDetail from "../components/FormBudgetOrderDetail.vue";
 import { useSalesOrderStore } from "../store/order";
 
 const formMode = ref(FormActionMode.EDIT);
@@ -169,7 +169,7 @@ const openBudgetDetailDialog = (
     detail = {
       id: getNewUuid(),
       referenceId: "",
-      workmasterId: null,
+      workMasterId: null,
       profit: 0,
       discount: 0,
       quantity: 1,
@@ -214,7 +214,11 @@ const onBudgetSubmit = async (budget: Budget) => {
   }
 };
 
-const onBudgetDetailSubmit = async (detail: BudgetDetail) => {
+const onBudgetDetailSubmit = async (
+  detail: BudgetDetail | SalesOrderDetail
+) => {
+  detail = detail as BudgetDetail;
+
   if (formDetailMode.value === FormActionMode.CREATE) {
     await budgetStore.CreateDetail(detail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
