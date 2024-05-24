@@ -9,7 +9,7 @@
       />
       <br />
     </div>
-    <section class="two-columns-7525 mb-2">
+    <section class="two-columns-2575 mb-2">
       <div>
         <BaseInput label="Codi de la fase" v-model="phase.code" />
       </div>

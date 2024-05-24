@@ -11,7 +11,12 @@
       :options="filteredReferences"
       placeholder="Selecciona..."
       optionValue="id"
-      :optionLabel="(r) => referenceStore.getShortNameById(r.id)"
+      :optionLabel="
+        (r) =>
+          fullName
+            ? referenceStore.getFullNameById(r.id)
+            : referenceStore.getShortNameById(r.id)
+      "
       class="w-full"
       v-bind="$attrs"
       v-bind:model-value="(modelValue as string)"

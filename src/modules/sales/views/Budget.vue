@@ -132,15 +132,12 @@ const loadView = async () => {
   await budgetStore.GetAssociatedSalesOrders(budgetId);
 
   referenceStore.fetchReferencesByModule("sales");
+  workMasterStore.fetchAllActives();
   lifeCycleStore.fetchOneByName("Budget");
   plantModelStore.fetchSites();
   exerciseStore.fetchAll();
   customerStore.fetchCustomers();
   taxesStore.fetchAll();
-
-  if (!workMasterStore.workmasters) {
-    workMasterStore.fetchAllActives();
-  }
 
   let pageTitle = "";
   if (budget.value) {
@@ -172,7 +169,10 @@ const openBudgetDetailDialog = (
     detail = {
       id: getNewUuid(),
       referenceId: "",
-      quantity: 0,
+      workmasterId: null,
+      profit: 0,
+      discount: 0,
+      quantity: 1,
       unitCost: 0,
       unitPrice: 0,
       totalCost: 0,

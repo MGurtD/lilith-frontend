@@ -219,6 +219,8 @@ const openOrderDetailDialog = (
       id: getNewUuid(),
       referenceId: "",
       quantity: 0,
+      profit: 0,
+      discount: 0,
       unitCost: 0,
       unitPrice: 0,
       totalCost: 0,
@@ -230,6 +232,7 @@ const openOrderDetailDialog = (
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,
+      workMasterId: null,
       workOrderId: "",
     } as SalesOrderDetail;
   }
