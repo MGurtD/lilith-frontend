@@ -39,9 +39,8 @@
           />
         </TabPanel>
         <TabPanel header="Referencia">
-          <FormReference
+          <FormMaterial
             v-if="referenceStore.reference"
-            :module="'purchase'"
             :reference="referenceStore.reference"
             @submit="onFormReferenceSubmit"
           />
@@ -55,7 +54,7 @@
 import FormReceipt from "../components/FormReceipt.vue";
 import TableReceiptDetails from "../components/TableReceiptDetails.vue";
 import FormReceiptDetail from "../components/FormReceiptDetail.vue";
-import FormReference from "../../shared/components/FormReference.vue";
+import FormMaterial from "../components/FormMaterial.vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
@@ -71,10 +70,12 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { Reference } from "../../shared/types";
 import router from "../../../router";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useReferenceTypeStore } from "../../shared/store/referenceType";
 
 const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
+const referenceTypeStore = useReferenceTypeStore();
 const receiptStore = useReceiptsStore();
 const lifecycleStore = useLifecyclesStore();
 const { receipt } = storeToRefs(receiptStore);
@@ -84,6 +85,7 @@ const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
   lifecycleStore.fetchOneByName("Receipts");
   referenceStore.fetchReferencesByModule("purchase");
+  referenceTypeStore.fetchActive();
   if (receipt.value) {
     receipt.value.date = formatDate(receipt.value.date);
   }
