@@ -87,6 +87,7 @@ const onAdd = () => {
     id: getNewUuid(),
     workMasterPhaseId: props.workmasterPhase.id,
     estimatedTime: 0,
+    estimatedOperatorTime: 0,
     isCycleTime: false,
     machineStatusId: "",
     comment: "",

@@ -22,7 +22,7 @@
         {{ getMachineStatus(slotProps.data.machineStatusId) }}
       </template>
     </Column>
-    
+
     <Column header="Temps de cicle" style="width: 25%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isCycleTime"></BooleanColumn>
@@ -87,6 +87,7 @@ const onAdd = () => {
     id: getNewUuid(),
     workOrderPhaseId: props.workorderPhase.id,
     estimatedTime: 0,
+    estimatedOperatorTime: 0,
     isCycleTime: false,
     machineStatusId: "",
     comment: "",
