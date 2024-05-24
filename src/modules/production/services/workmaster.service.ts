@@ -25,8 +25,13 @@ export class WorkMasterService extends BaseService<WorkMaster> {
     );
     return response.status === 200;
   }
-  async calculateCost(id: string): Promise<GenericResponse<number>> {
-    const response = await this.apiClient.get(`${this.resource}/cost/${id}`);
+  async calculateCost(id: string, quantity?: number): Promise<GenericResponse<number>> {
+    let endpoint = `${this.resource}/cost/${id}`
+    if (quantity) {
+      endpoint = endpoint.concat(`?quantity=${quantity}`)
+    }
+
+    const response = await this.apiClient.get(endpoint);
     return response.data;
   }
 }

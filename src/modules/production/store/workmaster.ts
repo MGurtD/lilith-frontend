@@ -73,8 +73,11 @@ export const useWorkMasterStore = defineStore({
       if (result) await this.fetchAll();
       return result;
     },
-    async calculate(id: string): Promise<GenericResponse<number>> {
-      const result = await Services.WorkMaster.calculateCost(id);
+    async calculate(
+      id: string,
+      quantity?: number
+    ): Promise<GenericResponse<number>> {
+      const result = await Services.WorkMaster.calculateCost(id, quantity);
       return result;
     },
     async copy(model: WorkMasterToCopy) {
