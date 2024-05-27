@@ -120,7 +120,6 @@
       style="float: right"
     />
   </form>
-  
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
@@ -213,9 +212,11 @@ const updateImports = () => {
     props.detail.amount = props.detail.unitCost * props.detail.quantity;
   }
   // apply discount
-  if (props.detail.discount > 0)
+  if (props.detail.discount > 0) {
     props.detail.amount =
       props.detail.amount * (1 - props.detail.discount / 100);
+  }
+  props.detail.unitPrice = props.detail.amount;
 };
 
 const schema = Yup.object().shape({
