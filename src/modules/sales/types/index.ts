@@ -31,6 +31,7 @@ export interface CustomerContact {
   charge: string;
   email: string;
   phoneNumber: string;
+  extension: string;
   disabled: boolean;
   main: boolean;
   customerId: string;

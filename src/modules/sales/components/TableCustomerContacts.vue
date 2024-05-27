@@ -27,7 +27,8 @@
       </Column>
       <Column header="Càrrec" field="charge" style="width: 25%"></Column>
       <Column header="Correu" field="email" style="width: 25%"></Column>
-      <Column header="Telèfon" field="phoneNumber" style="width: 25%"></Column>
+      <Column header="Ext." field="extension" style="width: 5%"></Column>
+      <Column header="Telèfon" field="phoneNumber" style="width: 20%"></Column>
       <Column>
         <template #body="slotProps">
           <i
