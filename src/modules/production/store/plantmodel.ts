@@ -96,6 +96,7 @@ export const usePlantModelStore = defineStore({
         description: "",
         workcenterTypeId: "",
         areaId: "",
+        shiftId: "",
         disabled: false,
       } as Workcenter;
     },

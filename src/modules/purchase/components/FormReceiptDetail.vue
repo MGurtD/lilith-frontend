@@ -125,7 +125,6 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
 import { useReceiptsStore } from "../store/receipt";
 
 const props = defineProps<{
@@ -141,17 +140,18 @@ const toast = useToast();
 const receiptStore = useReceiptsStore();
 
 const calculate = async () => {
-  const detail = await receiptStore.calculateDetailWeightAndPrice(props.detail);
-
-  if (detail) {
-    props.detail.unitWeight = detail.unitWeight;
-    props.detail.totalWeight = detail.totalWeight;
-    props.detail.unitPrice = detail.unitPrice;
-    props.detail.amount = detail.amount;
+  const response = await receiptStore.calculateDetailWeightAndPrice(
+    props.detail
+  );
+  if (response.result) {
+    props.detail.unitWeight = response.content!.unitWeight;
+    props.detail.totalWeight = response.content!.totalWeight;
+    props.detail.unitPrice = response.content!.unitPrice;
+    props.detail.amount = response.content!.amount;
   } else {
     toast.add({
       summary: "Calculadora de pes/preu",
-      detail: "Hi ha hagut un problema al realitzar el cálcul",
+      detail: response.errors[0],
       severity: "warn",
       life: 6000,
     });

@@ -67,8 +67,11 @@ export interface BudgetDetail {
   id: string;
   budgetId: string;
   referenceId: string;
+  workMasterId: string | null;
   description: string;
   quantity: number;
+  profit: number;
+  discount: number;
   unitCost: number;
   unitPrice: number;
   totalCost: number;
@@ -113,8 +116,12 @@ export interface SalesOrderDetail {
   id: string;
   salesOrderHeaderId: string;
   referenceId: string;
+  workMasterId: string | null;
+  workOrderId: string | null;
   description: string;
   quantity: number;
+  profit: number;
+  discount: number;
   lastCost: number;
   workMasterCost: number;
   unitCost: number;
@@ -123,7 +130,6 @@ export interface SalesOrderDetail {
   amount: number;
   isDelivered: boolean;
   isInvoiced: boolean;
-  workOrderId: string | null;
 }
 
 export interface CreateInvoiceDetailsFromOrderDetailsRequest {

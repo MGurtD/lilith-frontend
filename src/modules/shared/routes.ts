@@ -8,8 +8,6 @@ const Taxes = () => import("./views/Taxes.vue");
 const Tax = () => import("./views/Tax.vue");
 const Lifecycles = () => import("./views/Lifecycles.vue");
 const Lifecycle = () => import("./views/Lifecycle.vue");
-const References = () => import("./views/References.vue");
-const Reference = () => import("./views/Reference.vue");
 const ReferenceTypes = () => import("./views/ReferenceTypes.vue");
 const ReferenceType = () => import("./views/ReferenceType.vue");
 
@@ -56,13 +54,6 @@ export default [
     path: "/lifecycle/:id",
     name: "Lifecycle",
     component: Lifecycle,
-    props: true,
-  },
-  { path: "/reference/:module", name: "References", component: References },
-  {
-    path: "/reference/:module/:id",
-    name: "Referencia",
-    component: Reference,
     props: true,
   },
   {

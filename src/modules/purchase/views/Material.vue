@@ -1,51 +1,38 @@
 <template>
-  <FormReference
-    v-if="reference"
-    :module="module"
-    :reference="reference"
-    @submit="submitForm"
-  />
+  <FormMaterial v-if="reference" :reference="reference" @submit="submitForm" />
 </template>
 <script setup lang="ts">
+import FormMaterial from "../components/FormMaterial.vue";
 import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
-
-import { storeToRefs } from "pinia";
-import { Reference } from "../types";
-import { useStore } from "../../../store";
-
-import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
-import FormReference from "../components/FormReference.vue";
-import { useReferenceStore } from "../store/reference";
-import { useTaxesStore } from "../store/tax";
-import { useReferenceTypeStore } from "../store/referenceType";
+import { PrimeIcons } from "primevue/api";
+import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "../../../store";
+import { useToast } from "primevue/usetoast";
+import { useReferenceStore } from "../../shared/store/reference";
+import { Reference } from "../../shared/types";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
-const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
-const referenceTypeStore = useReferenceTypeStore();
+
 const { reference } = storeToRefs(referenceStore);
 const id = ref("");
-const module = ref("");
 
 const loadView = async () => {
   await referenceStore.fetchReference(id.value);
-  taxesStore.fetchAll();
-  referenceTypeStore.fetchAll();
 
   let pageTitle = "";
   if (!reference.value) {
     formMode.value = FormActionMode.CREATE;
     referenceStore.setNewReference(id.value);
-    pageTitle = `Alta de referència`;
+    pageTitle = `Alta de material`;
   } else {
     formMode.value = FormActionMode.EDIT;
-    pageTitle = `Referència ${reference.value.description}`;
+    pageTitle = `Material ${reference.value.code} - ${reference.value.description}`;
   }
 
   store.setMenuItem({
@@ -57,7 +44,6 @@ const loadView = async () => {
 
 onMounted(async () => {
   id.value = route.params.id as string;
-  module.value = route.params.module as string;
   await loadView();
 });
 
@@ -69,11 +55,11 @@ const submitForm = async () => {
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await referenceStore.createReference(data);
-    if (result) message = "Referència creada correctament";
-    else message = "La referència + versió introduïda ja existeix";
+    if (result) message = "Material creat correctament";
+    else message = "El material ja existeix";
   } else {
     result = await referenceStore.updateReference(data.id, data);
-    message = "Referència actualizada correctament";
+    message = "Material actualizada correctament";
   }
 
   toast.add({

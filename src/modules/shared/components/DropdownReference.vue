@@ -1,6 +1,8 @@
 <template>
   <div class="mb-2">
-    <label class="block text-900 mb-2">{{ label }}</label>
+    <label v-if="label.length > 0" class="block text-900 mb-2">{{
+      label
+    }}</label>
     <Dropdown
       showClear
       filter
@@ -9,7 +11,12 @@
       :options="filteredReferences"
       placeholder="Selecciona..."
       optionValue="id"
-      :optionLabel="(r) => referenceStore.getShortNameById(r.id)"
+      :optionLabel="
+        (r) =>
+          fullName
+            ? referenceStore.getFullNameById(r.id)
+            : referenceStore.getShortNameById(r.id)
+      "
       class="w-full"
       v-bind="$attrs"
       v-bind:model-value="(modelValue as string)"

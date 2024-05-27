@@ -54,11 +54,13 @@ export const useWorkOrderStore = defineStore({
         phases: [],
       } as WorkOrder;
     },
-    async fetchFiltered(startTime: string, endTime: string, statusId?: string) {
+    async fetchFiltered(startTime: string, endTime: string, statusId?: string, referenceId?: string, customerId?: string) {
       this.workorders = await Services.WorkOrder.GetBetweenDatesAndStatus(
         startTime,
         endTime,
-        statusId
+        statusId,
+        referenceId,
+        customerId,
       );
     },
     async fetchAll() {

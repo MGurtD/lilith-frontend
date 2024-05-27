@@ -116,12 +116,12 @@
     <Column field="time" header="Temps (min)" style="width: 10%"></Column>
     <Column header="Cost Operari" style="width: 10%" field="personalCost">
       <template #body="slotProps">
-        {{ slotProps.data.personalCost }} €
+        {{ formatCurrency(slotProps.data.personalCost) }}
       </template>
     </Column>
     <Column header="Cost Màquina" style="width: 10%" field="workcenterCost">
       <template #body="slotProps">
-        {{ slotProps.data.workcenterCost }} €
+        {{ formatCurrency(slotProps.data.workcenterCost) }}
       </template>
     </Column>
     <Column style="width: 5%">
@@ -142,9 +142,9 @@
           Temps: {{ totalProductionTime }} minuts / Quantitat:
           {{ totalProductionQuantity }} unitats
           <br />
-          Cost operari: {{ totalPersonalCost!.toFixed(2) }} € / Cost màquina:
-          {{ totalWorkcenterCost!.toFixed(2) }} € =
-          {{ (totalPersonalCost! + totalWorkcenterCost!).toFixed(2) }} €
+          Cost operari: {{ formatCurrency(totalPersonalCost!) }} / Cost màquina:
+          {{ formatCurrency(totalWorkcenterCost!) }} =
+          {{ formatCurrency(totalPersonalCost! + totalWorkcenterCost!) }}
         </span>
       </div>
     </template>
@@ -174,6 +174,7 @@ import { ProductionPart } from "../types";
 import {
   formatDateForQueryParameter,
   formatDateTime,
+  formatCurrency,
   getNewUuid,
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";

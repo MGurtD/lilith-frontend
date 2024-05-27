@@ -32,6 +32,7 @@ import { PrimeIcons } from "primevue/api";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useToast } from "primevue/usetoast";
+import { formatCurrency } from "../../../utils/functions";
 
 const route = useRoute();
 const router = useRouter();
@@ -74,13 +75,18 @@ const onWorkmasterSubmit = async (workmaster: WorkMaster) => {
 };
 
 const calculateCostSubmit = async (workmaster: WorkMaster) => {
+  const updated = await workmasterStore.update(id.value, workmaster);
+
   const response = await workmasterStore.calculate(workmaster.id);
-  if (response.result) {
+  if (updated && response.result) {
     toast.add({
       severity: "success",
       summary: "Cálcul de cost",
-      detail: `${response.content} €`,
+      detail: `${formatCurrency(response.content!)}`,
+      life: 10000,
     });
+
+    await workmasterStore.fetchOne(id.value);
   } else {
     toast.add({
       severity: "warn",

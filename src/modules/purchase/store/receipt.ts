@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { CreateReceiptRequest, Receipt, ReceiptDetail } from "../types";
 import Services from "../services";
+import { GenericResponse } from "../../../types";
 
 export const useReceiptsStore = defineStore({
   id: "receipts",
@@ -96,11 +97,13 @@ export const useReceiptsStore = defineStore({
       }
       return response;
     },
-    async calculateDetailWeightAndPrice(detail: ReceiptDetail) {
+    async calculateDetailWeightAndPrice(
+      detail: ReceiptDetail
+    ): Promise<GenericResponse<ReceiptDetail>> {
       const response = await Services.Receipt.calculateDetailWeightAndPrice(
         detail
       );
-      if (response.result) return response.content!;
+      return response;
     },
   },
 });

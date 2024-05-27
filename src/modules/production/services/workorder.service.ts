@@ -13,10 +13,14 @@ export class WorkOrderService extends BaseService<WorkOrder> {
   async GetBetweenDatesAndStatus(
     startTime: string,
     endTime: string,
-    statusId?: string
+    statusId?: string,
+    referenceId?: string,
+    customerId?: string
   ): Promise<Array<WorkOrder> | undefined> {
     let endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}`;
     if (statusId) endpoint += `&statusId=${statusId}`;
+    if (referenceId) endpoint += `&referenceId=${statusId}`;
+    if (customerId) endpoint += `&customerId=${customerId}`;
 
     const response = await this.apiClient.get(endpoint);
     if (response.status === 200) {

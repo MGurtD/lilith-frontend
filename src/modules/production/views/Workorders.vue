@@ -4,26 +4,24 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="80vh"
+    sort-mode="multiple"
     @row-click="editRow"
   >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Estat</label>
-            <Dropdown
-              v-model="filter.statusId"
-              editable
-              :options="lifecycleStore.lifecycle?.statuses"
-              optionValue="id"
-              optionLabel="name"
-              class="w-full"
-            />
+            <label class="block text-900">Client</label>
+            <DropdownCustomers label="" v-model="filter.customerId" />
+          </div>
+          <div class="filter-field">
+            <label class="block text-900">Estat</label>
+            <DropdownLifecycle label="" v-model="filter.statusId" />
           </div>
         </div>
         <div class="datatable-buttons">
@@ -56,12 +54,26 @@
         {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
       </template>
     </Column>
+    <Column header="Client" style="width: 15%">
+      <template #body="slotProps">
+        {{
+          customersStore.getCustomerNameById(
+            slotProps.data.reference.customerId
+          )
+        }}
+      </template>
+    </Column>
     <Column field="statusId" header="Estat" style="width: 10%">
       <template #body="slotProps">
         {{ lifecycleStore.getStatusName(slotProps.data.statusId) }}
       </template>
     </Column>
-    <Column field="plannedDate" header="Data Prevista" style="width: 10%">
+    <Column
+      field="plannedDate"
+      header="Data Prevista"
+      sortable
+      style="width: 12%"
+    >
       <template #body="slotProps">
         {{ formatDate(slotProps.data.plannedDate) }}
       </template>
@@ -95,7 +107,9 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
@@ -115,6 +129,7 @@ import { useExerciseStore } from "../../shared/store/exercise";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useWorkOrderStore } from "../store/workorder";
 import { useWorkMasterStore } from "../store/workmaster";
+import { useCustomersStore } from "../../sales/store/customers";
 
 const router = useRouter();
 const store = useStore();
@@ -123,6 +138,7 @@ const confirm = useConfirm();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 const referenceStore = useReferenceStore();
+const customersStore = useCustomersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 
@@ -142,10 +158,12 @@ const setCurrentYear = () => {
 const filter = ref({
   referenceId: undefined,
   statusId: undefined,
+  customerId: undefined,
 });
 const cleanFilter = () => {
   filter.value.referenceId = undefined;
   filter.value.statusId = undefined;
+  filter.value.customerId = undefined;
 };
 const filterData = async () => {
   if (store.exercisePicker.dates) {
@@ -157,7 +175,9 @@ const filterData = async () => {
     await workOrderStore.fetchFiltered(
       startTime,
       endTime,
-      filter.value.statusId
+      filter.value.statusId,
+      filter.value.referenceId,
+      filter.value.customerId
     );
   } else {
     toast.add({

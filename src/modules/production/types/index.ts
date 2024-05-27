@@ -116,6 +116,7 @@ export interface WorkMasterPhaseDetail {
   workMasterPhaseId: string;
   machineStatusId: string;
   estimatedTime: number;
+  estimatedOperatorTime: number;
   isCycleTime: boolean;
   order: number;
   comment: string;
@@ -186,6 +187,7 @@ export interface WorkOrderPhaseDetail {
   workOrderPhaseId: string;
   machineStatusId: string;
   estimatedTime: number;
+  estimatedOperatorTime: number;
   isCycleTime: boolean;
   order: number;
   comment: string;

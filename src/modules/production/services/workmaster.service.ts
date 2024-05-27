@@ -8,7 +8,16 @@ import {
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 
+// Workmaster
 export class WorkMasterService extends BaseService<WorkMaster> {
+  async getByReferenceId(
+    referenceId: string
+  ): Promise<Array<WorkMaster> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/reference/${referenceId}`
+    );
+    if (response.status === 200) return response.data as Array<WorkMaster>;
+  }
   async copyWorkMaster(workmasterToCopy: WorkMasterToCopy): Promise<boolean> {
     const response = await this.apiClient.post(
       `${this.resource}/copy`,
@@ -16,11 +25,17 @@ export class WorkMasterService extends BaseService<WorkMaster> {
     );
     return response.status === 200;
   }
-  async calculateCost(id: string): Promise<GenericResponse<number>> {
-    const response = await this.apiClient.get(`${this.resource}/cost/${id}`);
+  async calculateCost(id: string, quantity?: number): Promise<GenericResponse<number>> {
+    let endpoint = `${this.resource}/cost/${id}`
+    if (quantity) {
+      endpoint = endpoint.concat(`?quantity=${quantity}`)
+    }
+
+    const response = await this.apiClient.get(endpoint);
     return response.data;
   }
 }
+// Phases
 export class WorkMasterPhaseService extends BaseService<WorkMasterPhase> {
   async getByWorkMasterId(
     workMasterId: string
@@ -31,6 +46,7 @@ export class WorkMasterPhaseService extends BaseService<WorkMasterPhase> {
     if (response.status === 200) return response.data as Array<WorkMasterPhase>;
   }
 }
+// Phase details
 export class WorkMasterPhaseDetailService extends BaseService<WorkMasterPhaseDetail> {
   async getByWorkMasterPhaseId(
     workMasterPhaseId: string

@@ -17,7 +17,7 @@
             <label>Codi</label>
             <BaseInput v-model="filter.code" />
           </div>
-          <div class="filter-field" v-if="isSales">
+          <div class="filter-field">
             <label>Client</label>
             <DropdownCustomers label="" v-model="filter.customerId" />
           </div>
@@ -42,76 +42,28 @@
     </template>
     <Column field="code" header="Codi" style="width: 15%"></Column>
     <Column field="description" header="Descripció" style="width: 35%"></Column>
-    <Column
-      v-if="isSales"
-      field="version"
-      header="Versió"
-      style="width: 10%"
-    ></Column>
-    <Column
-      v-if="isSales"
-      field="customerId"
-      header="Client"
-      style="width: 20%"
-    >
+    <Column field="version" header="Versió" style="width: 10%"></Column>
+    <Column field="customerId" header="Client" style="width: 20%">
       <template #body="slotProps">
         <span>{{ getCustomerById(slotProps.data.customerId) }}</span>
       </template>
     </Column>
-    <Column v-if="isSales" field="price" header="Preu" style="width: 10%">
+    <Column field="price" header="Preu" style="width: 10%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.price) }}
       </template>
     </Column>
-    <Column v-if="isSales" field="cost" header="Cost" style="width: 10%">
+    <Column field="cost" header="Cost" style="width: 10%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.workMasterCost) }}
       </template>
     </Column>
-    <Column header="Servei" v-if="isSales" style="width: 10%">
+    <Column header="Servei" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isService" />
       </template>
     </Column>
-    <Column
-      v-if="isPurchase"
-      field="referenceTypeId"
-      header="Tipus"
-      style="width: 15%"
-    >
-      <template #body="slotProps">
-        <span>{{ getTypeDescription(slotProps.data.referenceTypeId) }}</span>
-      </template>
-    </Column>
-    <Column v-if="isPurchase" header="Densitat (mm)" style="width: 10%">
-      <template #body="slotProps">
-        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
-      </template>
-    </Column>
-    <Column
-      v-if="isPurchase"
-      field="referenceFormatId"
-      header="Format"
-      style="width: 10%"
-    >
-      <template #body="slotProps">
-        <span>{{
-          getFormatDescription(slotProps.data.referenceFormatId)
-        }}</span>
-      </template>
-    </Column>
-    <Column
-      v-if="isPurchase"
-      field="lastPurchaseCost"
-      header="Última Compra"
-      style="width: 10%"
-    ></Column>
 
-    <!-- <Column header="Desc." style="width: 10%">
-      <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
-      </template>
-    </Column> -->
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -127,22 +79,28 @@
 <script setup lang="ts">
 import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { computed, ref } from "vue";
-import { useReferenceStore } from "../store/reference";
-
+import { computed, ref, onUnmounted, onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { Reference } from "../types";
-import { useReferenceTypeStore } from "../store/referenceType";
+import { Reference } from "../../shared/types";
 import { useCustomersStore } from "../../sales/store/customers";
 import { formatCurrency } from "../../../utils/functions";
 
-const referenceTypeStore = useReferenceTypeStore();
-const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
 const filter = ref({
   code: "",
   customerId: "",
+});
+
+const filterLocalStoregeKey = "temges.filters.references";
+onMounted(() => {
+  const filterLocalStorage = localStorage.getItem(filterLocalStoregeKey);
+  if (filterLocalStorage) {
+    filter.value = JSON.parse(filterLocalStorage);
+  }
+});
+onUnmounted(() => {
+  localStorage.setItem(filterLocalStoregeKey, JSON.stringify(filter.value));
 });
 
 const cleanFilter = () => {
@@ -151,7 +109,6 @@ const cleanFilter = () => {
 };
 
 const props = defineProps<{
-  module: string;
   references: Array<Reference> | undefined;
 }>();
 
@@ -160,16 +117,6 @@ const emit = defineEmits<{
   (e: "edit", reference: Reference): void;
   (e: "delete", reference: Reference): void;
 }>();
-
-const isSales = computed(() => {
-  return props.module === "sales";
-});
-const isPurchase = computed(() => {
-  return props.module === "purchase";
-});
-const isProduction = computed(() => {
-  return props.module === "production";
-});
 
 const filteredData = computed(() => {
   if (!props.references) return [];
@@ -207,26 +154,6 @@ const editRow = (row: DataTableRowClickEvent) => {
 
 const onDeleteRow = (event: any, reference: Reference) => {
   emit("delete", reference);
-};
-
-const getReferenceTypeDensity = (referenceTypeId: string) => {
-  const referenceType =
-    referenceTypeStore.getReferenceTypeById(referenceTypeId);
-  return referenceType ? referenceType.density : 0;
-};
-
-const getFormatDescription = (formatId: string) => {
-  const format = referenceStore.referenceFormats?.find(
-    (f) => f.id === formatId
-  );
-  if (format) return format.description;
-  else return "";
-};
-
-const getTypeDescription = (referenceTypeId: string) => {
-  const referenceType =
-    referenceTypeStore.getReferenceTypeById(referenceTypeId);
-  return referenceType ? referenceType.description : "";
 };
 
 const getCustomerById = (customerId: string) => {

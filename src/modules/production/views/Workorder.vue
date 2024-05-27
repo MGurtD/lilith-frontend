@@ -202,6 +202,7 @@ const addWorkOrderPhase = async (phase: WorkOrderPhase) => {
       severity: "error",
       summary: "Error al crear la fase",
       detail: "Revisi el log per a més informació",
+      life: 10000,
     });
   }
 };

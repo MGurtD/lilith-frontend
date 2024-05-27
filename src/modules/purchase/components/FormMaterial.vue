@@ -9,7 +9,7 @@
     <br />
   </div>
   <form v-if="reference">
-    <section class="four-columns">
+    <section class="three-columns">
       <div class="mt-1">
         <BaseInput
           class="mb-2"
@@ -32,33 +32,14 @@
           }"
         ></BaseInput>
       </div>
-      <div class="mt-1" v-if="isSales">
-        <BaseInput
-          :type="BaseInputType.TEXT"
-          label="Versió"
-          id="version"
-          v-model="reference.version"
-        />
-      </div>
-      <div class="mt-1" v-if="isSales">
-        <DropdownCustomers label="Client" v-model="reference.customerId" />
-      </div>
-      <div class="mt-1" v-if="isPurchase">
-        <label class="block text-900 mb-2">Tipus de material</label>
-        <Dropdown
+      <div class="mt-1">
+        <DropdownReferenceType
+          label="Tipus de material"
           v-model="reference.referenceTypeId"
-          editable
-          :options="referenceTypeStore.referenceTypes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.taxid,
-          }"
         />
       </div>
     </section>
-    <section class="three-columns" v-if="isPurchase">
+    <section class="four-columns">
       <div class="mt-1">
         <label class="block text-900 mb-2">Format</label>
         <Dropdown
@@ -96,86 +77,31 @@
           }"
         />
       </div>
-    </section>
-    <section class="five-columns" v-if="isSales">
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Cost Teóric Fabricació"
-          id="workMasterCost"
-          v-model="reference.workMasterCost"
-          disabled
-        />
+      <div>
+        <label class="block text-900 mb-2">Desactivada</label>
+        <Checkbox v-model="reference.disabled" :binary="true" />
       </div>
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Cost Última Fabricació"
-          id="lastCost"
-          v-model="reference.lastCost"
-          disabled
-        />
-      </div>
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Preu"
-          id="price"
-          v-model="reference.price"
-        />
-      </div>
-      <div class="mt-1">
-        <label class="block text-900 mb-2">Impost</label>
-        <Dropdown
-          v-model="reference.taxId"
-          editable
-          :options="taxesStore.taxes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.taxid,
-          }"
-        />
-      </div>
-      <div class="mt-1">
-        <label class="block text-900 mb-2">Servei</label>
-        <Checkbox v-model="reference.isService" class="w-full" :binary="true" />
-      </div>
-    </section>
-    <section>
-      <br />
-      <FileEntityPicker
-        v-if="reference"
-        title="Documentació"
-        entity="referenceMaps"
-        :id="reference.id"
-      />
     </section>
   </form>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { Reference } from "../types";
+import { Reference } from "../../shared/types";
 import * as Yup from "yup";
 import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
-import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
-import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../../types/component";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useReferenceStore } from "../../shared/store/reference";
-import { useReferenceTypeStore } from "../store/referenceType";
+import { useReferenceTypeStore } from "../../shared/store/referenceType";
+import DropdownReferenceType from "../../shared/components/DropdownReferenceType.vue";
 
 const props = defineProps<{
-  module: string;
   reference: Reference;
-  defaultCustomerId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -183,29 +109,10 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
-const route = useRoute();
-
-const isSales = computed(() => {
-  return props.module === "sales";
-});
-const isPurchase = computed(() => {
-  return props.module === "purchase";
-});
-const isProduction = computed(() => {
-  return props.module === "production";
-});
-
 const toast = useToast();
 const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
-
-onMounted(() => {
-  // Set customer when optional property is set
-  if (props.defaultCustomerId && props.reference) {
-    props.reference.customerId = props.defaultCustomerId!;
-  }
-});
 
 const schema = Yup.object().shape({
   code: Yup.string()
@@ -214,11 +121,6 @@ const schema = Yup.object().shape({
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
-  version: Yup.string()
-    .required("La versió és obligatoria")
-    .max(20, "La versió pot superar els 20 carácters"),
-  cost: Yup.number().required("El cost es obligatori"),
-  price: Yup.number().required("El preu es obligatori"),
   taxId: Yup.string().required("El tipus d'iva es obligatori"),
 });
 const validation = ref({

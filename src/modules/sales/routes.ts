@@ -11,6 +11,8 @@ const SalesInvoices = () => import("./views/SalesInvoices.vue");
 const SalesInvoice = () => import("./views/SalesInvoice.vue");
 const DeliveryNotes = () => import("./views/DeliveryNotes.vue");
 const DeliveryNote = () => import("./views/DeliveryNote.vue");
+const References = () => import("./views/References.vue");
+const Reference = () => import("./views/Reference.vue");
 
 export default [
   {
@@ -33,7 +35,8 @@ export default [
     component: SalesInvoice,
     props: true,
   },
-
+  { path: "/sales/reference", name: "References", component: References },
+  { path: "/sales/reference/:id", name: "Reference", component: Reference },
   { path: "/budget", name: "Budgets", component: Budgets },
   { path: "/budget/:id", name: "Budget", component: Budget },
   { path: "/salesorder", name: "SalesOrders", component: SalesOrders },

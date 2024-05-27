@@ -4,6 +4,8 @@
     :value="salesOrderDetails"
     tableStyle="min-width: 100%"
     class="p-datatable-sm"
+    selectionMode="single"
+    dataKey="id"
     sortMode="single"
     sortField="reference.code"
     :sortOrder="1"

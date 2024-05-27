@@ -123,6 +123,7 @@ const onWorkmasterPhaseSubmit = async (phase: WorkMasterPhase) => {
       severity: "success",
       summary: "Fase actualitzada",
       detail: `La fase ${phase.code} ha estat actualitzada correctament`,
+      life: 10000,
     });
   }
 };

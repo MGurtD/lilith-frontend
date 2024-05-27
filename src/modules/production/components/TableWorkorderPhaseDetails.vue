@@ -23,16 +23,21 @@
       </template>
     </Column>
 
-    <Column
-      field="estimatedTime"
-      header="Temps (min)"
-      style="width: 25%"
-    ></Column>
     <Column header="Temps de cicle" style="width: 25%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.isCycleTime"></BooleanColumn>
       </template>
     </Column>
+    <Column
+      field="estimatedTime"
+      header="Temps màquina (min)"
+      style="width: 25%"
+    ></Column>
+    <Column
+      field="estimatedOperatorTime"
+      header="Temps operari (min)"
+      style="width: 25%"
+    ></Column>
     <Column style="width: 25%">
       <template #body="slotProps">
         <i
@@ -82,6 +87,7 @@ const onAdd = () => {
     id: getNewUuid(),
     workOrderPhaseId: props.workorderPhase.id,
     estimatedTime: 0,
+    estimatedOperatorTime: 0,
     isCycleTime: false,
     machineStatusId: "",
     comment: "",

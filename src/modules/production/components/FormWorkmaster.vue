@@ -6,7 +6,7 @@
       <Button label="Guardar" size="small" @click="submitForm" />
       <br />
     </div>
-    <section class="three-columns">
+    <section class="four-columns">
       <div>
         <DropdownReference
           label="Referència"

@@ -58,7 +58,7 @@
     >
     </Column>
     <Column field="cost" header="Cost" style="width: 30%">
-      <template #body="slotProps"> {{ slotProps.data.cost }} € </template>
+      <template #body="slotProps"> {{ formatCurrency(slotProps.data.cost) }} </template>
     </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
@@ -87,6 +87,7 @@ import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkcenterCost } from "../types";
+import { formatCurrency } from "../../../utils/functions";
 
 const router = useRouter();
 const store = useStore();

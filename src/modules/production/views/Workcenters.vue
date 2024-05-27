@@ -91,7 +91,6 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { Workcenter } from "../types";
-import { AreaService } from "../services";
 import { useShiftStore } from "../store/shift";
 
 const router = useRouter();
