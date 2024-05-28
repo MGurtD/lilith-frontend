@@ -29,7 +29,7 @@
         }"
       ></BaseInput>
     </section>
-    <section class="three-columns">
+    <section class="four-columns">
       <BaseInput
         class="mb-2"
         label="Correu electrònic"
@@ -37,6 +37,15 @@
         v-model="contact.email"
         :class="{
           'p-invalid': validation.errors.email,
+        }"
+      ></BaseInput>
+      <BaseInput
+        class="mb-2"
+        label="Extensió"
+        id="extension"
+        v-model="contact.extension"
+        :class="{
+          'p-invalid': validation.errors.extension,
         }"
       ></BaseInput>
       <BaseInput
@@ -101,6 +110,8 @@ const schema = Yup.object().shape({
   phoneNumber: Yup.string()
     .required("El telèfon és obligatori")
     .max(15, "Ha superat la longitud màxima del telèfon"),
+  extension: Yup.string().required("L'extensió del telèfon és obligatoria"),
+
   disabled: Yup.boolean().required(),
   main: Yup.boolean().required(),
 });
