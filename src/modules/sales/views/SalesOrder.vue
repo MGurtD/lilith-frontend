@@ -217,7 +217,7 @@ const openOrderDetailDialog = (
     salesOrderDetail = {
       id: getNewUuid(),
       referenceId: "",
-      quantity: 0,
+      quantity: 1,
       profit: 0,
       discount: 0,
       unitCost: 0,
@@ -232,7 +232,7 @@ const openOrderDetailDialog = (
       isDelivered: false,
       isInvoiced: false,
       workMasterId: null,
-      workOrderId: "",
+      workOrderId: null,
     } as SalesOrderDetail;
   }
 
