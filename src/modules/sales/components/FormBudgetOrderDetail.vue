@@ -13,8 +13,8 @@
       <div>
         <BaseInput
           class="mb-2"
-          label="Preu Unitari"
-          v-model="detail.unitPrice"
+          label="Preu"
+          v-model="referencePrice"
           :type="BaseInputType.CURRENCY"
           disabled
         ></BaseInput>
@@ -50,7 +50,7 @@
       </div>
     </section>
 
-    <section class="four-columns">
+    <section class="five-columns">
       <div>
         <BaseInput
           class="mb-2"
@@ -87,6 +87,13 @@
           }"
         ></BaseInput>
       </div>
+      <BaseInput
+        class="mb-2"
+        label="Preu Unitari"
+        v-model="detail.unitPrice"
+        :type="BaseInputType.CURRENCY"
+        disabled
+      ></BaseInput>
       <div>
         <BaseInput
           class="mb-2"
@@ -158,17 +165,21 @@ const textActionButton = computed(() => {
   return props.formAction === FormActionMode.CREATE ? "Afegir" : "Modificar";
 });
 
+const referencePrice = ref(0);
+
 const getReferenceInfo = () => {
   const reference = referenceStore.references!.find(
     (r) => r.id === props.detail.referenceId
   );
   if (reference) {
     props.detail.description = reference.description;
+    referencePrice.value = reference.price;
     props.detail.unitPrice = reference.price;
     props.detail.workMasterId = null;
     props.detail.unitCost = reference.lastCost;
     updateImports();
   } else {
+    referencePrice.value = 0;
     props.detail.description = "";
     props.detail.unitPrice = 0;
     props.detail.workMasterId = null;
@@ -190,6 +201,7 @@ const getWorkmasterCost = async () => {
     updateImports();
   } else {
     getReferenceInfo();
+    props.detail.totalCost = 0;
   }
 };
 
@@ -215,6 +227,16 @@ const updateImports = () => {
   if (props.detail.discount > 0) {
     props.detail.amount =
       props.detail.amount * (1 - props.detail.discount / 100);
+  }
+
+  // calculate unit price
+  const reference = referenceStore.references!.find(
+    (r) => r.id === props.detail.referenceId
+  );
+  if (props.detail.amount > 0 && props.detail.quantity > 0) {
+    props.detail.unitPrice = props.detail.amount / props.detail.quantity;
+  } else {
+    props.detail.unitPrice = reference?.price || 0;
   }
 };
 
