@@ -216,7 +216,6 @@ const updateImports = () => {
     props.detail.amount =
       props.detail.amount * (1 - props.detail.discount / 100);
   }
-  props.detail.unitPrice = props.detail.amount;
 };
 
 const schema = Yup.object().shape({
