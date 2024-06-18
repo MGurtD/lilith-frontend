@@ -45,7 +45,7 @@ apiClient.interceptors.response.use(
     // Do something with response error
     const store = useApiStore();
     store.isWaiting = false;
-    store.setError();
+    store.setError("Error de comunicació amb la API.");
 
     logException(error);
     return Promise.reject(error);

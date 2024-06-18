@@ -8,7 +8,6 @@ import {
   Operator,
   OperatorType,
   WorkcenterCost,
-  ProductionPart,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import {
