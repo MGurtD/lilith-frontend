@@ -4,7 +4,7 @@ import { useApiStore } from "../store/backend";
 const baseUrl = import.meta.env.VITE_SERVER_BASE_URL as string;
 
 const serverClient = axios.create({
-  baseURL: baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}`,
+  baseURL: baseUrl,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",

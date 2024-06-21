@@ -26,3 +26,4 @@ dist-ssr
 .env.production
 .env.test
 docker-compose.yml
+.env.test
