@@ -221,7 +221,8 @@ export interface ProductionPart {
   operatorId: string;
   date: Date;
   quantity: number;
-  time: number;
+  operatorTime: number;
+  workcenterTime: number;
   workOrder?: WorkOrder;
   workOrderPhase?: WorkOrderPhase;
   workOrderPhaseDetail?: WorkOrderPhaseDetail;

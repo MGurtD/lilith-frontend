@@ -32,7 +32,16 @@
       </template>
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
-    <Column field="time" header="Temps Total (min)" style="width: 15%"></Column>
+    <Column
+      field="operatorTime"
+      header="Temps Total Operari (min)"
+      style="width: 7.5%"
+    ></Column>
+    <Column
+      field="workcenterTime"
+      header="Temps Total Centre (min)"
+      style="width: 7.5%"
+    ></Column>
     <Column style="width: 5%">
       <template #body="slotProps">
         <i

@@ -75,7 +75,7 @@
         <Calendar v-model="productionPart.date" dateFormat="dd/mm/yy" />
       </div>
     </section>
-    <section class="two-columns mt-2">
+    <section class="three-columns mt-2">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -87,9 +87,17 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps total (minuts)"
+          label="Temps total operari (minuts)"
           id="time"
-          v-model="productionPart.time"
+          v-model="productionPart.operatorTime"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          label="Temps total centre de treball (minuts)"
+          id="time"
+          v-model="productionPart.workcenterTime"
         />
       </div>
     </section>
@@ -163,8 +171,8 @@ const schema = Yup.object().shape({
   quantity: Yup.number()
     .required("Has d'introduir una quantitat entera (pot ser 0)")
     .integer(),
-  time: Yup.number()
-    .required("Has d'introduir el temps i ha de ser major que 0")
+  workcenterTime: Yup.number()
+    .required("Has d'introduir el temps de màquina i ha de ser major que 0")
     .moreThan(0),
 });
 const validation = ref({

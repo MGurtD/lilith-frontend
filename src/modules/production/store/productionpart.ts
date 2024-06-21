@@ -20,7 +20,8 @@ export const useProductionPartStore = defineStore({
         workOrderPhaseId: "",
         workOrderPhaseDetailId: "",
         quantity: 0,
-        time: 0,
+        operatorTime: 0,
+        workcenterTime: 0,
       } as ProductionPart;
     },
     async fetchAll() {

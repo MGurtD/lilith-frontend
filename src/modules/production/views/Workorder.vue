@@ -222,7 +222,8 @@ const onProductionPartAddClick = () => {
     workOrderPhaseDetailId: "",
     operatorId: "",
     workcenterId: "",
-    time: 0,
+    operatorTime: 0,
+    workcenterTime: 0,
     quantity: 0,
     date: new Date(),
   };
