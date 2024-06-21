@@ -235,6 +235,7 @@ const filterData = async () => {
       life: 5000,
     });
   }
+  console.log("store: ", productionPartStore.productionParts);
 };
 
 const cleanFilter = () => {
@@ -285,7 +286,7 @@ const calculatedProductionParts = computed(() => {
 const totalProductionTime = computed(() => {
   if (productionPartStore.productionParts) {
     return productionPartStore.productionParts.reduce(
-      (acc, productionPart) => acc + productionPart.time,
+      (acc, productionPart) => acc + productionPart.workcenterTime,
       0
     );
   }
@@ -333,8 +334,9 @@ const generateNewRequest = (): ProductionPart => {
     workOrderId: "",
     workOrderPhaseId: "",
     workOrderPhaseDetailId: "",
-    time: 0,
     quantity: 0,
+    operatorTime: 0,
+    workcenterTime: 0,
     date: new Date(),
   };
 };
@@ -366,25 +368,46 @@ const getWorkCenterCost = (
         productionPart.workOrderPhaseDetail!.machineStatusId
   );
   if (workcenterStatusCost) {
-    const cost = (workcenterStatusCost.cost * productionPart.time) / 60;
+    const cost =
+      (workcenterStatusCost.cost * productionPart.workcenterTime) / 60;
     return _.round(cost, 2);
   }
 
   return 0;
 };
 
-const getPersonalCost = (
+/*const getPersonalCost = (
   productionPart: ProductionPart
 ): number | undefined => {
+  if (productionPart.operatortime == 0) return 0;
   let operator = plantModelStore.operators?.find(
     (op) => op.id === productionPart.operatorId
   );
   let operatorCost = plantModelStore.operatorTypes?.find(
     (ot) => ot.id === operator?.operatorTypeId
   );
-  if (operatorCost) return (operatorCost.cost * productionPart.time) / 60;
+  if (operatorCost)
+    return (operatorCost.cost * productionPart.operatortime) / 60;
 
   return 0;
+};*/
+const getPersonalCost = (
+  productionPart: ProductionPart
+): number | undefined => {
+  if (!productionPart || productionPart.operatorTime == 0) return 0;
+
+  let operator = plantModelStore.operators?.find(
+    (op) => op.id === productionPart.operatorId
+  );
+  if (!operator) return 0;
+
+  let operatorCost = plantModelStore.operatorTypes?.find(
+    (ot) => ot.id === operator.operatorTypeId
+  );
+  if (!operatorCost) return 0;
+
+  const cost = (operatorCost.cost * productionPart.operatorTime) / 60;
+  return _.round(cost, 2);
 };
 
 const createButtonClick = () => {
