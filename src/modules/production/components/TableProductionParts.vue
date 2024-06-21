@@ -11,7 +11,7 @@
     </template>
     <template #empty> No s'han trobat tiquets. </template>
     <template #loading> Carregant tiquets. Si us plau espera. </template>
-    <Column field="operatorId" header="Operari" style="width: 15%">
+    <Column field="operatorId" header="Operari" style="width: 20%">
       <template #body="slotProps">
         {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
       </template>
@@ -26,22 +26,22 @@
         {{ getWorkOrderPhaseName(slotProps.data) }}
       </template>
     </Column>
-    <Column field="date" header="Data" style="width: 15%">
+    <Column field="date" header="Data" style="width: 10%">
       <template #body="slotProps">
         {{ formatDateTime(slotProps.data.date) }}
       </template>
     </Column>
-    <Column field="quantity" header="Quantitat" style="width: 10%"></Column>
-    <Column
-      field="operatorTime"
-      header="Temps Total Operari (min)"
-      style="width: 7.5%"
-    ></Column>
-    <Column
-      field="workcenterTime"
-      header="Temps Total Centre (min)"
-      style="width: 7.5%"
-    ></Column>
+    <Column field="quantity" header="Quantitat" style="width: 7.5%"></Column>
+    <Column field="operatorTime" header="Temps operari" style="width: 10%">
+      <template #body="slotProps">
+        {{ slotProps.data.operatorTime }} min.
+      </template>
+    </Column>
+    <Column field="workcenterTime" header="Temps màquina" style="width: 10%">
+      <template #body="slotProps">
+        {{ slotProps.data.workcenterTime }} min.
+      </template>
+    </Column>
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
