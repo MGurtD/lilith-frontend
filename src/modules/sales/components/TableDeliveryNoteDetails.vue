@@ -13,9 +13,8 @@
     </template>
     <template #groupheader="slotProps">
       <span class="vertical-align-middle ml-2 font-bold line-height-3"
-        >Comanda {{ slotProps.data.salesOrderNumber }} ({{
-          slotProps.data.customerOrderNumber
-        }}) {{ formatDate(slotProps.data.salesOrderDate) }}</span
+        >Comanda {{ slotProps.data.salesOrderNumber }} (Núm. Client:
+        {{ slotProps.data.customerNumber }})</span
       >
       &nbsp;
       <i
@@ -77,11 +76,11 @@ const treeTableData = computed(() => {
         salesOrderId: order.id,
         salesOrderNumber: order.number,
         salesOrderDate: order.date,
+        customerNumber: order.customerNumber,
         ...detail,
       });
     });
   }
-
   return salesOrderDetails;
 });
 
