@@ -69,7 +69,6 @@ import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Budget, BudgetDetail } from "../types";
 import { useConfirm } from "primevue/useconfirm";
-import { useReferenceStore } from "../../shared/store/reference";
 import { useBudgetStore } from "../store/budget";
 import { formatCurrency } from "../../../utils/functions";
 
@@ -85,7 +84,6 @@ const emit = defineEmits<{
 
 const confirm = useConfirm();
 const budgetStore = useBudgetStore();
-const referenceStore = useReferenceStore();
 
 const onEditRow = (row: DataTableRowClickEvent) => {
   if (
