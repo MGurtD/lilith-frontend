@@ -13,7 +13,7 @@
     <template #header>
       <slot name="header"></slot>
     </template>
-    <Column field="quantity" header="Quantitat" style="width: 10%" />
+    <Column field="quantity" header="Quantitat" style="width: 7.5%" />
     <Column
       header="Referencia"
       field="reference.code"
@@ -24,7 +24,7 @@
         <LinkReference :id="slotProps.data.referenceId" />
       </template>
     </Column>
-    <Column field="description" header="Descripció" style="width: 30%" />
+    <Column field="description" header="Descripció" style="width: 25%" />
     <Column field="workOrderId" header="Ordre fabr." style="width: 10%">
       <template #body="slotProps">
         <div
@@ -50,22 +50,23 @@
         </div>
       </template>
     </Column>
-    <Column field="workMasterCost" header="Cost Teóric" style="width: 10%">
+    <Column field="unitCost" header="Cost un." style="width: 8%">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.workMasterCost) }}
+        {{ formatCurrency(slotProps.data.unitCost) }}
       </template>
     </Column>
-    <Column field="lastCost" header="Últim Cost" style="width: 10%">
+    <Column field="totalCost" header="Cost total" style="width: 8%">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.lastCost) }}
+        {{ formatCurrency(slotProps.data.totalCost) }}
       </template>
     </Column>
-    <Column field="unitPrice" header="Preu un." style="width: 10%">
-      <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.unitPrice) }}
-      </template>
+    <Column field="profit" header="Benefici" style="width: 8%">
+      <template #body="slotProps"> {{ slotProps.data.profit }} % </template>
     </Column>
-    <Column field="amount" header="Total" style="width: 10%">
+    <Column field="profit" header="Descompte" style="width: 8%">
+      <template #body="slotProps"> {{ slotProps.data.discount }} % </template>
+    </Column>
+    <Column field="amount" header="Total" style="width: 8%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.amount) }}
       </template>
