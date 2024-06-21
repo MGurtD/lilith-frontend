@@ -376,21 +376,6 @@ const getWorkCenterCost = (
   return 0;
 };
 
-/*const getPersonalCost = (
-  productionPart: ProductionPart
-): number | undefined => {
-  if (productionPart.operatortime == 0) return 0;
-  let operator = plantModelStore.operators?.find(
-    (op) => op.id === productionPart.operatorId
-  );
-  let operatorCost = plantModelStore.operatorTypes?.find(
-    (ot) => ot.id === operator?.operatorTypeId
-  );
-  if (operatorCost)
-    return (operatorCost.cost * productionPart.operatortime) / 60;
-
-  return 0;
-};*/
 const getPersonalCost = (
   productionPart: ProductionPart
 ): number | undefined => {
@@ -402,7 +387,7 @@ const getPersonalCost = (
   if (!operator) return 0;
 
   let operatorCost = plantModelStore.operatorTypes?.find(
-    (ot) => ot.id === operator.operatorTypeId
+    (ot) => ot.id === operator?.operatorTypeId
   );
   if (!operatorCost) return 0;
 
