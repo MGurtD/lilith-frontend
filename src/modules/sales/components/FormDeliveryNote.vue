@@ -56,11 +56,7 @@
           />
         </div>
         <div class="mt-2">
-          <BaseInput
-            v-model="deliveryNote.deliveryDate"
-            label="Data Entrega"
-            :disabled="true"
-          />
+          <BaseInput v-model="deliveryNote.deliveryDate" label="Data Entrega" />
         </div>
         <div class="mt-2">
           <BaseInput
