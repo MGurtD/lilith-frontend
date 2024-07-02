@@ -4,7 +4,7 @@
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="79vh"
     :sort-order="1"
     sort-field="date"
     paginator
@@ -107,21 +107,39 @@
         {{ getWorkOrderDetailedName(slotProps.data) }}
       </template>
     </Column>
-    <Column field="date" header="Data" style="width: 15%" sortable>
+    <Column field="date" header="Data" style="width: 10%" sortable>
       <template #body="slotProps">
-        {{ formatDateTime(slotProps.data.date) }}
+        {{ formatDate(slotProps.data.date) }}
       </template>
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 5%"></Column>
-    <Column field="time" header="Temps (min)" style="width: 10%"></Column>
-    <Column header="Cost Operari" style="width: 10%" field="personalCost">
+    <Column
+      field="operatorTime"
+      header="Temps Oper."
+      style="width: 10%"
+    ></Column>
+    <Column
+      field="workcenterTime"
+      header="Temps Maq."
+      style="width: 10%"
+    ></Column>
+    <Column header="Cost Operari" style="width: 10%" field="operatorHourCost">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.personalCost) }}
+        {{
+          formatCurrency(
+            (slotProps.data.operatorHourCost / 60) * slotProps.data.operatorTime
+          )
+        }}
       </template>
     </Column>
-    <Column header="Cost Màquina" style="width: 10%" field="workcenterCost">
+    <Column header="Cost Màquina" style="width: 10%" field="machineHourCost">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.workcenterCost) }}
+        {{
+          formatCurrency(
+            (slotProps.data.machineHourCost / 60) *
+              slotProps.data.workcenterTime
+          )
+        }}
       </template>
     </Column>
     <Column style="width: 5%">
@@ -139,11 +157,14 @@
         v-if="calculatedProductionParts && calculatedProductionParts.length > 0"
       >
         <span>
-          Temps: {{ totalProductionTime }} minuts / Quantitat:
+          Quantitat:
           {{ totalProductionQuantity }} unitats
           <br />
-          Cost operari: {{ formatCurrency(totalPersonalCost!) }} / Cost màquina:
-          {{ formatCurrency(totalWorkcenterCost!) }} =
+          Temps màquina: {{ totalWorkcenterTime }} / Temps operari :
+          {{ totalOperatorTime }}
+          <br />
+          Cost màquina: {{ formatCurrency(totalWorkcenterCost!) }} / Cost
+          operari: {{ formatCurrency(totalPersonalCost!) }} =
           {{ formatCurrency(totalPersonalCost! + totalWorkcenterCost!) }}
         </span>
       </div>
@@ -173,7 +194,7 @@ import { useToast } from "primevue/usetoast";
 import { ProductionPart } from "../types";
 import {
   formatDateForQueryParameter,
-  formatDateTime,
+  formatDate,
   formatCurrency,
   getNewUuid,
 } from "../../../utils/functions";
@@ -283,7 +304,15 @@ const calculatedProductionParts = computed(() => {
   }
 });
 
-const totalProductionTime = computed(() => {
+const totalOperatorTime = computed(() => {
+  if (productionPartStore.productionParts) {
+    return productionPartStore.productionParts.reduce(
+      (acc, productionPart) => acc + productionPart.operatorTime,
+      0
+    );
+  }
+});
+const totalWorkcenterTime = computed(() => {
   if (productionPartStore.productionParts) {
     return productionPartStore.productionParts.reduce(
       (acc, productionPart) => acc + productionPart.workcenterTime,
@@ -334,6 +363,11 @@ const generateNewRequest = (): ProductionPart => {
     workOrderId: "",
     workOrderPhaseId: "",
     workOrderPhaseDetailId: "",
+    operatorHourCost: 0,
+    machineHourCost: 0,
+    operatorTime: 0,
+    workcenterTime: 0,
+    time: 0,
     quantity: 0,
     operatorTime: 0,
     workcenterTime: 0,
@@ -358,40 +392,16 @@ const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
 const getWorkCenterCost = (
   productionPart: ProductionPart
 ): number | undefined => {
-  if (!productionPart.workOrderPhaseDetail) return 0;
-
-  console.log(productionPart);
-  let workcenterStatusCost = plantModelStore.workcentercosts?.find(
-    (wo) =>
-      wo.workcenterId === productionPart.workcenterId &&
-      wo.machineStatusId ===
-        productionPart.workOrderPhaseDetail!.machineStatusId
-  );
-  if (workcenterStatusCost) {
-    const cost =
-      (workcenterStatusCost.cost * productionPart.workcenterTime) / 60;
-    return _.round(cost, 2);
-  }
-
-  return 0;
+  const cost =
+    (productionPart.machineHourCost * productionPart.workcenterTime) / 60;
+  return _.round(cost, 2);
 };
 
 const getPersonalCost = (
   productionPart: ProductionPart
 ): number | undefined => {
-  if (!productionPart || productionPart.operatorTime == 0) return 0;
-
-  let operator = plantModelStore.operators?.find(
-    (op) => op.id === productionPart.operatorId
-  );
-  if (!operator) return 0;
-
-  let operatorCost = plantModelStore.operatorTypes?.find(
-    (ot) => ot.id === operator?.operatorTypeId
-  );
-  if (!operatorCost) return 0;
-
-  const cost = (operatorCost.cost * productionPart.operatorTime) / 60;
+  const cost =
+    (productionPart.operatorHourCost * productionPart.operatorTime) / 60;
   return _.round(cost, 2);
 };
 

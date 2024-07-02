@@ -12,6 +12,7 @@
             v-for="workcenter in workcentersByArea(area.id)"
             :key="workcenter.id"
             class="workcenter"
+            @click="() => $router.push(`/workcenter-detail/${workcenter.id}`)"
           >
             <template #header>
               <div class="workcenter__color"></div>

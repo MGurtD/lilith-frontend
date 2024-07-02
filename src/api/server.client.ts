@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useApiStore } from "../store/backend";
 
-const baseURL = import.meta.env.VITE_REPORTS_BASE_URL as string;
+const baseUrl = import.meta.env.VITE_SERVER_BASE_URL as string;
 
-const reportsClient = axios.create({
-  baseURL,
+const serverClient = axios.create({
+  baseURL: baseUrl,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
@@ -16,7 +16,7 @@ const reportsClient = axios.create({
 });
 
 // Add a request interceptor
-reportsClient.interceptors.request.use(
+serverClient.interceptors.request.use(
   function (config) {
     const store = useApiStore();
     store.isWaiting = true;
@@ -31,7 +31,7 @@ reportsClient.interceptors.request.use(
 );
 
 // Add a response interceptor
-reportsClient.interceptors.response.use(
+serverClient.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
@@ -45,7 +45,7 @@ reportsClient.interceptors.response.use(
     // Do something with response error
     const store = useApiStore();
     store.isWaiting = false;
-    store.setError("Error de comunicació amb el servei de reports");
+    store.setError("Error de comunicació amb el servidor de producció.");
 
     logException(error);
     return Promise.reject(error);
@@ -71,4 +71,4 @@ export function logException(error: any) {
   console.log(error);
 }
 
-export default reportsClient;
+export default serverClient;

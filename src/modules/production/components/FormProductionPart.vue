@@ -92,7 +92,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps total operari (minuts)"
+          label="Temps operari (minuts)"
           id="time"
           v-model="productionPart.operatorTime"
         />
@@ -100,7 +100,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps total centre de treball (minuts)"
+          label="Temps centre de treball (minuts)"
           id="time"
           v-model="productionPart.workcenterTime"
         />
@@ -162,8 +162,11 @@ const schema = Yup.object().shape({
     .required("Has d'introduir una quantitat entera (pot ser 0)")
     .integer(),
   workcenterTime: Yup.number()
-    .required("Has d'introduir el temps de màquina i ha de ser major que 0")
-    .moreThan(0),
+    .required("Has d'introduir el temps i ha de ser major que 0")
+    .integer(),
+  operatorTime: Yup.number()
+    .required("Has d'introduir el temps i ha de ser major que 0")
+    .integer(),
 });
 const validation = ref({
   result: false,

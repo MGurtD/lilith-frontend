@@ -23,6 +23,7 @@ import "boxicons";
 import "material-icons/iconfont/material-icons.css";
 
 import PrimeVue from "primevue/config";
+import Tooltip from "primevue/tooltip";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Button from "primevue/button";
@@ -54,6 +55,8 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+
+app.directive("tooltip", Tooltip);
 
 app
   .component("Toast", Toast)

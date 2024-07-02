@@ -4,8 +4,17 @@
     :workcenter="workcenter"
     @submit="submitForm"
   />
+  <section class="mt-4">
+    <FileEntityPicker
+      title="Imatge de la màquina"
+      entity="WorkcenterPicture"
+      :max-files="1"
+      :id="(route.params.id as string)"
+    />
+  </section>
 </template>
 <script setup lang="ts">
+import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import FormWorkcenter from "../components/FormWorkcenter.vue";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";

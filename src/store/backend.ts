@@ -9,7 +9,7 @@ export const useApiStore = defineStore("apiStore", {
     };
   },
   actions: {
-    setError() {
+    setError(message: string) {
       this.isOnError = true;
 
       let hasToShowError = !this.lastError;
@@ -20,7 +20,7 @@ export const useApiStore = defineStore("apiStore", {
       }
 
       this.lastError = now;
-      if (hasToShowError) alert("Error de comunicació");
+      if (hasToShowError) alert(message);
     },
   },
 });

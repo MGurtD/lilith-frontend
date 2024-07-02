@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { FileService } from "../api/services/file.service";
 import { File } from "../types";
 import Toolbar from "primevue/toolbar";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-import { createBlobAndDownloadFile } from "../utils/functions";
+import { loadImage, createBlobAndDownloadFile } from "../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
+import { DialogOptions, FileType } from "../types/component";
 
 const props = defineProps<{
   title: string;
   entity: string;
   id: string;
+  maxFiles?: number;
 }>();
 
 const toast = useToast();
@@ -19,6 +21,15 @@ const confirm = useConfirm();
 
 const service = new FileService();
 const files = ref(undefined as undefined | Array<File>);
+
+// Instancia para controlar el diálogo
+const dialogOptions = reactive({
+  visible: false,
+  title: "Detalle de la imagen",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
 
 // Crea una referencia reactiva para almacenar la prop
 const idRef = ref(props.id);
@@ -29,11 +40,6 @@ watch(
   (newValue, oldValue) => {
     // Actualiza la referencia reactiva
     idRef.value = newValue;
-
-    // Aquí puedes realizar acciones adicionales cuando la prop cambia
-    console.log(
-      `FileEntityPicker. entity > ${props.entity} | id > ${newValue}`
-    );
 
     if (newValue && newValue !== oldValue) {
       fetchData();
@@ -50,6 +56,16 @@ onMounted(async () => {
     fetchData();
   }, 200);
 });
+
+const canLoadMoreFiles = () => {
+  if (!props.maxFiles) {
+    return true;
+  }
+
+  if (files.value) {
+    return files.value?.length < props.maxFiles;
+  }
+};
 
 const uploadFile = async () => {
   const input = document.createElement("input");
@@ -70,6 +86,16 @@ const uploadFile = async () => {
   };
 
   input.click();
+};
+
+const showFile = async (file: File) => {
+  dialogOptions.visible = true;
+
+  const response = await service.Download(file);
+  const blob = new Blob([response], { type: "image/jpeg" });
+  const imageElement = await loadImage(blob);
+
+  document.getElementById("img-container")?.appendChild(imageElement);
 };
 
 const downloadFile = async (file: File) => {
@@ -103,6 +129,7 @@ const deleteFile = async (file: File) => {
       <template #end>
         <Button
           size="small"
+          :disabled="!canLoadMoreFiles()"
           rounded
           :icon="PrimeIcons.UPLOAD"
           @click="uploadFile"
@@ -113,7 +140,7 @@ const deleteFile = async (file: File) => {
       <article class="file-viewer-item" v-for="file in files" :key="id">
         <div class="file-viewer-item-type">
           <i
-            v-if="file.type === 0"
+            v-if="file.type === FileType.DOCUMENT"
             :class="
               file.originalName.endsWith('docx')
                 ? PrimeIcons.FILE_WORD
@@ -122,7 +149,7 @@ const deleteFile = async (file: File) => {
             style="font-size: 3.5rem"
           />
           <i
-            v-if="file.type === 1"
+            v-if="file.type === FileType.IMAGE"
             :class="PrimeIcons.IMAGE"
             style="font-size: 3.5rem"
           />
@@ -130,7 +157,20 @@ const deleteFile = async (file: File) => {
             {{ file.originalName.substring(0, 20) }}
           </p>
         </div>
-        <div class="file-viewer-item-actions">
+        <div
+          :class="
+            file.type === FileType.IMAGE
+              ? 'file-viewer-item-actions-image'
+              : 'file-viewer-item-actions-file'
+          "
+        >
+          <div
+            v-if="file.type === FileType.IMAGE"
+            class="file-viewer-item-action file-viewer-item-action-show"
+            @click="showFile(file)"
+          >
+            <i :class="PrimeIcons.EYE" style="font-size: 1rem" />
+          </div>
           <div
             class="file-viewer-item-action file-viewer-item-action-download"
             @click="downloadFile(file)"
@@ -147,6 +187,15 @@ const deleteFile = async (file: File) => {
       </article>
     </section>
   </div>
+
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <div id="img-container"></div>
+  </Dialog>
 </template>
 <style scoped>
 .file-viewer {
@@ -176,9 +225,14 @@ const deleteFile = async (file: File) => {
   color: darkgray;
 }
 
-.file-viewer-item-actions {
+.file-viewer-item-actions-file {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+}
+
+.file-viewer-item-actions-image {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .file-viewer-item-action {
@@ -201,5 +255,9 @@ const deleteFile = async (file: File) => {
 
 .file-viewer-item-action-download {
   background-color: var(--blue-800);
+}
+
+.file-viewer-item-action-show {
+  background-color: var(--gray-800);
 }
 </style>

@@ -126,3 +126,34 @@ export const extractTime = (isoString: string | null): string => {
     return "";
   }
 };
+
+export function calculateTimeDifference(startDateString: string) {
+  const startDate = new Date(startDateString);
+  const now = new Date();
+
+  const diffInMilliseconds = now.getTime() - startDate.getTime();
+  if (diffInMilliseconds < 0) {
+    return 0;
+  }
+
+  const hours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+  const minutes = Math.floor(
+    (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+  );
+  const seconds = Math.floor((diffInMilliseconds % (1000 * 60)) / 1000);
+
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+    minutes
+  ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  return formattedTime;
+}
+
+export function loadImage(blob: Blob): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    const url = URL.createObjectURL(blob);
+    img.src = url;
+  });
+}

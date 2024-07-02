@@ -11,7 +11,22 @@
         store.currentMenuItem.title
       }}</span>
     </div>
-    <div class="title-bar__user" v-if="store.user">
+    <div v-if="shopfloorStore.operator" class="title-bar__user">
+      <div class="title-bar__operator">
+        <p class="header-text">
+          {{ shopfloorStore.operator.name }}
+          {{ shopfloorStore.operator.surname }}
+        </p>
+        <Button
+          :icon="PrimeIcons.SIGN_OUT"
+          size="small"
+          severity="secondary"
+          label="Sortir"
+          @click="logoutOperator"
+        />
+      </div>
+    </div>
+    <div class="title-bar__user" v-else-if="store.user">
       <Avatar
         :label="store.user.username.substring(0, 1).toUpperCase()"
         class="title-bar__user__avatar"
@@ -36,8 +51,10 @@ import Avatar from "primevue/avatar";
 import OverlayPanel from "primevue/overlaypanel";
 import { PrimeIcons } from "primevue/api";
 import { useRouter } from "vue-router";
+import { useShoopfloorStore } from "../modules/shoopfloor/store";
 
-const emits = defineEmits(["logoutClick"]);
+const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
+const shopfloorStore = useShoopfloorStore();
 
 const store = useStore();
 const op = ref();
@@ -45,6 +62,7 @@ const showOverlayPanel = (event: any) => {
   op.value.toggle(event);
 };
 const logoutClick = () => emits("logoutClick");
+const logoutOperator = () => emits("logoutOperatorClick");
 
 const router = useRouter();
 const goBack = () => router.back();
@@ -105,5 +123,12 @@ const goBack = () => router.back();
 
 .title-bar__user__overlaypanel__text {
   text-align: center;
+}
+
+.title-bar__operator {
+  display: grid;
+  grid-template-columns: 1fr 0.4fr;
+  align-items: center;
+  gap: 1rem;
 }
 </style>

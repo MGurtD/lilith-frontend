@@ -18,17 +18,20 @@ const shopfloorStore = useShoopfloorStore();
 const plantModelStore = usePlantModelStore();
 
 onMounted(async () => {
+  await plantModelStore.fetchOperators();
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     title: "Operativa de planta",
   });
 
-  plantModelStore.fetchOperators();
+  await shopfloorStore.getOperator();
+  if (shopfloorStore.operator) {
+    plantModelStore.fetchActiveModel();
+  }
 });
 
 const onSubmit = async (operator: Operator) => {
   shopfloorStore.setOperator(operator);
-
   plantModelStore.fetchActiveModel();
 };
 </script>
