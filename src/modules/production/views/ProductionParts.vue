@@ -367,10 +367,7 @@ const generateNewRequest = (): ProductionPart => {
     machineHourCost: 0,
     operatorTime: 0,
     workcenterTime: 0,
-    time: 0,
     quantity: 0,
-    operatorTime: 0,
-    workcenterTime: 0,
     date: new Date(),
   };
 };
