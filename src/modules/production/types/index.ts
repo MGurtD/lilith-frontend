@@ -231,7 +231,8 @@ export interface ProductionPart {
   machineHourCost: number;
   date: Date;
   quantity: number;
-  time: number;
+  operatorTime: number;
+  workcenterTime: number;
   workOrder?: WorkOrder;
   workOrderPhase?: WorkOrderPhase;
   workOrderPhaseDetail?: WorkOrderPhaseDetail;

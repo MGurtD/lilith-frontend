@@ -123,13 +123,13 @@ const filteredData = computed(() => {
   let filteredReferences = props.references;
 
   // Customer filter
-  if (filter.value.customerId!.length > 0) {
+  if (filter.value.customerId && filter.value.customerId!.length > 0) {
     filteredReferences = filteredReferences.filter(
       (r) => r.customerId === filter.value.customerId
     );
   }
   // Code filter
-  if (filter.value.code.length > 0) {
+  if (filter.value.code && filter.value.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
       r.code.toLowerCase().includes(filter.value.code.toLowerCase())
     );

@@ -256,6 +256,7 @@ const filterData = async () => {
       life: 5000,
     });
   }
+  console.log("store: ", productionPartStore.productionParts);
 };
 
 const cleanFilter = () => {
@@ -368,6 +369,8 @@ const generateNewRequest = (): ProductionPart => {
     workcenterTime: 0,
     time: 0,
     quantity: 0,
+    operatorTime: 0,
+    workcenterTime: 0,
     date: new Date(),
   };
 };

@@ -31,13 +31,6 @@
           >
             <span class="text-l text-900 font-bold">Linies de la comanda</span>
             <section v-if="!deliveryNoteStore.deliveryNote">
-              <!-- <Button
-                :size="'small'"
-                severity="secondary"
-                label="Afegir referència"
-                @click="openReferenceDetail()"
-                class="mr-2"
-              /> -->
               <Button
                 :size="'small'"
                 label="Afegir línea"
@@ -304,6 +297,7 @@ const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
         severity: "success",
         summary: "Generació OF",
         detail: `Ordre de fabricació ${response.content!.code} generada`,
+        life: 5000,
       });
 
       workOrderStore.fetchBySalesOrder(salesOrder.value!.id);
@@ -313,6 +307,7 @@ const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
       severity: "error",
       summary: "Generació OF",
       detail: `Error al generar la ordre de fabricació`,
+      life: 5000,
     });
   }
 };
