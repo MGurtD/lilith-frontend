@@ -164,6 +164,11 @@ export interface WorkOrder {
   phases: Array<WorkOrderPhase>;
 }
 
+export interface WorkOrderPhaseShoopfloor {
+  workOrderPhase: WorkOrderPhase;
+  referencePdfs: Array<File>;
+}
+
 export interface WorkOrderPhase {
   id: string;
   code: string;
@@ -178,6 +183,7 @@ export interface WorkOrderPhase {
   statusId: string;
   startTime: string | null;
   endTime: string | null;
+  workOrder?: WorkOrder;
   details?: Array<WorkOrderPhaseDetail>;
   billOfMaterials?: Array<WorkOrderPhaseBillOfMaterials>;
 }
@@ -219,6 +225,10 @@ export interface ProductionPart {
   workOrderPhaseDetailId: string;
   workcenterId: string;
   operatorId: string;
+  operatorTime: number;
+  operatorHourCost: number;
+  workcenterTime: number;
+  machineHourCost: number;
   date: Date;
   quantity: number;
   time: number;

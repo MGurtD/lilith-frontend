@@ -7,10 +7,12 @@ import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useShoopfloorStore } from "./modules/shoopfloor/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
 
 const store = useStore();
+const shopfloorStore = useShoopfloorStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
@@ -24,11 +26,16 @@ const logout = () => {
   store.removeAuthorization();
   router.push("/");
 };
+
+const logoutOperator = () => {
+  shopfloorStore.removeOperator();
+  router.push({ path: "/shopfloor" });
+};
 </script>
 
 <template>
   <div v-if="store.authorization">
-    <Header @logout-click="logout" />
+    <Header @logout-click="logout" @logout-operator-click="logoutOperator" />
     <SideBar />
     <main class="app__view" :class="{ collapsed: store.menuCollapsed }">
       <ScrollPanel style="height: calc(100vh - 5rem)">

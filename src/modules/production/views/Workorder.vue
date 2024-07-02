@@ -225,6 +225,10 @@ const onProductionPartAddClick = () => {
     time: 0,
     quantity: 0,
     date: new Date(),
+    machineHourCost: 0,
+    operatorHourCost: 0,
+    operatorTime: 0,
+    workcenterTime: 0,
   };
   if (workorder.value) workorderStore.fetchByWorkOrderId(workorder.value.id);
 

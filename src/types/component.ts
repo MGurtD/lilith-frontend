@@ -40,3 +40,8 @@ export interface DialogOptions {
   position: string;
   modal: boolean;
 }
+
+export enum FileType {
+  DOCUMENT = 0,
+  IMAGE = 1,
+}

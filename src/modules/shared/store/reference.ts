@@ -16,9 +16,6 @@ export const useReferenceStore = defineStore({
       return (reference: Reference) => {
         if (!reference) return "";
 
-        if (reference.description.length >= 30)
-          reference.description = reference.description.substring(0, 29);
-
         if (reference.sales) {
           return `${reference.code} (v. ${reference.version}) - ${reference.description}`;
         } else {
@@ -29,9 +26,6 @@ export const useReferenceStore = defineStore({
     getShortName: (state) => {
       return (reference: Reference) => {
         if (!reference) return "";
-
-        if (reference.description.length >= 30)
-          reference.description = reference.description.substring(0, 29);
 
         if (reference.sales) {
           return `${reference.code} (v. ${reference.version})`;
