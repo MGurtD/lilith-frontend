@@ -40,7 +40,48 @@
         />
       </div>
     </section>
-
+    <section class="five-columns">
+      <div>
+        <label class="block text-900 mb-2">Aturada</label>
+        <Checkbox
+          v-model="machineStatus.stoped"
+          class="w-full"
+          :binary="true"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Operaris</label>
+        <Checkbox
+          v-model="machineStatus.operatorsAllowed"
+          class="w-full"
+          :binary="true"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Tancada</label>
+        <Checkbox
+          v-model="machineStatus.closed"
+          class="w-full"
+          :binary="true"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Preferida</label>
+        <Checkbox
+          v-model="machineStatus.preferred"
+          class="w-full"
+          :binary="true"
+        />
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Icona"
+          id="icon"
+          v-model="machineStatus.icon"
+        ></BaseInput>
+      </div>
+    </section>
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>

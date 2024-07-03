@@ -54,6 +54,11 @@ export interface MachineStatus {
   name: string;
   description: string;
   color: string;
+  stoped: boolean;
+  operatorsAllowed: boolean;
+  closed: boolean;
+  preferred: boolean;
+  icon: string;
   disabled: boolean;
 }
 
