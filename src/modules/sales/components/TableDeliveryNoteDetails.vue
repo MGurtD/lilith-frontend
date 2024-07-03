@@ -7,31 +7,33 @@
     groupRowsBy="salesOrderNumber"
     sortMode="multiple"
     :sortOrder="1"
+    scrollable
+    scrollHeight="60vh"
   >
     <template #header>
       <slot name="header"></slot>
     </template>
     <template #groupheader="slotProps">
-      <span class="vertical-align-middle ml-2 font-bold line-height-3"
-        >Comanda {{ slotProps.data.salesOrderNumber }} (Núm. Client:
-        {{ slotProps.data.customerNumber }})</span
-      >
-      &nbsp;
       <i
         v-if="canDelete"
         :class="PrimeIcons.TIMES"
         class="grid_delete_column_button"
         @click="onDeleteRow($event, slotProps.data)"
       />
+      &nbsp;
+      <span class="vertical-align-middle ml-2 font-bold line-height-3"
+        >Comanda {{ slotProps.data.salesOrderNumber }} (Núm. Client:
+        {{ slotProps.data.customerNumber }})</span
+      >
     </template>
     <Column field="salesOrderNumber" header="Comanda" style="width: 5%" />
-    <Column field="" header="" style="width: 5%" />
+    <Column field="" header="" style="width: 2%" />
     <Column field="quantity" header="Quantitat" style="width: 5%" />
     <Column
       header="Referència"
       field="reference.code"
       sortable
-      style="width: 10%"
+      style="width: 15%"
     >
       <template #body="slotProps">
         <LinkReference :id="slotProps.data.referenceId" />
@@ -48,6 +50,11 @@
         {{ formatCurrency(slotProps.data.amount) }}
       </template>
     </Column>
+    <template #footer>
+      <div class="flex-right">
+        <span> Total: {{ formatCurrency(deliveryNoteAmount) }} </span>
+      </div>
+    </template>
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -106,4 +113,15 @@ const onDeleteRow = (event: any, clickedOrder: any) => {
     },
   });
 };
+
+const deliveryNoteAmount = computed(() => {
+  if (!props.orders) return 0;
+  return props.orders.reduce((acc, order) => {
+    if (!order.salesOrderDetails) return acc;
+    return (
+      acc +
+      order.salesOrderDetails.reduce((acc, detail) => acc + detail.amount, 0)
+    );
+  }, 0);
+});
 </script>

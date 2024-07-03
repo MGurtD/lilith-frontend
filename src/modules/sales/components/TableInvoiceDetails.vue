@@ -4,7 +4,9 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="62vh"
-    sortMode="multiple"
+    sortMode="single"
+    sortField="description"
+    :sortOrder="1"
     :value="groupedDetails"
     rowGroupMode="subheader"
     groupRowsBy="deliveryNoteNumber"
@@ -13,22 +15,22 @@
       <slot name="header"></slot>
     </template>
     <template #groupheader="slotProps">
-      <span class="vertical-align-middle ml-2 font-bold line-height-3">{{
-        slotProps.data.deliveryNoteNumber
-      }}</span>
-      &nbsp;
       <i
         v-if="canDelete && slotProps.data.deliveryNoteNumber !== 'Sense albarà'"
         :class="PrimeIcons.TIMES"
         class="grid_delete_column_button"
         @click="onGroupDeleteRow($event, slotProps.data)"
       />
+      &nbsp;
+      <span class="vertical-align-middle ml-2 font-bold line-height-3">{{
+        slotProps.data.deliveryNoteNumber
+      }}</span>
     </template>
     <Column header="Albarà" field="deliveryNoteNumber" style="width: 5%" />
-    <Column header="" field="" style="width: 5%" />
+    <Column header="" field="" style="width: 2%" />
 
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
-    <Column header="Referència" style="width: 10%">
+    <Column header="Referència" style="width: 15%">
       <template #body="slotProps">
         <span v-if="slotProps.data.deliveryNoteDetail">
           <LinkReference :id="slotProps.data.deliveryNoteDetail.referenceId" />
@@ -36,13 +38,18 @@
         <span v-else>--</span>
       </template>
     </Column>
-    <Column header="Descripció" field="description" style="width: 40%"></Column>
-    <Column header="Preu unitat" field="unitCost" style="width: 10%">
+    <Column
+      header="Descripció"
+      sortable
+      field="description"
+      style="width: 40%"
+    ></Column>
+    <Column header="Preu unitat" style="width: 10%">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.unitCost) }}
+        {{ formatCurrency(slotProps.data.unitPrice) }}
       </template>
     </Column>
-    <Column header="IVA" style="width: 10%">
+    <Column header="Impost" style="width: 10%">
       <template #body="slotProps">
         {{ getTaxNameById(slotProps.data.taxId) }}
       </template>
@@ -73,13 +80,11 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { formatDate, formatCurrency } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
-import { useReferenceStore } from "../../shared/store/reference";
 import _ from "lodash";
 
 const confirm = useConfirm();
 const lifecycleStore = useLifecyclesStore();
 const sharedData = useSharedDataStore();
-const referenceStore = useReferenceStore();
 
 const props = defineProps<{
   details: Array<SalesInvoiceDetail> | undefined;
@@ -110,10 +115,15 @@ const groupedDetails = computed(() => {
         (dn) => dn.id === d.deliveryNoteDetail?.deliveryNoteId
       );
 
+      const deliveredDate =
+        deliveryNote && deliveryNote.deliveryDate
+          ? `Entregat ${formatDate(deliveryNote.deliveryDate)}`
+          : "No entregat";
+
       return {
         deliveryNoteId: deliveryNote?.id,
         deliveryNoteNumber: `Albarà ${
-          deliveryNote ? deliveryNote.number : "--"
+          deliveryNote ? `${deliveryNote.number} - ${deliveredDate}` : "--"
         }`,
         deliveryNoteDate:
           deliveryNote && deliveryNote.deliveryDate
@@ -133,7 +143,7 @@ onMounted(async () => {
 });
 const getTaxNameById = (taxId: string) => {
   const tax = sharedData.taxes?.find((t) => t.id === taxId);
-  if (tax) return `${tax.percentatge} %`;
+  if (tax) return `${tax.name}`;
 };
 
 const emit = defineEmits<{
