@@ -21,7 +21,11 @@
             </div>
           </template>
           <Column field="name" header="Nom"></Column>
-          <Column field="disabled" header="Inactiu"></Column>
+          <Column field="disabled" header="Desactivat">
+            <template #body="slotProps">
+              <BooleanColumn :value="slotProps.data.disabled" />
+            </template>
+          </Column>
         </DataTable>
       </div>
       <div>
@@ -44,7 +48,11 @@
           </template>
           <Column field="startTime" header="Hora inici"></Column>
           <Column field="endTime" header="Hora fi"></Column>
-          <Column field="isProductiveTime" header="Temps Productiu"></Column>
+          <Column field="isProductiveTime" header="Temps Productiu">
+            <template #body="slotProps">
+              <BooleanColumn :value="slotProps.data.isProductiveTime" />
+            </template>
+          </Column>
         </DataTable>
       </div>
     </section>
@@ -83,6 +91,7 @@ import FormShift from "../components/FormShift.vue";
 import FormShiftDetail from "../components/FormShiftDetail.vue";
 import { storeToRefs } from "pinia";
 import { getNewUuid } from "../../../utils/functions";
+import BooleanColumn from "../../../components/tables/BooleanColumn.vue";
 
 const store = useStore();
 const shiftStore = useShiftStore();
@@ -124,12 +133,16 @@ const selectedShift = ref(undefined as Shift | undefined);
 const selectShift = async (row: DataTableRowClickEvent) => {
   await shiftStore.fetchShiftDetailsByShiftId(row.data.id);
   selectedShift.value = row.data;
-  //console.log(row.data);
-  //shiftdetail.value!.shiftId = row.data.id;
 };
 
 onMounted(async () => {
   await shiftStore.fetchAllShifts();
+
+  store.setMenuItem({
+    icon: PrimeIcons.BUILDING,
+    backButtonVisible: false,
+    title: "Gestió de torns",
+  });
 });
 
 const submitShift = async () => {
