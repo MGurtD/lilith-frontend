@@ -56,7 +56,12 @@
           />
         </div>
         <div class="mt-2">
-          <BaseInput v-model="deliveryNote.deliveryDate" label="Data Entrega" />
+          <label class="block text-900 mb-2">Data Entrega</label>
+          <Calendar
+            v-model="deliveryNote.deliveryDate"
+            dateFormat="dd/mm/yy"
+            class="mt-2"
+          />
         </div>
         <div class="mt-2">
           <BaseInput
