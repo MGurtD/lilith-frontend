@@ -1,6 +1,9 @@
 <template>
   <form v-if="machineStatus">
-    <section class="four-columns">
+    <div class="grid_add_row_button">
+      <Button label="Guardar" style="float: right" @click="submitForm" />
+    </div>
+    <section class="four-columns pt-4">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -32,12 +35,12 @@
         ></ColorPicker>
       </div>
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox
-          v-model="machineStatus.disabled"
-          class="w-full"
-          :binary="true"
-        />
+        <BaseInput
+          class="mb-2"
+          label="Icona"
+          id="icon"
+          v-model="machineStatus.icon"
+        ></BaseInput>
       </div>
     </section>
     <section class="five-columns">
@@ -74,17 +77,14 @@
         />
       </div>
       <div>
-        <BaseInput
-          class="mb-2"
-          label="Icona"
-          id="icon"
-          v-model="machineStatus.icon"
-        ></BaseInput>
+        <label class="block text-900 mb-2">Desactivat</label>
+        <Checkbox
+          v-model="machineStatus.disabled"
+          class="w-full"
+          :binary="true"
+        />
       </div>
     </section>
-    <div class="mt-2">
-      <Button label="Guardar" class="mr-2" @click="submitForm" />
-    </div>
   </form>
 </template>
 
