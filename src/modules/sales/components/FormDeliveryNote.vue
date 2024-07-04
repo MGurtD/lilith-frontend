@@ -3,20 +3,6 @@
     <form v-if="deliveryNote">
       <section class="three-columns">
         <div class="mt-1">
-          <label class="block text-900 mb-2">Exercici</label>
-          <Dropdown
-            v-model="deliveryNote.exerciseId"
-            editable
-            :options="sharedDataStore.exercises"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.exerciseId,
-            }"
-          />
-        </div>
-        <div class="mt-1">
           <BaseInput
             :type="BaseInputType.TEXT"
             label="Número Albarà"
@@ -37,6 +23,13 @@
             :class="{
               'p-invalid': validation.errors.customerId,
             }"
+          />
+        </div>
+        <div class="mt-2">
+          <BaseInput
+            v-model="createdOn"
+            label="Data Creació"
+            :disabled="true"
           />
         </div>
       </section>
@@ -88,7 +81,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../../types/component";
-import { convertDateTimeToJSON } from "../../../utils/functions";
+import { convertDateTimeToJSON, formatDate } from "../../../utils/functions";
 
 const props = defineProps<{
   deliveryNote: DeliveryNote;
@@ -107,6 +100,12 @@ const toast = useToast();
 const salesInvoiceNumber = computed(() => {
   if (props.deliveryNote && props.deliveryNote.salesInvoice)
     return props.deliveryNote.salesInvoice.invoiceNumber;
+  return "";
+});
+
+const createdOn = computed((): string => {
+  if (props.deliveryNote && props.deliveryNote.createdOn)
+    return formatDate(props.deliveryNote.createdOn);
   return "";
 });
 

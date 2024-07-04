@@ -246,6 +246,7 @@ export interface DeliveryNoteReport {
 }
 
 export interface DeliveryNote {
+  createdOn?: string;
   number: string;
   deliveryDate: string;
   exerciseId: string;
