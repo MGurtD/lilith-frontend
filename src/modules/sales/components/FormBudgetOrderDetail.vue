@@ -206,7 +206,12 @@ const getWorkmasterCost = async () => {
 };
 
 const updateQuantity = () => {
+  if (!props.detail.quantity) {
+    props.detail.quantity = 1;
+  }
+
   if (props.detail.workMasterId) {
+    getWorkmasterCost();
     props.detail.totalCost = props.detail.unitCost * props.detail.quantity;
   }
 

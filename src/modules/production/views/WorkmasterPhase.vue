@@ -152,8 +152,12 @@ const onEditDetail = (detail: WorkMasterPhaseDetail) => {
   dialogOptions.title = "Modificar pas de fabricació";
   dialogOptions.visible = true;
 };
-const onDeleteDetail = (detail: WorkMasterPhaseDetail) => {
-  workmasterStore.deletePhaseDetail(detail.id);
+const onDeleteDetail = async (detail: WorkMasterPhaseDetail) => {
+  await workmasterStore.updatePhase(
+    workmasterStore.workmasterPhase!.id,
+    workmasterStore.workmasterPhase!
+  );
+  await workmasterStore.deletePhaseDetail(detail.id);
 };
 
 const onWorkmasterPhaseDetailSubmit = async (detail: WorkMasterPhaseDetail) => {
@@ -163,6 +167,10 @@ const onWorkmasterPhaseDetailSubmit = async (detail: WorkMasterPhaseDetail) => {
   } else if (formAction.value === FormActionMode.EDIT) {
     promise = workmasterStore.updatePhaseDetail(detail.id, detail);
   }
+  await workmasterStore.updatePhase(
+    workmasterStore.workmasterPhase!.id,
+    workmasterStore.workmasterPhase!
+  );
   const result = await promise;
 
   if (result) {
@@ -185,8 +193,12 @@ const onEditBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
   dialogOptions.title = "Modificar material";
   dialogOptions.visible = true;
 };
-const onDeleteBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
-  workmasterStore.deletePhaseBomItem(bomItem.id);
+const onDeleteBomItem = async (bomItem: WorkMasterPhaseBillOfMaterials) => {
+  await workmasterStore.updatePhase(
+    workmasterStore.workmasterPhase!.id,
+    workmasterStore.workmasterPhase!
+  );
+  await workmasterStore.deletePhaseBomItem(bomItem.id);
 };
 
 const onWorkmasterPhasBomItemSubmit = async (
@@ -198,6 +210,10 @@ const onWorkmasterPhasBomItemSubmit = async (
   } else if (formAction.value === FormActionMode.EDIT) {
     promise = workmasterStore.updatePhaseBomItem(bomItem.id, bomItem);
   }
+  await workmasterStore.updatePhase(
+    workmasterStore.workmasterPhase!.id,
+    workmasterStore.workmasterPhase!
+  );
   const result = await promise;
 
   if (result) {

@@ -153,8 +153,12 @@ const onEditDetail = (detail: WorkOrderPhaseDetail) => {
   dialogOptions.title = "Modificar pas de fabricació";
   dialogOptions.visible = true;
 };
-const onDeleteDetail = (detail: WorkOrderPhaseDetail) => {
-  workorderStore.deletePhaseDetail(detail.id);
+const onDeleteDetail = async (detail: WorkOrderPhaseDetail) => {
+  await workorderStore.updatePhase(
+    phaseId.value,
+    workorderStore.workorderPhase!
+  );
+  await workorderStore.deletePhaseDetail(detail.id);
 };
 
 const onWorkOrderPhaseDetailSubmit = async (detail: WorkOrderPhaseDetail) => {
@@ -164,6 +168,10 @@ const onWorkOrderPhaseDetailSubmit = async (detail: WorkOrderPhaseDetail) => {
   } else if (formAction.value === FormActionMode.EDIT) {
     promise = workorderStore.updatePhaseDetail(detail.id, detail);
   }
+  await workorderStore.updatePhase(
+    phaseId.value,
+    workorderStore.workorderPhase!
+  );
   const result = await promise;
 
   if (result) {
@@ -186,8 +194,9 @@ const onEditBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
   dialogOptions.title = "Modificar material";
   dialogOptions.visible = true;
 };
-const onDeleteBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
-  workorderStore.deletePhaseBomItem(bomItem.id);
+const onDeleteBomItem = async (bomItem: WorkOrderPhaseBillOfMaterials) => {
+  await workorderStore.updatePhase(phaseId.value, workorderStore.workorderPhase!);
+  await workorderStore.deletePhaseBomItem(bomItem.id);
 };
 
 const onWorkmasterPhasBomItemSubmit = async (
@@ -199,6 +208,10 @@ const onWorkmasterPhasBomItemSubmit = async (
   } else if (formAction.value === FormActionMode.EDIT) {
     promise = workorderStore.updatePhaseBomItem(bomItem.id, bomItem);
   }
+  await workorderStore.updatePhase(
+    phaseId.value,
+    workorderStore.workorderPhase!
+  );
   const result = await promise;
 
   if (result) {

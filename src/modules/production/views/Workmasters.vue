@@ -7,6 +7,8 @@
     sort-field="reference.code"
     :sort-order="1"
     @row-click="editRow"
+    paginator
+    :rows="12"
   >
     <template #header>
       <div
