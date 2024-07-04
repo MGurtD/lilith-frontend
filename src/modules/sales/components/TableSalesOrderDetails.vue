@@ -42,6 +42,7 @@
         </div>
         <div v-else>
           <Button
+            :disabled="salesOrder.deliveryNoteId !== null"
             size="small"
             :icon="PrimeIcons.PLUS_CIRCLE"
             value="Generar OF"
