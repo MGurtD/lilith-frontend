@@ -20,8 +20,28 @@
       </div>
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
-    <Column field="description" header="Descripció" style="width: 50%"></Column>
-    <Column header="Desactivat" style="width: 10%">
+    <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column header="Aturada" style="width: 2%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.stoped" />
+      </template>
+    </Column>
+    <Column header="Operaris" style="width: 2%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.operatorsAllowed" />
+      </template>
+    </Column>
+    <Column header="Tancada" style="width: 2%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.closed" />
+      </template>
+    </Column>
+    <Column header="Preferit" style="width: 2%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.preferred" />
+      </template>
+    </Column>
+    <Column header="Desactivat" style="width: 2%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
