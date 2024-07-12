@@ -78,6 +78,7 @@
         {{ formatDate(slotProps.data.plannedDate) }}
       </template>
     </Column>
+    <Column field="order" header="Prioritat" style="width: 10%"></Column>
     <Column
       field="plannedQuantity"
       header="Quantitat"

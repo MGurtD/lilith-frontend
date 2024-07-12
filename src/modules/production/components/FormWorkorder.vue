@@ -73,7 +73,7 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Ordre"
+          label="Prioritat"
           v-model="workorder.order"
           :class="{
             'p-invalid': validation.errors.plannedorderQuantity,
