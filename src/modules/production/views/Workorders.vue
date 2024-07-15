@@ -114,7 +114,7 @@ import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
@@ -131,9 +131,11 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useWorkOrderStore } from "../store/workorder";
 import { useWorkMasterStore } from "../store/workmaster";
 import { useCustomersStore } from "../../sales/store/customers";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const confirm = useConfirm();
 const workMasterStore = useWorkMasterStore();
@@ -165,6 +167,8 @@ const cleanFilter = () => {
   filter.value.referenceId = undefined;
   filter.value.statusId = undefined;
   filter.value.customerId = undefined;
+
+  userFilterStore.removeFilter("Workorders", "");
 };
 const filterData = async () => {
   if (store.exercisePicker.dates) {
@@ -217,8 +221,21 @@ onMounted(async () => {
   });
 
   setCurrentYear();
+  getUserFilter();
   filterData();
 });
+onUnmounted(() => {
+  userFilterStore.addFilter("Workorders", "", filter.value);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("Workorders", "");
+  if (userFilter) {
+    filter.value.referenceId = userFilter.referenceId;
+    filter.value.statusId = userFilter.statusId;
+    filter.value.customerId = userFilter.customerId;
+  }
+};
 
 const createButtonClick = () => {
   dialogOptions.visible = true;

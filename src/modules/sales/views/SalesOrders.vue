@@ -126,7 +126,7 @@ import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
 import DropdownCustomers from "../components/DropdownCustomers.vue";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
@@ -145,11 +145,13 @@ import { DialogOptions } from "../../../types/component";
 import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const sharedStore = useSharedDataStore();
 const salesOrderStore = useSalesOrderStore();
 const referenceStore = useReferenceStore();
@@ -175,6 +177,7 @@ onMounted(async () => {
   await sharedStore.fetchMasterData();
 
   setCurrentYear();
+  getUserFilter();
   await filterSalesOrder();
 
   store.setMenuItem({
@@ -182,6 +185,17 @@ onMounted(async () => {
     title: "Comandes",
   });
 });
+onUnmounted(() => {
+  userFilterStore.addFilter("SalesOrders", "", filter.value);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("SalesOrders", "");
+  if (userFilter) {
+    filter.value.statusId = userFilter.statusId;
+    filter.value.customerId = userFilter.customerId;
+  }
+};
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();

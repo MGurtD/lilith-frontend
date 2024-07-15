@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
@@ -132,11 +132,13 @@ import { useConfirm } from "primevue/useconfirm";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useSharedDataStore } from "../../shared/store/masterData";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const sharedDataStore = useSharedDataStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const referenceStore = useReferenceStore();
@@ -162,6 +164,7 @@ onMounted(async () => {
   await sharedDataStore.fetchMasterData();
 
   setCurrentYear();
+  getUserFilter();
   await filterData();
 
   store.setMenuItem({
@@ -169,6 +172,17 @@ onMounted(async () => {
     title: "Albarans d'entrega",
   });
 });
+onUnmounted(() => {
+  userFilterStore.addFilter("DeliveryNotes", "", filter.value);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("DeliveryNotes", "");
+  if (userFilter) {
+    filter.value.referenceId = userFilter.referenceId;
+    filter.value.customerId = userFilter.customerId;
+  }
+};
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();

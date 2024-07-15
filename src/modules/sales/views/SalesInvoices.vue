@@ -76,7 +76,7 @@ import { useStore } from "../../../store";
 import { useSalesInvoiceStore } from "../store/invoice";
 import { useCustomersStore } from "../store/customers";
 import { useSharedDataStore } from "../../shared/store/masterData";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import {
   formatDateForQueryParameter,
@@ -85,11 +85,13 @@ import {
 import { CreateSalesHeaderRequest, SalesInvoice } from "../types";
 import { DialogOptions } from "../../../types/component";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const sharedStore = useSharedDataStore();
 const customersStore = useCustomersStore();
 const invoiceStore = useSalesInvoiceStore();
@@ -109,6 +111,7 @@ onMounted(async () => {
   customersStore.fetchCustomers();
   await sharedStore.fetchMasterData();
   setCurrentYear();
+  getUserFilter();
   await filterInvoices();
 
   store.setMenuItem({
@@ -116,6 +119,16 @@ onMounted(async () => {
     title: "Factures de venta",
   });
 });
+onUnmounted(() => {
+  userFilterStore.addFilter("SalesInvoices", "", filter.value);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("SalesInvoices", "");
+  if (userFilter) {
+    filter.value.customerId = userFilter.customerId;
+  }
+};
 
 const cleanFilter = () => {
   store.cleanExercisePicker();

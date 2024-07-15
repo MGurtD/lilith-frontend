@@ -181,7 +181,7 @@ import DropdownReference from "../../shared/components/DropdownReference.vue";
 import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
@@ -192,9 +192,11 @@ import { useCustomersStore } from "../../sales/store/customers";
 import { WorkMaster } from "../types";
 import { getNewUuid, formatCurrency } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const confirm = useConfirm();
 const workmasterStore = useWorkMasterStore();
@@ -209,6 +211,8 @@ const filter = ref({
 const cleanFilter = () => {
   filter.value.referenceId = undefined;
   filter.value.customerId = undefined;
+
+  userFilterStore.removeFilter("Workmasters", "");
 };
 
 const filteredData = computed(() => {
@@ -248,13 +252,23 @@ const copyDialogOptions = reactive({
 } as DialogOptions);
 
 onMounted(async () => {
-  await workmasterStore.fetchAll();
-  await referenceStore.fetchReferencesByModule("sales");
-
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,
     title: "Gestió de rutes de fabricació",
   });
+
+  referenceStore.fetchReferencesByModule("sales");
+  await workmasterStore.fetchAll();
+
+  const userFilter = userFilterStore.getFilter("Workmasters", "");
+  if (userFilter) {
+    if (userFilter.referenceId)
+      filter.value.referenceId = userFilter.referenceId;
+    if (userFilter.customerId) filter.value.customerId = userFilter.customerId;
+  }
+});
+onUnmounted(() => {
+  userFilterStore.addFilter("Workmasters", "", filter.value);
 });
 
 const createButtonClick = () => {
