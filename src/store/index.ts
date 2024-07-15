@@ -7,6 +7,7 @@ import { PrimeIcons } from "primevue/api";
 import { ref } from "vue";
 import { getMenusByRole } from "./menus";
 import { Exercise } from "../modules/shared/types";
+import { useUserFilterStore } from "./userfilter";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -57,8 +58,14 @@ export const useStore = defineStore("applicationStore", {
       if (jwtDecoded.id) {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
-        console.log(this.user);
-        if (this.user) this.setMenusByRole(this.user);
+        if (this.user) {
+          // Set user menus
+          this.setMenusByRole(this.user);
+
+          // Get user filters
+          const userFilterStore = useUserFilterStore();
+          userFilterStore.getUserFilters(this.user.id);
+        }
       }
     },
     removeAuthorization() {
