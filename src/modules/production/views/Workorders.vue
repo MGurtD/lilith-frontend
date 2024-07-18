@@ -145,19 +145,6 @@ const customersStore = useCustomersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 
-const setCurrentYear = () => {
-  const year = new Date().getFullYear().toString();
-  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
-
-  if (currentExercise) {
-    store.exercisePicker.exercise = currentExercise;
-    store.exercisePicker.dates = [
-      new Date(store.exercisePicker.exercise.startDate),
-      new Date(store.exercisePicker.exercise.endDate),
-    ];
-  }
-};
-
 const filter = ref({
   referenceId: undefined,
   statusId: undefined,
@@ -220,12 +207,19 @@ onMounted(async () => {
     title: "Ordres de fabricació",
   });
 
-  setCurrentYear();
   getUserFilter();
+  if (!store.exercisePicker.exercise) store.setCurrentYear();
   filterData();
 });
 onUnmounted(() => {
-  userFilterStore.addFilter("Workorders", "", filter.value);
+  const savedFilter = {
+    referenceId: filter.value.referenceId,
+    statusId: filter.value.statusId,
+    customerId: filter.value.customerId,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("Workorders", "", savedFilter);
 });
 
 const getUserFilter = () => {
@@ -234,6 +228,13 @@ const getUserFilter = () => {
     filter.value.referenceId = userFilter.referenceId;
     filter.value.statusId = userFilter.statusId;
     filter.value.customerId = userFilter.customerId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
   }
 };
 

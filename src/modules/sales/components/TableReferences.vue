@@ -15,7 +15,7 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <label>Codi</label>
-            <BaseInput v-model="filter.code" />
+            <BaseInput v-model="filter.code"  />
           </div>
           <div class="filter-field">
             <label>Client</label>
@@ -95,14 +95,11 @@ const filter = ref({
 });
 
 onMounted(() => {
-  setTimeout(() => {
-    const userFilter = userFilterStore.getFilter("References", "");
-    if (userFilter) {
-      if (userFilter.code) filter.value.code = userFilter.code;
-      if (userFilter.customerId)
-        filter.value.customerId = userFilter.customerId;
-    }
-  }, 500);
+  const userFilter = userFilterStore.getFilter("References", "");
+  if (userFilter) {
+    if (userFilter.code) filter.value.code = userFilter.code;
+    if (userFilter.customerId) filter.value.customerId = userFilter.customerId;
+  }
 });
 onUnmounted(async () => {
   await userFilterStore.addFilter("References", "", filter.value);

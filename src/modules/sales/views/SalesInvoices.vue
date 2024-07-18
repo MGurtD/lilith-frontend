@@ -120,13 +120,25 @@ onMounted(async () => {
   });
 });
 onUnmounted(() => {
-  userFilterStore.addFilter("SalesInvoices", "", filter.value);
+  const savedFilter = {
+    customerId: filter.value.customerId,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("SalesInvoices", "", savedFilter);
 });
 
 const getUserFilter = () => {
   const userFilter = userFilterStore.getFilter("SalesInvoices", "");
   if (userFilter) {
     filter.value.customerId = userFilter.customerId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
   }
 };
 

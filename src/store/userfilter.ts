@@ -35,6 +35,8 @@ export const useUserFilterStore = defineStore("userFilterStore", {
         filter: JSON.stringify(filter),
       } as UserFilter;
 
+      console.log("addFilter", userFilter);
+
       await AppServices.UserFilter.CreateOrUpdate(userFilter);
       this.getUserFilters(userFilter.userId);
     },

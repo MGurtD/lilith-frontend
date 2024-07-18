@@ -186,7 +186,13 @@ onMounted(async () => {
   });
 });
 onUnmounted(() => {
-  userFilterStore.addFilter("SalesOrders", "", filter.value);
+  const savedFilter = {
+    statusId: filter.value.statusId,
+    customerId: filter.value.customerId,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("SalesOrders", "", savedFilter);
 });
 
 const getUserFilter = () => {
@@ -194,6 +200,13 @@ const getUserFilter = () => {
   if (userFilter) {
     filter.value.statusId = userFilter.statusId;
     filter.value.customerId = userFilter.customerId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
   }
 };
 

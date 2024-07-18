@@ -50,11 +50,23 @@
         </div>
       </div>
     </template>
-    <Column field="description" header="Descripció" style="width: 40%" sortable></Column>
+    <Column
+      field="description"
+      header="Descripció"
+      style="width: 40%"
+      sortable
+    ></Column>
     <Column field="amount" header="Import" style="width: 15%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.amount) }}
+      </template>
     </Column>
-    <Column field="paymentDate" header="Data pagament" style="width: 20%" sortable>
+    <Column
+      field="paymentDate"
+      header="Data pagament"
+      style="width: 20%"
+      sortable
+    >
       <template #body="slotProps">
         {{ formatDate(slotProps.data.paymentDate) }}
       </template>
@@ -78,7 +90,7 @@
         />
       </template>
     </Column>
-    <template #footer>Total {{ totalAmount }} €</template>
+    <template #footer>Total {{ formatCurrency(totalAmount) }} €</template>
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -89,7 +101,7 @@ import { useExpenseStore } from "../store/expense";
 import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, formatCurrency } from "../../../utils/functions";
 import { Expense } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
@@ -106,7 +118,7 @@ const totalAmount = computed(() => {
   if (expenseStore.expenses) {
     expenseStore.expenses.forEach((e) => (total += e.amount));
   }
-  return total.toFixed(2);
+  return total;
 });
 
 onMounted(async () => {
