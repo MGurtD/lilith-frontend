@@ -7,6 +7,8 @@ import { PrimeIcons } from "primevue/api";
 import { ref } from "vue";
 import { getMenusByRole } from "./menus";
 import { Exercise } from "../modules/shared/types";
+import { useUserFilterStore } from "./userfilter";
+import { useExerciseStore } from "../modules/shared/store/exercise";
 
 const localStorageAuthKey = "temges.authorization";
 
@@ -29,6 +31,20 @@ export const useStore = defineStore("applicationStore", {
     };
   },
   actions: {
+    setCurrentYear() {
+      const exerciseStore = useExerciseStore();
+      if (exerciseStore.exercises === undefined) exerciseStore.fetchActive();
+      const year = new Date().getFullYear().toString();
+      const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
+
+      if (currentExercise) {
+        this.exercisePicker.exercise = currentExercise;
+        this.exercisePicker.dates = [
+          new Date(this.exercisePicker.exercise.startDate),
+          new Date(this.exercisePicker.exercise.endDate),
+        ];
+      }
+    },
     cleanExercisePicker() {
       this.exercisePicker.exercise = undefined;
       this.exercisePicker.dates = undefined;
@@ -57,8 +73,14 @@ export const useStore = defineStore("applicationStore", {
       if (jwtDecoded.id) {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
-        console.log(this.user);
-        if (this.user) this.setMenusByRole(this.user);
+        if (this.user) {
+          // Set user menus
+          this.setMenusByRole(this.user);
+
+          // Get user filters
+          const userFilterStore = useUserFilterStore();
+          userFilterStore.getUserFilters(this.user.id);
+        }
       }
     },
     removeAuthorization() {

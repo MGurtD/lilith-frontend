@@ -22,7 +22,7 @@
             <label>Operari</label>
             <Dropdown
               v-model="filter.operatorId"
-              editable
+              :show-clear="true"
               :filter="true"
               :options="
                 plantModelStore.operators
@@ -41,7 +41,7 @@
             <label>Màquina</label>
             <Dropdown
               v-model="filter.workcenterId"
-              editable
+              :show-clear="true"
               :filter="true"
               :options="
                 plantModelStore.workcenters?.sort((a, b) =>
@@ -57,7 +57,7 @@
             <label>OF</label>
             <Dropdown
               v-model="filter.workorderId"
-              editable
+              :show-clear="true"
               :filter="true"
               :options="workOrderStore.workorders"
               optionValue="id"
@@ -188,7 +188,7 @@ import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useConfirm } from "primevue/useconfirm";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { ProductionPart } from "../types";
@@ -205,9 +205,11 @@ import { usePlantModelStore } from "../store/plantmodel";
 import { useWorkOrderStore } from "../store/workorder";
 import FormProductionPart from "../components/FormProductionPart.vue";
 import _ from "lodash";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const productionPartStore = useProductionPartStore();
 const exerciseStore = useExerciseStore();
@@ -215,18 +217,6 @@ const plantModelStore = usePlantModelStore();
 const workOrderStore = useWorkOrderStore();
 const confirm = useConfirm();
 
-const setCurrentYear = () => {
-  const year = new Date().getFullYear().toString();
-  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
-
-  if (currentExercise) {
-    store.exercisePicker.exercise = currentExercise;
-    store.exercisePicker.dates = [
-      new Date(store.exercisePicker.exercise.startDate),
-      new Date(store.exercisePicker.exercise.endDate),
-    ];
-  }
-};
 const filter = ref({
   operatorId: "" as string,
   workcenterId: "" as string,
@@ -256,7 +246,6 @@ const filterData = async () => {
       life: 5000,
     });
   }
-  console.log("store: ", productionPartStore.productionParts);
 };
 
 const cleanFilter = () => {
@@ -286,11 +275,35 @@ onMounted(async () => {
   await plantModelStore.fetchWorkcenterCosts();
 
   await exerciseStore.fetchActive();
-  setCurrentYear();
+  getUserFilter();
   filterData();
 
   workOrderStore.detailedWorkOrders = undefined;
 });
+onUnmounted(() => {
+  const savedFilter = {
+    ...filter.value,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("ProductionParts", "", savedFilter);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("ProductionParts", "");
+  if (userFilter) {
+    filter.value.operatorId = userFilter.operatorId;
+    filter.value.workcenterId = userFilter.workcenterId;
+    filter.value.workorderId = userFilter.workorderId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
+  }
+};
 
 const calculatedProductionParts = computed(() => {
   if (productionPartStore.productionParts) {
