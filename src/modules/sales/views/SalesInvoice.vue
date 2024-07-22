@@ -11,7 +11,7 @@
 
     <TableInvoiceDetails
       class="mt-3"
-      :canDelete="true"
+      :canDelete="isEditable"
       :details="invoice.salesInvoiceDetails"
       :deliveryNotes="deliveryNoteStore.deliveryNotes"
       @deleteDeliveryNote="deleteDeliveryNote"
@@ -27,12 +27,14 @@
               :size="'small'"
               label="Afegir albarà"
               @click="openDeliveryNoteSelector"
+              :disabled="!isEditable"
             />
             &nbsp;&nbsp;
             <Button
               :size="'small'"
               label="Afegir linia lliure"
               @click="openAddDetail"
+              :disabled="!isEditable"
             />
           </div>
         </div>
@@ -45,7 +47,14 @@
     :header="dialogOptions.title"
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
-    :style="{ width: currentDialogType === dialogType.Free ? '50vw' : '60vw' }"
+    :style="{
+      width:
+        currentDialogType === dialogType.Rectificative
+          ? '20vw'
+          : currentDialogType === dialogType.Free
+          ? '50vw'
+          : '60vw',
+    }"
     :maximizable="currentDialogType === dialogType.FromDeliveryNote"
   >
     <FormSalesInvoiceDetail
@@ -61,10 +70,20 @@
     >
       <template #header> </template>
     </SelectorDeliveryNotes>
+    <FormRectificativeInvoice
+      v-if="
+        invoice &&
+        currentDialogType === dialogType.Rectificative &&
+        rectificativeRequest
+      "
+      :rectificative-invoice="rectificativeRequest"
+      :maximum-quantity="invoice.baseAmount"
+      @submit="createRectificativeInvoice"
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
@@ -78,11 +97,16 @@ import {
   createBlobAndDownloadFile,
   formatDate,
 } from "../../../utils/functions";
-import { DeliveryNote, SalesInvoiceDetail } from "../types";
+import {
+  CreateRectificativeInvoiceRequest,
+  DeliveryNote,
+  SalesInvoiceDetail,
+} from "../types";
 import { DialogOptions } from "../../../types/component";
 import FormSalesInvoice from "../components/FormSalesInvoice.vue";
 import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
+import FormRectificativeInvoice from "../components/FormRectificativeInvoice.vue";
 import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useReferenceStore } from "../../shared/store/reference";
@@ -95,6 +119,11 @@ const items = [
     label: "Descarregar",
     icon: PrimeIcons.FILE_WORD,
     command: () => printInvoice(),
+  },
+  {
+    label: "Rectificativa",
+    icon: PrimeIcons.FILE_IMPORT,
+    command: () => requestRectificativeQuantity(),
   },
 ];
 
@@ -113,6 +142,7 @@ const { invoice } = storeToRefs(invoiceStore);
 const dialogType = {
   Free: 0,
   FromDeliveryNote: 1,
+  Rectificative: 2,
 };
 const currentDialogType = ref(0);
 const dialogOptions = reactive({
@@ -151,6 +181,12 @@ const loadView = async () => {
     invoice.value!.invoiceDate = formatDate(invoice.value.invoiceDate);
   }
 };
+
+const isEditable = computed(() => {
+  return (
+    invoice.value !== undefined && invoice.value.parentSalesInvoiceId === null
+  );
+});
 
 const updateInvoice = async () => {
   if (invoice.value) {
@@ -244,5 +280,44 @@ const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
   invoiceStore.invoice!.invoiceDate = formatDate(
     invoiceStore.invoice!.invoiceDate
   );
+};
+
+// Create rectificative invoice
+const rectificativeRequest = ref(
+  undefined as undefined | CreateRectificativeInvoiceRequest
+);
+const requestRectificativeQuantity = () => {
+  rectificativeRequest.value = {
+    id: invoice.value!.id,
+    quantity: 0,
+  };
+
+  dialogOptions.visible = true;
+  dialogOptions.title = "Crear factura rectificativa";
+  currentDialogType.value = dialogType.Rectificative;
+};
+const createRectificativeInvoice = async () => {
+  if (rectificativeRequest.value) {
+    const response = await invoiceStore.CreateRectificative(
+      rectificativeRequest.value
+    );
+    if (response && response.result && response.content) {
+      toast.add({
+        summary: "Factura rectificativa",
+        detail: `Creada correctament amb el número ${response.content.invoiceNumber}`,
+        severity: "success",
+        life: 10000,
+      });
+
+      router.back();
+    } else {
+      toast.add({
+        summary: "Factura rectificativa",
+        detail: "Error en la creació de la factura",
+        severity: "error",
+        life: 10000,
+      });
+    }
+  }
 };
 </script>
