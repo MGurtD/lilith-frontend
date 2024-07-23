@@ -84,24 +84,17 @@
 <script setup lang="ts">
 import DropdownReferenceTypes from "../../../modules/shared/components/DropdownReferenceType.vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useReferenceStore } from "../../shared/store/reference";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../../shared/types";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
+import { useUserFilterStore } from "../../../store/userfilter";
 
+const userFilterStore = useUserFilterStore();
 const referenceTypeStore = useReferenceTypeStore();
 const referenceStore = useReferenceStore();
-const filter = ref({
-  code: "",
-  referenceTypeId: "",
-});
-
-const cleanFilter = () => {
-  filter.value.code = "";
-  filter.value.referenceTypeId = "";
-};
 
 const props = defineProps<{
   references: Array<Reference> | undefined;
@@ -112,6 +105,27 @@ const emit = defineEmits<{
   (e: "edit", reference: Reference): void;
   (e: "delete", reference: Reference): void;
 }>();
+
+onMounted(() => {
+  const userFilter = userFilterStore.getFilter("Materials", "");
+  if (userFilter) {
+    filter.value.code = userFilter.code;
+    filter.value.referenceTypeId = userFilter.referenceTypeId;
+  }
+});
+onUnmounted(() => {
+  userFilterStore.addFilter("Materials", "", filter.value);
+});
+
+const filter = ref({
+  code: "",
+  referenceTypeId: "",
+});
+
+const cleanFilter = () => {
+  filter.value.code = "";
+  filter.value.referenceTypeId = "";
+};
 
 const filteredData = computed(() => {
   if (!props.references) return [];

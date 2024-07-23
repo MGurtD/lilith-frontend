@@ -15,7 +15,7 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <label>Codi</label>
-            <BaseInput v-model="filter.code" />
+            <BaseInput v-model="filter.code"  />
           </div>
           <div class="filter-field">
             <label>Client</label>
@@ -85,22 +85,24 @@ import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../../shared/types";
 import { useCustomersStore } from "../../sales/store/customers";
 import { formatCurrency } from "../../../utils/functions";
+import { useUserFilterStore } from "../../../store/userfilter";
 
+const userFilterStore = useUserFilterStore();
 const customerStore = useCustomersStore();
 const filter = ref({
   code: "",
   customerId: "",
 });
 
-const filterLocalStoregeKey = "temges.filters.references";
 onMounted(() => {
-  const filterLocalStorage = localStorage.getItem(filterLocalStoregeKey);
-  if (filterLocalStorage) {
-    filter.value = JSON.parse(filterLocalStorage);
+  const userFilter = userFilterStore.getFilter("References", "");
+  if (userFilter) {
+    if (userFilter.code) filter.value.code = userFilter.code;
+    if (userFilter.customerId) filter.value.customerId = userFilter.customerId;
   }
 });
-onUnmounted(() => {
-  localStorage.setItem(filterLocalStoregeKey, JSON.stringify(filter.value));
+onUnmounted(async () => {
+  await userFilterStore.addFilter("References", "", filter.value);
 });
 
 const cleanFilter = () => {

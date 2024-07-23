@@ -46,5 +46,6 @@ export const useExerciseStore = defineStore({
       if (result) await this.fetchAll();
       return result;
     },
+    
   },
 });
