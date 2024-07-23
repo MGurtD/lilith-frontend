@@ -6,6 +6,7 @@ import {
 } from "../../../utils/functions";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
+  CreateRectificativeInvoiceRequest,
   CreateSalesHeaderRequest,
   DeliveryNote,
   InvoiceableOrderDetail,
@@ -19,6 +20,18 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     const response = await this.apiClient.post(endpoint, request);
 
     return response.status === 200;
+  }
+  async CreateRectificative(
+    request: CreateRectificativeInvoiceRequest
+  ): Promise<GenericResponse<SalesInvoice> | undefined> {
+    const endpoint = `${this.resource}`;
+    const response = await this.apiClient.post(
+      `${endpoint}/rectificative`,
+      request
+    );
+
+    if (response.status === 200)
+      return response.data as GenericResponse<SalesInvoice>;
   }
 
   async GetBetweenDates(

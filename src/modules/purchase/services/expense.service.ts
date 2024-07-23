@@ -4,6 +4,20 @@ import BaseService from "../../../api/base.service";
 export class ExpenseTypeService extends BaseService<ExpenseType> {}
 
 export class ExpenseService extends BaseService<Expense> {
+  async getBetweenDatesAndType(
+    startTime: string,
+    endTime: string,
+    expenseTypeId?: string
+  ): Promise<Array<Expense> | undefined> {
+    let endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}`;
+    if (expenseTypeId) {
+      endpoint += `&expenseTypeId=${expenseTypeId}`;
+    }
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<Expense>;
+    }
+  }
   async getConsolidated(
     startTime: string,
     endTime: string,

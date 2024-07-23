@@ -6,6 +6,7 @@ import {
   CreateSalesHeaderRequest,
   CreateInvoiceDetailsFromOrderDetailsRequest,
   DeliveryNote,
+  CreateRectificativeInvoiceRequest,
 } from "../types";
 import { GenericResponse } from "../../../types";
 
@@ -20,6 +21,14 @@ export const useSalesInvoiceStore = defineStore({
     async Create(createRequest: CreateSalesHeaderRequest) {
       const created = await SalesService.SalesInvoice.Create(createRequest);
       return created;
+    },
+    async CreateRectificative(
+      request: CreateRectificativeInvoiceRequest
+    ): Promise<GenericResponse<SalesInvoice> | undefined> {
+      const response = await SalesService.SalesInvoice.CreateRectificative(
+        request
+      );
+      return response;
     },
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);

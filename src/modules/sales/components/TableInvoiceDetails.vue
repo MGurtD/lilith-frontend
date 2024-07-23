@@ -62,7 +62,7 @@
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
-          v-if="!slotProps.data.deliveryNoteDetailId"
+          v-if="!slotProps.data.deliveryNoteDetailId && canDelete"
           :class="PrimeIcons.TIMES"
           class="grid_delete_column_button"
           @click="onDeleteRow($event, slotProps.data)"

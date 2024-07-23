@@ -146,8 +146,14 @@ export interface CreateSalesHeaderRequest {
   initialStatusId?: string;
 }
 
+export interface CreateRectificativeInvoiceRequest {
+  id: string;
+  quantity: number;
+}
+
 export interface SalesInvoice {
   id: string;
+  parentSalesInvoiceId: string | null;
   disabled: boolean;
   invoiceNumber: string;
   invoiceDate: string;

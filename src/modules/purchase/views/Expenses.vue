@@ -14,6 +14,12 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
+            <ExerciseDatePicker
+              :exercises="exerciseStore.exercises"
+              @range-selected="filterExpense"
+            />
+          </div>
+          <div class="filter-field">
             <label class="block text-900 mb-2">Tipus</label>
             <Dropdown
               v-model="filter.expenseTypeId"
@@ -50,17 +56,17 @@
         </div>
       </div>
     </template>
+    <Column header="Tipus" style="width: 15%">
+      <template #body="slotProps">
+        {{ getExpenseTypeNameById(slotProps.data.expenseTypeId) }}
+      </template>
+    </Column>
     <Column
       field="description"
       header="Descripció"
       style="width: 40%"
       sortable
     ></Column>
-    <Column field="amount" header="Import" style="width: 15%">
-      <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.amount) }}
-      </template>
-    </Column>
     <Column
       field="paymentDate"
       header="Data pagament"
@@ -71,9 +77,9 @@
         {{ formatDate(slotProps.data.paymentDate) }}
       </template>
     </Column>
-    <Column header="Tipus" style="width: 15%">
+    <Column field="amount" header="Import" style="width: 15%">
       <template #body="slotProps">
-        {{ getExpenseTypeNameById(slotProps.data.expenseTypeId) }}
+        {{ formatCurrency(slotProps.data.amount) }}
       </template>
     </Column>
     <Column header="Recurrent" style="width: 10%">
@@ -90,7 +96,11 @@
         />
       </template>
     </Column>
-    <template #footer>Total {{ formatCurrency(totalAmount) }} €</template>
+    <template #footer
+      ><div class="flex-right">
+        Total {{ formatCurrency(totalAmount) }}
+      </div></template
+    >
   </DataTable>
 </template>
 <script setup lang="ts">
@@ -100,19 +110,29 @@ import { useStore } from "../../../store";
 import { useExpenseStore } from "../store/expense";
 import { computed, onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { formatDate, formatCurrency } from "../../../utils/functions";
+import {
+  formatDate,
+  formatDateForQueryParameter,
+  formatCurrency,
+} from "../../../utils/functions";
 import { Expense } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import { useExerciseStore } from "../../shared/store/exercise";
 
 const router = useRouter();
 const store = useStore();
+const exerciseStore = useExerciseStore();
 const expenseStore = useExpenseStore();
+const toast = useToast();
+const confirm = useConfirm();
+
 const filter = ref({
-  dates: undefined as Array<Date> | undefined,
   expenseTypeId: undefined as string | undefined,
 });
+
 const totalAmount = computed(() => {
   let total = 0;
   if (expenseStore.expenses) {
@@ -122,25 +142,50 @@ const totalAmount = computed(() => {
 });
 
 onMounted(async () => {
-  await expenseStore.fetchExpenseTypes();
-  await expenseStore.fetchExpenses();
-
   store.setMenuItem({
     icon: PrimeIcons.WALLET,
     title: "Gestió de despeses",
   });
+
+  await expenseStore.fetchExpenseTypes();
+  if (!exerciseStore.exercises) {
+    await exerciseStore.fetchActive();
+  }
+  setCurrentYear();
+  filterExpense();
 });
 
 const filterExpense = async () => {
-  if (filter.value.expenseTypeId) {
-    await expenseStore.getFiltered(filter.value.expenseTypeId);
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
+
+    await expenseStore.fetchExpenses(
+      startTime,
+      endTime,
+      filter.value.expenseTypeId
+    );
+  }
+};
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
   }
 };
 
 const clearFilter = async () => {
   filter.value.expenseTypeId = "";
-
-  await expenseStore.fetchExpenses();
+  store.cleanExercisePicker();
 };
 
 const createButtonClick = () => {
@@ -157,8 +202,6 @@ const editExpense = (row: DataTableRowClickEvent) => {
   }
 };
 
-const toast = useToast();
-const confirm = useConfirm();
 const deleteExpense = (event: any, expense: Expense) => {
   confirm.require({
     target: event.currentTarget,
@@ -174,7 +217,7 @@ const deleteExpense = (event: any, expense: Expense) => {
           summary: "Eliminat",
           life: 3000,
         });
-        await expenseStore.fetchExpenses();
+        await filterExpense();
       }
     },
   });
