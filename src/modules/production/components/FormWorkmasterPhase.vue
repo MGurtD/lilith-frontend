@@ -17,7 +17,7 @@
         <BaseInput label="Descripció" v-model="phase.description" />
       </div>
     </section>
-    <section class="three-columns mb-2">
+    <section class="four-columns mb-2">
       <div>
         <label class="block text-900 mb-2">Tipus de màquina</label>
         <Dropdown
@@ -32,6 +32,17 @@
           }"
           @change="workcenterTypeUpdated"
         />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :minFractionDigits="2"
+          class="mb-2"
+          label="Marge de benefici"
+          id="profitPercentage"
+          v-model="phase.profitPercentage"
+          suffix="%"
+        ></BaseInput>
       </div>
       <div>
         <label class="block text-900 mb-2">Màquina preferida</label>
@@ -96,6 +107,7 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
+import WorkcenterType from "../views/WorkcenterType.vue";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -118,6 +130,10 @@ const preferredWorkcenters = computed(() => {
 
 const workcenterTypeUpdated = () => {
   props.phase.preferredWorkcenterId = null;
+  let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
+    (wt) => wt.id === props.phase.workcenterTypeId
+  );
+  props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
 };
 const isExternalWorkChanged = () => {
   if (props.phase.isExternalWork) {
