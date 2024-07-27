@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ReferenceService } from "../services/reference.service";
 import { Reference, ReferenceFormat } from "../types";
+import { SupplierReference } from "../../purchase/types";
 
 const referenceService = new ReferenceService("/reference");
 export const useReferenceStore = defineStore({
@@ -9,6 +10,7 @@ export const useReferenceStore = defineStore({
     reference: undefined as Reference | undefined,
     references: undefined as Array<Reference> | undefined,
     referenceFormats: undefined as Array<ReferenceFormat> | undefined,
+    referenceSuppliers: undefined as Array<SupplierReference> | undefined,
     module: "" as string,
   }),
   getters: {
@@ -105,6 +107,34 @@ export const useReferenceStore = defineStore({
       const response = await referenceService.deleteReference(id);
       if (response.result) {
         await this.fetchReferencesByModule(this.module);
+      }
+      return response;
+    },
+
+    // Suppliers
+    async fetchReferenceSuppliers(referenceId: string) {
+      this.referenceSuppliers = await referenceService.getReferenceSuppliers(
+        referenceId
+      );
+    },
+    async addSupplier(model: SupplierReference) {
+      const response = await referenceService.addSupplier(model);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
+      }
+      return response;
+    },
+    async updateSupplier(model: SupplierReference) {
+      const response = await referenceService.updateSupplier(model);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
+      }
+      return response;
+    },
+    async deleteSupplier(model: SupplierReference) {
+      const response = await referenceService.removeSupplier(model.id);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
       }
       return response;
     },

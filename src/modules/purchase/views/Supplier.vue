@@ -9,6 +9,21 @@
     </TabPanel>
     <TabPanel v-if="formMode === FormActionMode.EDIT">
       <template #header>
+        <i :class="PrimeIcons.TAG" class="mr-2"></i>
+        <span>Referencies</span>
+      </template>
+      <TableSupplierReferences
+        v-if="supplier && supplierStore.supplierReferences"
+        title="Referències"
+        :supplier-id="supplier.id"
+        :supplier-references="supplierStore.supplierReferences"
+        @create="addReference"
+        @update="editReference"
+        @delete="removeReference"
+      />
+    </TabPanel>
+    <TabPanel v-if="formMode === FormActionMode.EDIT">
+      <template #header>
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
       </template>
@@ -28,28 +43,35 @@ import { PrimeIcons } from "primevue/api";
 
 import FormSupplier from "../components/FormSupplier.vue";
 import { storeToRefs } from "pinia";
-import { Supplier, SupplierContact } from "../types";
+import { Supplier, SupplierContact, SupplierReference } from "../types";
 import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import SupplierContacts from "../components/TableSupplierContacts.vue";
+import { useReferenceStore } from "../../shared/store/reference";
+import TableSupplierReferences from "../components/TableSupplierReferences.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
 const supplierStore = useSuppliersStore();
+const referenceStore = useReferenceStore();
 const { supplier } = storeToRefs(supplierStore);
 
 const loadView = async () => {
-  await supplierStore.fetchSupplier(route.params.id as string);
+  const supplierId = route.params.id as string;
+
+  await supplierStore.fetchSupplier(supplierId);
   supplierStore.fetchSupplierTypes();
+  supplierStore.fetchSupplierReferences(supplierId);
+  referenceStore.fetchReferencesByModule("purchase");
 
   // Comprovar existencia del proveïdor
   let pageTitle = "";
   if (!supplier.value) {
     formMode.value = FormActionMode.CREATE;
-    supplierStore.setNewSupplier(route.params.id as string);
+    supplierStore.setNewSupplier(supplierId);
     pageTitle = "Alta de proveïdor";
   } else {
     formMode.value = FormActionMode.EDIT;
@@ -119,6 +141,39 @@ const removeContact = async (contact: SupplierContact) => {
     toast.add({
       severity: "success",
       summary: "Contacte eliminat",
+      life: 5000,
+    });
+  }
+};
+
+const addReference = async (Reference: SupplierReference) => {
+  const result = await supplierStore.addReferenceToSupplier(Reference);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència afegida",
+      life: 5000,
+    });
+  }
+};
+
+const editReference = async (Reference: SupplierReference) => {
+  const result = await supplierStore.updateReferenceFromSupplier(Reference);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència actualizada",
+      life: 5000,
+    });
+  }
+};
+
+const removeReference = async (Reference: SupplierReference) => {
+  const result = await supplierStore.removeReferenceFromSupplier(Reference);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència eliminada",
       life: 5000,
     });
   }

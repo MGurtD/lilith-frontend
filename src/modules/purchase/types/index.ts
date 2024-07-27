@@ -40,6 +40,17 @@ export interface SupplierContact {
   id: string;
 }
 
+export interface SupplierReference {
+  referenceId: string;
+  supplierId: string;
+  supplierCode: string;
+  supplierDescription: string;
+  supplierPrice: number;
+  supplyDays: number;
+  disabled: boolean;
+  id: string;
+}
+
 export interface PurchaseInvoiceTransition {
   id: string;
   fromStatusId: string;

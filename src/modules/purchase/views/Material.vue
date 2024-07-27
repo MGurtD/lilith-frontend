@@ -1,7 +1,20 @@
 <template>
   <FormMaterial v-if="reference" :reference="reference" @submit="submitForm" />
+
+  <section class="mt-4">
+    <TableSupplierReferences
+      v-if="reference && referenceStore.referenceSuppliers"
+      title="Proveïdors"
+      :referenceId="reference.id"
+      :supplier-references="referenceStore.referenceSuppliers"
+      @create="addSupplier"
+      @update="editSupplier"
+      @delete="removeSupplier"
+    />
+  </section>
 </template>
 <script setup lang="ts">
+import TableSupplierReferences from "../components/TableSupplierReferences.vue";
 import FormMaterial from "../components/FormMaterial.vue";
 import { onMounted, ref } from "vue";
 import { FormActionMode } from "../../../types/component";
@@ -12,17 +25,22 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useReferenceStore } from "../../shared/store/reference";
 import { Reference } from "../../shared/types";
+import { SupplierReference } from "../types";
+import { useSuppliersStore } from "../store/suppliers";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const supplierStore = useSuppliersStore();
 const referenceStore = useReferenceStore();
 
 const { reference } = storeToRefs(referenceStore);
 const id = ref("");
 
 const loadView = async () => {
+  supplierStore.fetchSuppliers();
+  referenceStore.fetchReferenceSuppliers(id.value);
   await referenceStore.fetchReference(id.value);
 
   let pageTitle = "";
@@ -69,5 +87,38 @@ const submitForm = async () => {
   });
 
   if (result) router.back();
+};
+
+const addSupplier = async (supplier: SupplierReference) => {
+  const result = await referenceStore.addSupplier(supplier);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència afegida",
+      life: 5000,
+    });
+  }
+};
+
+const editSupplier = async (supplier: SupplierReference) => {
+  const result = await referenceStore.updateSupplier(supplier);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència actualizada",
+      life: 5000,
+    });
+  }
+};
+
+const removeSupplier = async (supplier: SupplierReference) => {
+  const result = await referenceStore.deleteSupplier(supplier);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Referència eliminada",
+      life: 5000,
+    });
+  }
 };
 </script>
