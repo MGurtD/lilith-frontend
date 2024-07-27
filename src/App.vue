@@ -17,9 +17,9 @@ const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
 
-onMounted(() => {
-  store.getAuthorization();
+onMounted(async () => {
   spanishGeography.fetch();
+  await store.getAuthorization();
 });
 
 const logout = () => {

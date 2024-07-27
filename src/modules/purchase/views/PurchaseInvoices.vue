@@ -120,7 +120,7 @@ import { useStore } from "../../../store";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import {
   formatDateForQueryParameter,
@@ -129,11 +129,13 @@ import {
 import { PurchaseInvoice } from "../types";
 import { Exercise } from "../../shared/types";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const lifecycleName = "PurchaseInvoice";
 const lifecycleStore = useLifecyclesStore();
 const puchaseMasterDataStore = usePurchaseMasterDataStore();
@@ -153,9 +155,32 @@ onMounted(async () => {
   await lifecycleStore.fetchOneByName(lifecycleName);
   await puchaseMasterDataStore.fetchMasterData();
   setCurrentYear();
+  getUserFilter();
 
   await filterInvoices();
 });
+onUnmounted(() => {
+  const savedFilter = {
+    ...filter.value,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("PurchaseInvoices", "", savedFilter);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("PurchaseInvoices", "");
+  if (userFilter) {
+    filter.value.supplierId = userFilter.supplierId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
+  }
+};
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();

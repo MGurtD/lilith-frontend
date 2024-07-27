@@ -13,7 +13,7 @@
     <template #header>
       <slot name="header"></slot>
     </template>
-    <Column field="quantity" header="Quantitat" style="width: 7.5%" />
+    <Column field="quantity" header="Un." style="width: 3%" />
     <Column
       header="Referencia"
       field="reference.code"
@@ -25,7 +25,7 @@
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 25%" />
-    <Column field="workOrderId" header="Ordre fabr." style="width: 10%">
+    <Column field="workOrderId" header="Ordre fabr." style="width: 8%">
       <template #body="slotProps">
         <div
           v-if="workOrderStore.getWorkOrderCodeById(slotProps.data.workOrderId)"
@@ -51,23 +51,42 @@
         </div>
       </template>
     </Column>
-    <Column field="unitCost" header="Cost un." style="width: 8%">
+    <Column field="unitCost" header="Cost un. teo." style="width: 8%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.unitCost) }}
       </template>
     </Column>
-    <Column field="totalCost" header="Cost total" style="width: 8%">
+    <Column field="totalCost" header="Cost teòric" style="width: 8%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.totalCost) }}
       </template>
     </Column>
-    <Column field="profit" header="Benefici" style="width: 8%">
+    <Column header="Cost un. r." style="width: 8%">
+      <template #body="slotProps">
+        {{ formatCurrency(getUnitRealCost(slotProps.data)) }}
+      </template>
+    </Column>
+    <Column header="Cost real" style="width: 6%">
+      <template #body="slotProps">
+        {{
+          formatCurrency(
+            workOrderStore.getWorkOrderCost(slotProps.data.workOrderId)
+          )
+        }}
+      </template>
+    </Column>
+    <Column field="discount" header="% Bene." style="width: 6%">
       <template #body="slotProps"> {{ slotProps.data.profit }} % </template>
     </Column>
-    <Column field="profit" header="Descompte" style="width: 8%">
+    <Column field="profit" header="% Desc." style="width: 6%">
       <template #body="slotProps"> {{ slotProps.data.discount }} % </template>
     </Column>
-    <Column field="amount" header="Total" style="width: 8%">
+    <Column header="Preu un." style="width: 6%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitPrice) }}
+      </template>
+    </Column>
+    <Column field="amount" header="Total" style="width: 6%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.amount) }}
       </template>
@@ -190,6 +209,13 @@ const onDeleteRow = (event: any, salesOrderDetail: SalesOrderDetail) => {
       emit("delete", salesOrderDetail);
     },
   });
+};
+
+const getUnitRealCost = (detail: SalesOrderDetail) => {
+  if (!detail.workOrderId) return 0;
+  const cost = workOrderStore.getWorkOrderCost(detail.workOrderId);
+  if (cost === 0) return 0;
+  return cost / detail.quantity;
 };
 
 const onWorkOrderCreateClick = (salesOrderDetail: SalesOrderDetail) => {

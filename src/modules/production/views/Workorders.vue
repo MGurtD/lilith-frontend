@@ -114,7 +114,7 @@ import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
@@ -131,9 +131,11 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useWorkOrderStore } from "../store/workorder";
 import { useWorkMasterStore } from "../store/workmaster";
 import { useCustomersStore } from "../../sales/store/customers";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const confirm = useConfirm();
 const workMasterStore = useWorkMasterStore();
@@ -142,19 +144,6 @@ const referenceStore = useReferenceStore();
 const customersStore = useCustomersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
-
-const setCurrentYear = () => {
-  const year = new Date().getFullYear().toString();
-  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
-
-  if (currentExercise) {
-    store.exercisePicker.exercise = currentExercise;
-    store.exercisePicker.dates = [
-      new Date(store.exercisePicker.exercise.startDate),
-      new Date(store.exercisePicker.exercise.endDate),
-    ];
-  }
-};
 
 const filter = ref({
   referenceId: undefined,
@@ -165,6 +154,8 @@ const cleanFilter = () => {
   filter.value.referenceId = undefined;
   filter.value.statusId = undefined;
   filter.value.customerId = undefined;
+
+  userFilterStore.removeFilter("Workorders", "");
 };
 const filterData = async () => {
   if (store.exercisePicker.dates) {
@@ -216,9 +207,36 @@ onMounted(async () => {
     title: "Ordres de fabricació",
   });
 
-  setCurrentYear();
+  getUserFilter();
+  if (!store.exercisePicker.exercise) store.setCurrentYear();
   filterData();
 });
+onUnmounted(() => {
+  const savedFilter = {
+    referenceId: filter.value.referenceId,
+    statusId: filter.value.statusId,
+    customerId: filter.value.customerId,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("Workorders", "", savedFilter);
+});
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("Workorders", "");
+  if (userFilter) {
+    filter.value.referenceId = userFilter.referenceId;
+    filter.value.statusId = userFilter.statusId;
+    filter.value.customerId = userFilter.customerId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
+  }
+};
 
 const createButtonClick = () => {
   dialogOptions.visible = true;

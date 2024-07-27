@@ -31,6 +31,14 @@ export interface User {
   role?: Role;
 }
 
+export interface UserFilter {
+  id: string;
+  userId: string;
+  page: string;
+  key: string;
+  filter: string;
+}
+
 export interface File {
   entity: string;
   entityId: string;

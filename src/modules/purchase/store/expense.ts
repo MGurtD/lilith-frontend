@@ -10,7 +10,7 @@ export const useExpenseStore = defineStore({
     expense: undefined as Expense | undefined,
     expenses: undefined as Array<Expense> | undefined,
   }),
-  getters: {  },
+  getters: {},
   actions: {
     //Expense Types
     setNewExpenseType(id: string) {
@@ -59,8 +59,16 @@ export const useExpenseStore = defineStore({
         disabled: false,
       } as Expense;
     },
-    async fetchExpenses() {
-      this.expenses = await Services.Expense.getAll();
+    async fetchExpenses(
+      startDate: string,
+      endDate: string,
+      expenseTypeId?: string
+    ) {
+      this.expenses = await Services.Expense.getBetweenDatesAndType(
+        startDate,
+        endDate,
+        expenseTypeId
+      );
     },
     async fetchExpense(id: string) {
       this.expense = await Services.Expense.getById(id);
@@ -70,17 +78,20 @@ export const useExpenseStore = defineStore({
     },
     async createExpense(expense: Expense) {
       const result = await Services.Expense.create(expense);
-      if (result) await this.fetchExpenses();
+      if (result) {
+        this.expenses?.push(expense);
+      }
       return result;
     },
     async updateExpense(id: string, expense: Expense) {
       const result = await Services.Expense.update(id, expense);
-      if (result) await this.fetchExpenses();
       return result;
     },
     async deleteExpense(id: string) {
       const result = await Services.Expense.delete(id);
-      if (result) await this.fetchExpenses();
+      if (result) {
+        this.expenses = this.expenses?.filter((e) => e.id !== id);
+      }
       return result;
     },
   },

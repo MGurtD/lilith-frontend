@@ -26,6 +26,12 @@ export const useWorkOrderStore = defineStore({
       const wo = this.workorders?.find((r) => r.id === id);
       if (wo) return wo.code;
     },
+    getWorkOrderCost(id: string): number {
+      let cost = 0;
+      const wo = this.workorders?.find((r) => r.id === id);
+      if (wo) cost = wo.machineCost + wo.operatorCost + wo.materialCost;
+      return cost;
+    },
     // Workorder
     setNew(id: string) {
       this.workorder = {
@@ -54,13 +60,19 @@ export const useWorkOrderStore = defineStore({
         phases: [],
       } as WorkOrder;
     },
-    async fetchFiltered(startTime: string, endTime: string, statusId?: string, referenceId?: string, customerId?: string) {
+    async fetchFiltered(
+      startTime: string,
+      endTime: string,
+      statusId?: string,
+      referenceId?: string,
+      customerId?: string
+    ) {
       this.workorders = await Services.WorkOrder.GetBetweenDatesAndStatus(
         startTime,
         endTime,
         statusId,
         referenceId,
-        customerId,
+        customerId
       );
     },
     async fetchAll() {
