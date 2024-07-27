@@ -3,7 +3,7 @@
     <section>
       <div class="mt-2">
         <BaseInput
-          label="Import a retornar sense IVA"
+          label="Import a facturar sense IVA"
           v-model="rectificativeInvoice.quantity"
           :decimals="2"
           :type="BaseInputType.CURRENCY"
