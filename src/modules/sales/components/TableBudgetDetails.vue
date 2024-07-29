@@ -13,7 +13,7 @@
     <template #header>
       <slot name="header"></slot>
     </template>
-    <Column field="quantity" header="Quantitat" style="width: 10%" />
+    <Column field="quantity" header="Un." style="width: 3%" />
     <Column
       header="Referencia"
       field="reference.code"
@@ -25,11 +25,7 @@
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 25%" />
-    <Column field="unitPrice" header="Preu un." style="width: 10%">
-      <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.unitPrice) }}
-      </template>
-    </Column>
+
     <Column field="unitCost" header="Cost un." style="width: 10%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.unitCost) }}
@@ -43,8 +39,13 @@
     <Column field="profit" header="Benefici" style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.profit }} % </template>
     </Column>
-    <Column field="profit" header="Descompte" style="width: 10%">
+    <Column field="discount" header="Descompte" style="width: 10%">
       <template #body="slotProps"> {{ slotProps.data.discount }} % </template>
+    </Column>
+    <Column field="unitPrice" header="Preu un." style="width: 10%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitPrice) }}
+      </template>
     </Column>
     <Column field="amount" header="Total" style="width: 10%">
       <template #body="slotProps">
