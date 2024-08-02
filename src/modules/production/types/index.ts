@@ -1,4 +1,3 @@
-import { integer } from "@vuelidate/validators";
 import { Reference } from "../../shared/types";
 
 export interface Enterprise {
@@ -111,7 +110,9 @@ export interface WorkMasterPhase {
   preferredWorkcenterId?: string | null;
   operatorTypeId?: string | null;
   isExternalWork: boolean;
+  serviceReferenceId?: string | null;
   externalWorkCost: number;
+  transportCost: number;
   details?: Array<WorkMasterPhaseDetail>;
   billOfMaterials?: Array<WorkMasterPhaseBillOfMaterials>;
 }
@@ -184,7 +185,9 @@ export interface WorkOrderPhase {
   preferredWorkcenterId?: string | null;
   operatorTypeId?: string | null;
   isExternalWork: boolean;
+  serviceReferenceId?: string | null;
   externalWorkCost: number;
+  transportCost: number;
   statusId: string;
   startTime: string | null;
   endTime: string | null;

@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { ReferenceService } from "../services/reference.service";
-import { Reference, ReferenceFormat } from "../types";
+import {
+  Reference,
+  ReferenceCategory,
+  ReferenceCategoryEnum,
+  ReferenceFormat,
+} from "../types";
 
 const referenceService = new ReferenceService("/reference");
 export const useReferenceStore = defineStore({
@@ -9,9 +14,19 @@ export const useReferenceStore = defineStore({
     reference: undefined as Reference | undefined,
     references: undefined as Array<Reference> | undefined,
     referenceFormats: undefined as Array<ReferenceFormat> | undefined,
+    referenceCategories: [
+      { code: "Service", description: "Servei" },
+      { code: "Tool", description: "Eina" },
+      { code: "Material", description: "Material" },
+    ] as ReferenceCategory[],
     module: "" as string,
   }),
   getters: {
+    getByCategory: (state) => {
+      return (category: ReferenceCategoryEnum) => {
+        return state.references?.filter((r) => r.categoryName === category);
+      };
+    },
     getFullName: (state) => {
       return (reference: Reference) => {
         if (!reference) return "";
@@ -46,7 +61,7 @@ export const useReferenceStore = defineStore({
       if (!ref) return "";
       return this.getShortName(ref);
     },
-    setNewReference(id: string) {
+    setNewReference(id: string, category: ReferenceCategoryEnum) {
       this.reference = {
         id: id,
         code: "",
@@ -60,6 +75,8 @@ export const useReferenceStore = defineStore({
         production: this.module === "production",
         referenceTypeId: null,
         referenceFormatId: null,
+        categoryName: category,
+        transportAmount: 0,
         density: 0,
         lastPurchaseCost: 0,
         isService: false,

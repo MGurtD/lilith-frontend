@@ -28,7 +28,7 @@ const loadView = async () => {
   let pageTitle = "";
   if (!reference.value) {
     formMode.value = FormActionMode.CREATE;
-    referenceStore.setNewReference(id.value);
+    referenceStore.setNewReference(id.value, ReferenceCategory.MATERIAL);
     pageTitle = `Alta de material`;
   } else {
     formMode.value = FormActionMode.EDIT;

@@ -29,7 +29,7 @@ const confirm = useConfirm();
 const toast = useToast();
 
 onMounted(async () => {
-  let title = "Materials de compra";
+  let title = "Referències de compra";
   store.setMenuItem({
     icon: PrimeIcons.TICKET,
     title,

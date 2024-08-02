@@ -73,6 +73,8 @@ export interface BudgetDetail {
   quantity: number;
   profit: number;
   discount: number;
+  transportCost: number;
+  serviceCost: number;
   unitCost: number;
   unitPrice: number;
   totalCost: number;
@@ -126,6 +128,8 @@ export interface SalesOrderDetail {
   lastCost: number;
   workMasterCost: number;
   unitCost: number;
+  transportCost: number;
+  serviceCost: number;
   unitPrice: number;
   totalCost: number;
   amount: number;
