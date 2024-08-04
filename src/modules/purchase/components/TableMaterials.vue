@@ -78,11 +78,6 @@
         <span>{{ getTypeDescription(slotProps.data.referenceTypeId) }}</span>
       </template>
     </Column>
-    <Column v-if="isMaterial" header="Densitat (mm)" style="width: 10%">
-      <template #body="slotProps">
-        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
-      </template>
-    </Column>
     <Column
       v-if="isMaterial"
       field="referenceFormatId"
@@ -95,6 +90,12 @@
         }}</span>
       </template>
     </Column>
+    <Column v-if="isMaterial" header="Densitat (mm)" style="width: 10%">
+      <template #body="slotProps">
+        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
+      </template>
+    </Column>
+
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
