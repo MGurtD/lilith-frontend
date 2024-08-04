@@ -127,6 +127,8 @@ const onAddClick = () => {
     preferredWorkcenterId: null,
     isExternalWork: false,
     externalWorkCost: 0,
+    transportCost: 0,
+    serviceReferenceId: null,
     workmasterPhaseDetails: [],
     workmasterPhaseBillOfMaterials: [],
   } as WorkMasterPhase;

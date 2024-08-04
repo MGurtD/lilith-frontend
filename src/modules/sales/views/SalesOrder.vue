@@ -195,13 +195,6 @@ const submitForm = () => {
   form.submitForm();
 };
 
-const openReferenceDetail = () => {
-  router.push(`/sales/reference/${getNewUuid()}`);
-  setTimeout(() => {
-    referenceStore.reference!.customerId = salesOrder.value!.customerId;
-  }, 200);
-};
-
 const openOrderDetailDialog = (
   formMode: FormActionMode,
   salesOrderDetail: SalesOrderDetail
@@ -221,6 +214,8 @@ const openOrderDetailDialog = (
       lastCost: 0,
       workMasterCost: 0,
       description: "",
+      serviceCost: 0,
+      transportCost: 0,
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ReferenceService } from "../services/reference.service";
-import { Reference, ReferenceFormat } from "../types";
 import { SupplierReference } from "../../purchase/types";
 import {
   Reference,

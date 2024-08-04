@@ -95,11 +95,6 @@
         }}</span>
       </template>
     </Column>
-    <!-- <Column header="Desc." style="width: 10%">
-      <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
-      </template>
-    </Column> -->
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -131,6 +126,7 @@ const referenceStore = useReferenceStore();
 
 const props = defineProps<{
   references: Array<Reference> | undefined;
+  filter: any;
 }>();
 
 const emit = defineEmits<{
@@ -142,34 +138,28 @@ const emit = defineEmits<{
 onMounted(() => {
   const userFilter = userFilterStore.getFilter("Materials", "");
   if (userFilter) {
-    filter.value.code = userFilter.code;
-    filter.value.referenceTypeId = userFilter.referenceTypeId;
-    filter.value.referenceCategory = userFilter.referenceCategory;
+    props.filter.code = userFilter.code;
+    props.filter.referenceTypeId = userFilter.referenceTypeId;
+    props.filter.referenceCategory = userFilter.referenceCategory;
   }
 });
 onUnmounted(() => {
-  userFilterStore.addFilter("Materials", "", filter.value);
-});
-
-const filter = ref({
-  code: "",
-  referenceTypeId: "",
-  referenceCategory: "",
+  userFilterStore.addFilter("Materials", "", props.filter);
 });
 
 const cleanFilter = () => {
-  filter.value.code = "";
-  filter.value.referenceTypeId = "";
+  props.filter.code = "";
+  props.filter.referenceTypeId = "";
 };
 
 const selectedCategoryReferences = computed(() => {
   if (!props.references) return [];
-  if (filter.value.referenceCategory === "") {
+  if (props.filter.referenceCategory === "") {
     return [];
   }
 
   return referenceStore.references!.filter(
-    (r) => r.categoryName === filter.value.referenceCategory
+    (r) => r.categoryName === props.filter.referenceCategory
   );
 });
 
@@ -180,17 +170,17 @@ const filteredData = computed(() => {
 
   // Type filter
   if (
-    filter.value.referenceTypeId &&
-    filter.value.referenceTypeId!.length > 0
+    props.filter.referenceTypeId &&
+    props.filter.referenceTypeId!.length > 0
   ) {
     filteredReferences = filteredReferences.filter(
-      (r) => r.referenceTypeId === filter.value.referenceTypeId
+      (r) => r.referenceTypeId === props.filter.referenceTypeId
     );
   }
   // Code filter
-  if (filter.value.code.length > 0) {
+  if (props.filter.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
-      r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+      r.code.toLowerCase().includes(props.filter.code.toLowerCase())
     );
   }
 
@@ -198,13 +188,13 @@ const filteredData = computed(() => {
 });
 
 const isMaterial = computed(() => {
-  return filter.value.referenceCategory === ReferenceCategoryEnum.MATERIAL;
+  return props.filter.referenceCategory === ReferenceCategoryEnum.MATERIAL;
 });
 const isTool = computed(() => {
-  return filter.value.referenceCategory === ReferenceCategoryEnum.TOOL;
+  return props.filter.referenceCategory === ReferenceCategoryEnum.TOOL;
 });
 const isService = computed(() => {
-  return filter.value.referenceCategory === ReferenceCategoryEnum.SERVICE;
+  return props.filter.referenceCategory === ReferenceCategoryEnum.SERVICE;
 });
 
 const createButtonClick = () => {

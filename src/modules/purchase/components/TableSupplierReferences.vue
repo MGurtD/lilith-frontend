@@ -92,9 +92,8 @@ import { computed, ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { useSuppliersStore } from "../store/suppliers";
 import FormSupplierReference from "./FormSupplierReference.vue";
-import { Supplier, SupplierReference } from "../types";
+import { SupplierReference } from "../types";
 import { formatCurrency } from "../../../utils/functions";
-import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -122,7 +121,7 @@ const emit = defineEmits<{
 }>();
 
 const selectedReference = ref(undefined as SupplierReference | undefined);
-const dialogVisible = computed(() => selectedReference.value !== undefined);
+const dialogVisible = ref(false);
 
 const createButtonClick = () => {
   selectedReference.value = {
@@ -136,6 +135,7 @@ const createButtonClick = () => {
     supplyDays: 0,
   } as SupplierReference;
   formMode.value = FormActionMode.CREATE;
+  dialogVisible.value = true;
 };
 
 const rowContactClick = (row: DataTableRowClickEvent) => {
@@ -146,6 +146,7 @@ const rowContactClick = (row: DataTableRowClickEvent) => {
   ) {
     selectedReference.value = row.data;
     formMode.value = FormActionMode.EDIT;
+    dialogVisible.value = true;
   }
 };
 

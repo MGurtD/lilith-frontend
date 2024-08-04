@@ -1,6 +1,7 @@
 <template>
   <TableMaterials
     :references="referenceStore.references"
+    :filter="filter"
     @add="addReference"
     @edit="editReference"
     @delete="deleteReference"
@@ -10,7 +11,7 @@
 import TableMaterials from "../components/TableMaterials.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { Reference } from "../../../modules/shared/types";
 import { useConfirm } from "primevue/useconfirm";
@@ -28,6 +29,12 @@ const referenceTypeStore = useReferenceTypeStore();
 const confirm = useConfirm();
 const toast = useToast();
 
+const filter = ref({
+  code: "",
+  referenceTypeId: "",
+  referenceCategory: "",
+});
+
 onMounted(async () => {
   let title = "Referències de compra";
   store.setMenuItem({
@@ -41,11 +48,15 @@ onMounted(async () => {
 });
 
 const addReference = () => {
-  router.push({ path: `/material/${getNewUuid()}` });
+  router.push({
+    path: `/material/${getNewUuid()}/${filter.value.referenceCategory}`,
+  });
 };
 
 const editReference = (reference: Reference) => {
-  router.push({ path: `/material/${reference.id}` });
+  router.push({
+    path: `/material/${reference.id}/${filter.value.referenceCategory}`,
+  });
 };
 
 const deleteReference = (reference: Reference) => {
