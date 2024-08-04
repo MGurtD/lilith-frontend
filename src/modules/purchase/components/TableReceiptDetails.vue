@@ -21,7 +21,9 @@
     <Column field="thickness" header="Gruix" style="width: 7.5%"></Column>
     <Column field="diameter" header="Diàmetre" style="width: 7.5%"></Column>
     <Column field="totalWeight" header="Pes" style="width: 7.5%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} KG</template>
+      <template #body="slotProps">
+        {{ slotProps.data.totalWeight }} KG</template
+      >
     </Column>
     <Column field="amount" header="Preu" style="width: 7.5%">
       <template #body="slotProps"> {{ slotProps.data.amount }} €</template>
