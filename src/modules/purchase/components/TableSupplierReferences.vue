@@ -88,7 +88,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { useSuppliersStore } from "../store/suppliers";
 import FormSupplierReference from "./FormSupplierReference.vue";
@@ -169,7 +169,7 @@ const submitForm = () => {
   } else {
     emit("update", reference);
   }
-  // Amb aquesta assignació es torna a pintar la grid
+
   selectedReference.value = undefined;
 };
 
