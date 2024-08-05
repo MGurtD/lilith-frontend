@@ -58,6 +58,7 @@
       :formAction="formDetailMode"
       :header="budget"
       :detail="budgetDetail"
+      :style="{ width: '65vw' }"
       @submit="onBudgetDetailSubmit"
     />
   </Dialog>
