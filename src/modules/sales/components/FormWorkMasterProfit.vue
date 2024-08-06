@@ -21,8 +21,8 @@
           :minFractionDigits="2"
           class="mb-2"
           id="profitPercentage"
-          :modelValue="getTableProfitPercentage(slotProps.data)"
-          @input="(value:number) => updateProfitPercentage(slotProps.data, Number(value))"
+          v-model="slotProps.data.profitPercentage"
+          @input="(event:any) => updateProfitPercentage(slotProps.data, event.value)"
         />
       </template>
     </Column>
@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+//@input="(value:number) => updateProfitPercentage(slotProps.data, Number(value))"
 import { ref, watchEffect, computed, onMounted, reactive } from "vue";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import {
@@ -64,6 +65,7 @@ interface ProcessedPhase {
   machineStatusId: string;
   estimatedTime: number;
   isCycleTime: boolean;
+  profitPercentage: number;
 }
 
 const props = defineProps<{
@@ -93,6 +95,7 @@ const processPhases = (phases: WorkMasterPhase[]): ProcessedPhase[] => {
         ? detail.estimatedTime * props.quantity
         : detail.estimatedTime,
       isCycleTime: detail.isCycleTime,
+      profitPercentage: phase.profitPercentage,
     }))
   );
 };
@@ -109,9 +112,7 @@ onMounted(async () => {
   processedPhases.value.forEach((phase) => {
     const key = createUniqueKey(phase);
     if (!(phase.workcenterTypeId in tableProfitPercentages)) {
-      tableProfitPercentages[key] = getWorkcenterTypeProfit(
-        phase.workcenterTypeId
-      );
+      tableProfitPercentages[key] = phase.profitPercentage;
     }
     if (!(phase.workcenterTypeId in tableEstimatedTimes)) {
       tableEstimatedTimes[key] = phase.estimatedTime;
@@ -156,8 +157,8 @@ const getStatusName = (machineStatusId: string | undefined) => {
   return machineStatus?.name || "No definit";
 };
 
-const getTableProfitPercentage = (phase: ProcessedPhase) => {
-  const key = createUniqueKey(phase);
+const getTableProfitPercentage = (key: string) => {
+  //const key = createUniqueKey(phase);
   const profitPercentage = tableProfitPercentages[key];
   if (typeof profitPercentage === "number") {
     return profitPercentage;
@@ -176,9 +177,16 @@ const getTableProfitPercentage = (phase: ProcessedPhase) => {
 };*/
 
 const updateProfitPercentage = (phase: ProcessedPhase, value: number) => {
+  console.log("val:", value);
+  console.log("type:", typeof value);
+  console.log("pre phases:", phases);
   if (typeof value === "number") {
     const key = createUniqueKey(phase);
+    // Actualizar directamente el profitPercentage en slotProps.data
+    phase.profitPercentage = value;
     tableProfitPercentages[key] = value;
+    console.log("taula", tableProfitPercentages);
+    console.log("phases:", phases);
     calculateWeightedProfit();
   } else {
     console.error(
@@ -187,7 +195,6 @@ const updateProfitPercentage = (phase: ProcessedPhase, value: number) => {
     );
   }
 };
-
 /*const updateEstimatedTime = (workcenterTypeId: string, value: number) => {
   tableEstimatedTimes[workcenterTypeId] = value;
   calculateWeightedProfit();
@@ -199,7 +206,7 @@ const calculateWeightedProfit = () => {
 
   processedPhases.value.forEach((phase) => {
     const key = createUniqueKey(phase);
-    const profit = getTableProfitPercentage(phase);
+    const profit = getTableProfitPercentage(key);
     const time = tableEstimatedTimes[key] ?? phase.estimatedTime;
 
     totalTime += time;
