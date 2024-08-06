@@ -23,6 +23,7 @@
           id="profitPercentage"
           v-model="slotProps.data.profitPercentage"
           @input="(event:any) => updateProfitPercentage(slotProps.data, event.value)"
+          suffix="%"
         />
       </template>
     </Column>
@@ -30,7 +31,18 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-l text-900 font-bold">Benefici ponderat</span>
+        <span class="text-l text-900">Temps total operatiu: </span>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :minFractionDigits="0"
+          class="mb-2"
+          id="totalTime"
+          :modelValue="totalTime"
+          readonly
+          disabled
+        >
+        </BaseInput>
+        <span class="text-l text-900 font-bold">Benefici ponderat </span>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :minFractionDigits="2"
@@ -40,6 +52,7 @@
           suffix="%"
           readonly
         />
+        <Button @click="emitProfitAverage" icon="pi pi-copy" label="copiar" />
       </div>
     </template>
   </DataTable>
@@ -47,7 +60,7 @@
 
 <script setup lang="ts">
 //@input="(value:number) => updateProfitPercentage(slotProps.data, Number(value))"
-import { ref, watchEffect, computed, onMounted, reactive } from "vue";
+import { ref, watchEffect, computed, onMounted, reactive, watch } from "vue";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import {
   MachineStatus,
@@ -59,6 +72,7 @@ import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 
 interface ProcessedPhase {
+  id: string;
   code: string;
   order: number;
   workcenterTypeId: string;
@@ -84,23 +98,54 @@ const tableEstimatedTimes = reactive<{ [key: string]: number }>({});
 
 const profitAverage = ref(0);
 
-const processPhases = (phases: WorkMasterPhase[]): ProcessedPhase[] => {
+const stepProfitPercentages = reactive<{ [key: string]: number }>({});
+
+const emit = defineEmits(["updateProfitAverage"]);
+
+const processPhases = (
+  phases: WorkMasterPhase[],
+  quantity: number
+): ProcessedPhase[] => {
   return phases.flatMap((phase) =>
-    phase.details!.map((detail) => ({
-      code: phase.code,
-      order: detail.order,
-      workcenterTypeId: phase.workcenterTypeId || "",
-      machineStatusId: detail.machineStatusId || "",
-      estimatedTime: detail.isCycleTime
-        ? detail.estimatedTime * props.quantity
-        : detail.estimatedTime,
-      isCycleTime: detail.isCycleTime,
-      profitPercentage: phase.profitPercentage,
-    }))
+    phase.details!.map((detail) => {
+      const key = `${phase.code}-${detail.order}-${phase.workcenterTypeId}`;
+      // Inicializar profitPercentage a nivel de paso si no está definido
+      if (!(key in stepProfitPercentages)) {
+        stepProfitPercentages[key] = phase.profitPercentage ?? 0;
+      }
+      return {
+        id: detail.id,
+        code: phase.code,
+        order: detail.order,
+        workcenterTypeId: phase.workcenterTypeId || "",
+        machineStatusId: detail.machineStatusId || "",
+        estimatedTime: detail.isCycleTime
+          ? detail.estimatedTime * quantity
+          : detail.estimatedTime,
+        isCycleTime: detail.isCycleTime,
+        profitPercentage: stepProfitPercentages[key],
+      };
+    })
   );
 };
 
-const processedPhases = computed(() => processPhases(phases.value));
+watch(
+  () => props.quantity,
+  (newQuantity, oldQuantity) => {
+    // Recalcula las fases procesadas y el profitAverage cuando cambia quantity
+    calculateWeightedProfit();
+  }
+);
+
+const processedPhases = computed(() =>
+  processPhases(phases.value, props.quantity)
+);
+
+const totalTime = computed(() => {
+  return processedPhases.value.reduce((total, phase) => {
+    return total + phase.estimatedTime;
+  }, 0);
+});
 
 onMounted(async () => {
   await plantModelStore.fetchWorkcenterTypes();
@@ -128,10 +173,11 @@ watchEffect(async () => {
   } else {
     phases.value = [];
   }
+  calculateWeightedProfit();
 });
 
 const createUniqueKey = (phase: ProcessedPhase) => {
-  return `${phase.workcenterTypeId}-${phase.order}-${phase.code}`;
+  return `${phase.code}-${phase.order}-${phase.workcenterTypeId}`;
 };
 
 const getWorkcenterType = (workcenterTypeId: string | undefined) => {
@@ -141,15 +187,6 @@ const getWorkcenterType = (workcenterTypeId: string | undefined) => {
   return workcenterType?.name || "No definit";
 };
 
-const getWorkcenterTypeProfit = (
-  workcenterTypeId: string | undefined
-): number => {
-  const workcenterType = workcenterTypes.value?.find(
-    (p) => p.id === workcenterTypeId
-  );
-  return workcenterType?.profitPercentage || 0;
-};
-
 const getStatusName = (machineStatusId: string | undefined) => {
   const machineStatus = machineStatuses.value?.find(
     (p) => p.id === machineStatusId
@@ -157,36 +194,16 @@ const getStatusName = (machineStatusId: string | undefined) => {
   return machineStatus?.name || "No definit";
 };
 
-const getTableProfitPercentage = (key: string) => {
-  //const key = createUniqueKey(phase);
-  const profitPercentage = tableProfitPercentages[key];
-  if (typeof profitPercentage === "number") {
-    return profitPercentage;
-  } else {
-    console.error(
-      "Unexpected type for profitPercentage:",
-      typeof profitPercentage,
-      profitPercentage
-    );
-    return profitPercentage; // Retornar un valor por defecto en caso de error
-  }
+const emitProfitAverage = () => {
+  emit("updateProfitAverage", profitAverage.value);
 };
 
-/*const getTableEstimatedTime = (workcenterTypeId: string) => {
-  return tableEstimatedTimes[workcenterTypeId] ?? 0;
-};*/
-
 const updateProfitPercentage = (phase: ProcessedPhase, value: number) => {
-  console.log("val:", value);
-  console.log("type:", typeof value);
-  console.log("pre phases:", phases);
   if (typeof value === "number") {
     const key = createUniqueKey(phase);
-    // Actualizar directamente el profitPercentage en slotProps.data
+    stepProfitPercentages[key] = value;
     phase.profitPercentage = value;
     tableProfitPercentages[key] = value;
-    console.log("taula", tableProfitPercentages);
-    console.log("phases:", phases);
     calculateWeightedProfit();
   } else {
     console.error(
@@ -195,10 +212,6 @@ const updateProfitPercentage = (phase: ProcessedPhase, value: number) => {
     );
   }
 };
-/*const updateEstimatedTime = (workcenterTypeId: string, value: number) => {
-  tableEstimatedTimes[workcenterTypeId] = value;
-  calculateWeightedProfit();
-};*/
 
 const calculateWeightedProfit = () => {
   let totalTime = 0;
@@ -206,7 +219,7 @@ const calculateWeightedProfit = () => {
 
   processedPhases.value.forEach((phase) => {
     const key = createUniqueKey(phase);
-    const profit = getTableProfitPercentage(key);
+    const profit = stepProfitPercentages[key];
     const time = tableEstimatedTimes[key] ?? phase.estimatedTime;
 
     totalTime += time;

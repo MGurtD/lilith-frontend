@@ -134,6 +134,7 @@
       <WorkMasterPhaseTable
         :workMasterId="detail.workMasterId"
         :quantity="detail.quantity"
+        @updateProfitAverage="copyProfitAverage"
       />
     </TabPanel>
   </TabView>
@@ -168,6 +169,12 @@ const props = defineProps<{
   header: Budget | SalesOrderHeader;
   detail: BudgetDetail | SalesOrderDetail;
 }>();
+
+const copyProfitAverage = (profitAverage: number) => {
+  props.detail.profit = profitAverage;
+  updateImports();
+};
+
 const emit = defineEmits<{
   (e: "submit", detail: BudgetDetail | SalesOrderDetail): void;
 }>();
