@@ -25,10 +25,24 @@
       </template>
     </Column>
     <Column field="description" header="Descripció" style="width: 25%" />
-
-    <Column field="unitCost" header="Cost un." style="width: 10%">
+    <Column header="Cost intern" style="width: 10%">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.unitCost) }}
+        {{
+          formatCurrency(
+            slotProps.data.totalCost -
+              slotProps.data.serviceCost -
+              slotProps.data.transportCost
+          )
+        }}
+      </template>
+    </Column>
+    <Column header="Cost extern" style="width: 10%">
+      <template #body="slotProps">
+        {{
+          formatCurrency(
+            slotProps.data.serviceCost + slotProps.data.transportCost
+          )
+        }}
       </template>
     </Column>
     <Column field="totalCost" header="Cost total" style="width: 10%">
