@@ -87,6 +87,14 @@ export interface OperatorType {
   disabled: boolean;
 }
 
+export interface ProductionCosts {
+  operatorCost: number;
+  machineCost: number;
+  materialCost: number;
+  externalServiceCost: number;
+  externalTransportCost: number;
+}
+
 export interface WorkMaster {
   id: string;
   referenceId: string;

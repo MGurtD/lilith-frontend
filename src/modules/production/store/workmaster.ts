@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  ProductionCosts,
   WorkMaster,
   WorkMasterPhase,
   WorkMasterPhaseBillOfMaterials,
@@ -78,6 +79,13 @@ export const useWorkMasterStore = defineStore({
       quantity?: number
     ): Promise<GenericResponse<number>> {
       const result = await Services.WorkMaster.calculateCost(id, quantity);
+      return result;
+    },
+    async getCosts(
+      id: string,
+      quantity?: number
+    ): Promise<GenericResponse<ProductionCosts>> {
+      const result = await Services.WorkMaster.getCosts(id, quantity);
       return result;
     },
     async copy(model: WorkMasterToCopy) {
