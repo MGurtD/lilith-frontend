@@ -9,6 +9,7 @@
       title="Proveïdors"
       :referenceId="reference.id"
       :supplier-references="referenceStore.referenceSuppliers"
+      :formActionMode="formMode"
       @create="addSupplier"
       @update="editSupplier"
       @delete="removeSupplier"

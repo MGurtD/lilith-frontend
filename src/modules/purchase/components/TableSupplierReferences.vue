@@ -29,7 +29,7 @@
             <span class="text-l text-900 font-bold">{{ title }}</span>
             <div>
               <Button
-                v-if="!selectedReference"
+                v-if="formActionMode === FormActionMode.EDIT"
                 :icon="PrimeIcons.PLUS"
                 rounded
                 @click="createButtonClick"
@@ -109,6 +109,7 @@ const formMode = ref(FormActionMode.CREATE);
 
 const props = defineProps<{
   title: string;
+  formActionMode: FormActionMode;
   referenceId?: string;
   supplierId?: string;
   supplierReferences: SupplierReference[];
@@ -170,6 +171,7 @@ const submitForm = () => {
     emit("update", reference);
   }
 
+  dialogVisible.value = false;
   selectedReference.value = undefined;
 };
 
