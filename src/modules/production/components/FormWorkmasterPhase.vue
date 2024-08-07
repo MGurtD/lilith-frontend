@@ -59,7 +59,7 @@
         />
       </div>
     </section>
-    <section class="three-columns mb-2">
+    <section class="four-columns mb-2">
       <div>
         <label class="block text-900 mt-1 mb-1">Externa</label>
         <Checkbox
@@ -70,10 +70,34 @@
         />
       </div>
       <div>
+        <label class="block text-900 mb-2">Servei</label>
+        <Dropdown
+          v-model="phase.serviceReferenceId"
+          editable
+          :options="serviceReferences"
+          optionValue="id"
+          :optionLabel="(r) => r.code + ' - ' + r.description"
+          :disabled="!phase.isExternalWork"
+          class="w-full"
+          @change="onServiceReferenceChanged"
+        />
+      </div>
+      <div>
         <BaseInput
           :type="BaseInputType.CURRENCY"
-          label="Cost extern"
+          label="Cost servei"
           v-model="phase.externalWorkCost"
+          :disabled="!phase.isExternalWork"
+          :class="{
+            'p-invalid': validation.errors.externalWorkCost,
+          }"
+        />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Cost transport"
+          v-model="phase.transportCost"
           :disabled="!phase.isExternalWork"
           :class="{
             'p-invalid': validation.errors.externalWorkCost,
@@ -85,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import * as Yup from "yup";
 import {
@@ -96,6 +120,8 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
+import { useReferenceStore } from "../../shared/store/reference";
+import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -107,8 +133,19 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
+onMounted(async () => {
+  serviceReferences.value =
+    await referencesStore.getReferencesByModuleAndCategory(
+      "purchase",
+      ReferenceCategoryEnum.SERVICE
+    );
+});
+
 const toast = useToast();
 const plantModelStore = usePlantModelStore();
+const referencesStore = useReferenceStore();
+
+const serviceReferences = ref(undefined as undefined | Reference[]);
 
 const preferredWorkcenters = computed(() => {
   return props.phase.workcenterTypeId
@@ -119,11 +156,27 @@ const preferredWorkcenters = computed(() => {
 const workcenterTypeUpdated = () => {
   props.phase.preferredWorkcenterId = null;
 };
-const isExternalWorkChanged = () => {
+const isExternalWorkChanged = async () => {
   if (props.phase.isExternalWork) {
     props.phase.operatorTypeId = null;
     props.phase.workcenterTypeId = null;
     props.phase.preferredWorkcenterId = null;
+  } else {
+    props.phase.externalWorkCost = 0;
+    props.phase.transportCost = 0;
+    props.phase.serviceReferenceId = null;
+  }
+};
+
+const onServiceReferenceChanged = () => {
+  if (serviceReferences.value) {
+    const selectedReference = serviceReferences.value.find(
+      (r) => r.id === props.phase.serviceReferenceId
+    );
+    if (selectedReference) {
+      props.phase.externalWorkCost = selectedReference.price;
+      props.phase.transportCost = selectedReference.transportAmount;
+    }
   }
 };
 
