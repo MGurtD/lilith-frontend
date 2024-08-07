@@ -52,7 +52,7 @@
           suffix="%"
           readonly
         />
-        <Button @click="emitProfitAverage" icon="pi pi-copy" label="copiar" />
+        <Button @click="emitProfitAverage" icon="pi pi-copy" label="Aplicar" />
       </div>
     </template>
   </DataTable>
