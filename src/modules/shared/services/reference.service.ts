@@ -4,8 +4,15 @@ import { SupplierReference } from "../../purchase/types";
 import { Reference, ReferenceFormat } from "../types";
 
 export class ReferenceService extends BaseService<Reference> {
-  async getByModule(module: string): Promise<Array<Reference> | undefined> {
-    const response = await this.apiClient.get(`${this.resource}/${module}`);
+  async getByModule(
+    module: string,
+    category?: string
+  ): Promise<Array<Reference> | undefined> {
+    let endpoint = `${this.resource}/${module}`;
+    if (category) {
+      endpoint += `/${category}`;
+    }
+    const response = await this.apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<Reference>;
     }

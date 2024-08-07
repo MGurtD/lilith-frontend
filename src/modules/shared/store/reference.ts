@@ -87,6 +87,12 @@ export const useReferenceStore = defineStore({
         customerId: null,
       } as Reference;
     },
+    async getReferencesByModuleAndCategory(
+      module: string,
+      category: ReferenceCategoryEnum
+    ) {
+      return await referenceService.getByModule(module, category);
+    },
     async fetchReferences() {
       this.references = await referenceService.getAll();
 
