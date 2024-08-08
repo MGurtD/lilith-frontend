@@ -24,11 +24,11 @@
               />
             </div>
             <div class="filter-field">
-              <label class="block text-900 mb-2 mr-3">Amagar Gestionades</label>
+              <label class="block text-900 mb-2 mr-3">Gestionades</label>
               <div class="flex flex-wrap gap-3">
                 <div class="flex align-items-center">
                   <Checkbox
-                    v-model="filter.excludeManaged"
+                    v-model="filter.showManaged"
                     :binary="true"
                     @change="filterInvoices"
                   />
@@ -98,11 +98,11 @@
           {{ getLastDueDate(slotProps.data) }}
         </template>
       </Column>
-      <Column
-        field="baseAmount"
-        header="Import Base"
-        style="width: 15%"
-      ></Column>
+      <Column field="baseAmount" header="Import Base" style="width: 15%">
+        <template #body="slotProps">
+          {{ formatCurrency(slotProps.data.baseAmount) }}
+        </template>
+      </Column>
       <Column style="width: 2%">
         <template #body="slotProps">
           <i
@@ -116,7 +116,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
@@ -126,6 +126,7 @@ import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
 import SharedServices from "../../../api/services";
 import {
   createBlobAndDownloadFile,
+  formatCurrency,
   formatDate,
   formatDateForQueryParameter,
 } from "../../../utils/functions";
@@ -139,12 +140,14 @@ const purchaseInvoiceStore = usePurchaseInvoiceStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
-  excludeManaged: false,
+  showManaged: false,
 });
 const selectedInvoices = ref([] as Array<PurchaseInvoice>);
 const lifecycleName = "PurchaseInvoice";
 
 onMounted(async () => {
+  purchaseInvoiceStore.purchaseInvoices = [];
+
   purchaseStore.fetchMasterData();
   lifecycleStore.fetchOneByName(lifecycleName);
 
@@ -191,7 +194,7 @@ const isManagedStatus = (statusId: string): boolean => {
 const filterInvoices = async () => {
   if (filter.value.dates) {
     let managedStatus = undefined;
-    if (filter.value.excludeManaged === true) {
+    if (!filter.value.showManaged) {
       managedStatus = lifecycleStore.lifecycle?.statuses?.find(
         (s) => s.name === "Gestionada"
       );

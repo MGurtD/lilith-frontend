@@ -141,6 +141,8 @@ const onAddClick = () => {
     preferredWorkcenterId: null,
     isExternalWork: false,
     externalWorkCost: 0,
+    transportCost: 0,
+    serviceReferenceId: null,
     statusId: "",
     startTime: null,
     endTime: null,

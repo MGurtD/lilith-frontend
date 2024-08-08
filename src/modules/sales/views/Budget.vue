@@ -12,9 +12,9 @@
   <TabView>
     <TabPanel header="Detall">
       <TableBudgetDetails
-        v-if="budget"
+        v-if="budget && budget.details"
         :budget="budget"
-        :details="budget?.details"
+        :details="budget.details"
         @edit="(det: BudgetDetail) => openBudgetDetailDialog(FormActionMode.EDIT, det)"
         @delete="deleteSalesOrderDetails"
       >
@@ -170,6 +170,8 @@ const openBudgetDetailDialog = (
       quantity: 1,
       unitCost: 0,
       unitPrice: 0,
+      serviceCost: 0,
+      transportCost: 0,
       totalCost: 0,
       amount: 0,
       budgetId: budget.value!.id,
@@ -177,16 +179,9 @@ const openBudgetDetailDialog = (
     } as BudgetDetail;
   }
 
-  budgetDetail.value = detail;
+  budgetDetail.value = Object.assign({}, detail);
   formDetailMode.value = formMode;
   isDetailDialogVisible.value = true;
-};
-
-const openReferenceDetail = () => {
-  router.push(`/sales/reference/${getNewUuid()}`);
-  setTimeout(() => {
-    referenceStore.reference!.customerId = budget.value!.customerId;
-  }, 200);
 };
 
 const onBudgetSubmit = async (budget: Budget) => {
@@ -216,9 +211,13 @@ const onBudgetDetailSubmit = async (
 
   if (formDetailMode.value === FormActionMode.CREATE) {
     await budgetStore.CreateDetail(detail);
+    //budget.value!.details!.push(detail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
     await budgetStore.UpdateDetail(detail);
+    const index = budget.value!.details!.findIndex((i) => i.id === detail.id);
+    budget.value!.details![index] = detail;
   }
+
   isDetailDialogVisible.value = false;
 };
 

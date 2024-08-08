@@ -24,49 +24,36 @@ export default abstract class BaseService<T> {
       return response.filter((e) => (e as any).disabled === false);
   }
   async getById(id: string): Promise<T | undefined> {
-    try {
-      const response = await apiClient.get(`${this.resource}/${id}`);
-      if (response.status === 200) {
-        return response.data as T;
-      }
-    } catch (err) {
-      logException(err);
+    const response = await apiClient.get(`${this.resource}/${id}`);
+    if (response.status === 200) {
+      return response.data as T;
     }
   }
   async create(model: T | CreateReceiptRequest): Promise<boolean> {
     let result: boolean = false;
-    try {
-      const response = await apiClient.post(`${this.resource}`, model);
-      if (response.status === 200 || response.status === 201) {
-        result = true;
-      }
-    } catch (err) {
-      logException(err);
+    const response = await apiClient.post(`${this.resource}`, model);
+    if (response.status === 200 || response.status === 201) {
+      result = true;
     }
+
     return result;
   }
   async update(id: string, model: T) {
     let result: boolean = false;
-    try {
-      const response = await apiClient.put(`${this.resource}/${id}`, model);
-      if (response.status === 200 || response.status === 201) {
-        result = true;
-      }
-    } catch (err) {
-      logException(err);
+
+    const response = await apiClient.put(`${this.resource}/${id}`, model);
+    if (response.status === 200 || response.status === 201) {
+      result = true;
     }
     return result;
   }
   async delete(id: string) {
     let result: boolean = false;
-    try {
-      const response = await apiClient.delete(`${this.resource}/${id}`);
-      if (response.status === 200 || response.status === 201) {
-        result = true;
-      }
-    } catch (err) {
-      logException(err);
+    const response = await apiClient.delete(`${this.resource}/${id}`);
+    if (response.status === 200 || response.status === 201) {
+      result = true;
     }
+
     return result;
   }
 }

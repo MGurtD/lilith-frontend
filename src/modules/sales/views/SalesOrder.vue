@@ -195,13 +195,6 @@ const submitForm = () => {
   form.submitForm();
 };
 
-const openReferenceDetail = () => {
-  router.push(`/sales/reference/${getNewUuid()}`);
-  setTimeout(() => {
-    referenceStore.reference!.customerId = salesOrder.value!.customerId;
-  }, 200);
-};
-
 const openOrderDetailDialog = (
   formMode: FormActionMode,
   salesOrderDetail: SalesOrderDetail
@@ -214,6 +207,8 @@ const openOrderDetailDialog = (
       profit: 0,
       discount: 0,
       unitCost: 0,
+      serviceCost: 0,
+      transportCost: 0,
       unitPrice: 0,
       totalCost: 0,
       amount: 0,
@@ -221,6 +216,8 @@ const openOrderDetailDialog = (
       lastCost: 0,
       workMasterCost: 0,
       description: "",
+      serviceCost: 0,
+      transportCost: 0,
       estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,
@@ -230,7 +227,7 @@ const openOrderDetailDialog = (
   }
 
   salesOrderDetail.salesOrderHeaderId = salesOrder.value!.id;
-  selectedSalesOrderDetail.value = salesOrderDetail;
+  selectedSalesOrderDetail.value = Object.assign({}, salesOrderDetail);
   formDetailMode.value = formMode;
   isDetailDialogVisible.value = true;
 };
@@ -262,6 +259,10 @@ const onOrderDetailSubmit = async (detail: BudgetDetail | SalesOrderDetail) => {
     await salesOrderStore.CreateDetail(detail);
   } else if (formDetailMode.value === FormActionMode.EDIT) {
     await salesOrderStore.UpdateDetail(detail);
+    const index = salesOrder.value!.salesOrderDetails!.findIndex(
+      (i) => i.id === detail.id
+    );
+    salesOrder.value!.salesOrderDetails![index] = detail;
   }
   isDetailDialogVisible.value = false;
 

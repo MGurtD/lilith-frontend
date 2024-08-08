@@ -1,113 +1,143 @@
 <template>
+  <form v-if="detail">
   <TabView v-model:activeIndex="activeTab">
     <TabPanel header="Referència">
-      <form v-if="detail">
-        <section class="two-columns-7525">
-          <div class="mb-2">
-            <DropdownReference
-              label="Referència"
-              v-model="detail.referenceId"
-              :customerId="header.customerId"
-              :fullName="true"
-              @update:modelValue="getReferenceInfo()"
-            ></DropdownReference>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Preu"
-              v-model="referencePrice"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-        </section>
+    <section class="three-columns">
+      <div class="mb-2">
+        <DropdownReference
+          label="Referència"
+          v-model="detail.referenceId"
+          :customerId="header.customerId"
+          :fullName="true"
+          @update:modelValue="getReferenceInfo()"
+        ></DropdownReference>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Preu"
+          v-model="referencePrice"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+      <div class="mb-2">
+        <DropdownWorkmasters
+          label="Ruta de fabricació"
+          v-model="detail.workMasterId"
+          :referenceId="detail.referenceId"
+          @update:modelValue="getWorkmasterCost(false)"
+        ></DropdownWorkmasters>
+      </div>
+    </section>
 
-        <section class="three-columns">
-          <div class="mb-2">
-            <DropdownWorkmasters
-              label="Ruta de fabricació"
-              v-model="detail.workMasterId"
-              :referenceId="detail.referenceId"
-              @update:modelValue="getWorkmasterCost()"
-            ></DropdownWorkmasters>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Cost Unitari"
-              v-model="detail.unitCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Cost Total"
-              v-model="detail.totalCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-        </section>
+    <section class="five-columns">
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Intern"
+          v-model="internalCosts"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Servei"
+          v-model="detail.serviceCost"
+          :type="BaseInputType.CURRENCY"
+          @update:modelValue="updateCosts()"
+          :disabled="detail.workMasterId === null"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Transport"
+          v-model="detail.transportCost"
+          :type="BaseInputType.CURRENCY"
+          @update:modelValue="updateCosts()"
+          :disabled="detail.workMasterId === null"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Unitari"
+          v-model="detail.unitCost"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Cost Total"
+          v-model="detail.totalCost"
+          :type="BaseInputType.CURRENCY"
+          disabled
+        ></BaseInput>
+      </div>
+    </section>
 
-        <section class="five-columns">
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Quantitat"
-              v-model="detail.quantity"
-              :type="BaseInputType.NUMERIC"
-              :class="{
-                'p-invalid': validation.errors.quantity,
-              }"
-              @update:modelValue="updateQuantity()"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="% Benefici"
-              v-model="detail.profit"
-              :type="BaseInputType.NUMERIC"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="% Descompte"
-              v-model="detail.discount"
-              :type="BaseInputType.NUMERIC"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.discount,
-              }"
-            ></BaseInput>
-          </div>
-          <BaseInput
-            class="mb-2"
-            label="Preu Unitari"
-            v-model="detail.unitPrice"
-            :type="BaseInputType.CURRENCY"
-            disabled
-          ></BaseInput>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Total"
-              v-model="detail.amount"
-              :type="BaseInputType.CURRENCY"
-              :class="{
-                'p-invalid': validation.errors.amount,
-              }"
-            ></BaseInput>
-          </div>
-        </section>
+    <section class="five-columns">
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Quantitat"
+          v-model="detail.quantity"
+          :type="BaseInputType.NUMERIC"
+          :class="{
+            'p-invalid': validation.errors.quantity,
+          }"
+          @update:modelValue="updateQuantity()"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="% Benefici"
+          v-model="detail.profit"
+          :type="BaseInputType.NUMERIC"
+          @update:modelValue="updateImports()"
+          :class="{
+            'p-invalid': validation.errors.profit,
+          }"
+        ></BaseInput>
+      </div>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="% Descompte"
+          v-model="detail.discount"
+          :type="BaseInputType.NUMERIC"
+          @update:modelValue="updateImports()"
+          :class="{
+            'p-invalid': validation.errors.discount,
+          }"
+        ></BaseInput>
+      </div>
+      <BaseInput
+        class="mb-2"
+        label="Preu Unitari"
+        v-model="detail.unitPrice"
+        :type="BaseInputType.CURRENCY"
+        @update:modelValue="updateUnitPrice()"
+      ></BaseInput>
+      <div>
+        <BaseInput
+          class="mb-2"
+          label="Total"
+          v-model="detail.amount"
+          disabled
+          :type="BaseInputType.CURRENCY"
+          :class="{
+            'p-invalid': validation.errors.amount,
+          }"
+        ></BaseInput>
+      </div>
+    </section>
 
         <section>
           <div>
@@ -141,7 +171,8 @@
   </TabView>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import DropdownReference from "../../shared/components/DropdownReference.vue";
+import { computed, ref, watch, toRefs } from "vue";
 import {
   Budget,
   BudgetDetail,
@@ -157,9 +188,8 @@ import { useToast } from "primevue/usetoast";
 import { BaseInputType, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../../production/store/workmaster";
-import DropdownReference from "../../shared/components/DropdownReference.vue";
-import DropdownWorkmasters from "../../production/components/DropdownWorkmasters.vue";
-import TableWorkmasterProfit from "./TableWorkmasterProfit.vue";
+import { ProductionCosts } from "../../production/types";
+import _ from "lodash";
 
 const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
@@ -183,6 +213,9 @@ const emit = defineEmits<{
   (e: "submit", detail: BudgetDetail | SalesOrderDetail): void;
 }>();
 
+// Destructure the user prop to get a reactive reference to the age property
+const { detail } = toRefs(props);
+
 const textActionButton = computed(() => {
   return props.formAction === FormActionMode.CREATE ? "Afegir" : "Modificar";
 });
@@ -191,80 +224,147 @@ const referencePrice = ref(0);
 
 const getReferenceInfo = () => {
   const reference = referenceStore.references!.find(
-    (r) => r.id === props.detail.referenceId
+    (r) => r.id === detail.value.referenceId
   );
   if (reference) {
-    props.detail.description = reference.description;
+    detail.value.description = reference.description;
     referencePrice.value = reference.price;
-    props.detail.unitPrice = reference.price;
-    props.detail.workMasterId = null;
-    props.detail.unitCost = reference.lastCost;
+    detail.value.unitPrice = reference.price;
+    detail.value.workMasterId = null;
+    detail.value.unitCost = reference.lastCost;
     updateImports();
   } else {
     referencePrice.value = 0;
-    props.detail.description = "";
-    props.detail.unitPrice = 0;
-    props.detail.workMasterId = null;
-    props.detail.unitCost = 0;
-    props.detail.totalCost = 0;
-    props.detail.amount = 0;
+    detail.value.description = "";
+    detail.value.unitPrice = 0;
+    detail.value.workMasterId = null;
+    detail.value.unitCost = 0;
+    detail.value.totalCost = 0;
+    detail.value.amount = 0;
   }
 };
 
-const getWorkmasterCost = async () => {
-  if (props.detail.workMasterId) {
-    const costsResponse = await workmasterStore.calculate(
-      props.detail.workMasterId,
-      props.detail.quantity
+const workmasterCosts = ref<ProductionCosts>({
+  machineCost: 0,
+  materialCost: 0,
+  operatorCost: 0,
+  externalTransportCost: 0,
+  externalServiceCost: 0,
+});
+const getWorkmasterCost = async (blockExternalCosts: boolean) => {
+  if (detail.value.workMasterId) {
+    const costsResponse = await workmasterStore.getCosts(
+      detail.value.workMasterId,
+      detail.value.quantity
     );
-    props.detail.unitCost = costsResponse.content! / props.detail.quantity;
-    props.detail.totalCost = costsResponse.content!;
 
-    updateImports();
+    if (costsResponse.result && costsResponse.content) {
+      workmasterCosts.value = costsResponse.content as ProductionCosts;
+
+      // avoid unnecessary updates when user update the quantity
+      if (!blockExternalCosts) {
+        detail.value.transportCost =
+          workmasterCosts.value.externalTransportCost;
+        detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
+      }
+
+      detail.value.totalCost =
+        workmasterCosts.value.machineCost +
+        workmasterCosts.value.materialCost +
+        workmasterCosts.value.operatorCost +
+        detail.value.transportCost +
+        detail.value.serviceCost;
+      detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
+
+      updateImports();
+    }
   } else {
     getReferenceInfo();
-    props.detail.totalCost = 0;
+    detail.value.transportCost = 0;
+    detail.value.serviceCost = 0;
+    detail.value.totalCost = 0;
   }
 };
 
-const updateQuantity = () => {
-  if (!props.detail.quantity) {
-    props.detail.quantity = 1;
+const internalCosts = computed(() => {
+  if (!detail.value.workMasterId) {
+    return 0;
+  } else if (
+    workmasterCosts.value.machineCost === 0 &&
+    workmasterCosts.value.machineCost === 0 &&
+    workmasterCosts.value.operatorCost === 0
+  ) {
+    return (
+      detail.value.totalCost -
+      detail.value.serviceCost -
+      detail.value.transportCost
+    );
+  } else {
+    return (
+      workmasterCosts.value.machineCost +
+      workmasterCosts.value.materialCost +
+      workmasterCosts.value.operatorCost
+    );
   }
+});
 
-  if (props.detail.workMasterId) {
-    getWorkmasterCost();
-    props.detail.totalCost = props.detail.unitCost * props.detail.quantity;
-  }
+const updateCosts = () => {
+  detail.value.totalCost =
+    internalCosts.value + detail.value.serviceCost + detail.value.transportCost;
+  detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
 
   updateImports();
 };
 
-const updateImports = () => {
-  // apply profit
-  if (props.detail.profit > 0) {
-    props.detail.amount =
-      props.detail.unitCost *
-      props.detail.quantity *
-      (1 + props.detail.profit / 100);
-  } else {
-    props.detail.amount = props.detail.unitCost * props.detail.quantity;
-  }
-  // apply discount
-  if (props.detail.discount > 0) {
-    props.detail.amount =
-      props.detail.amount * (1 - props.detail.discount / 100);
+let isUpdatingQuantity = false;
+const updateQuantity = () => {
+  isUpdatingQuantity = true;
+  if (!detail.value.quantity) {
+    detail.value.quantity = 1;
   }
 
-  // calculate unit price
-  const reference = referenceStore.references!.find(
-    (r) => r.id === props.detail.referenceId
-  );
-  if (props.detail.amount > 0 && props.detail.quantity > 0) {
-    props.detail.unitPrice = props.detail.amount / props.detail.quantity;
-  } else {
-    props.detail.unitPrice = reference?.price || 0;
+  if (detail.value.workMasterId) {
+    getWorkmasterCost(true);
   }
+
+  updateImports();
+  isUpdatingQuantity = false;
+};
+
+const updateImports = () => {
+  // starting from unit cost
+  detail.value.unitPrice = detail.value.unitCost;
+
+  // no cost, get price from reference
+  if (detail.value.unitPrice === 0) {
+    const reference = referenceStore.references!.find(
+      (r) => r.id === detail.value.referenceId
+    );
+    detail.value.unitPrice = reference?.price || 0;
+  }
+
+  // apply profit
+  if (detail.value.profit > 0) {
+    detail.value.unitPrice *= 1 + detail.value.profit / 100;
+  }
+  // apply discount
+  if (detail.value.discount > 0) {
+    detail.value.unitPrice *= 1 - detail.value.discount / 100;
+  }
+
+  // round it & calculate total price (amount)
+  detail.value.unitPrice = _.round(detail.value.unitPrice, 2);
+  detail.value.amount = _.round(
+    detail.value.unitPrice * detail.value.quantity,
+    2
+  );
+};
+
+const updateUnitPrice = () => {
+  detail.value.amount = _.round(
+    detail.value.unitPrice * detail.value.quantity,
+    2
+  );
 };
 
 const schema = Yup.object().shape({
@@ -276,6 +376,8 @@ const schema = Yup.object().shape({
     .min(1, "El total ha de ser un número positiu"),
   profit: Yup.number().required("El benefici és obligatori"),
   discount: Yup.number().required("El descompte és obligatori"),
+  unitPrice: Yup.number().required("El preu unitari és obligatori"),
+  amount: Yup.number().required("El total és obligatori"),
 });
 const validation = ref({
   result: false,

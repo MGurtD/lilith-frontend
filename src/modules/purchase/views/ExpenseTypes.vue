@@ -91,7 +91,7 @@ const deleteExpenseType = (event: any, expenseType: ExpenseType) => {
           summary: "Eliminada",
           life: 3000,
         });
-        await expenseStore.fetchExpenses();
+        await expenseStore.fetchExpenseTypes();
       }
     },
   });

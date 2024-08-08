@@ -16,9 +16,6 @@
           label="Codi"
           id="code"
           v-model="reference.code"
-          :class="{
-            'p-invalid': validation.errors.code,
-          }"
         ></BaseInput>
       </div>
       <div class="mt-1">
@@ -27,109 +24,89 @@
           label="Descripció"
           id="description"
           v-model="reference.description"
-          :class="{
-            'p-invalid': validation.errors.description,
-          }"
         ></BaseInput>
       </div>
       <div class="mt-1">
-        <DropdownReferenceType
-          label="Tipus de material"
-          v-model="reference.referenceTypeId"
-        />
-      </div>
-    </section>
-    <section class="four-columns">
-      <div class="mt-1">
-        <label class="block text-900 mb-2">Format</label>
-        <Dropdown
-          v-model="reference.referenceFormatId"
-          editable
-          :options="referenceStore.referenceFormats"
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.taxid,
-          }"
-        />
-      </div>
-      <div class="mt-1">
-        <BaseInput
-          :type="BaseInputType.CURRENCY"
-          label="Últim cost de compra"
-          id="lastCost"
-          v-model="reference.lastCost"
+        <DropdownReferenceCategory
+          label="Categoria"
+          v-model="reference.categoryName"
           disabled
         />
       </div>
-      <div class="mt-1">
-        <label class="block text-900 mb-2">Impost</label>
-        <Dropdown
-          v-model="reference.taxId"
-          editable
-          :options="taxesStore.taxes"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-          :class="{
-            'p-invalid': validation.errors.taxid,
-          }"
-        />
-      </div>
-      <div>
-        <label class="block text-900 mb-2">Desactivada</label>
-        <Checkbox v-model="reference.disabled" :binary="true" />
-      </div>
     </section>
+    <FormReferenceMaterial
+      v-if="reference.categoryName === ReferenceCategoryEnum.MATERIAL"
+      :reference="reference"
+    />
+    <FormReferenceTool
+      v-if="reference.categoryName === ReferenceCategoryEnum.TOOL"
+      :reference="reference"
+    />
+    <FormReferenceService
+      v-if="reference.categoryName === ReferenceCategoryEnum.SERVICE"
+      :reference="reference"
+    />
   </form>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { Reference } from "../../shared/types";
+import DropdownReferenceCategory from "../../shared/components/DropdownReferenceCategory.vue";
+import FormReferenceMaterial from "../components/FormReferenceMaterial.vue";
+import FormReferenceTool from "../components/FormReferenceTool.vue";
+import FormReferenceService from "../components/FormReferenceService.vue";
+import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import * as Yup from "yup";
 import {
   FormValidation,
   FormValidationResult,
 } from "../../../utils/form-validator";
+import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { BaseInputType } from "../../../types/component";
-import { useTaxesStore } from "../../shared/store/tax";
-import { useReferenceStore } from "../../shared/store/reference";
-import { useReferenceTypeStore } from "../../shared/store/referenceType";
-import DropdownReferenceType from "../../shared/components/DropdownReferenceType.vue";
 
 const props = defineProps<{
   reference: Reference;
 }>();
-
 const emit = defineEmits<{
   (e: "submit", reference: Reference): void;
-  (e: "cancel"): void;
 }>();
 
 const toast = useToast();
-const taxesStore = useTaxesStore();
-const referenceStore = useReferenceStore();
-const referenceTypeStore = useReferenceTypeStore();
-
-const schema = Yup.object().shape({
+const schema = {
   code: Yup.string()
-    .required("El codi és obligatori")
+    .required("El codi és obligatoria")
     .max(50, "El codi no pot superar els 50 carácters"),
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
-  taxId: Yup.string().required("El tipus d'iva es obligatori"),
-});
+};
+
 const validation = ref({
   result: false,
   errors: {},
 } as FormValidationResult);
-
 const validate = () => {
-  const formValidation = new FormValidation(schema);
+  let categorySchema = {} as Yup.ObjectSchema<any>;
+
+  if (props.reference.categoryName === ReferenceCategoryEnum.MATERIAL) {
+    categorySchema = Yup.object().shape({
+      ...schema,
+      taxId: Yup.string().required("L'IVA és obligatori"),
+      referenceTypeId: Yup.string().required(
+        "El tipus de referència és obligatori"
+      ),
+      referenceFormatId: Yup.string().required("El format és obligatori"),
+    });
+  } else if (props.reference.categoryName === ReferenceCategoryEnum.SERVICE) {
+    categorySchema = Yup.object().shape({
+      ...schema,
+      price: Yup.number().required("El preu és obligatori"),
+      transportAmount: Yup.number().required(
+        "El preu de transport és obligatori"
+      ),
+    });
+  }
+
+  const formValidation = new FormValidation(categorySchema);
   validation.value = formValidation.validate(props.reference);
 };
 

@@ -22,7 +22,7 @@ const Material = () => import("./views/Material.vue");
 
 export default [
   { path: "/material", name: "Materials", component: Materials },
-  { path: "/material/:id", name: "Material", component: Material },
+  { path: "/material/:id/:category", name: "Material", component: Material },
   { path: "/suppliers", name: "Suppliers", component: Suppliers },
   {
     path: "/suppliers/:id",
