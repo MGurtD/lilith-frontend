@@ -1,5 +1,5 @@
 <template>
-  <TabView>
+  <TabView v-model:activeIndex="activeTab">
     <TabPanel header="Referència">
       <form v-if="detail">
         <section class="two-columns-7525">
@@ -124,6 +124,7 @@
         </section>
 
         <Button
+          :disabled="readonly"
           :label="textActionButton"
           @click="submitForm"
           style="float: right"
@@ -131,7 +132,7 @@
       </form>
     </TabPanel>
     <TabPanel header="Marges">
-      <WorkMasterPhaseTable
+      <TableWorkmasterProfit
         :workMasterId="detail.workMasterId"
         :quantity="detail.quantity"
         @updateProfitAverage="copyProfitAverage"
@@ -140,7 +141,6 @@
   </TabView>
 </template>
 <script setup lang="ts">
-import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { computed, ref } from "vue";
 import {
   Budget,
@@ -156,10 +156,10 @@ import {
 import { useToast } from "primevue/usetoast";
 import { BaseInputType, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
-
-import DropdownWorkmasters from "../../production/components/DropdownWorkmasters.vue";
 import { useWorkMasterStore } from "../../production/store/workmaster";
-import WorkMasterPhaseTable from "./FormWorkMasterProfit.vue";
+import DropdownReference from "../../shared/components/DropdownReference.vue";
+import DropdownWorkmasters from "../../production/components/DropdownWorkmasters.vue";
+import TableWorkmasterProfit from "./TableWorkmasterProfit.vue";
 
 const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
@@ -168,12 +168,16 @@ const props = defineProps<{
   formAction: FormActionMode;
   header: Budget | SalesOrderHeader;
   detail: BudgetDetail | SalesOrderDetail;
+  readonly?: boolean;
 }>();
 
 const copyProfitAverage = (profitAverage: number) => {
   props.detail.profit = profitAverage;
   updateImports();
+
+  activeTab.value = 0;
 };
+const activeTab = ref(0);
 
 const emit = defineEmits<{
   (e: "submit", detail: BudgetDetail | SalesOrderDetail): void;
