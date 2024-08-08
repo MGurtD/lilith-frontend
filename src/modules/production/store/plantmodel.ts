@@ -135,6 +135,7 @@ export const usePlantModelStore = defineStore({
         id: id,
         name: "",
         description: "",
+        profitPercentage: 0.0,
         disabled: false,
       } as WorkcenterType;
     },

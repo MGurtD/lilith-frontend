@@ -35,6 +35,7 @@ export interface WorkcenterType {
   id: string;
   name: string;
   description: string;
+  profitPercentage: number;
   disabled: boolean;
 }
 
@@ -115,6 +116,7 @@ export interface WorkMasterPhase {
   workMasterId: string;
   disabled: boolean;
   workcenterTypeId?: string | null;
+  profitPercentage: number;
   preferredWorkcenterId?: string | null;
   operatorTypeId?: string | null;
   isExternalWork: boolean;
@@ -190,6 +192,7 @@ export interface WorkOrderPhase {
   workOrderId: string;
   disabled: boolean;
   workcenterTypeId?: string | null;
+  profitPercentage: number;
   preferredWorkcenterId?: string | null;
   operatorTypeId?: string | null;
   isExternalWork: boolean;

@@ -57,6 +57,7 @@
     :closable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
+    :style="{ width: '80%' }"
     :modal="true"
   >
     <FormBudgetOrderDetail

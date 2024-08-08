@@ -41,6 +41,7 @@
 
   <Dialog
     :closable="true"
+    :style="{ width: '80%' }"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
     :modal="true"
@@ -51,6 +52,7 @@
       :formAction="formDetailMode"
       :header="budget"
       :detail="budgetDetail"
+      :readonly="budgetStore.order !== null"
       @submit="onBudgetDetailSubmit"
     />
   </Dialog>
