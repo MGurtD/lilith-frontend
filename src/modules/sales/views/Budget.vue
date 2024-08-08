@@ -24,13 +24,6 @@
           >
             <span class="text-l text-900 font-bold">Linies del pressupost</span>
             <section v-if="!budgetStore.order">
-              <!-- <Button
-                :size="'small'"
-                severity="secondary"
-                label="Afegir referència"
-                @click="openReferenceDetail()"
-                class="mr-2"
-              /> -->
               <Button
                 :size="'small'"
                 label="Afegir línea"
@@ -59,6 +52,7 @@
       :header="budget"
       :detail="budgetDetail"
       :style="{ width: '65vw' }"
+      :readonly="budgetStore.order !== null"
       @submit="onBudgetDetailSubmit"
     />
   </Dialog>
