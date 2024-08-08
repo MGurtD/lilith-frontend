@@ -1,143 +1,143 @@
 <template>
-  <form v-if="detail">
   <TabView v-model:activeIndex="activeTab">
     <TabPanel header="Referència">
-    <section class="three-columns">
-      <div class="mb-2">
-        <DropdownReference
-          label="Referència"
-          v-model="detail.referenceId"
-          :customerId="header.customerId"
-          :fullName="true"
-          @update:modelValue="getReferenceInfo()"
-        ></DropdownReference>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Preu"
-          v-model="referencePrice"
-          :type="BaseInputType.CURRENCY"
-          disabled
-        ></BaseInput>
-      </div>
-      <div class="mb-2">
-        <DropdownWorkmasters
-          label="Ruta de fabricació"
-          v-model="detail.workMasterId"
-          :referenceId="detail.referenceId"
-          @update:modelValue="getWorkmasterCost(false)"
-        ></DropdownWorkmasters>
-      </div>
-    </section>
+      <form v-if="detail">
+        <section class="three-columns">
+          <div class="mb-2">
+            <DropdownReference
+              label="Referència"
+              v-model="detail.referenceId"
+              :customerId="header.customerId"
+              :fullName="true"
+              @update:modelValue="getReferenceInfo()"
+            ></DropdownReference>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Preu"
+              v-model="referencePrice"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div class="mb-2">
+            <DropdownWorkmasters
+              label="Ruta de fabricació"
+              v-model="detail.workMasterId"
+              :referenceId="detail.referenceId"
+              @update:modelValue="getWorkmasterCost(false)"
+            ></DropdownWorkmasters>
+          </div>
+        </section>
 
-    <section class="five-columns">
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Cost Intern"
-          v-model="internalCosts"
-          :type="BaseInputType.CURRENCY"
-          disabled
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Cost Servei"
-          v-model="detail.serviceCost"
-          :type="BaseInputType.CURRENCY"
-          @update:modelValue="updateCosts()"
-          :disabled="detail.workMasterId === null"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Cost Transport"
-          v-model="detail.transportCost"
-          :type="BaseInputType.CURRENCY"
-          @update:modelValue="updateCosts()"
-          :disabled="detail.workMasterId === null"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Cost Unitari"
-          v-model="detail.unitCost"
-          :type="BaseInputType.CURRENCY"
-          disabled
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Cost Total"
-          v-model="detail.totalCost"
-          :type="BaseInputType.CURRENCY"
-          disabled
-        ></BaseInput>
-      </div>
-    </section>
+        <section class="five-columns">
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Intern"
+              v-model="internalCosts"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Servei"
+              v-model="detail.serviceCost"
+              :type="BaseInputType.CURRENCY"
+              @update:modelValue="updateCosts()"
+              :disabled="detail.workMasterId === null"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Transport"
+              v-model="detail.transportCost"
+              :type="BaseInputType.CURRENCY"
+              @update:modelValue="updateCosts()"
+              :disabled="detail.workMasterId === null"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Unitari"
+              v-model="detail.unitCost"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Total"
+              v-model="detail.totalCost"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+        </section>
 
-    <section class="five-columns">
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Quantitat"
-          v-model="detail.quantity"
-          :type="BaseInputType.NUMERIC"
-          :class="{
-            'p-invalid': validation.errors.quantity,
-          }"
-          @update:modelValue="updateQuantity()"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="% Benefici"
-          v-model="detail.profit"
-          :type="BaseInputType.NUMERIC"
-          @update:modelValue="updateImports()"
-          :class="{
-            'p-invalid': validation.errors.profit,
-          }"
-        ></BaseInput>
-      </div>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="% Descompte"
-          v-model="detail.discount"
-          :type="BaseInputType.NUMERIC"
-          @update:modelValue="updateImports()"
-          :class="{
-            'p-invalid': validation.errors.discount,
-          }"
-        ></BaseInput>
-      </div>
-      <BaseInput
-        class="mb-2"
-        label="Preu Unitari"
-        v-model="detail.unitPrice"
-        :type="BaseInputType.CURRENCY"
-        @update:modelValue="updateUnitPrice()"
-      ></BaseInput>
-      <div>
-        <BaseInput
-          class="mb-2"
-          label="Total"
-          v-model="detail.amount"
-          disabled
-          :type="BaseInputType.CURRENCY"
-          :class="{
-            'p-invalid': validation.errors.amount,
-          }"
-        ></BaseInput>
-      </div>
-    </section>
+        <section class="five-columns">
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Quantitat"
+              v-model="detail.quantity"
+              :type="BaseInputType.NUMERIC"
+              :class="{
+                'p-invalid': validation.errors.quantity,
+              }"
+              @update:modelValue="updateQuantity()"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici"
+              v-model="detail.profit"
+              :type="BaseInputType.NUMERIC"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Descompte"
+              v-model="detail.discount"
+              :type="BaseInputType.NUMERIC"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.discount,
+              }"
+            ></BaseInput>
+          </div>
+          <BaseInput
+            class="mb-2"
+            label="Preu Unitari"
+            v-model="detail.unitPrice"
+            :type="BaseInputType.CURRENCY"
+            @update:modelValue="updateUnitPrice()"
+          ></BaseInput>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Total"
+              v-model="detail.amount"
+              disabled
+              :type="BaseInputType.CURRENCY"
+              :class="{
+                'p-invalid': validation.errors.amount,
+              }"
+            ></BaseInput>
+          </div>
+        </section>
 
         <section>
           <div>
@@ -190,6 +190,8 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { ProductionCosts } from "../../production/types";
 import _ from "lodash";
+import DropdownWorkmasters from "../../production/components/DropdownWorkmasters.vue";
+import TableWorkmasterProfit from "./TableWorkmasterProfit.vue";
 
 const workmasterStore = useWorkMasterStore();
 const referenceStore = useReferenceStore();
