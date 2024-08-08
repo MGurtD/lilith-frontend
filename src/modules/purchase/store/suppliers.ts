@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { Supplier, SupplierContact, SupplierType } from "../types";
+import {
+  Supplier,
+  SupplierContact,
+  SupplierType,
+  SupplierReference,
+} from "../types";
 import {
   SupplierService,
   SupplierTypeService,
@@ -11,12 +16,23 @@ const typeService = new SupplierTypeService("/suppliertype");
 export const useSuppliersStore = defineStore({
   id: "suppliers",
   state: () => ({
-    suppliers: undefined as Array<Supplier> | undefined,
     supplierTypes: undefined as Array<SupplierType> | undefined,
-    supplier: undefined as Supplier | undefined,
     supplierType: undefined as SupplierType | undefined,
+    suppliers: undefined as Array<Supplier> | undefined,
+    supplier: undefined as Supplier | undefined,
+    supplierReferences: undefined as Array<SupplierReference> | undefined,
+    supplierReference: undefined as SupplierReference | undefined,
   }),
-  getters: {},
+  getters: {
+    getName: (state) => {
+      return (id: string) => {
+        if (!state.suppliers) return "";
+        const sup = state.suppliers?.find((r) => r.id === id);
+        if (!sup) return "";
+        return sup.comercialName;
+      };
+    },
+  },
   actions: {
     setNewSupplier(id: string) {
       this.supplier = {
@@ -98,6 +114,28 @@ export const useSuppliersStore = defineStore({
     async removeContactFromSupplier(contact: SupplierContact) {
       const result = await service.removeContact(contact.id);
       if (result) await this.fetchSupplier(contact.supplierId);
+      return result;
+    },
+
+    async fetchSupplierReference(id: string) {
+      this.supplierReference = await service.getReference(id);
+    },
+    async fetchSupplierReferences(supplierId: string) {
+      this.supplierReferences = await service.getReferences(supplierId);
+    },
+    async addReferenceToSupplier(reference: SupplierReference) {
+      const result = await service.addReference(reference);
+      if (result) await this.fetchSupplierReferences(reference.supplierId);
+      return result;
+    },
+    async updateReferenceFromSupplier(reference: SupplierReference) {
+      const result = await service.updateReference(reference);
+      if (result) await this.fetchSupplierReferences(reference.supplierId);
+      return result;
+    },
+    async removeReferenceFromSupplier(reference: SupplierReference) {
+      const result = await service.removeReference(reference.id);
+      if (result) await this.fetchSupplierReferences(reference.supplierId);
       return result;
     },
   },

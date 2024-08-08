@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
 import { ReferenceService } from "../services/reference.service";
-import { Reference, ReferenceFormat } from "../types";
+import { SupplierReference } from "../../purchase/types";
+import {
+  Reference,
+  ReferenceCategory,
+  ReferenceCategoryEnum,
+  ReferenceFormat,
+} from "../types";
 
 const referenceService = new ReferenceService("/reference");
 export const useReferenceStore = defineStore({
@@ -9,9 +15,20 @@ export const useReferenceStore = defineStore({
     reference: undefined as Reference | undefined,
     references: undefined as Array<Reference> | undefined,
     referenceFormats: undefined as Array<ReferenceFormat> | undefined,
+    referenceSuppliers: undefined as Array<SupplierReference> | undefined,
+    referenceCategories: [
+      { code: "Service", description: "Servei" },
+      { code: "Tool", description: "Eina" },
+      { code: "Material", description: "Material" },
+    ] as ReferenceCategory[],
     module: "" as string,
   }),
   getters: {
+    getByCategory: (state) => {
+      return (category: ReferenceCategoryEnum) => {
+        return state.references?.filter((r) => r.categoryName === category);
+      };
+    },
     getFullName: (state) => {
       return (reference: Reference) => {
         if (!reference) return "";
@@ -46,7 +63,7 @@ export const useReferenceStore = defineStore({
       if (!ref) return "";
       return this.getShortName(ref);
     },
-    setNewReference(id: string) {
+    setNewReference(id: string, category: ReferenceCategoryEnum) {
       this.reference = {
         id: id,
         code: "",
@@ -60,6 +77,8 @@ export const useReferenceStore = defineStore({
         production: this.module === "production",
         referenceTypeId: null,
         referenceFormatId: null,
+        categoryName: category,
+        transportAmount: 0,
         density: 0,
         lastPurchaseCost: 0,
         isService: false,
@@ -67,6 +86,12 @@ export const useReferenceStore = defineStore({
         workMasterCost: 0,
         customerId: null,
       } as Reference;
+    },
+    async getReferencesByModuleAndCategory(
+      module: string,
+      category: ReferenceCategoryEnum
+    ) {
+      return await referenceService.getByModule(module, category);
     },
     async fetchReferences() {
       this.references = await referenceService.getAll();
@@ -105,6 +130,34 @@ export const useReferenceStore = defineStore({
       const response = await referenceService.deleteReference(id);
       if (response.result) {
         await this.fetchReferencesByModule(this.module);
+      }
+      return response;
+    },
+
+    // Suppliers
+    async fetchReferenceSuppliers(referenceId: string) {
+      this.referenceSuppliers = await referenceService.getReferenceSuppliers(
+        referenceId
+      );
+    },
+    async addSupplier(model: SupplierReference) {
+      const response = await referenceService.addSupplier(model);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
+      }
+      return response;
+    },
+    async updateSupplier(model: SupplierReference) {
+      const response = await referenceService.updateSupplier(model);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
+      }
+      return response;
+    },
+    async deleteSupplier(model: SupplierReference) {
+      const response = await referenceService.removeSupplier(model.id);
+      if (response) {
+        await this.fetchReferenceSuppliers(model.referenceId);
       }
       return response;
     },

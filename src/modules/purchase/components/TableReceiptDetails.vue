@@ -21,10 +21,14 @@
     <Column field="thickness" header="Gruix" style="width: 7.5%"></Column>
     <Column field="diameter" header="Diàmetre" style="width: 7.5%"></Column>
     <Column field="totalWeight" header="Pes" style="width: 7.5%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} KG</template>
+      <template #body="slotProps">
+        {{ slotProps.data.totalWeight }} KG</template
+      >
     </Column>
     <Column field="amount" header="Preu" style="width: 7.5%">
-      <template #body="slotProps"> {{ slotProps.data.amount }} €</template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.amount) }}
+      </template>
     </Column>
     <Column style="width: 5%">
       <template #body="slotProps">
@@ -42,6 +46,7 @@
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { ReceiptDetail } from "../types";
+import { formatCurrency } from "../../../utils/functions";
 
 const props = defineProps<{
   details: Array<ReceiptDetail> | undefined;

@@ -4,6 +4,7 @@ import {
   WorkMasterPhaseDetail,
   WorkMasterPhaseBillOfMaterials,
   WorkMasterToCopy,
+  ProductionCosts,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -27,6 +28,15 @@ export class WorkMasterService extends BaseService<WorkMaster> {
   }
   async calculateCost(id: string, quantity?: number): Promise<GenericResponse<number>> {
     let endpoint = `${this.resource}/cost/${id}`
+    if (quantity) {
+      endpoint = endpoint.concat(`?quantity=${quantity}`)
+    }
+
+    const response = await this.apiClient.get(endpoint);
+    return response.data;
+  }
+  async getCosts(id: string, quantity?: number): Promise<GenericResponse<ProductionCosts>> {
+    let endpoint = `${this.resource}/costs/${id}`
     if (quantity) {
       endpoint = endpoint.concat(`?quantity=${quantity}`)
     }

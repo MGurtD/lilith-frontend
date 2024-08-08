@@ -67,7 +67,7 @@ import { GenericResponse } from "../../../types";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
 import { useReferenceStore } from "../../shared/store/reference";
-import { Reference } from "../../shared/types";
+import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import router from "../../../router";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
@@ -159,7 +159,7 @@ const openCreateDetailForm = () => {
     width: 0,
     disabled: false,
   } as ReceiptDetail;
-  referenceStore.setNewReference(getNewUuid());
+  referenceStore.setNewReference(getNewUuid(), ReferenceCategoryEnum.MATERIAL);
 
   dialogOptions.title = "Crear línia";
   dialogOptions.visible = true;
@@ -168,7 +168,7 @@ const openCreateDetailForm = () => {
 const openEditDetailForm = (detail: ReceiptDetail) => {
   formAction.value = FormActionMode.EDIT;
   selectedDetail.value = detail;
-  referenceStore.setNewReference(getNewUuid());
+  referenceStore.setNewReference(getNewUuid(), ReferenceCategoryEnum.MATERIAL);
 
   dialogOptions.title = "Modificar línia";
   dialogOptions.visible = true;
@@ -231,7 +231,10 @@ const onFormReferenceSubmit = async (reference: Reference) => {
     selectedDetail.value!.referenceId = reference.id;
     formsActiveIndex.value = 0;
 
-    referenceStore.setNewReference(getNewUuid());
+    referenceStore.setNewReference(
+      getNewUuid(),
+      ReferenceCategoryEnum.MATERIAL
+    );
   }
 };
 </script>

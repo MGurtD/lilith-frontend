@@ -61,6 +61,18 @@ export interface Parameter {
   value: string;
 }
 
+export enum ReferenceCategoryEnum {
+  SERVICE = "Service",
+  TOOL = "Tool",
+  MATERIAL = "Material",
+  PRODUCT = "Product",
+}
+
+export interface ReferenceCategory {
+  code: string;
+  description: string;
+}
+
 export interface Reference {
   id: string;
   code: string;
@@ -71,10 +83,12 @@ export interface Reference {
   price: number;
   disabled: boolean;
   customerId: string | null;
+  categoryName: string;
   referenceTypeId: string | null;
   referenceFormatId: string | null;
   lastCost: number;
   workMasterCost: number;
+  transportAmount: number;
   sales: boolean;
   purchase: boolean;
   production: boolean;

@@ -111,7 +111,7 @@ import { useToast } from "primevue/usetoast";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useWorkMasterStore } from "../../production/store/workmaster";
-import { Reference } from "../../shared/types";
+import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import { getNewUuid } from "../../../utils/functions";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useConfirm } from "primevue/useconfirm";
@@ -138,7 +138,7 @@ const loadView = async () => {
   let pageTitle = "";
   if (!reference.value) {
     formMode.value = FormActionMode.CREATE;
-    referenceStore.setNewReference(id.value);
+    referenceStore.setNewReference(id.value, ReferenceCategoryEnum.PRODUCT);
     pageTitle = `Alta de referència`;
   } else {
     formMode.value = FormActionMode.EDIT;

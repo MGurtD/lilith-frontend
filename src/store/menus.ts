@@ -57,7 +57,7 @@ export const applicationMenus = [
       },
       {
         icon: PrimeIcons.TICKET,
-        title: "Materials",
+        title: "Referències",
         child: [
           {
             icon: PrimeIcons.PALETTE,
@@ -66,7 +66,7 @@ export const applicationMenus = [
           },
           {
             icon: PrimeIcons.TICKET,
-            title: "Materies primeres",
+            title: "Referències",
             href: "/material",
           },
         ],

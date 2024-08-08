@@ -12,14 +12,28 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
+          <div class="filter-field">
+            <label>Categoria</label>
+            <DropdownReferenceCategory
+              label=""
+              v-model="filter.referenceCategory"
+            />
+          </div>
           <div class="filter-field">
             <label>Codi</label>
             <BaseInput v-model="filter.code" />
           </div>
           <div class="filter-field">
             <label>Tipus</label>
-            <DropdownReferenceTypes label="" v-model="filter.referenceTypeId" />
+            <DropdownReferenceTypes
+              label=""
+              v-model="filter.referenceTypeId"
+              :disabled="
+                filter.referenceCategory !== ReferenceCategoryEnum.MATERIAL
+              "
+              @change="cleanFilter"
+            />
           </div>
         </div>
         <div class="datatable-buttons">
@@ -42,33 +56,46 @@
     </template>
     <Column field="code" header="Codi" style="width: 15%"></Column>
     <Column field="description" header="Descripció" style="width: 25%"></Column>
-    <Column field="referenceTypeId" header="Tipus" style="width: 30%">
+    <!-- Service columns -->
+    <Column v-if="isService" header="Preu" style="width: 10%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.price) }}
+      </template>
+    </Column>
+    <Column v-if="isService" header="Transport" style="width: 10%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.transportAmount) }}
+      </template>
+    </Column>
+    <!-- Material columns -->
+    <Column
+      v-if="isMaterial"
+      field="referenceTypeId"
+      header="Tipus"
+      style="width: 30%"
+    >
       <template #body="slotProps">
         <span>{{ getTypeDescription(slotProps.data.referenceTypeId) }}</span>
       </template>
     </Column>
-    <Column header="Densitat (mm)" style="width: 10%">
-      <template #body="slotProps">
-        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
-      </template>
-    </Column>
-    <Column field="referenceFormatId" header="Format" style="width: 10%">
+    <Column
+      v-if="isMaterial"
+      field="referenceFormatId"
+      header="Format"
+      style="width: 10%"
+    >
       <template #body="slotProps">
         <span>{{
           getFormatDescription(slotProps.data.referenceFormatId)
         }}</span>
       </template>
     </Column>
-    <!-- <Column field="lastPurchaseCost" header="Última Compra" style="width: 10%">
+    <Column v-if="isMaterial" header="Densitat (mm)" style="width: 10%">
       <template #body="slotProps">
-        {{ formatCurrency(slotProps.data.lastPurchaseCost) }}
-      </template>
-    </Column> -->
-    <Column header="Desc." style="width: 10%">
-      <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.disabled" />
+        {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
       </template>
     </Column>
+
     <Column style="width: 10%">
       <template #body="slotProps">
         <i
@@ -84,13 +111,15 @@
 <script setup lang="ts">
 import DropdownReferenceTypes from "../../../modules/shared/components/DropdownReferenceType.vue";
 import BaseInput from "../../../components/BaseInput.vue";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, Ref, ref } from "vue";
 import { useReferenceStore } from "../../shared/store/reference";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { Reference } from "../../shared/types";
+import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
 import { useUserFilterStore } from "../../../store/userfilter";
+import DropdownReferenceCategory from "../../shared/components/DropdownReferenceCategory.vue";
+import { formatCurrency } from "../../../utils/functions";
 
 const userFilterStore = useUserFilterStore();
 const referenceTypeStore = useReferenceTypeStore();
@@ -98,6 +127,7 @@ const referenceStore = useReferenceStore();
 
 const props = defineProps<{
   references: Array<Reference> | undefined;
+  filter: any;
 }>();
 
 const emit = defineEmits<{
@@ -109,42 +139,63 @@ const emit = defineEmits<{
 onMounted(() => {
   const userFilter = userFilterStore.getFilter("Materials", "");
   if (userFilter) {
-    filter.value.code = userFilter.code;
-    filter.value.referenceTypeId = userFilter.referenceTypeId;
+    props.filter.code = userFilter.code;
+    props.filter.referenceTypeId = userFilter.referenceTypeId;
+    props.filter.referenceCategory = userFilter.referenceCategory;
   }
 });
 onUnmounted(() => {
-  userFilterStore.addFilter("Materials", "", filter.value);
-});
-
-const filter = ref({
-  code: "",
-  referenceTypeId: "",
+  userFilterStore.addFilter("Materials", "", props.filter);
 });
 
 const cleanFilter = () => {
-  filter.value.code = "";
-  filter.value.referenceTypeId = "";
+  props.filter.code = "";
+  props.filter.referenceTypeId = "";
 };
 
-const filteredData = computed(() => {
+const selectedCategoryReferences = computed(() => {
   if (!props.references) return [];
-  let filteredReferences = props.references;
+  if (props.filter.referenceCategory === "") {
+    return [];
+  }
 
-  // Customer filter
-  if (filter.value.referenceTypeId!.length > 0) {
+  return referenceStore.references!.filter(
+    (r) => r.categoryName === props.filter.referenceCategory
+  );
+});
+
+const filteredData = computed(() => {
+  if (!selectedCategoryReferences.value) return [];
+
+  let filteredReferences = selectedCategoryReferences.value;
+
+  // Type filter
+  if (
+    props.filter.referenceTypeId &&
+    props.filter.referenceTypeId!.length > 0
+  ) {
     filteredReferences = filteredReferences.filter(
-      (r) => r.referenceTypeId === filter.value.referenceTypeId
+      (r) => r.referenceTypeId === props.filter.referenceTypeId
     );
   }
   // Code filter
-  if (filter.value.code.length > 0) {
+  if (props.filter.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
-      r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+      r.code.toLowerCase().includes(props.filter.code.toLowerCase())
     );
   }
 
   return filteredReferences;
+});
+
+const isMaterial = computed(() => {
+  return props.filter.referenceCategory === ReferenceCategoryEnum.MATERIAL;
+});
+const isTool = computed(() => {
+  return props.filter.referenceCategory === ReferenceCategoryEnum.TOOL;
+});
+const isService = computed(() => {
+  return props.filter.referenceCategory === ReferenceCategoryEnum.SERVICE;
 });
 
 const createButtonClick = () => {
