@@ -1,7 +1,11 @@
 <template>
-  <DataTable :value="processedPhases">
-    <Column field="code" header="Fase"></Column>
-    <Column field="order" header="Pas"></Column>
+  <DataTable
+    sortMode="multiple"
+    :multiSortMeta="sortingFields"
+    :value="processedPhases"
+  >
+    <Column field="code" sortable header="Fase"></Column>
+    <Column field="order" sortable header="Pas"></Column>
     <Column field="workcenterTypeId" header="Màquina">
       <template #body="slotProps">
         {{ getWorkcenterType(slotProps.data.workcenterTypeId) }}
@@ -13,7 +17,11 @@
       </template>
     </Column>
     <Column field="estimatedTime" header="Temps total"> </Column>
-    <Column field="isCycleTime" header="Temps de cicle"></Column>
+    <Column field="isCycleTime" header="Temps de cicle">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isCycleTime" />
+      </template>
+    </Column>
     <Column header="% de benefici">
       <template #body="slotProps">
         <BaseInput
@@ -59,7 +67,6 @@
 </template>
 
 <script setup lang="ts">
-//@input="(value:number) => updateProfitPercentage(slotProps.data, Number(value))"
 import { ref, watchEffect, computed, onMounted, reactive, watch } from "vue";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import {
@@ -70,6 +77,8 @@ import {
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../../production/store/plantmodel";
+import { DataTableSortMeta } from "primevue/datatable";
+import BooleanColumn from "../../../components/tables/BooleanColumn.vue";
 
 interface ProcessedPhase {
   id: string;
@@ -86,6 +95,11 @@ const props = defineProps<{
   workMasterId: string | null;
   quantity: number;
 }>();
+
+const sortingFields = ref([
+  { field: "code", order: 1 },
+  { field: "order", order: 1 },
+] as DataTableSortMeta[]);
 
 const workMasterStore = useWorkMasterStore();
 const plantModelStore = usePlantModelStore();
