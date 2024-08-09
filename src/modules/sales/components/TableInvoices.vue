@@ -6,6 +6,8 @@
     scrollHeight="80vh"
     sortMode="multiple"
     :value="invoices"
+    paginator
+    :rows="12"
     @row-click="editButtonClick"
   >
     <template #header>

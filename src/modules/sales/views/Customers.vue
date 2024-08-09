@@ -19,6 +19,8 @@
         :sort-order="1"
         scrollable
         scrollHeight="80vh"
+        paginator
+        :rows="12"
         @row-click="editCustomer"
       >
         <template #header>

@@ -52,10 +52,11 @@
       :formAction="formDetailMode"
       :header="budget"
       :detail="budgetDetail"
-      :readonly="budgetStore.order !== null"
+      :readonly="false"
       @submit="onBudgetDetailSubmit"
     />
   </Dialog>
+  <!--:readonly="budgetStore.order !== null"-->
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";

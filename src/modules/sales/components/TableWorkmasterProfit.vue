@@ -137,7 +137,7 @@ const processPhases = (
           ? detail.estimatedTime * quantity
           : detail.estimatedTime,
         isCycleTime: detail.isCycleTime,
-        profitPercentage: stepProfitPercentages[key],
+        profitPercentage: phase.isExternalWork ? 0 : stepProfitPercentages[key],
       };
     })
   );
@@ -240,7 +240,12 @@ const calculateWeightedProfit = () => {
     weightedSum += time * profit;
   });
 
+  console.log(weightedSum);
+  console.log(totalTime);
+  console.log(Number((weightedSum / totalTime).toFixed(2)));
   profitAverage.value =
-    totalTime > 0 ? Number((weightedSum / totalTime).toFixed(2)) : 0;
+    !isNaN(totalTime) && totalTime > 0 && !isNaN(weightedSum)
+      ? Number((weightedSum / totalTime).toFixed(2))
+      : 0;
 };
 </script>

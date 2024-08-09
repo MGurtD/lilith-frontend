@@ -8,6 +8,8 @@
     sortMode="single"
     sortField="number"
     :sort-order="1"
+    paginator
+    :rows="12"
     @row-click="editRow"
   >
     <template #header>
