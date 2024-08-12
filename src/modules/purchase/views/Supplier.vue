@@ -15,6 +15,7 @@
       <TableSupplierReferences
         v-if="supplier && supplierStore.supplierReferences"
         title="Referències"
+        :formActionMode="formMode"
         :supplier-id="supplier.id"
         :supplier-references="supplierStore.supplierReferences"
         @create="addReference"

@@ -379,7 +379,6 @@ const schema = Yup.object().shape({
   profit: Yup.number().required("El benefici és obligatori"),
   discount: Yup.number().required("El descompte és obligatori"),
   unitPrice: Yup.number().required("El preu unitari és obligatori"),
-  amount: Yup.number().required("El total és obligatori"),
 });
 const validation = ref({
   result: false,

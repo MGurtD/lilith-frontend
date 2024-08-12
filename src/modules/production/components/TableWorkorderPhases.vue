@@ -146,6 +146,7 @@ const onAddClick = () => {
     statusId: "",
     startTime: null,
     endTime: null,
+    profitPercentage: 0,
     workOrderPhaseDetails: [],
     workOrderPhaseBillOfMaterials: [],
   } as WorkOrderPhase;

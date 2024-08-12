@@ -129,6 +129,7 @@ const onAddClick = () => {
     externalWorkCost: 0,
     transportCost: 0,
     serviceReferenceId: null,
+    profitPercentage: 0,
     workmasterPhaseDetails: [],
     workmasterPhaseBillOfMaterials: [],
   } as WorkMasterPhase;
