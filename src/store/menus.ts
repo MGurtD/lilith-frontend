@@ -72,19 +72,19 @@ export const applicationMenus = [
         ],
       },
       {
+        icon: PrimeIcons.SHOPPING_BAG,
+        title: "Comandes",
+        href: "/purchase-orders",
+      },
+      {
         icon: PrimeIcons.TRUCK,
-        title: "Albarans de recepció",
+        title: "Albarans",
         href: "/receipts",
       },
       {
         icon: PrimeIcons.MONEY_BILL,
-        title: "Factures de compra",
+        title: "Factures",
         href: "/purchaseinvoice",
-      },
-      {
-        icon: PrimeIcons.MONEY_BILL,
-        title: "Gestió de factures",
-        href: "/purchaseinvoices-by-period",
       },
       {
         icon: PrimeIcons.WALLET,

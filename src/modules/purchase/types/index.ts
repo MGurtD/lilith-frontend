@@ -174,11 +174,35 @@ export interface Receipt {
   disabled: boolean;
 }
 
-export interface CreateReceiptRequest {
+export interface CreatePurchaseDocumentRequest {
   id: string;
   date: string | Date;
   supplierId: string;
   exerciseId: string;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  number: string;
+  date: string;
+  supplierId: string;
+  exerciseId: string;
+  statusId: string;
+  details: Array<PurchaseOrderDetail>;
+}
+
+export interface PurchaseOrderDetail {
+  purchaseOrderId: string;
+  statusId: string;
+  workOrderPhaseId?: string | null;
+  referenceId: string;
+  expectedReceiptDate?: string | null;
+  quantity: number;
+  receivedQuantity: number;
+  unitPrice: number;
+  amount: number;
+  id: string;
+  disabled: boolean;
 }
 
 export interface ReceiptDetail {

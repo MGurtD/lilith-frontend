@@ -37,7 +37,7 @@ import { ref } from "vue";
 import { useSuppliersStore } from "../store/suppliers";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useToast } from "primevue/usetoast";
-import { CreateReceiptRequest } from "../types";
+import { CreatePurchaseDocumentRequest } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -50,10 +50,10 @@ const sharedData = useSharedDataStore();
 const suppliersStore = useSuppliersStore();
 
 const props = defineProps<{
-  createRequest: CreateReceiptRequest;
+  createRequest: CreatePurchaseDocumentRequest;
 }>();
 const emit = defineEmits<{
-  (e: "submit", createRequest: CreateReceiptRequest): void;
+  (e: "submit", createRequest: CreatePurchaseDocumentRequest): void;
 }>();
 
 const schema = Yup.object().shape({
