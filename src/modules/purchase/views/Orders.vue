@@ -143,7 +143,7 @@ const filter = ref({
 });
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear albarà",
+  title: "Crear comanda",
   closable: true,
   position: "center",
   modal: true,

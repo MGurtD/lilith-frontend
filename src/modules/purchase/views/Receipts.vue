@@ -16,7 +16,7 @@
           <div class="datatable-filter">
             <div class="filter-field">
               <ExerciseDatePicker
-                :exercises="sharedDataStore.exercises"
+                :exercises="exerciseStore.exercises"
                 @range-selected="filterReceipts"
               />
             </div>
@@ -117,7 +117,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { useSharedDataStore } from "../../shared/store/masterData";
+import { useExerciseStore } from "../../shared/store/exercise";
 import { useReceiptsStore } from "../store/receipt";
 import { useSuppliersStore } from "../store/suppliers";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -140,7 +140,7 @@ const store = useStore();
 const lifecycleStore = useLifecyclesStore();
 const receiptsStore = useReceiptsStore();
 const suppliersStore = useSuppliersStore();
-const sharedDataStore = useSharedDataStore();
+const exerciseStore = useExerciseStore();
 
 const filter = ref({
   supplierId: undefined as string | undefined,
@@ -162,7 +162,7 @@ onMounted(async () => {
 
   suppliersStore.fetchSuppliers();
   lifecycleStore.fetchOneByName("Receipts");
-  await sharedDataStore.fetchMasterData();
+  await exerciseStore.fetchActive();
   await receiptsStore.fetchReceipts();
   setCurrentYear();
 
@@ -171,9 +171,7 @@ onMounted(async () => {
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
-  const currentExercise = sharedDataStore.exercises?.find(
-    (e) => e.name === year
-  );
+  const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
 
   if (currentExercise) {
     store.exercisePicker.exercise = currentExercise;

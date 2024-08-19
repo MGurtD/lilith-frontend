@@ -41,7 +41,6 @@
           }"
         />
       </div>
-      
     </div>
 
     <section class="four-columns">
@@ -69,6 +68,12 @@
     </section>
 
     <div class="four-columns mt-2">
+      <div>
+        <BaseInput
+          label="Comandes de compra"
+          v-model="exercise.purchaseOrderCounter"
+        />
+      </div>
       <div>
         <BaseInput
           label="Albarans de recepció"
