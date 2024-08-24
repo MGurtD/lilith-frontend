@@ -48,6 +48,7 @@
         <DropdownLifecycle
           label="Estat"
           v-model="workorder.statusId"
+          name="WorkOrder"
           :class="{
             'p-invalid': validation.errors.statusId,
           }"

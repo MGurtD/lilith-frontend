@@ -9,7 +9,11 @@
         ></DropdownReference>
       </div>
       <div>
-        <DropdownLifecycle label="Estat" v-model="detail.statusId" />
+        <DropdownLifecycle
+          label="Estat"
+          name="PurchaseOrderDetail"
+          v-model="detail.statusId"
+        />
       </div>
       <div>
         <label class="block text-900 mb-2">Data prevista</label>

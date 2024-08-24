@@ -2,10 +2,13 @@
   <DataTable
     :value="workOrderStore.workorders"
     tableStyle="min-width: 100%"
+    class="p-datatable-sm small-datatable"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="76vh"
     sort-mode="multiple"
     @row-click="editRow"
+    paginator
+    :rows="25"
   >
     <template #header>
       <div
@@ -21,7 +24,11 @@
           </div>
           <div class="filter-field">
             <label class="block text-900">Estat</label>
-            <DropdownLifecycle label="" v-model="filter.statusId" />
+            <DropdownLifecycle
+              label=""
+              name="WorkOrder"
+              v-model="filter.statusId"
+            />
           </div>
         </div>
         <div class="datatable-buttons">

@@ -39,7 +39,11 @@
       </section>
       <section class="three-columns">
         <div class="mt-1">
-          <DropdownLifecycle label="Estat" v-model="order.statusId" />
+          <DropdownLifecycle
+            label="Estat"
+            name="PurchaseOrder"
+            v-model="order.statusId"
+          />
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Proveïdor</label>
@@ -60,11 +64,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useOrderStore } from "../store/order";
 import { useSuppliersStore } from "../store/suppliers";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import { PurchaseOrder, Receipt } from "../types";
 import * as Yup from "yup";
