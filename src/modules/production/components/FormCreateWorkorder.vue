@@ -12,7 +12,7 @@
             : workMasterStore.workmasters
         "
         optionValue="id"
-        :optionLabel="(r) => referenceStore.getShortNameById(r.referenceId)"
+        :optionLabel="formatWorkMasterLabel"
         class="w-full"
       />
     </div>
@@ -76,6 +76,25 @@ onMounted(() => {
     workMasterStore.fetchAllActives();
   }
 });
+
+const formatWorkMasterLabel = (workMaster: WorkMaster) => {
+  const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
+  let modeName = "";
+  switch (workMaster.mode) {
+    case 1:
+      modeName = "Prototip";
+      break;
+    case 2:
+      modeName = "Sèrie curta";
+      break;
+    case 3:
+      modeName = "Sèrie llarga";
+      break;
+  }
+
+  //const modeName = workMaster.mode;
+  return `${referenceName} - ${modeName}`;
+};
 
 const schema = Yup.object().shape({
   plannedQuantity: Yup.number()

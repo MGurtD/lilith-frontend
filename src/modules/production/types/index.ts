@@ -105,6 +105,7 @@ export interface WorkMaster {
   machineCost: number;
   externalCost: number;
   materialCost: number;
+  mode: number;
   disabled: boolean;
   phases: Array<WorkMasterPhase>;
 }
@@ -154,6 +155,7 @@ export interface WorkMasterToCopy {
   workmaster: WorkMaster;
   workmasterId: string;
   referenceCode: string;
+  mode: number;
 }
 
 export interface WorkOrder {

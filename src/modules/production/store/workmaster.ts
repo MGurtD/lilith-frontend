@@ -39,6 +39,7 @@ export const useWorkMasterStore = defineStore({
         machineCost: 0,
         materialCost: 0,
         operatorCost: 0,
+        mode: 1,
         phases: [],
       } as WorkMaster;
 

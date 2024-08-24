@@ -52,13 +52,13 @@
       field="reference.code"
       sortable
       header="Referencia"
-      style="width: 50%"
+      style="width: 40%"
     >
       <template #body="slotProps">
         {{ referenceStore.getFullName(slotProps.data.reference) }}
       </template>
     </Column>
-    <Column sortable header="Client" style="width: 25%">
+    <Column sortable header="Client" style="width: 20%">
       <template #body="slotProps">
         {{
           customersStore.getCustomerNameById(
@@ -70,9 +70,9 @@
     <Column
       field="baseQuantity"
       header="Quantitat Base"
-      style="width: 25%"
+      style="width: 10%"
     ></Column>
-    <Column header="Cost" style="width: 25%">
+    <Column header="Cost" style="width: 10%">
       <template #body="slotProps">
         {{
           formatCurrency(
@@ -84,7 +84,12 @@
         }}
       </template>
     </Column>
-    <Column header="Desactivada" style="width: 25%">
+    <Column header="Mode" sytle="width: 30%">
+      <template #body="slotProps">
+        {{ returnMode(slotProps.data.mode) }}
+      </template>
+    </Column>
+    <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
@@ -158,6 +163,16 @@
           :fullName="true"
           @change="checkDestinyCode"
         ></DropdownReference>
+        <label class="block text-900 mb-2">Mode</label>
+        <Dropdown
+          v-model="workmasterStore.workmasterToCopy!.mode"
+          :options="modeOptions"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="Seleccione el modo"
+          class="w-full"
+        />
+
         <BaseInput
           class="mb-2"
           label="Nou codi:"
@@ -215,6 +230,12 @@ const cleanFilter = () => {
   userFilterStore.removeFilter("Workmasters", "");
 };
 
+const modeOptions = ref([
+  { id: 1, value: "Prototip" },
+  { id: 2, value: "Sèrie curta" },
+  { id: 3, value: "Sèrie llarga" }, // Puedes agregar más opciones si es necesario
+]);
+
 const filteredData = computed(() => {
   if (!workmasterStore.workmasters) return [];
 
@@ -242,6 +263,19 @@ const dialogOptions = reactive({
   position: "center",
   modal: true,
 } as DialogOptions);
+
+const returnMode = (mode: number) => {
+  if (mode === 1) {
+    return "Prototip";
+  }
+  if (mode === 2) {
+    return "Sèrie curta";
+  }
+  if (mode === 3) {
+    return "Sèrie llarga";
+  }
+  return "";
+};
 
 const copyDialogOptions = reactive({
   visible: false,
@@ -284,6 +318,7 @@ const copyButton = (event: any, workmaster: WorkMaster) => {
     workmaster,
     referenceId: null,
     referenceCode: "",
+    mode: 1,
   };
   copyDialogOptions.visible = true;
 };

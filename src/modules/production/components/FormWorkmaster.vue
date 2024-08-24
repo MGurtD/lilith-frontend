@@ -6,7 +6,7 @@
       <Button label="Guardar" size="small" @click="submitForm" />
       <br />
     </div>
-    <section class="four-columns">
+    <section class="five-columns">
       <div>
         <DropdownReference
           label="Referència"
@@ -20,6 +20,17 @@
           label="Quantitat Base"
           :decimals="2"
           v-model="workmaster.baseQuantity"
+        />
+      </div>
+      <div>
+        <label class="block text-900 mb-2">Mode</label>
+        <Dropdown
+          v-model="workmaster.mode"
+          :options="modeOptions"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="Seleccione el modo"
+          class="w-full"
         />
       </div>
       <div>
@@ -94,6 +105,12 @@ const totalCost = computed(() => {
     props.workmaster.externalCost
   );
 });
+
+const modeOptions = ref([
+  { id: 1, value: "Prototip" },
+  { id: 2, value: "Sèrie curta" },
+  { id: 3, value: "Sèrie llarga" }, // Puedes agregar más opciones si es necesario
+]);
 
 const schema = Yup.object().shape({
   baseQuantity: Yup.number()
