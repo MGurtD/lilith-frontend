@@ -26,6 +26,7 @@ import {
 import { ProductionPartService } from "./productionpart.service";
 import ShiftService from "./shift.service";
 import PlanningService from "./planning.service";
+import ProductionCostDashboardService from "./productioncostdashboard.service";
 
 export class AreaService extends BaseService<Area> {}
 export class EnterpriseService extends BaseService<Enterprise> {}
@@ -67,4 +68,7 @@ export default {
   DetailedWorkOrder: new DetailedWorkOrderService("/WorkOrder/Detailed"),
   ShiftService: new ShiftService("/Shift"),
   PlanningService: new PlanningService("/Planning"),
+  ProductionCostDashboardService: new ProductionCostDashboardService(
+    "/productioncost"
+  ),
 };
