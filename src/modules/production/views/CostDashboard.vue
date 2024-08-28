@@ -131,7 +131,7 @@ const setChartData = () => {
     return {
       type: "bar",
       label: type,
-      backgroundColor: documentStyle.getPropertyValue(`--p-color-${index + 1}`),
+      backgroundColor: colors[index],
       data: labels.map((month) => groupedByMonth[month][type] || 0),
     };
   });
@@ -188,6 +188,49 @@ const setChartOptions = () => {
     },
   };
 };
+
+const colors = [
+  "#FFB3BA", // Rosa claro
+  "#B3FFBA", // Verde claro
+  "#BAE1FF", // Azul claro
+  "#FFDFBA", // Naranja claro
+  "#FFFFBA", // Amarillo claro
+  "#BAFFC9", // Menta claro
+  "#FFB3E6", // Rosa pastel
+  "#B3FFFF", // Cian claro
+  "#FFBEBA", // Salmón claro
+  "#D1BAFF", // Lila claro
+  "#BAFFC9", // Verde menta
+  "#C9BAFF", // Morado pastel
+  "#FFBAD2", // Rosa pálido
+  "#BAFFD1", // Turquesa claro
+  "#FFC9BA", // Melocotón pastel
+  "#B3BAFF", // Azul lavanda
+  "#B3FFA1", // Verde lima claro
+  "#FFD1BA", // Coral pastel
+  "#FFBAE6", // Fucsia pastel
+  "#BAE6FF", // Azul bebé pastel
+  "#F0BAFF", // Malva pastel
+  "#FFBACD", // Rosa empolvado
+  "#A1FFB3", // Verde claro
+  "#FFB3FF", // Magenta pastel
+  "#C2FFBA", // Verde limón pastel
+  "#FFBAC2", // Melón pastel
+  "#BAC2FF", // Azul claro pastel
+  "#B3FFD1", // Verde espuma de mar
+  "#FFB3C9", // Rosa coral claro
+  "#C9FFA1", // Lima pastel
+  "#FFDFD1", // Rosa muy claro
+  "#A1C9FF", // Azul muy claro
+  "#D1FFBA", // Verde pastel pálido
+  "#FFB3C9", // Rosa coral
+  "#BAC2FF", // Azul claro
+  "#FFBACD", // Rosa claro empolvado
+  "#BAFFC2", // Verde menta claro
+  "#D1BAFF", // Púrpura pastel
+  "#FFBAF0", // Rosa fucsia pastel
+  "#BAFFDA", // Verde agua pastel
+];
 </script>
 <style scoped>
 :root {
