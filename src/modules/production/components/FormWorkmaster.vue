@@ -26,7 +26,7 @@
         <label class="block text-900 mb-2">Mode</label>
         <Dropdown
           v-model="workmaster.mode"
-          :options="modeOptions"
+          :options="workmasterStore.workmasterModes"
           optionLabel="value"
           optionValue="id"
           placeholder="Seleccione el modo"
@@ -82,6 +82,7 @@ import {
 } from "../../../utils/form-validator";
 import { formatCurrency } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
+import { useWorkMasterStore } from "../store/workmaster";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 
@@ -95,6 +96,7 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
+const workmasterStore = useWorkMasterStore();
 const toast = useToast();
 
 const totalCost = computed(() => {
@@ -105,12 +107,6 @@ const totalCost = computed(() => {
     props.workmaster.externalCost
   );
 });
-
-const modeOptions = ref([
-  { id: 1, value: "Prototip" },
-  { id: 2, value: "Sèrie curta" },
-  { id: 3, value: "Sèrie llarga" }, // Puedes agregar más opciones si es necesario
-]);
 
 const schema = Yup.object().shape({
   baseQuantity: Yup.number()

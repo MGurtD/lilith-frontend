@@ -36,20 +36,9 @@ const workmasterStore = useWorkMasterStore();
 
 const formatWorkMasterLabel = (workMaster: WorkMaster) => {
   const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
-  let modeName = "";
-  switch (workMaster.mode) {
-    case 1:
-      modeName = "Prototip";
-      break;
-    case 2:
-      modeName = "Sèrie curta";
-      break;
-    case 3:
-      modeName = "Sèrie llarga";
-      break;
-  }
-
-  //const modeName = workMaster.mode;
+  let modeName = workmasterStore.workmasterModes.find(
+    (mode) => mode.id === workMaster.mode
+  )?.value;
 
   return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;
 };

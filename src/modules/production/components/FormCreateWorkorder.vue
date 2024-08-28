@@ -79,21 +79,11 @@ onMounted(() => {
 
 const formatWorkMasterLabel = (workMaster: WorkMaster) => {
   const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
-  let modeName = "";
-  switch (workMaster.mode) {
-    case 1:
-      modeName = "Prototip";
-      break;
-    case 2:
-      modeName = "Sèrie curta";
-      break;
-    case 3:
-      modeName = "Sèrie llarga";
-      break;
-  }
+  let modeName = workMasterStore.workmasterModes.find(
+    (mode) => mode.id === workMaster.mode
+  )?.value;
 
-  //const modeName = workMaster.mode;
-  return `${referenceName} - ${modeName}`;
+  return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;
 };
 
 const schema = Yup.object().shape({

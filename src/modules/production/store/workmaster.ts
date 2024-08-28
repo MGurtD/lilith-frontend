@@ -17,6 +17,11 @@ export const useWorkMasterStore = defineStore({
     workmasters: undefined as Array<WorkMaster> | undefined,
     workmasterPhase: undefined as WorkMasterPhase | undefined,
     workmasterToCopy: undefined as WorkMasterToCopy | undefined,
+    workmasterModes: [
+      { id: 1, value: "Prototip" },
+      { id: 2, value: "Sèrie curta" },
+      { id: 3, value: "Sèrie llarga" }, // Puedes agregar más opciones si es necesario
+    ],
   }),
   getters: {
     getByReferenceId: (state) => {
@@ -91,7 +96,7 @@ export const useWorkMasterStore = defineStore({
     },
     async copy(model: WorkMasterToCopy) {
       const result = await Services.WorkMaster.copyWorkMaster(model);
-      if (result) await this.fetchAll();
+      if (result.result) await this.fetchAll();
       return result;
     },
 

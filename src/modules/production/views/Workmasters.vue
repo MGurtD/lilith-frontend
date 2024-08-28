@@ -166,7 +166,7 @@
         <label class="block text-900 mb-2">Mode</label>
         <Dropdown
           v-model="workmasterStore.workmasterToCopy!.mode"
-          :options="modeOptions"
+          :options="workmasterStore.workmasterModes"
           optionLabel="value"
           optionValue="id"
           placeholder="Seleccione el modo"
@@ -230,12 +230,6 @@ const cleanFilter = () => {
   userFilterStore.removeFilter("Workmasters", "");
 };
 
-const modeOptions = ref([
-  { id: 1, value: "Prototip" },
-  { id: 2, value: "Sèrie curta" },
-  { id: 3, value: "Sèrie llarga" }, // Puedes agregar más opciones si es necesario
-]);
-
 const filteredData = computed(() => {
   if (!workmasterStore.workmasters) return [];
 
@@ -265,16 +259,7 @@ const dialogOptions = reactive({
 } as DialogOptions);
 
 const returnMode = (mode: number) => {
-  if (mode === 1) {
-    return "Prototip";
-  }
-  if (mode === 2) {
-    return "Sèrie curta";
-  }
-  if (mode === 3) {
-    return "Sèrie llarga";
-  }
-  return "";
+  return workmasterStore.workmasterModes.find((m) => m.id === mode)?.value;
 };
 
 const copyDialogOptions = reactive({
@@ -330,7 +315,7 @@ const onCopySubmit = async () => {
   const copied = await workmasterStore.copy(workmasterStore.workmasterToCopy!);
   await workmasterStore.fetchAll();
   copyDialogOptions.visible = false;
-  if (copied) {
+  if (copied.result) {
     toast.add({
       severity: "success",
       summary: "Copiada",
@@ -338,9 +323,12 @@ const onCopySubmit = async () => {
     });
   } else {
     toast.add({
-      severity: "error",
-      summary: "Hi ha hagut un error en el proces",
-      life: 3000,
+      severity: copied.errors.length > 0 ? "warn" : "error",
+      summary:
+        copied.errors.length > 0
+          ? copied.errors[0]
+          : "Hi ha hagut un error en el proces",
+      life: 6000,
     });
   }
 };
