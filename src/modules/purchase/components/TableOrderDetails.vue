@@ -9,22 +9,27 @@
       <slot name="header"></slot>
     </template>
     <Column field="quantity" header="Unitats" style="width: 5%" />
+    <Column field="receivedQuantity" header="Un. Rebudes" style="width: 5%" />
     <Column header="Material" style="width: 40%">
       <template #body="slotProps">
         {{ slotProps.data.reference.code }} -
         {{ slotProps.data.reference.description }}
       </template>
     </Column>
-    <Column field="receivedQuantity" header="Un. Rebudes" style="width: 5%" />
     <Column
-    field="expectedReceiptDate"
-    header="Data Prev. Recepció"
-    style="width: 7.5%"
+      field="expectedReceiptDate"
+      header="Data Prev. Recepció"
+      style="width: 7.5%"
     >
-    <template #body="slotProps">
-      {{ formatDate(slotProps.data.expectedReceiptDate) }}
-    </template>
-  </Column>
+      <template #body="slotProps">
+        {{ formatDate(slotProps.data.expectedReceiptDate) }}
+      </template>
+    </Column>
+    <Column field="unitPrice" header="Preu Un." style="width: 7.5%">
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.unitPrice) }}
+      </template>
+    </Column>
     <Column field="amount" header="Preu" style="width: 7.5%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.amount) }}

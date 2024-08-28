@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { CreateReceiptRequest, Receipt, ReceiptDetail } from "../types";
+import {
+  CreatePurchaseDocumentRequest,
+  PurchaseOrderReceiptDetail,
+  Receipt,
+  ReceiptDetail,
+} from "../types";
 import Services from "../services";
 import { GenericResponse } from "../../../types";
 
@@ -7,8 +12,9 @@ export const useReceiptsStore = defineStore({
   id: "receipts",
   state: () => ({
     receipts: undefined as Array<Receipt> | undefined,
-    selectorReceipts: undefined as Array<Receipt> | undefined,
     receipt: undefined as Receipt | undefined,
+    receptions: undefined as Array<PurchaseOrderReceiptDetail> | undefined,
+    selectorReceipts: undefined as Array<Receipt> | undefined,
   }),
   getters: {},
   actions: {
@@ -50,7 +56,7 @@ export const useReceiptsStore = defineStore({
     async fetchReceipt(id: string) {
       this.receipt = await Services.Receipt.getById(id);
     },
-    async createReceipt(createRequest: CreateReceiptRequest) {
+    async createReceipt(createRequest: CreatePurchaseDocumentRequest) {
       const result = await Services.Receipt.create(createRequest);
       if (result) await this.fetchReceipts();
       return result;
@@ -104,6 +110,9 @@ export const useReceiptsStore = defineStore({
         detail
       );
       return response;
+    },
+    async getReceptions(orderId: string) {
+      this.receptions = await Services.Order.getReceptions(orderId);
     },
   },
 });

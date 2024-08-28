@@ -56,20 +56,14 @@ export const applicationMenus = [
         href: "/suppliers",
       },
       {
+        icon: PrimeIcons.PALETTE,
+        title: "Tipus de materials",
+        href: "/referencetype",
+      },
+      {
         icon: PrimeIcons.TICKET,
         title: "Referències",
-        child: [
-          {
-            icon: PrimeIcons.PALETTE,
-            title: "Tipus de materials",
-            href: "/referencetype",
-          },
-          {
-            icon: PrimeIcons.TICKET,
-            title: "Referències",
-            href: "/material",
-          },
-        ],
+        href: "/material",
       },
       {
         icon: PrimeIcons.SHOPPING_BAG,

@@ -12,18 +12,42 @@
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
           <span class="text-xl text-900 font-bold">Detall de l'albarà</span>
-          <div>
-            <Button
-              :size="'small'"
-              :icon="PrimeIcons.PLUS"
-              rounded
-              :disabled="hasToBlockDetailCreation"
-              @click="openCreateDetailForm"
-            />
+          <div
+            class="flex flex-wrap align-items-center justify-content-between gap-2"
+          >
+            <div>
+              <Button
+                :size="'small'"
+                label="Afegir de comanda"
+                :disabled="hasToBlockDetailCreation"
+                @click="openOrderDetailsToReceiptSelector"
+              />
+            </div>
+            <div>
+              <Button
+                :size="'small'"
+                label="Afegir línia"
+                :disabled="hasToBlockDetailCreation"
+                @click="openCreateDetailForm"
+              />
+            </div>
           </div>
         </div>
       </template>
     </TableReceiptDetails>
+
+    <Dialog
+      v-model:visible="dialogOptionsSelector.visible"
+      :header="dialogOptionsSelector.title"
+      :closable="dialogOptionsSelector.closable"
+      :modal="dialogOptionsSelector.modal"
+      :style="{ width: '50vw' }"
+    >
+      <SelectorOrdersDetailsToReceipt
+        :orders="orderStore.ordersToReceipt"
+        @selected="onOrderDetailsSelected"
+      />
+    </Dialog>
 
     <Dialog
       v-model:visible="dialogOptions.visible"
@@ -55,20 +79,22 @@ import FormReceipt from "../components/FormReceipt.vue";
 import TableReceiptDetails from "../components/TableReceiptDetails.vue";
 import FormReceiptDetail from "../components/FormReceiptDetail.vue";
 import FormMaterial from "../components/FormMaterial.vue";
+import SelectorOrdersDetailsToReceipt from "../components/SelectorOrdersDetailsToReceipt.vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useRoute } from "vue-router";
-import { ReceiptDetail } from "../types";
 import { useStore } from "../../../store";
-import { useReceiptsStore } from "../store/receipt";
+import { ReceiptDetail } from "../types";
 import { GenericResponse } from "../../../types";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
 import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import router from "../../../router";
+import { useReceiptsStore } from "../store/receipt";
+import { useOrderStore } from "../store/order";
+import { useReferenceStore } from "../../shared/store/reference";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
 
@@ -77,6 +103,7 @@ const store = useStore();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
 const receiptStore = useReceiptsStore();
+const orderStore = useOrderStore();
 const lifecycleStore = useLifecyclesStore();
 const { receipt } = storeToRefs(receiptStore);
 const formsActiveIndex = ref(0);
@@ -138,6 +165,14 @@ const dialogOptions = reactive({
   position: "center",
   modal: true,
 } as DialogOptions);
+const dialogOptionsSelector = reactive({
+  visible: false,
+  title: "Selecció de comandes",
+  closable: true,
+  position: "center",
+  modal: true,
+} as DialogOptions);
+
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref({} as ReceiptDetail);
 
@@ -236,5 +271,13 @@ const onFormReferenceSubmit = async (reference: Reference) => {
       ReferenceCategoryEnum.MATERIAL
     );
   }
+};
+
+const openOrderDetailsToReceiptSelector = async () => {
+  await orderStore.fetchOrdersToReceiptBySupplier(receipt.value!.supplierId);
+  dialogOptionsSelector.visible = true;
+};
+const onOrderDetailsSelected = (details: any) => {
+  dialogOptionsSelector.visible = false;
 };
 </script>

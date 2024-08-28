@@ -3,6 +3,7 @@ import {
   CreatePurchaseDocumentRequest,
   PurchaseOrder,
   PurchaseOrderDetail,
+  PurchaseOrderReceiptDetail,
 } from "../types";
 import Services from "../services";
 
@@ -11,6 +12,8 @@ export const useOrderStore = defineStore({
   state: () => ({
     orders: undefined as Array<PurchaseOrder> | undefined,
     order: undefined as PurchaseOrder | undefined,
+    ordersToReceipt: undefined as Array<PurchaseOrder> | undefined,
+    receptions: undefined as Array<PurchaseOrderReceiptDetail> | undefined,
   }),
   getters: {},
   actions: {
@@ -45,6 +48,11 @@ export const useOrderStore = defineStore({
     },
     async fetchOne(id: string) {
       this.order = await Services.Order.getById(id);
+    },
+    async fetchOrdersToReceiptBySupplier(supplierId: string) {
+      this.ordersToReceipt = await Services.Order.getOrdersToReciptBySupplierId(
+        supplierId
+      );
     },
     async create(createRequest: CreatePurchaseDocumentRequest) {
       const result = await Services.Order.create(createRequest);
@@ -82,6 +90,9 @@ export const useOrderStore = defineStore({
         }
       }
       return response;
+    },
+    async getReceptions(orderId: string) {
+      this.receptions = await Services.Order.getReceptions(orderId);
     },
   },
 });

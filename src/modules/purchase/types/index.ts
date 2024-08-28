@@ -222,3 +222,12 @@ export interface ReceiptDetail {
   id: string;
   disabled: boolean;
 }
+
+export interface PurchaseOrderReceiptDetail {
+  purchaseOrderDetailId: string;
+  receiptDetailId: string;
+  quantity: number;
+  user: string;
+  createdOn: string;
+  id: string;
+}
