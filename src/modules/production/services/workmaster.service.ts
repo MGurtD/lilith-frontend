@@ -19,26 +19,34 @@ export class WorkMasterService extends BaseService<WorkMaster> {
     );
     if (response.status === 200) return response.data as Array<WorkMaster>;
   }
-  async copyWorkMaster(workmasterToCopy: WorkMasterToCopy): Promise<boolean> {
+  async copyWorkMaster(
+    workmasterToCopy: WorkMasterToCopy
+  ): Promise<GenericResponse<boolean>> {
     const response = await this.apiClient.post(
       `${this.resource}/copy`,
       workmasterToCopy
     );
-    return response.status === 200;
+    return response.data as GenericResponse<boolean>;
   }
-  async calculateCost(id: string, quantity?: number): Promise<GenericResponse<number>> {
-    let endpoint = `${this.resource}/cost/${id}`
+  async calculateCost(
+    id: string,
+    quantity?: number
+  ): Promise<GenericResponse<number>> {
+    let endpoint = `${this.resource}/cost/${id}`;
     if (quantity) {
-      endpoint = endpoint.concat(`?quantity=${quantity}`)
+      endpoint = endpoint.concat(`?quantity=${quantity}`);
     }
 
     const response = await this.apiClient.get(endpoint);
     return response.data;
   }
-  async getCosts(id: string, quantity?: number): Promise<GenericResponse<ProductionCosts>> {
-    let endpoint = `${this.resource}/costs/${id}`
+  async getCosts(
+    id: string,
+    quantity?: number
+  ): Promise<GenericResponse<ProductionCosts>> {
+    let endpoint = `${this.resource}/costs/${id}`;
     if (quantity) {
-      endpoint = endpoint.concat(`?quantity=${quantity}`)
+      endpoint = endpoint.concat(`?quantity=${quantity}`);
     }
 
     const response = await this.apiClient.get(endpoint);

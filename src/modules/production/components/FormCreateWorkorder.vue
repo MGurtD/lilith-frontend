@@ -12,7 +12,7 @@
             : workMasterStore.workmasters
         "
         optionValue="id"
-        :optionLabel="(r) => referenceStore.getShortNameById(r.referenceId)"
+        :optionLabel="formatWorkMasterLabel"
         class="w-full"
       />
     </div>
@@ -76,6 +76,15 @@ onMounted(() => {
     workMasterStore.fetchAllActives();
   }
 });
+
+const formatWorkMasterLabel = (workMaster: WorkMaster) => {
+  const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
+  let modeName = workMasterStore.workmasterModes.find(
+    (mode) => mode.id === workMaster.mode
+  )?.value;
+
+  return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;
+};
 
 const schema = Yup.object().shape({
   plannedQuantity: Yup.number()

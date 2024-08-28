@@ -31,6 +31,8 @@ const ProductionParts = () => import("./views/ProductionParts.vue");
 
 const Shifts = () => import("./views/Shifts.vue");
 
+const CostDashboard = () => import("./views/CostDashboard.vue");
+
 export default [
   {
     path: "/enterprise/:id",
@@ -161,5 +163,10 @@ export default [
     path: "/shifts",
     name: "shifts",
     component: Shifts,
+  },
+  {
+    path: "/productioncost",
+    name: "productioncost",
+    component: CostDashboard,
   },
 ] as Array<RouteRecordRaw>;

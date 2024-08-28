@@ -105,6 +105,7 @@ export interface WorkMaster {
   machineCost: number;
   externalCost: number;
   materialCost: number;
+  mode: number;
   disabled: boolean;
   phases: Array<WorkMasterPhase>;
 }
@@ -154,6 +155,7 @@ export interface WorkMasterToCopy {
   workmaster: WorkMaster;
   workmasterId: string;
   referenceCode: string;
+  mode: number;
 }
 
 export interface WorkOrder {
@@ -304,4 +306,14 @@ export interface ShiftDetail {
   endTime: string | null;
   isProductiveTime: boolean;
   shiftId: string;
+}
+
+export interface ProductionCostDashboardGrouped {
+  workcenterName: string;
+  workcenterTypeName: string;
+  year: number;
+  month: number;
+  totalWorkcenterTime: number;
+  totalPartWorkcenterCost: number;
+  totalCost: number;
 }
