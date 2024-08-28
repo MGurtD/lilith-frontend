@@ -12,7 +12,7 @@
           : workmasterStore.workmasters
       "
       optionValue="id"
-      :optionLabel="(r: WorkMaster) => referenceStore.getShortNameById(r.referenceId) + ' (Base = ' + r.baseQuantity + ')'"
+      :optionLabel="formatWorkMasterLabel"
       class="w-full"
       v-bind="$attrs"
       v-bind:model-value="(modelValue as string)"
@@ -20,12 +20,7 @@
     >
       <template #option="slotProps">
         <div v-if="slotProps.option" class="flex align-items-center">
-          {{
-            referenceStore.getShortNameById(slotProps.option.referenceId) +
-            " (Base = " +
-            slotProps.option.baseQuantity +
-            " )"
-          }}
+          {{ formatWorkMasterLabel(slotProps.option) }}
         </div>
       </template>
     </Dropdown>
@@ -38,6 +33,15 @@ import { WorkMaster } from "../types";
 
 const referenceStore = useReferenceStore();
 const workmasterStore = useWorkMasterStore();
+
+const formatWorkMasterLabel = (workMaster: WorkMaster) => {
+  const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
+  let modeName = workmasterStore.workmasterModes.find(
+    (mode) => mode.id === workMaster.mode
+  )?.value;
+
+  return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;
+};
 
 defineProps<{
   label: string;

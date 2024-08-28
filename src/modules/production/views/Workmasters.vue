@@ -52,13 +52,13 @@
       field="reference.code"
       sortable
       header="Referencia"
-      style="width: 50%"
+      style="width: 40%"
     >
       <template #body="slotProps">
         {{ referenceStore.getFullName(slotProps.data.reference) }}
       </template>
     </Column>
-    <Column sortable header="Client" style="width: 25%">
+    <Column sortable header="Client" style="width: 20%">
       <template #body="slotProps">
         {{
           customersStore.getCustomerNameById(
@@ -70,9 +70,9 @@
     <Column
       field="baseQuantity"
       header="Quantitat Base"
-      style="width: 25%"
+      style="width: 10%"
     ></Column>
-    <Column header="Cost" style="width: 25%">
+    <Column header="Cost" style="width: 10%">
       <template #body="slotProps">
         {{
           formatCurrency(
@@ -84,7 +84,12 @@
         }}
       </template>
     </Column>
-    <Column header="Desactivada" style="width: 25%">
+    <Column header="Mode" sytle="width: 30%">
+      <template #body="slotProps">
+        {{ returnMode(slotProps.data.mode) }}
+      </template>
+    </Column>
+    <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
       </template>
@@ -158,6 +163,16 @@
           :fullName="true"
           @change="checkDestinyCode"
         ></DropdownReference>
+        <label class="block text-900 mb-2">Mode</label>
+        <Dropdown
+          v-model="workmasterStore.workmasterToCopy!.mode"
+          :options="workmasterStore.workmasterModes"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="Seleccione el modo"
+          class="w-full"
+        />
+
         <BaseInput
           class="mb-2"
           label="Nou codi:"
@@ -243,6 +258,10 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
+const returnMode = (mode: number) => {
+  return workmasterStore.workmasterModes.find((m) => m.id === mode)?.value;
+};
+
 const copyDialogOptions = reactive({
   visible: false,
   title: "Copiar ruta",
@@ -284,6 +303,7 @@ const copyButton = (event: any, workmaster: WorkMaster) => {
     workmaster,
     referenceId: null,
     referenceCode: "",
+    mode: 1,
   };
   copyDialogOptions.visible = true;
 };
@@ -295,7 +315,7 @@ const onCopySubmit = async () => {
   const copied = await workmasterStore.copy(workmasterStore.workmasterToCopy!);
   await workmasterStore.fetchAll();
   copyDialogOptions.visible = false;
-  if (copied) {
+  if (copied.result) {
     toast.add({
       severity: "success",
       summary: "Copiada",
@@ -303,9 +323,12 @@ const onCopySubmit = async () => {
     });
   } else {
     toast.add({
-      severity: "error",
-      summary: "Hi ha hagut un error en el proces",
-      life: 3000,
+      severity: copied.errors.length > 0 ? "warn" : "error",
+      summary:
+        copied.errors.length > 0
+          ? copied.errors[0]
+          : "Hi ha hagut un error en el proces",
+      life: 6000,
     });
   }
 };
