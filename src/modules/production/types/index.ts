@@ -305,3 +305,13 @@ export interface ShiftDetail {
   isProductiveTime: boolean;
   shiftId: string;
 }
+
+export interface ProductionCostDashboardGrouped {
+  workcenterName: string;
+  workcenterTypeName: string;
+  year: number;
+  month: number;
+  totalWorkcenterTime: number;
+  totalPartWorkcenterCost: number;
+  totalCost: number;
+}

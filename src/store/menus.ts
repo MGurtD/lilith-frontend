@@ -229,6 +229,11 @@ export const applicationMenus = [
         title: "Tiquets de producció",
         href: "/productionpart",
       },
+      {
+        icon: PrimeIcons.EURO,
+        title: "Dashboard Costs",
+        href: "/productioncost",
+      },
     ],
   },
   {
