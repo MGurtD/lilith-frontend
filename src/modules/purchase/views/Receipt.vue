@@ -44,6 +44,7 @@
       :style="{ width: '50vw' }"
     >
       <SelectorOrdersDetailsToReceipt
+        :receipt="receipt"
         :orders="orderStore.ordersToReceipt"
         @selected="onOrderDetailsSelected"
       />
@@ -86,7 +87,7 @@ import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useRoute } from "vue-router";
 import { useStore } from "../../../store";
-import { ReceiptDetail } from "../types";
+import { AddReceptionsRequest, ReceiptDetail } from "../types";
 import { GenericResponse } from "../../../types";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
@@ -277,7 +278,27 @@ const openOrderDetailsToReceiptSelector = async () => {
   await orderStore.fetchOrdersToReceiptBySupplier(receipt.value!.supplierId);
   dialogOptionsSelector.visible = true;
 };
-const onOrderDetailsSelected = (details: any) => {
+const onOrderDetailsSelected = async (
+  addReceptionRequest: AddReceptionsRequest
+) => {
   dialogOptionsSelector.visible = false;
+
+  const response = await receiptStore.addReceptions(addReceptionRequest);
+  if (!response.result) {
+    toast.add({
+      severity: "error",
+      summary: response.errors[0],
+      life: 10000,
+      closable: true,
+    });
+  } else {
+    toast.add({
+      severity: "success",
+      summary: "Recepcions afegides correctament",
+      life: 5000,
+    });
+
+    receiptStore.fetchReceipt(addReceptionRequest.receiptId);
+  }
 };
 </script>

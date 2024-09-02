@@ -64,6 +64,7 @@ export class OrderService extends BaseService<PurchaseOrder> {
     const response = await this.apiClient.get(
       `${this.resource}/${orderId}/Receptions`
     );
+    console.log(response.data);
     return response.data as Array<PurchaseOrderReceiptDetail>;
   }
   async addReception(

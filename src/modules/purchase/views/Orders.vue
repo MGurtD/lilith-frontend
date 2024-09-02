@@ -132,10 +132,10 @@ const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
+const suppliersStore = useSuppliersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 const ordersStore = useOrderStore();
-const suppliersStore = useSuppliersStore();
 
 const filter = ref({
   supplierId: undefined as string | undefined,

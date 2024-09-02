@@ -6,6 +6,7 @@
           label="Material"
           v-model="detail.referenceId"
           :fullName="true"
+          :disabled="detail.receivedQuantity > 0"
         ></DropdownReference>
       </div>
       <div>
@@ -28,6 +29,7 @@
     <section class="three-columns mt-2">
       <div>
         <BaseInput
+          :disabled="detail.receivedQuantity > 0"
           :type="BaseInputType.NUMERIC"
           label="Quantitat"
           v-model="detail.quantity"
@@ -35,16 +37,10 @@
       </div>
       <div>
         <BaseInput
-          :type="BaseInputType.NUMERIC"
-          label="Quantitat rebuda"
-          v-model="detail.receivedQuantity"
-        />
-      </div>
-      <div>
-        <BaseInput
           :type="BaseInputType.CURRENCY"
           label="Preu"
           v-model="detail.amount"
+          :disabled="detail.receivedQuantity > 0"
         />
       </div>
     </section>

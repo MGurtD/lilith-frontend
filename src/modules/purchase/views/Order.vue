@@ -3,7 +3,8 @@
     <FormOrder @submit="submitForm" />
     <br />
     <TableOrderDetails
-      :details="order?.details"
+      v-if="order.details"
+      :details="order.details"
       @edit="openEditDetailForm"
       @delete="removeDetail"
     >
@@ -39,37 +40,47 @@
 import FormOrder from "../components/FormOrder.vue";
 import TableOrderDetails from "../components/TableOrderDetails.vue";
 import FormOrderDetail from "../components/FormOrderDetail.vue";
-import { computed, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { useToast } from "primevue/usetoast";
-import { useRoute } from "vue-router";
 import { PurchaseOrderDetail } from "../types";
-import { useStore } from "../../../store";
 import { GenericResponse } from "../../../types";
+import { ReferenceCategoryEnum } from "../../shared/types";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
+import { useRouter, useRoute } from "vue-router";
+import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
-import { Reference, ReferenceCategoryEnum } from "../../shared/types";
-import router from "../../../router";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
 import { useOrderStore } from "../store/order";
+import { useSuppliersStore } from "../store/suppliers";
+import { useExerciseStore } from "../../shared/store/exercise";
 
+const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const confirm = useConfirm();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
 const orderStore = useOrderStore();
+const suppliersStore = useSuppliersStore();
+const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 const { order } = storeToRefs(orderStore);
-const formsActiveIndex = ref(0);
 
 const loadView = async () => {
   await orderStore.fetchOne(route.params.id as string);
-  lifecycleStore.fetchOneByName("PurchaseOrder");
-  referenceStore.fetchReferencesByModule("purchase");
-  referenceTypeStore.fetchActive();
+
+  if (!lifecycleStore.lifecycle) lifecycleStore.fetchOneByName("PurchaseOrder");
+  if (!exerciseStore.exercises) exerciseStore.fetchActive();
+  if (!suppliersStore.suppliers) suppliersStore.fetchSuppliers();
+  if (!referenceTypeStore.referenceTypes) referenceTypeStore.fetchActive();
+  if (!referenceStore.references || referenceStore.module !== "purchase")
+    referenceStore.fetchReferencesByModule("purchase");
+
   if (order.value) {
     order.value.date = formatDate(order.value.date);
   }
@@ -168,9 +179,17 @@ const editDetail = async (detail: PurchaseOrderDetail) => {
 };
 
 const removeDetail = async (detail: PurchaseOrderDetail) => {
-  const response = await orderStore.deleteDetail(detail.id);
-  order.value!.date = formatDate(order.value!.date);
-  if (!response.result) showResponseErrorToast(response);
+  confirm.require({
+    message: `Está segur que vols la línia?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const response = await orderStore.deleteDetail(detail.id);
+      order.value!.date = formatDate(order.value!.date);
+      if (!response.result) showResponseErrorToast(response);
+    },
+  });
 };
 
 const showResponseErrorToast = (

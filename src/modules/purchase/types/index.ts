@@ -204,6 +204,20 @@ export interface PurchaseOrderDetail {
   id: string;
   disabled: boolean;
 }
+export interface PurchaseOrderDetailWithPendingQuantity {
+  purchaseOrderId: string;
+  statusId: string;
+  workOrderPhaseId?: string | null;
+  referenceId: string;
+  expectedReceiptDate?: string | null;
+  quantity: number;
+  receivedQuantity: number;
+  unitPrice: number;
+  amount: number;
+  id: string;
+  disabled: boolean;
+  pendingQuantity: number;
+}
 
 export interface ReceiptDetail {
   receiptId: string;
@@ -230,4 +244,9 @@ export interface PurchaseOrderReceiptDetail {
   user: string;
   createdOn: string;
   id: string;
+}
+
+export interface AddReceptionsRequest {
+  receiptId: string;
+  receptions: Array<PurchaseOrderReceiptDetail>;
 }

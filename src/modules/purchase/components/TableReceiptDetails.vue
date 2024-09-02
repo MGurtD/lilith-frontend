@@ -4,15 +4,22 @@
     :value="props.details"
     tableStyle="min-width: 100%"
     class="p-datatable-sm"
+    sort-mode="single"
+    sort-field="reference.code"
+    :sort-order="1"
   >
     <template #header>
       <slot name="header"></slot>
     </template>
     <Column field="quantity" header="Quantitat" style="width: 7.5%" />
-    <Column header="Material" style="width: 25%">
-      <template #body="slotProps">
-        {{ slotProps.data.reference.code }} -
-        {{ slotProps.data.reference.description }}
+    <Column
+      sortable
+      header="Material"
+      field="reference.code"
+      style="width: 25%"
+    >
+      <template #body="{ data }">
+        <LinkReference :id="data.referenceId" :full-name="true" />
       </template>
     </Column>
     <Column field="width" header="Amplada" style="width: 7.5%"></Column>
@@ -47,6 +54,7 @@ import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { ReceiptDetail } from "../types";
 import { formatCurrency } from "../../../utils/functions";
+import LinkReference from "../../shared/components/LinkReference.vue";
 
 const props = defineProps<{
   details: Array<ReceiptDetail> | undefined;

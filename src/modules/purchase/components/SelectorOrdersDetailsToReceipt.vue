@@ -14,24 +14,29 @@
           <label for="">Buscar</label> &nbsp;
           <InputText
             style="width: 150px; height: 35px"
-            v-model="selectedReceipt"
+            v-model="filterReference"
             size="small"
           />
         </div>
-        <div class="selector-filter-button">
-          <Button
-            @click="onSelectedClick"
-            :size="'small'"
-            :icon="PrimeIcons.CHECK_SQUARE"
-          ></Button>
+        <div>
+          <div>
+            <Button
+              @click="onSelectedClick"
+              :size="'small'"
+              :icon="PrimeIcons.CHECK_SQUARE"
+              label="Afegir"
+            ></Button>
+          </div>
         </div>
       </header>
     </template>
     <Column expander style="width: 5%" />
     <Column header="" field="number" style="width: 80%">
       <template #body="slotProps">
-        Comanda {{ slotProps.data.number }} | Data prevista
-        {{ formatDate(slotProps.data.date) }}
+        <b
+          >Comanda {{ slotProps.data.number }} | Data prevista
+          {{ formatDate(slotProps.data.date) }}
+        </b>
       </template>
     </Column>
     <template #expansion="slotProps">
@@ -40,27 +45,27 @@
         :value="slotProps.data.details"
         v-model:selection="selectedOrderDetails"
       >
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column header="Referència">
-          <template #body="slotProps">
-            {{ referenceStore.getFullNameById(slotProps.data.reference.id) }}
+        <Column selectionMode="multiple" headerStyle="width: 2rem"></Column>
+        <Column header="Referència" headerStyle="width: 50%">
+          <template #body="{ data }">
+            {{ referenceStore.getFullNameById(data.reference.id) }}
           </template>
         </Column>
-        <Column field="expectedReceiptDate" header="Data prevista">
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.expectedReceiptDate) }}
+        <Column header="Qtt. total" headerStyle="width: 20%">
+          <template #body="{ data }">
+            {{ data.quantity }}
           </template>
         </Column>
-        <Column header="Uds. totals">
-          <template #body="slotProps">
-            {{ slotProps.data.quantity }}
+        <Column header="Qtt. rebuda" headerStyle="width: 20%">
+          <template #body="{ data }">
+            {{ data.receivedQuantity }}
           </template>
         </Column>
-        <Column header="Uds. a recepcionar">
-          <template #body="{ data, field }">
+        <Column header="A recepcionar" headerStyle="width: 20%">
+          <template #body="{ data }">
             <InputNumber
               size="small"
-              v-model="data[field]"
+              v-model="data.pendingQuantity"
               :min="0"
               :max="data.pendingQuantity"
             />
@@ -72,38 +77,53 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { PurchaseOrder, PurchaseOrderDetail } from "../types";
+import {
+  AddReceptionsRequest,
+  PurchaseOrder,
+  PurchaseOrderDetail,
+  PurchaseOrderDetailWithPendingQuantity,
+  Receipt,
+} from "../types";
 import { PrimeIcons } from "primevue/api";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, getNewUuid } from "../../../utils/functions";
 import { useReferenceStore } from "../../shared/store/reference";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useToast } from "primevue/usetoast";
+import { useStore } from "../../../store";
 
+const toast = useToast();
+const store = useStore();
 const referenceStore = useReferenceStore();
-const lifecycleStore = useLifecyclesStore();
-const selectedOrderDetails = ref([] as Array<PurchaseOrderDetail>);
+const localOrders = ref([] as Array<PurchaseOrder>);
 const expandedRows = ref({});
+const filterReference = ref("");
+const selectedOrderDetails = ref(
+  [] as Array<PurchaseOrderDetailWithPendingQuantity>
+);
 
 const props = defineProps<{
+  receipt: Receipt;
   orders: Array<PurchaseOrder> | undefined;
 }>();
 const emits = defineEmits<{
-  (e: "selected", receipts: Array<PurchaseOrderDetail>): void;
+  (e: "selected", receipts: AddReceptionsRequest): void;
 }>();
-const selectedReceipt = ref("");
+
 const filteredOrders = computed(() => {
   var filtered = [] as Array<PurchaseOrder>;
-
-  if (props.orders) {
-    filtered = props.orders.filter((o) =>
-      o.number.toString().includes(selectedReceipt.value)
+  if (localOrders.value) {
+    // Filter orders by reference full name
+    filtered = localOrders.value.filter((o) =>
+      o.details.some((d) => {
+        const referenceFullName = referenceStore.getFullNameById(d.referenceId);
+        return referenceFullName.includes(filterReference.value.toLowerCase());
+      })
     );
   }
-
   return filtered;
 });
 
 const expandAll = () => {
-  expandedRows.value = filteredOrders.value.reduce(
+  expandedRows.value = localOrders.value.reduce(
     (acc: { [key: string]: boolean }, p) => {
       acc[p.id] = true;
       return acc;
@@ -113,17 +133,48 @@ const expandAll = () => {
 };
 
 onMounted(() => {
+  if (!props.orders) {
+    console.error("No orders to show");
+    return;
+  }
+
+  // Asignar `localOrders` con los valores de `props.orders` y añadir `pendingQuantity`
+  localOrders.value = props.orders.map((o) => ({
+    ...o,
+    details: o.details.map((d) => ({
+      ...d,
+      pendingQuantity: d.quantity - d.receivedQuantity,
+    })),
+  }));
+
   expandAll();
 });
 
-const onCellEditComplete = (event: any) => {
-  let { data, newValue, field } = event;
-};
-
 const onSelectedClick = () => {
-  if (selectedOrderDetails.value.length === 0) return;
+  if (selectedOrderDetails.value.length === 0) {
+    toast.add({
+      severity: "warn",
+      summary: "Selecció inválida",
+      detail: "Selecciona alguna línia per afegir-la a l'albarà",
+      life: 6000,
+    });
 
-  emits("selected", selectedOrderDetails.value);
+    return;
+  }
+
+  const addReceptionsRequest = {
+    receiptId: props.receipt.id,
+    receptions: selectedOrderDetails.value.map((d) => {
+      return {
+        receiptDetailId: getNewUuid(),
+        purchaseOrderDetailId: d.id,
+        quantity: d.pendingQuantity,
+        user: store.user?.username,
+      };
+    }),
+  } as AddReceptionsRequest;
+
+  emits("selected", addReceptionsRequest);
 };
 </script>
 <style scoped>

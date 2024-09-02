@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  AddReceptionsRequest,
   CreatePurchaseDocumentRequest,
   PurchaseOrderReceiptDetail,
   Receipt,
@@ -113,6 +114,11 @@ export const useReceiptsStore = defineStore({
     },
     async getReceptions(orderId: string) {
       this.receptions = await Services.Order.getReceptions(orderId);
+    },
+    async addReceptions(
+      request: AddReceptionsRequest
+    ): Promise<GenericResponse<any>> {
+      return await Services.Receipt.addReceptions(request);
     },
   },
 });

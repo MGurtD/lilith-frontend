@@ -1,4 +1,9 @@
-import { PurchaseOrderReceiptDetail, Receipt, ReceiptDetail } from "../types";
+import {
+  AddReceptionsRequest,
+  PurchaseOrderReceiptDetail,
+  Receipt,
+  ReceiptDetail,
+} from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 
@@ -76,5 +81,15 @@ export class ReceiptService extends BaseService<Receipt> {
       `${this.resource}/${receiptId}/Receptions`
     );
     return response.data as GenericResponse<Array<PurchaseOrderReceiptDetail>>;
+  }
+
+  async addReceptions(
+    request: AddReceptionsRequest
+  ): Promise<GenericResponse<any>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/AddReceptions`,
+      request
+    );
+    return response.data as GenericResponse<any>;
   }
 }
