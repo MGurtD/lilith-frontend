@@ -4,7 +4,11 @@
     class="link"
     @click="navegateToReference"
   >
-    {{ referenceStore.getShortNameById(id) }}
+    {{
+      fullName
+        ? referenceStore.getFullNameById(id)
+        : referenceStore.getShortNameById(id)
+    }}
   </span>
 </template>
 <script setup lang="ts">
@@ -14,14 +18,23 @@ import { useRouter } from "vue-router";
 
 const props = defineProps<{
   id: string;
+  category?: string;
+  fullName?: boolean;
 }>();
 
 const referenceStore = useReferenceStore();
 const router = useRouter();
 
 const navegateToReference = () => {
+  let path = "";
+  if (referenceStore.module === "purchase") {
+    path = `/material/${props.id}/${props.category}`;
+  } else if (referenceStore.module === "sales") {
+    path = `/sales/reference/${props.id}`;
+  }
+
   router.push({
-    path: `/sales/reference/${props.id}`,
+    path,
   });
 };
 </script>

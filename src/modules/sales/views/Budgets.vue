@@ -29,7 +29,11 @@
           </div>
           <div class="filter-field">
             <label class="block text-900">Estat</label>
-            <DropdownLifecycle label="" v-model="filter.statusId" />
+            <DropdownLifecycle
+              label=""
+              name="Budget"
+              v-model="filter.statusId"
+            />
           </div>
         </div>
         <div class="datatable-buttons">

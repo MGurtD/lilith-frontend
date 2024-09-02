@@ -5,6 +5,8 @@ const Supplier = () => import("./views/Supplier.vue");
 const SupplierType = () => import("./views/SupplierType.vue");
 const Receipts = () => import("./views/Receipts.vue");
 const Receipt = () => import("./views/Receipt.vue");
+const Orders = () => import("./views/Orders.vue");
+const Order = () => import("./views/Order.vue");
 const PurchaseInvoiceSeries = () => import("./views/PurchaseInvoiceSeries.vue");
 const PurchaseInvoiceSerie = () => import("./views/PurchaseInvoiceSerie.vue");
 const PurchaseInvoicesByDates = () =>
@@ -34,6 +36,17 @@ export default [
     path: "/supplier-types/:id",
     name: "SupplierType",
     component: SupplierType,
+    props: true,
+  },
+  {
+    path: "/purchase-orders",
+    name: "PurchaseOrders",
+    component: Orders,
+  },
+  {
+    path: "/purchase-orders/:id",
+    name: "PurchaseOrder",
+    component: Order,
     props: true,
   },
   {

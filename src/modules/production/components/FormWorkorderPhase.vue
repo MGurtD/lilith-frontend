@@ -20,6 +20,7 @@
         <DropdownLifecycle
           label="Estat"
           v-model="phase.statusId"
+          name="WorkOrder"
           :class="{
             'p-invalid': validation.errors.statusId,
           }"

@@ -6,8 +6,8 @@
       scrollable
       scrollHeight="75vh"
       sortMode="multiple"
-      :value="receiptsStore.receipts"
-      @row-click="editReceipt"
+      :value="ordersStore.orders"
+      @row-click="edit"
     >
       <template #header>
         <div
@@ -17,7 +17,7 @@
             <div class="filter-field">
               <ExerciseDatePicker
                 :exercises="exerciseStore.exercises"
-                @range-selected="filterReceipts"
+                @range-selected="filterData"
               />
             </div>
             <div class="filter-field">
@@ -38,7 +38,7 @@
               :icon="PrimeIcons.FILTER"
               rounded
               raised
-              @click="filterReceipts"
+              @click="filterData"
             />
             <Button
               class="datatable-button mr-2"
@@ -72,11 +72,6 @@
           {{ getSupplierNameById(slotProps.data.supplierId) }}
         </template>
       </Column>
-      <Column
-        header="Número Albarà"
-        style="width: 15%"
-        field="supplierNumber"
-      ></Column>
       <Column header="Estat" style="width: 15%">
         <template #body="slotProps">
           {{ getStatusNameById(slotProps.data.statusId) }}
@@ -91,7 +86,7 @@
             "
             :class="PrimeIcons.TIMES"
             class="grid_delete_column_button"
-            @click="deleteReceipt($event, slotProps.data)"
+            @click="remove($event, slotProps.data)"
           />
         </template>
       </Column>
@@ -106,7 +101,7 @@
   >
     <FormCreatePurchaseDocument
       :create-request="createRequest"
-      @submit="createReceipt"
+      @submit="create"
     />
   </Dialog>
 </template>
@@ -117,9 +112,9 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
-import { useExerciseStore } from "../../shared/store/exercise";
-import { useReceiptsStore } from "../store/receipt";
+import { useOrderStore } from "../store/order";
 import { useSuppliersStore } from "../store/suppliers";
+import { useExerciseStore } from "../../shared/store/exercise";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { onMounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
@@ -137,10 +132,10 @@ const toast = useToast();
 const confirm = useConfirm();
 const router = useRouter();
 const store = useStore();
-const lifecycleStore = useLifecyclesStore();
-const receiptsStore = useReceiptsStore();
 const suppliersStore = useSuppliersStore();
 const exerciseStore = useExerciseStore();
+const lifecycleStore = useLifecyclesStore();
+const ordersStore = useOrderStore();
 
 const filter = ref({
   supplierId: undefined as string | undefined,
@@ -148,7 +143,7 @@ const filter = ref({
 });
 const dialogOptions = reactive({
   visible: false,
-  title: "Crear albarà",
+  title: "Crear comanda",
   closable: true,
   position: "center",
   modal: true,
@@ -157,16 +152,15 @@ const dialogOptions = reactive({
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.MONEY_BILL,
-    title: "Albarans de compra",
+    title: "Comandes de compra",
   });
 
   suppliersStore.fetchSuppliers();
-  lifecycleStore.fetchOneByName("Receipts");
   await exerciseStore.fetchActive();
-  await receiptsStore.fetchReceipts();
+  await lifecycleStore.fetchOneByName("PurchaseOrder");
   setCurrentYear();
 
-  await filterReceipts();
+  await filterData();
 });
 
 const setCurrentYear = () => {
@@ -187,14 +181,14 @@ const cleanFilter = () => {
   filter.value.supplierId = undefined;
 };
 
-const filterReceipts = async () => {
+const filterData = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
       store.exercisePicker.dates[0]
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await receiptsStore.fetchFiltered(
+    await ordersStore.fetchFiltered(
       startTime,
       endTime,
       filter.value.supplierId
@@ -233,37 +227,38 @@ const generateNewRequest = (): CreatePurchaseDocumentRequest => {
     date: new Date(),
   };
 };
-const createReceipt = async () => {
-  const created = await receiptsStore.createReceipt(createRequest.value);
-  if (created) router.push({ path: `/receipts/${createRequest.value.id}` });
+const create = async () => {
+  const created = await ordersStore.create(createRequest.value);
+  if (created)
+    router.push({ path: `/purchase-orders/${createRequest.value.id}` });
 };
 
-const editReceipt = (row: DataTableRowClickEvent) => {
+const edit = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
       "grid_delete_column_button"
     )
   ) {
-    router.push({ path: `/receipts/${row.data.id}` });
+    router.push({ path: `/purchase-orders/${row.data.id}` });
   }
 };
 
-const deleteReceipt = (event: any, invoice: PurchaseInvoice) => {
+const remove = (event: any, invoice: PurchaseInvoice) => {
   confirm.require({
     target: event.currentTarget,
-    message: `Està segur que vol eliminar l'albarà ${invoice.number}?`,
+    message: `Està segur que vol eliminar la comanda ${invoice.number}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const deleted = await receiptsStore.deleteReceipt(invoice.id);
+      const deleted = await ordersStore.delete(invoice.id);
       if (deleted) {
         toast.add({
           severity: "success",
           summary: "Eliminat",
           life: 3000,
         });
-        await filterReceipts();
+        await filterData();
       }
     },
   });

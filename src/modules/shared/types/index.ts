@@ -15,6 +15,7 @@ export interface Exercise {
   description: string;
   startDate: Date;
   endDate: Date;
+  purchaseOrderCounter: string;
   budgetCounter: string;
   salesOrderCounter: string;
   receiptCounter: string;

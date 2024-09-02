@@ -5,7 +5,7 @@
     }}</label>
     <Dropdown
       showClear
-      :options="lifecycleStore.lifecycle?.statuses"
+      :options="lifecycle?.statuses"
       placeholder="Selecciona..."
       optionValue="id"
       optionLabel="name"
@@ -23,16 +23,26 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useLifecyclesStore } from "../store/lifecycle";
+import { onMounted, ref } from "vue";
+import SharedServices from "../services";
+import { Lifecycle } from "../types";
 
 const props = defineProps<{
   label: string;
   modelValue: string | undefined;
+  name: string;
 }>();
+
+const lifecycle = ref(undefined as Lifecycle | undefined);
+onMounted(async () => {
+  lifecycle.value = await SharedServices.Lifecycle.getByName(props.name);
+
+  if (props.modelValue === "") {
+    emit("update:modelValue", lifecycle.value?.initialStatusId!);
+  }
+});
 
 const emit = defineEmits<{
   (event: "update:modelValue", payload: string): void;
 }>();
-
-const lifecycleStore = useLifecyclesStore();
 </script>

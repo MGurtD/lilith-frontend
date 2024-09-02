@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import apiClient, { logException } from "./api.client";
-import { CreateReceiptRequest } from "../modules/purchase/types";
+import { CreatePurchaseDocumentRequest } from "../modules/purchase/types";
 
 export default abstract class BaseService<T> {
   public apiClient: AxiosInstance;
@@ -29,7 +29,7 @@ export default abstract class BaseService<T> {
       return response.data as T;
     }
   }
-  async create(model: T | CreateReceiptRequest): Promise<boolean> {
+  async create(model: T | CreatePurchaseDocumentRequest): Promise<boolean> {
     let result: boolean = false;
     const response = await apiClient.post(`${this.resource}`, model);
     if (response.status === 200 || response.status === 201) {

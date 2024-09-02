@@ -1,4 +1,5 @@
 import { ExpenseService, ExpenseTypeService } from "./expense.service";
+import { OrderService } from "./order.service";
 import {
   PurchaseInvoiceSerieService,
   PurchaseInvoiceService,
@@ -16,4 +17,5 @@ export default {
   Expense: new ExpenseService("Expense"),
   ExpenseType: new ExpenseTypeService("ExpenseType"),
   Receipt: new ReceiptService("/Receipt"),
+  Order: new OrderService("/PurchaseOrder"),
 };
