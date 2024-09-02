@@ -117,7 +117,7 @@ const expandedRows = ref({});
 const detailsWithReceptions = ref([] as Array<any>);
 onMounted(async () => {
   await orderStore.getReceptions(route.params.id as string);
-  if (!orderStore.receptions || orderStore.receptions.length === 0) {
+  if (!orderStore.receptions) {
     return;
   }
 
