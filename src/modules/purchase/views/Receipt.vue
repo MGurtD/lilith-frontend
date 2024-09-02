@@ -98,7 +98,9 @@ import { useOrderStore } from "../store/order";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
+import { useConfirm } from "primevue/useconfirm";
 
+const confirm = useConfirm();
 const route = useRoute();
 const store = useStore();
 const referenceStore = useReferenceStore();
@@ -234,9 +236,17 @@ const editDetail = async (detail: ReceiptDetail) => {
 };
 
 const removeDetail = async (detail: ReceiptDetail) => {
-  const response = await receiptStore.deleteReceiptDetail(detail.id);
-  receipt.value!.date = formatDate(receipt.value!.date);
-  if (!response.result) showResponseErrorToast(response);
+  confirm.require({
+    message: `Está segur que vols la línia?`,
+    icon: "pi pi-question-circle",
+    acceptIcon: "pi pi-check",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      const response = await receiptStore.deleteReceiptDetail(detail.id);
+      receipt.value!.date = formatDate(receipt.value!.date);
+      if (!response.result) showResponseErrorToast(response);
+    },
+  });
 };
 
 const showResponseErrorToast = (response: GenericResponse<ReceiptDetail>) => {
