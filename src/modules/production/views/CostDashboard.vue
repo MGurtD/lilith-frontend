@@ -2,8 +2,8 @@
   <div class="dashboard-filter">
     <div class="dashboard-filter-field">
       <ExerciseDatePicker
-        :exercises="sharedDataStore.exercises"
-        @range-selected="filterDashboard(false)"
+        :exercises="exercicesStore.exercises"
+        @range-selected="filterDashboard"
       />
     </div>
     <Button
@@ -34,7 +34,7 @@ import { ref, onMounted } from "vue";
 import { useStore } from "../../../store";
 import { useProductionCostDashboardStore } from "../store/productioncostdashboard";
 import { formatDateForQueryParameter } from "../../../utils/functions";
-import { useSharedDataStore } from "../../shared/store/masterData";
+import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../store/plantmodel";
 import { PrimeIcons } from "primevue/api";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
@@ -45,7 +45,7 @@ import ProductionCostDashboardService from "../services/productioncostdashboard.
 const store = useStore();
 const productionCostStore = useProductionCostDashboardStore();
 const plantModelStore = usePlantModelStore();
-const sharedDataStore = useSharedDataStore();
+const exercicesStore = useExerciseStore();
 const productionCostDashboardService = new ProductionCostDashboardService(
   "/ProductionCost"
 );
@@ -65,11 +65,15 @@ onMounted(async () => {
     icon: PrimeIcons.MONEY_BILL,
     title: "Dashboard costs producció",
   });
+  await plantModelStore.fetchOperators();
   await plantModelStore.fetchWorkcenterTypes();
-  await sharedDataStore.fetchMasterData();
+  await exercicesStore.fetchActive();
+
+  if (!store.exercisePicker.exercise) store.setCurrentYear();
+  filterDashboard();
 });
 
-const filterDashboard = async (clearDetail: boolean) => {
+const filterDashboard = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
       store.exercisePicker.dates[0]
@@ -79,7 +83,7 @@ const filterDashboard = async (clearDetail: boolean) => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
     const dataResponse =
-      await productionCostDashboardService.GetGroupedByMonthAndWorkcenter(
+      await productionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
         startTime,
         endTime
       );
@@ -91,8 +95,6 @@ const chartData = ref();
 const chartOptions = ref();
 
 const setChartData = () => {
-  const documentStyle = getComputedStyle(document.documentElement);
-
   const workcenterTypes = plantModelStore.workcenterTypes!.map(
     (type) => type.name
   );
@@ -115,7 +117,7 @@ const setChartData = () => {
   }
 
   const groupedByMonth: GroupedData = {};
-  productionCostStore.productionCostDashboardGroupedByType!.forEach((item) => {
+  productionCostStore.productionCostDashboardGrouped!.forEach((item) => {
     const month = monthNames[item.month - 1];
     if (!groupedByMonth[month]) {
       groupedByMonth[month] = {};

@@ -3,7 +3,8 @@
     :value="props.costs"
     tableStyle="min-width: 100%"
     paginator
-    :rows="12"
+    :rows="18"
+    class="p-datatable-sm"
     sortMode="multiple"
   >
     <Column field="year" header="Any"></Column>

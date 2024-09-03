@@ -5,25 +5,29 @@ import services from "../services";
 export const useProductionCostDashboardStore = defineStore({
   id: "productionCostDashboard",
   state: () => ({
-    productionCostDashboardGroupedByType: undefined as
-      | Array<ProductionCostDashboardGrouped>
-      | undefined,
-    productionCostDashboardGroupedByWorkcenter: undefined as
+    productionCostDashboardGrouped: undefined as
       | Array<ProductionCostDashboardGrouped>
       | undefined,
   }),
   getters: {},
   actions: {
     async fetchGroupedByType(startTime: string, endTime: string) {
-      this.productionCostDashboardGroupedByType =
+      this.productionCostDashboardGrouped =
         await services.ProductionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
           startTime,
           endTime
         );
     },
     async fetchGroupedByWorkcenter(startTime: string, endTime: string) {
-      this.productionCostDashboardGroupedByWorkcenter =
+      this.productionCostDashboardGrouped =
         await services.ProductionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
+          startTime,
+          endTime
+        );
+    },
+    async fetchGroupedByOperator(startTime: string, endTime: string) {
+      this.productionCostDashboardGrouped =
+        await services.ProductionCostDashboardService.GroupedByMonthAndOperator(
           startTime,
           endTime
         );
