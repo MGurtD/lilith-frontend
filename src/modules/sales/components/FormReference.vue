@@ -67,7 +67,7 @@
       <div class="mt-1">
         <BaseInput
           :type="BaseInputType.CURRENCY"
-          label="Preu"
+          label="Preu unitari"
           id="price"
           v-model="reference.price"
         />
