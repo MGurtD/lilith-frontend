@@ -156,14 +156,16 @@ const openEditDetailForm = (detail: PurchaseOrderDetail) => {
 };
 
 // Order Detail
-const submitDetailForm = (detail: PurchaseOrderDetail) => {
+const submitDetailForm = async (detail: PurchaseOrderDetail) => {
   if (formAction.value === FormActionMode.CREATE) {
-    addDetail(detail);
+    await addDetail(detail);
   } else if (formAction.value === FormActionMode.EDIT) {
-    editDetail(detail);
+    await editDetail(detail);
   }
 
   dialogOptions.visible = false;
+
+  router.push({ path: route.path, query: route.query });
 };
 
 const addDetail = async (detail: PurchaseOrderDetail) => {

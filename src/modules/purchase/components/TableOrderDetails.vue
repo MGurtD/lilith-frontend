@@ -130,7 +130,6 @@ onMounted(async () => {
         ),
       };
     }) || [];
-  console.log(detailsWithReceptions.value);
 
   lifecycle.value = await sharedServices.Lifecycle.getByName(
     "PurchaseOrderDetail"

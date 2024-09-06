@@ -9,8 +9,7 @@
           :filter="true"
           :options="
             workOrderStore.detailedWorkOrders
-              ?.sort((a, b) => a.workOrderCode.localeCompare(b.workOrderCode))
-              .map((workorder) => ({
+              ?.map((workorder) => ({
                 label:
                   'Fase ' +
                   workorder.workOrderPhaseCode +
@@ -20,6 +19,7 @@
                   workorder.machineStatusDescription,
                 value: workorder,
               }))
+              .sort((a, b) => a.label.localeCompare(b.label))
           "
           optionLabel="label"
           class="w-full"
