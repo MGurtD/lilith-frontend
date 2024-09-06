@@ -85,12 +85,15 @@ export const convertDateTimeToJSON = (dateTime: any): any => {
     dateTime.setHours(hoursDiff);
     return dateTime.toISOString();
   } else if (_.isString(dateTime)) {
-    try {
+    return convertDateTimeToJSON(convertDDMMYYYYToDate(dateTime));
+    /*try {
       var dateTimeInstance = new Date(dateTime);
+      console.log("ok - ", dateTimeInstance);
       return convertDateTimeToJSON(dateTimeInstance);
     } catch (err) {
+      console.log("ko");
       return convertDateTimeToJSON(convertDDMMYYYYToDate(dateTime));
-    }
+    }*/
   }
 };
 
