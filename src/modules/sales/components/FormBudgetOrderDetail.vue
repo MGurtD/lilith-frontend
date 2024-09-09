@@ -172,7 +172,7 @@
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import { computed, ref, watch, toRefs } from "vue";
+import { computed, ref, watch, toRefs, onMounted } from "vue";
 import {
   Budget,
   BudgetDetail,
@@ -220,6 +220,12 @@ const { detail } = toRefs(props);
 
 const textActionButton = computed(() => {
   return props.formAction === FormActionMode.CREATE ? "Afegir" : "Modificar";
+});
+
+onMounted(() => {
+  if (props.formAction === FormActionMode.EDIT) {
+    getWorkmasterCost(true); // O el valor que necesites
+  }
 });
 
 const referencePrice = ref(0);
@@ -293,7 +299,7 @@ const internalCosts = computed(() => {
     return 0;
   } else if (
     workmasterCosts.value.machineCost === 0 &&
-    workmasterCosts.value.machineCost === 0 &&
+    workmasterCosts.value.materialCost === 0 &&
     workmasterCosts.value.operatorCost === 0
   ) {
     return (

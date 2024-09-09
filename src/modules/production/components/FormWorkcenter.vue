@@ -3,7 +3,7 @@
     <div class="grid_add_row_button">
       <Button label="Guardar" style="float: right" @click="submitForm" />
     </div>
-    <section class="three-columns mb-2">
+    <section class="four-columns mb-2">
       <BaseInput
         label="Nom"
         id="name"
@@ -19,6 +19,15 @@
         :class="{
           'p-invalid': validation.errors.description,
         }"
+      ></BaseInput>
+      <BaseInput
+        :type="BaseInputType.NUMERIC"
+        :minFractionDigits="2"
+        class="mb-2"
+        label="Marge de benefici"
+        id="profitPercentage"
+        v-model="workcenter.profitPercentage"
+        suffix="%"
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Desactivat</label>
@@ -75,6 +84,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
+import { BaseInputType } from "../../../types/component";
 import { Workcenter } from "../types";
 import * as Yup from "yup";
 import {

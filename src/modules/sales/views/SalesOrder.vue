@@ -232,6 +232,16 @@ const openOrderDetailDialog = (
 };
 
 const onOrderSubmit = async (salesOrder: SalesOrderHeader) => {
+  if (!salesOrder.date) {
+    toast.add({
+      severity: "error",
+      summary: "Error al crear la comanda ",
+      detail: "La data no pot estar buida",
+      life: 5000,
+    });
+    return false;
+  }
+
   let result = false;
   let message = "";
 

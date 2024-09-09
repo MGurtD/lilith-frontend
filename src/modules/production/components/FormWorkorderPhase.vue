@@ -45,17 +45,6 @@
         />
       </div>
       <div>
-        <BaseInput
-          :type="BaseInputType.NUMERIC"
-          :minFractionDigits="2"
-          class="mb-2"
-          label="Marge de benefici"
-          id="profitPercentage"
-          v-model="phase.profitPercentage"
-          suffix="%"
-        ></BaseInput>
-      </div>
-      <div>
         <label class="block text-900 mb-2">Màquina preferida</label>
         <Dropdown
           v-model="phase.preferredWorkcenterId"
@@ -64,7 +53,20 @@
           optionValue="id"
           optionLabel="description"
           class="w-full"
+          @change="workcenterUpdated"
         />
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.NUMERIC"
+          :minFractionDigits="2"
+          class="mb-2"
+          label="Marge de benefici"
+          id="profitPercentage"
+          v-model="phase.profitPercentage"
+          suffix="%"
+          @change="workcenterUpdated"
+        ></BaseInput>
       </div>
       <div>
         <label class="block text-900 mb-2">Tipus d'operari</label>
@@ -195,6 +197,21 @@ const workcenterTypeUpdated = () => {
   );
   props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
 };
+
+const workcenterUpdated = () => {
+  let selectedWorkcenter = plantModelStore.workcenters?.find(
+    (wt) => wt.id === props.phase.preferredWorkcenterId
+  );
+  if (selectedWorkcenter!.profitPercentage > 0) {
+    props.phase.profitPercentage = selectedWorkcenter!.profitPercentage;
+  } else {
+    let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
+      (wt) => wt.id === props.phase.workcenterTypeId
+    );
+    props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
+  }
+};
+
 const isExternalWorkChanged = async () => {
   if (props.phase.isExternalWork) {
     props.phase.operatorTypeId = null;

@@ -46,6 +46,7 @@ export interface Workcenter {
   workcenterTypeId: string;
   areaId: string;
   shiftId: string;
+  profitPercentage: number;
   disabled: boolean;
 }
 

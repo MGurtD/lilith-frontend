@@ -153,6 +153,15 @@ onMounted(async () => {
 });
 
 const submitForm = () => {
+  if (!budget.value?.date) {
+    toast.add({
+      severity: "error",
+      summary: "Error al crear la comanda ",
+      detail: "La data no pot estar buida",
+      life: 5000,
+    });
+    return false;
+  }
   const form = budgetForm.value as any;
   form.submitForm();
 };
