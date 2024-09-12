@@ -13,7 +13,6 @@
     dataKey="id"
   >
     <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>
-    <Column field="id" header="Codi" style="width: 15%"></Column>
     <Column field="code" header="Codi" style="width: 15%"></Column>
     <Column field="description" header="Descripció" style="width: 65%"></Column>
   </DataTable>
