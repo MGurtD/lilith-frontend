@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "build-development": "vue-tsc && vite build --mode development --outDir dist-test",
+    "build-preprod": "vue-tsc && vite build --mode preprod --outDir dist-preprod",
     "preview": "vite preview"
   },
   "dependencies": {
