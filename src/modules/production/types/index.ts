@@ -205,6 +205,7 @@ export interface WorkOrderPhase {
   statusId: string;
   startTime: string | null;
   endTime: string | null;
+  purchaseOrderId?: string | null;
   workOrder?: WorkOrder;
   details?: Array<WorkOrderPhaseDetail>;
   billOfMaterials?: Array<WorkOrderPhaseBillOfMaterials>;

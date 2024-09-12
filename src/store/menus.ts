@@ -68,7 +68,18 @@ export const applicationMenus = [
       {
         icon: PrimeIcons.SHOPPING_BAG,
         title: "Comandes",
-        href: "/purchase-orders",
+        child: [
+          {
+            icon: PrimeIcons.SHOPPING_BAG,
+            title: "Comandes",
+            href: "/purchase-orders",
+          },
+          {
+            icon: PrimeIcons.SHOPPING_CART,
+            title: "Comandes des de producció",
+            href: "/phase-to-purchase-order",
+          },
+        ],
       },
       {
         icon: PrimeIcons.TRUCK,

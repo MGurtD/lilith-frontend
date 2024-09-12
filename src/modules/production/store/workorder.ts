@@ -117,6 +117,10 @@ export const useWorkOrderStore = defineStore({
     async fetchPhaseById(id: string) {
       this.workorderPhase = await Services.WorkOrderPhase.getById(id);
     },
+    async fetchExternalPhases() {
+      this.workorderPhases =
+        await Services.WorkOrderPhase.getExternalWorkOrderPhases();
+    },
     async createPhase(model: WorkOrderPhase) {
       const result = await Services.WorkOrderPhase.create(model);
       if (result) await this.fetchPhaseById(model.id);
