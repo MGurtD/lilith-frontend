@@ -174,6 +174,17 @@ export interface Receipt {
   disabled: boolean;
 }
 
+export interface PurchaseOrderFromWO {
+  workorderId: string;
+  workorderDescription: string;
+  phaseId: string;
+  phaseDescription: string;
+  serviceReferenceId: string;
+  serviceReferenceName: string;
+  supplierId: string;
+  quantity: number;
+}
+
 export interface CreatePurchaseDocumentRequest {
   id: string;
   date: string | Date;
