@@ -31,7 +31,11 @@
       :closable="dialogOptions.closable"
       :modal="dialogOptions.modal"
     >
-      <FormOrderDetail :detail="selectedDetail" @submit="submitDetailForm" />
+      <FormOrderDetail
+        :detail="selectedDetail"
+        :order="order"
+        @submit="submitDetailForm"
+      />
     </Dialog>
   </main>
   <main v-else>Carregant comanda ...</main>
@@ -164,8 +168,9 @@ const submitDetailForm = async (detail: PurchaseOrderDetail) => {
   }
 
   dialogOptions.visible = false;
-
-  router.push({ path: route.path, query: route.query });
+  //router.push({ path: route.path, query: route.query });
+  await orderStore.fetchOne(route.params.id as string);
+  console.log(order.value?.details);
 };
 
 const addDetail = async (detail: PurchaseOrderDetail) => {

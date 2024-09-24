@@ -7,6 +7,7 @@
           v-model="detail.referenceId"
           :fullName="true"
           :disabled="detail.receivedQuantity > 0"
+          @update:modelValue="getPrice"
         ></DropdownReference>
       </div>
       <div>
@@ -33,6 +34,7 @@
           :type="BaseInputType.NUMERIC"
           label="Quantitat"
           v-model="detail.quantity"
+          @input="calculateAmount"
         />
       </div>
       <div>
@@ -58,8 +60,8 @@
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
-import { ref } from "vue";
-import { PurchaseOrderDetail } from "../types";
+import { ref, watch } from "vue";
+import { PurchaseOrderDetail, PurchaseOrder } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -68,15 +70,19 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   detail: PurchaseOrderDetail;
+  order: PurchaseOrder;
 }>();
 
 const emit = defineEmits<{
   (e: "submit", detail: PurchaseOrderDetail): void;
   (e: "cancel"): void;
 }>();
+
+const referenceStore = useReferenceStore();
 
 const toast = useToast();
 
@@ -92,6 +98,28 @@ const validation = ref({
 const validate = () => {
   const formValidation = new FormValidation(schema);
   validation.value = formValidation.validate(props.detail);
+};
+
+watch(
+  () => props.detail.quantity,
+  async (newValue) => {
+    if (newValue) {
+      await calculateAmount();
+    }
+  }
+);
+
+const getPrice = async (id: string | null) => {
+  if (id == null || props.order.supplierId == "") {
+    return;
+  }
+  const price = await referenceStore.getPrice(id, props.order.supplierId);
+  props.detail.unitPrice = price;
+  await calculateAmount();
+};
+
+const calculateAmount = async () => {
+  props.detail.amount = props.detail.quantity * props.detail.unitPrice;
 };
 
 const submitForm = async () => {

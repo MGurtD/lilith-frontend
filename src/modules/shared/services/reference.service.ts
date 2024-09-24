@@ -60,6 +60,22 @@ export class ReferenceService extends BaseService<Reference> {
     );
     return response.data as Array<SupplierReference>;
   }
+
+  async getPrice(_referenceId: string, _supplierId: string): Promise<number> {
+    interface iRequest {
+      referenceId: string;
+      supplierId: string;
+    }
+    const request: iRequest = {
+      referenceId: _referenceId,
+      supplierId: _supplierId,
+    };
+    const response = await this.apiClient.post(
+      `${this.resource}/GetPrice`,
+      request
+    );
+    return response.data;
+  }
   async addSupplier(model: SupplierReference): Promise<boolean> {
     const response = await this.apiClient.post(`Supplier/Reference`, model);
     return response.status === 200 || response.status === 201;
