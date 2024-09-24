@@ -70,7 +70,8 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
-import { useReferenceStore } from "../../shared/store/reference";
+import PurchaseServices from "../services";
+import SharedServices from "../../shared/services";
 
 const props = defineProps<{
   detail: PurchaseOrderDetail;
@@ -81,8 +82,6 @@ const emit = defineEmits<{
   (e: "submit", detail: PurchaseOrderDetail): void;
   (e: "cancel"): void;
 }>();
-
-const referenceStore = useReferenceStore();
 
 const toast = useToast();
 
@@ -104,7 +103,7 @@ watch(
   () => props.detail.quantity,
   async (newValue) => {
     if (newValue) {
-      await calculateAmount();
+      calculateAmount();
     }
   }
 );
@@ -113,12 +112,32 @@ const getPrice = async (id: string | null) => {
   if (id == null || props.order.supplierId == "") {
     return;
   }
-  const price = await referenceStore.getPrice(id, props.order.supplierId);
-  props.detail.unitPrice = price;
-  await calculateAmount();
+
+  var supplierReference =
+    await PurchaseServices.Supplier.getSupplierReferenceBySupplierIdAndReferenceId(
+      props.order.supplierId,
+      id
+    );
+  if (supplierReference) {
+    props.detail.unitPrice = supplierReference.supplierPrice;
+    props.detail.expectedReceiptDate = addDays(supplierReference.supplyDays);
+  } else {
+    const reference = await SharedServices.Reference.getById(id);
+    if (reference) {
+      props.detail.unitPrice = reference.price;
+    }
+  }
+
+  calculateAmount();
 };
 
-const calculateAmount = async () => {
+function addDays(days: number) {
+  let currentDate = new Date(); // Get the current date
+  currentDate.setDate(currentDate.getDate() + days); // Add the specified number of days
+  return currentDate;
+}
+
+const calculateAmount = () => {
   props.detail.amount = props.detail.quantity * props.detail.unitPrice;
 };
 

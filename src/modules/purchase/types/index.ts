@@ -207,7 +207,7 @@ export interface PurchaseOrderDetail {
   statusId: string;
   workOrderPhaseId?: string | null;
   referenceId: string;
-  expectedReceiptDate?: string | null;
+  expectedReceiptDate?: string | Date | null;
   quantity: number;
   receivedQuantity: number;
   unitPrice: number;

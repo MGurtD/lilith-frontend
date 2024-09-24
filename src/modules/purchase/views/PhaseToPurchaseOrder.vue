@@ -135,7 +135,7 @@ onMounted(async () => {
   if (purchaseOrders.value && purchaseOrders.value.length > 0) {
     for (const phase of purchaseOrders.value) {
       if (phase && phase.serviceReferenceId != null) {
-        const suppliers = await supplierService.getSuppliersByReference(
+        const suppliers = await supplierService.getSuppliersReferenceById(
           phase.serviceReferenceId
         );
         suppliersByReference.value[phase.phaseId] = suppliers;
