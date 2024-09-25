@@ -116,15 +116,6 @@ const lifecycle = ref(undefined as undefined | Lifecycle);
 const expandedRows = ref({});
 const detailsWithReceptions = ref([] as Array<any>);
 
-const emptyReceptions = {
-  purchaseOrderDetailId: "",
-  receiptDetailId: "",
-  quantity: 0,
-  user: "",
-  createdOn: "",
-  id: "",
-};
-
 watch(
   () => props.details?.length,
   async (newValue) => {
