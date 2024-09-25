@@ -58,7 +58,9 @@
     >
     </Column>
     <Column field="cost" header="Cost" style="width: 30%">
-      <template #body="slotProps"> {{ formatCurrency(slotProps.data.cost) }} </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.cost) }}
+      </template>
     </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
@@ -76,6 +78,7 @@
     </Column>
   </DataTable>
 </template>
+
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
@@ -83,27 +86,40 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkcenterCost } from "../types";
 import { formatCurrency } from "../../../utils/functions";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
 const plantmodelStore = usePlantModelStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const confirm = useConfirm();
 
-onMounted(async () => {
-  await plantmodelStore.fetchWorkcenterCosts();
-  await plantmodelStore.fetchWorkcenters();
-  await plantmodelStore.fetchMachineStatuses();
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("WorkcenterCosts", "");
+  if (userFilter) {
+    filter.value = userFilter;
+  }
+};
 
+onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,
     title: "Costs per màquina",
   });
+
+  await plantmodelStore.fetchWorkcenterCosts();
+  await plantmodelStore.fetchWorkcenters();
+  await plantmodelStore.fetchMachineStatuses();
+  getUserFilter();
+});
+onUnmounted(() => {
+  userFilterStore.addFilter("WorkcenterCosts", "", filter.value);
 });
 
 const mappedWorkcenterCosts = computed(() => {
