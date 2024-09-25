@@ -108,7 +108,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useExpenseStore } from "../store/expense";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -121,11 +121,13 @@ import { Expense } from "../types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { useExerciseStore } from "../../shared/store/exercise";
+import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
 const exerciseStore = useExerciseStore();
 const expenseStore = useExpenseStore();
+const userFilterStore = useUserFilterStore();
 const toast = useToast();
 const confirm = useConfirm();
 
@@ -141,6 +143,20 @@ const totalAmount = computed(() => {
   return total;
 });
 
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter("Expenses", "");
+  if (userFilter) {
+    filter.value.expenseTypeId = userFilter.expenseTypeId;
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
+  }
+};
+
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.WALLET,
@@ -152,7 +168,16 @@ onMounted(async () => {
     await exerciseStore.fetchActive();
   }
   setCurrentYear();
+  getUserFilter();
   filterExpense();
+});
+onUnmounted(() => {
+  const savedFilter = {
+    expenseTypeId: filter.value.expenseTypeId,
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("Expenses", "", savedFilter);
 });
 
 const filterExpense = async () => {
