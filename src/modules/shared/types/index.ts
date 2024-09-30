@@ -44,6 +44,7 @@ export interface Lifecycle {
 export interface Status {
   id: string;
   name: string;
+  color: string;
   disabled: boolean;
   lifecycleId: string;
   transitions: Array<StatusTransition>;

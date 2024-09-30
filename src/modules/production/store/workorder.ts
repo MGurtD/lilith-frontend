@@ -26,6 +26,10 @@ export const useWorkOrderStore = defineStore({
       const wo = this.workorders?.find((r) => r.id === id);
       if (wo) return wo.code;
     },
+    getWorkOrderStatusById(id: string): string | undefined {
+      const wo = this.workorders?.find((r) => r.id === id);
+      if (wo) return wo.statusId;
+    },
     getWorkOrderCost(id: string): number {
       let cost = 0;
       const wo = this.workorders?.find((r) => r.id === id);
