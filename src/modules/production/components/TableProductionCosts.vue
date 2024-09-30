@@ -15,6 +15,7 @@
       header="Tipus de centre"
       sortable
     ></Column>
+    <Column field="operatorName" header="Operari" sortable></Column>
     <Column field="totalTime" header="Temps mensual">
       <template #body="slotProps">
         <span>{{ formatToTwoDecimals(slotProps.data.totalTime) }} hores</span>

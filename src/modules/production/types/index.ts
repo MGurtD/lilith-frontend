@@ -311,6 +311,7 @@ export interface ShiftDetail {
 
 export interface ProductionCostDashboardGrouped {
   workcenterName: string;
+  operatorName: string;
   workcenterTypeName: string;
   year: number;
   month: number;

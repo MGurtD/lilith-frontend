@@ -6,6 +6,20 @@
         @range-selected="filterDashboard"
       />
     </div>
+    <div class="dashboard-filter-field">
+      <label class="block text-900">Consolidat per:</label>
+      <Dropdown
+        id="consolidatedBy"
+        v-model="filter.consolidatedBy"
+        :options="optionValues"
+        placeholder="Selecciona..."
+        optionValue="id"
+        optionLabel="value"
+        class="w-full"
+        @change="filterDashboard"
+      >
+      </Dropdown>
+    </div>
     <Button
       class="grid_add_row_button"
       :icon="PrimeIcons.FILTER_SLASH"
@@ -52,11 +66,23 @@ const productionCostDashboardService = new ProductionCostDashboardService(
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
+  consolidatedBy: undefined as string | undefined,
 });
 
 const clearFilter = () => {
   store.cleanExercisePicker();
+  filter.value.consolidatedBy = "";
 };
+
+type Options = {
+  id: string;
+  value: string;
+};
+
+const optionValues: Options[] = [
+  { id: "operator", value: "Operaris" },
+  { id: "workcentertype", value: "Tipus de centre de treball" },
+];
 
 const costs = ref([] as Array<ProductionCostDashboardGrouped>);
 
@@ -70,7 +96,7 @@ onMounted(async () => {
   await exercicesStore.fetchActive();
 
   if (!store.exercisePicker.exercise) store.setCurrentYear();
-  filterDashboard();
+  //filterDashboard();
 });
 
 const filterDashboard = async () => {
@@ -79,14 +105,29 @@ const filterDashboard = async () => {
       store.exercisePicker.dates[0]
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
-    await productionCostStore.fetchGroupedByType(startTime, endTime);
+
+    var dataResponse: Array<ProductionCostDashboardGrouped> | undefined;
+    if (filter.value.consolidatedBy == "operator") {
+      await productionCostStore.fetchGroupedByOperator(startTime, endTime);
+      dataResponse =
+        await productionCostDashboardService.GroupedByMonthAndOperator(
+          startTime,
+          endTime
+        );
+    }
+    if (filter.value.consolidatedBy == "workcentertype") {
+      await productionCostStore.fetchGroupedByType(startTime, endTime);
+      dataResponse =
+        await productionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
+          startTime,
+          endTime
+        );
+    }
+
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
-    const dataResponse =
-      await productionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
-        startTime,
-        endTime
-      );
+    //console.log(chartData.value);
+    //console.log(chartOptions.value);
     if (dataResponse) costs.value = dataResponse;
   }
 };
@@ -97,6 +138,9 @@ const chartOptions = ref();
 const setChartData = () => {
   const workcenterTypes = plantModelStore.workcenterTypes!.map(
     (type) => type.name
+  );
+  const operatorNames = plantModelStore.operators!.map(
+    (operator) => operator.name + " " + operator.surname
   );
   const monthNames = [
     "Gener",
@@ -115,29 +159,53 @@ const setChartData = () => {
   interface GroupedData {
     [key: string]: { [key: string]: number };
   }
+  interface Dataset {
+    type: string;
+    label: string;
+    backgroundColor: string;
+    data: number[];
+  }
 
   const groupedByMonth: GroupedData = {};
+  var datasets: Dataset[] = [];
   productionCostStore.productionCostDashboardGrouped!.forEach((item) => {
     const month = monthNames[item.month - 1];
     if (!groupedByMonth[month]) {
       groupedByMonth[month] = {};
     }
-    groupedByMonth[month][item.workcenterTypeName] = item.totalCost;
+    if (filter.value.consolidatedBy == "operator") {
+      groupedByMonth[month][item.operatorName] = item.totalCost; //item.totalCost;
+    }
+    if (filter.value.consolidatedBy == "workcentertype") {
+      groupedByMonth[month][item.workcenterTypeName] = item.totalCost;
+    }
   });
 
   const labels = Object.keys(groupedByMonth).sort(
     (a, b) => parseInt(a) - parseInt(b)
   );
 
-  const datasets = workcenterTypes.map((type, index) => {
-    return {
-      type: "bar",
-      label: type,
-      backgroundColor: colors[index],
-      data: labels.map((month) => groupedByMonth[month][type] || 0),
-    };
-  });
-
+  if (filter.value.consolidatedBy == "operator") {
+    datasets = operatorNames.map((operator, index) => {
+      return {
+        type: "bar",
+        label: operator,
+        backgroundColor: colors[index],
+        data: labels.map((month) => groupedByMonth[month][operator] || 0),
+      };
+    });
+  }
+  if (filter.value.consolidatedBy == "workcentertype") {
+    datasets = workcenterTypes.map((type, index) => {
+      return {
+        type: "bar",
+        label: type,
+        backgroundColor: colors[index],
+        data: labels.map((month) => groupedByMonth[month][type] || 0),
+      };
+    });
+  }
+  //console.log(labels, datasets);
   return {
     labels,
     datasets,
