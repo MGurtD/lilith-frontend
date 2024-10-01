@@ -97,7 +97,7 @@
     </Column>
     <Column v-if="isTool" header="Àrea" style="width: 10%">
       <template #body="slotProps">
-        {{ getAreaDescription(slotProps.data.areaId) }}
+        {{ getAreaName(slotProps.data.areaId) }}
       </template>
     </Column>
 
@@ -247,10 +247,10 @@ const getTypeDescription = (referenceTypeId: string) => {
   return referenceType ? referenceType.description : "";
 };
 
-const getAreaDescription = (areaId: string) => {
+const getAreaName = (areaId: string) => {
   const area = plantModelStore.areas?.find((a) => a.id === areaId);
 
-  if (area) return area.description;
+  if (area) return area.name;
   else return "";
 };
 </script>
