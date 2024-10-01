@@ -82,13 +82,7 @@ export const useOrderStore = defineStore({
     },
     async deleteDetail(id: string) {
       const response = await Services.Order.removeDetail(id);
-      if (response.result) {
-        const detail = this.order!.details.find((d) => d.id === id);
-        if (detail) {
-          const index = this.order!.details.indexOf(detail);
-          this.order!.details.splice(index);
-        }
-      }
+      if (response.result) await this.fetchOne(id);
       return response;
     },
     async getReceptions(orderId: string) {

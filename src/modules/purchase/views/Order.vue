@@ -1,6 +1,14 @@
 <template>
   <main v-if="order">
-    <FormOrder @submit="submitForm" />
+    <SplitButton
+      label="Guardar"
+      @click="submitForm"
+      :model="items"
+      :size="'small'"
+      class="grid_add_row_button"
+    />
+
+    <FormOrder class="pt-3" ref="orderForm" @submit="onOrderSubmit" />
     <br />
     <TableOrderDetails
       v-if="order.details"
@@ -46,7 +54,11 @@ import { PrimeIcons } from "primevue/api";
 import { PurchaseOrderDetail } from "../types";
 import { GenericResponse } from "../../../types";
 import { ReferenceCategoryEnum } from "../../shared/types";
-import { formatDate, getNewUuid } from "../../../utils/functions";
+import {
+  createBlobAndDownloadFile,
+  formatDate,
+  getNewUuid,
+} from "../../../utils/functions";
 import { DialogOptions, FormActionMode } from "../../../types/component";
 import { useRouter, useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -58,10 +70,13 @@ import { useReferenceTypeStore } from "../../shared/store/referenceType";
 import { useOrderStore } from "../store/order";
 import { useSuppliersStore } from "../store/suppliers";
 import { useExerciseStore } from "../../shared/store/exercise";
+import Services from "../services";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
 
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const orderForm = ref();
 const confirm = useConfirm();
 const referenceStore = useReferenceStore();
 const referenceTypeStore = useReferenceTypeStore();
@@ -70,6 +85,14 @@ const suppliersStore = useSuppliersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 const { order } = storeToRefs(orderStore);
+
+const items = [
+  {
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(),
+  },
+];
 
 const loadView = async () => {
   await orderStore.fetchOne(route.params.id as string);
@@ -99,6 +122,21 @@ onMounted(async () => {
 const toast = useToast();
 
 const submitForm = async () => {
+  if (!order.value?.date) {
+    toast.add({
+      severity: "error",
+      summary: "Error al crear la comanda ",
+      detail: "La data no pot estar buida",
+      life: 5000,
+    });
+    return false;
+  }
+
+  const form = orderForm.value as any;
+  form.submitForm();
+};
+
+const onOrderSubmit = async () => {
   let result = false;
   let message = "";
   if (order.value) {
@@ -203,5 +241,30 @@ const showResponseErrorToast = (
     life: 10000,
     closable: true,
   });
+};
+
+const printInvoice = async () => {
+  const orderReport = await Services.Order.GetReportDataById(order.value!.id);
+
+  if (orderReport) {
+    const fileName = `ComandaCompra_${order.value?.number}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      orderReport,
+      REPORTS.PurchaseOrder,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
+  }
 };
 </script>

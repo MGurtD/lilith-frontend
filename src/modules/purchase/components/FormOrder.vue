@@ -1,67 +1,58 @@
 <template>
-  <div>
-    <Button
-      label="Guardar"
-      size="small"
-      class="grid_add_row_button"
-      @click="submitForm"
-    />
-    <br />
-    <form v-if="order">
-      <section class="three-columns">
-        <div class="mt-1">
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            label="Número"
-            id="number"
-            v-model="order.number"
-            disabled
-          />
-        </div>
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Exercici</label>
-          <Dropdown
-            v-model="order.exerciseId"
-            editable
-            :options="exerciseStore.exercises"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.exerciseId,
-            }"
-          />
-        </div>
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Data Comanda</label>
-          <Calendar v-model="order.date" dateFormat="dd/mm/yy" />
-        </div>
-      </section>
-      <section class="three-columns">
-        <div class="mt-1">
-          <DropdownLifecycle
-            label="Estat"
-            name="PurchaseOrder"
-            v-model="order.statusId"
-          />
-        </div>
-        <div class="mt-1">
-          <label class="block text-900 mb-2">Proveïdor</label>
-          <Dropdown
-            v-model="order.supplierId"
-            editable
-            :options="suppliersStore.suppliers"
-            optionValue="id"
-            optionLabel="comercialName"
-            class="w-full"
-            :class="{
-              'p-invalid': validation.errors.customerId,
-            }"
-          />
-        </div>
-      </section>
-    </form>
-  </div>
+  <form v-if="order">
+    <section class="three-columns">
+      <div class="mt-1">
+        <BaseInput
+          :type="BaseInputType.TEXT"
+          label="Número"
+          id="number"
+          v-model="order.number"
+          disabled
+        />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Exercici</label>
+        <Dropdown
+          v-model="order.exerciseId"
+          editable
+          :options="exerciseStore.exercises"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.exerciseId,
+          }"
+        />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Data Comanda</label>
+        <Calendar v-model="order.date" dateFormat="dd/mm/yy" />
+      </div>
+    </section>
+    <section class="three-columns">
+      <div class="mt-1">
+        <DropdownLifecycle
+          label="Estat"
+          name="PurchaseOrder"
+          v-model="order.statusId"
+        />
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Proveïdor</label>
+        <Dropdown
+          v-model="order.supplierId"
+          editable
+          :options="suppliersStore.suppliers"
+          optionValue="id"
+          optionLabel="comercialName"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.customerId,
+          }"
+        />
+      </div>
+    </section>
+  </form>
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
