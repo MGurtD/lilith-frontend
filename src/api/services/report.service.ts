@@ -10,6 +10,7 @@ export enum REPORTS {
   Order = "SalesOrder",
   DeliveryNote = "DeliveryNote",
   Invoice = "SalesInvoice",
+  PurchaseOrder = "PurchaseOrder",
 }
 
 export class ReportService {

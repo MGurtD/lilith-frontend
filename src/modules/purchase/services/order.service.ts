@@ -7,6 +7,14 @@ import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
 
 export class OrderService extends BaseService<PurchaseOrder> {
+  async GetReportDataById(id: string) {
+    const endpoint = `${this.resource}/Report/${id}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data;
+    }
+  }
+
   async getBetweenDates(
     startTime: string,
     endTime: string,
