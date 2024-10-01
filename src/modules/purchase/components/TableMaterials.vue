@@ -95,6 +95,11 @@
         {{ getReferenceTypeDensity(slotProps.data.referenceTypeId) }}
       </template>
     </Column>
+    <Column v-if="isTool" header="Àrea" style="width: 10%">
+      <template #body="slotProps">
+        {{ getAreaName(slotProps.data.areaId) }}
+      </template>
+    </Column>
 
     <Column style="width: 10%">
       <template #body="slotProps">
@@ -120,10 +125,12 @@ import { useReferenceTypeStore } from "../../shared/store/referenceType";
 import { useUserFilterStore } from "../../../store/userfilter";
 import DropdownReferenceCategory from "../../shared/components/DropdownReferenceCategory.vue";
 import { formatCurrency } from "../../../utils/functions";
+import { usePlantModelStore } from "../../production/store/plantmodel";
 
 const userFilterStore = useUserFilterStore();
 const referenceTypeStore = useReferenceTypeStore();
 const referenceStore = useReferenceStore();
+const plantModelStore = usePlantModelStore();
 
 const props = defineProps<{
   references: Array<Reference> | undefined;
@@ -142,6 +149,10 @@ onMounted(() => {
     props.filter.code = userFilter.code;
     props.filter.referenceTypeId = userFilter.referenceTypeId;
     props.filter.referenceCategory = userFilter.referenceCategory;
+  }
+
+  if (!plantModelStore.areas) {
+    plantModelStore.fetchAreas();
   }
 });
 onUnmounted(() => {
@@ -234,6 +245,13 @@ const getTypeDescription = (referenceTypeId: string) => {
   const referenceType =
     referenceTypeStore.getReferenceTypeById(referenceTypeId);
   return referenceType ? referenceType.description : "";
+};
+
+const getAreaName = (areaId: string) => {
+  const area = plantModelStore.areas?.find((a) => a.id === areaId);
+
+  if (area) return area.name;
+  else return "";
 };
 </script>
 <style scoped>

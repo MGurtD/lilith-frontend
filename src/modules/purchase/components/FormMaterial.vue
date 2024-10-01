@@ -104,6 +104,12 @@ const validate = () => {
         "El preu de transport és obligatori"
       ),
     });
+  } else if (props.reference.categoryName === ReferenceCategoryEnum.TOOL) {
+    categorySchema = Yup.object().shape({
+      ...schema,
+      areaId: Yup.string().required("L'àrea és obligatoria"),
+      taxId: Yup.string().required("L'IVA és obligatori"),
+    });
   }
 
   const formValidation = new FormValidation(categorySchema);

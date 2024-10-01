@@ -94,6 +94,7 @@ export interface Reference {
   purchase: boolean;
   production: boolean;
   isService: boolean;
+  areaId: string | null;
 }
 
 export interface ReferenceType {
