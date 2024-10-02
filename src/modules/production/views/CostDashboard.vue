@@ -7,7 +7,7 @@
       />
     </div>
     <div class="dashboard-filter-field">
-      <label class="block text-900">Concepte:</label>
+      <label class="block text-900">Consolidat per:</label>
       <Dropdown
         id="consolidatedBy"
         v-model="filter.consolidatedBy"
