@@ -288,3 +288,14 @@ export interface CreateWorkOrderFromSalesOrderDto {
   workOrderDto: CreateWorkOrderDto;
   orderDetail: SalesOrderDetail;
 }
+
+export interface ConsolidatedIncomes {
+  year: number;
+  month: number;
+  week: number;
+  date: string;
+  type: string;
+  typedetail: string;
+  description: string;
+  amount: number;
+}
