@@ -63,6 +63,13 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
     );
     if (response.status === 200) return response.data as Array<WorkOrderPhase>;
   }
+
+  async getExternalWorkOrderPhases(): Promise<
+    Array<WorkOrderPhase> | undefined
+  > {
+    const response = await this.apiClient.get(`${this.resource}/External`);
+    if (response.status === 200) return response.data as Array<WorkOrderPhase>;
+  }
 }
 export class WorkOrderPhaseDetailService extends BaseService<WorkOrderPhaseDetail> {
   async getByWorkOrderPhaseId(

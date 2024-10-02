@@ -2,6 +2,7 @@ import {
   PurchaseOrder,
   PurchaseOrderDetail,
   PurchaseOrderReceiptDetail,
+  PurchaseOrderFromWO,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -29,6 +30,15 @@ export class OrderService extends BaseService<PurchaseOrder> {
     if (response.status === 200) {
       return response.data as Array<PurchaseOrder>;
     }
+  }
+  async createFromWo(
+    model: Array<PurchaseOrderFromWO>
+  ): Promise<GenericResponse<Boolean>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/FromWo`,
+      model
+    );
+    return response.data as GenericResponse<Boolean>;
   }
 
   async addDetail(

@@ -22,6 +22,8 @@ const ExpenseDashboard = () => import("./views/ExpenseDashboard.vue");
 const Materials = () => import("./views/Materials.vue");
 const Material = () => import("./views/Material.vue");
 
+const PhaseToPurchaseOrder = () => import("./views/PhaseToPurchaseOrder.vue");
+
 export default [
   { path: "/material", name: "Materials", component: Materials },
   { path: "/material/:id/:category", name: "Material", component: Material },
@@ -42,6 +44,11 @@ export default [
     path: "/purchase-orders",
     name: "PurchaseOrders",
     component: Orders,
+  },
+  {
+    path: "/phase-to-purchase-order",
+    name: "PhaseToPurchaseOrder",
+    component: PhaseToPurchaseOrder,
   },
   {
     path: "/purchase-orders/:id",

@@ -7,6 +7,7 @@
           v-model="detail.referenceId"
           :fullName="true"
           :disabled="detail.receivedQuantity > 0"
+          @update:modelValue="getPrice"
         ></DropdownReference>
       </div>
       <div>
@@ -33,6 +34,7 @@
           :type="BaseInputType.NUMERIC"
           label="Quantitat"
           v-model="detail.quantity"
+          @input="calculateAmount"
         />
       </div>
       <div>
@@ -58,8 +60,8 @@
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
-import { ref } from "vue";
-import { PurchaseOrderDetail } from "../types";
+import { ref, watch } from "vue";
+import { PurchaseOrderDetail, PurchaseOrder } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -68,9 +70,12 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
+import PurchaseServices from "../services";
+import SharedServices from "../../shared/services";
 
 const props = defineProps<{
   detail: PurchaseOrderDetail;
+  order: PurchaseOrder;
 }>();
 
 const emit = defineEmits<{
@@ -92,6 +97,48 @@ const validation = ref({
 const validate = () => {
   const formValidation = new FormValidation(schema);
   validation.value = formValidation.validate(props.detail);
+};
+
+watch(
+  () => props.detail.quantity,
+  async (newValue) => {
+    if (newValue) {
+      calculateAmount();
+    }
+  }
+);
+
+const getPrice = async (id: string | null) => {
+  if (id == null || props.order.supplierId == "") {
+    return;
+  }
+
+  var supplierReference =
+    await PurchaseServices.Supplier.getSupplierReferenceBySupplierIdAndReferenceId(
+      props.order.supplierId,
+      id
+    );
+  if (supplierReference) {
+    props.detail.unitPrice = supplierReference.supplierPrice;
+    props.detail.expectedReceiptDate = addDays(supplierReference.supplyDays);
+  } else {
+    const reference = await SharedServices.Reference.getById(id);
+    if (reference) {
+      props.detail.unitPrice = reference.price;
+    }
+  }
+
+  calculateAmount();
+};
+
+function addDays(days: number) {
+  let currentDate = new Date(); // Get the current date
+  currentDate.setDate(currentDate.getDate() + days); // Add the specified number of days
+  return currentDate;
+}
+
+const calculateAmount = () => {
+  props.detail.amount = props.detail.quantity * props.detail.unitPrice;
 };
 
 const submitForm = async () => {
