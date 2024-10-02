@@ -63,6 +63,7 @@ const onAdd = () => {
     name: "",
     disabled: false,
     transitions: [],
+    color: "",
   } as Status;
   emit("add", defaultImport);
 };

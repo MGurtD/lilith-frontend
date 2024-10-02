@@ -85,6 +85,7 @@ export interface Reference {
   price: number;
   disabled: boolean;
   customerId: string | null;
+  areaId: string | null;
   categoryName: string;
   referenceTypeId: string | null;
   referenceFormatId: string | null;
@@ -95,7 +96,6 @@ export interface Reference {
   purchase: boolean;
   production: boolean;
   isService: boolean;
-  areaId: string | null;
 }
 
 export interface ReferenceType {
