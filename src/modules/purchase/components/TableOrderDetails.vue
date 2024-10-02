@@ -91,7 +91,7 @@
 </template>
 <script setup lang="ts">
 import LinkReference from "../../shared/components/LinkReference.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -115,12 +115,30 @@ const orderStore = useOrderStore();
 const lifecycle = ref(undefined as undefined | Lifecycle);
 const expandedRows = ref({});
 const detailsWithReceptions = ref([] as Array<any>);
+
+watch(
+  () => props.details?.length,
+  async (newValue) => {
+    if (newValue) {
+      await mergeDetailsWithReceptions();
+    }
+  }
+);
+
 onMounted(async () => {
   await orderStore.getReceptions(route.params.id as string);
   if (!orderStore.receptions) {
     return;
   }
 
+  await mergeDetailsWithReceptions();
+
+  lifecycle.value = await sharedServices.Lifecycle.getByName(
+    "PurchaseOrderDetail"
+  );
+});
+
+const mergeDetailsWithReceptions = async () => {
   detailsWithReceptions.value =
     props.details?.map((d) => {
       return {
@@ -130,11 +148,7 @@ onMounted(async () => {
         ),
       };
     }) || [];
-
-  lifecycle.value = await sharedServices.Lifecycle.getByName(
-    "PurchaseOrderDetail"
-  );
-});
+};
 
 const getStatusName = (statusId: string) => {
   if (!lifecycle.value) return "";

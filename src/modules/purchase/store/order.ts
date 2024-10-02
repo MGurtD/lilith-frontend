@@ -4,6 +4,7 @@ import {
   PurchaseOrder,
   PurchaseOrderDetail,
   PurchaseOrderReceiptDetail,
+  PurchaseOrderFromWO,
 } from "../types";
 import Services from "../services";
 
@@ -57,6 +58,10 @@ export const useOrderStore = defineStore({
     async create(createRequest: CreatePurchaseDocumentRequest) {
       const result = await Services.Order.create(createRequest);
       if (result) await this.fetchAll();
+      return result;
+    },
+    async createFromWo(createRequest: Array<PurchaseOrderFromWO>) {
+      const result = await Services.Order.createFromWo(createRequest);
       return result;
     },
     async update(id: string, Order: PurchaseOrder) {

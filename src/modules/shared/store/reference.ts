@@ -93,6 +93,9 @@ export const useReferenceStore = defineStore({
     ) {
       return await referenceService.getByModule(module, category);
     },
+    async getPrice(referenceId: string, supplierId: string) {
+      return await referenceService.getPrice(referenceId, supplierId);
+    },
     async fetchReferences() {
       this.references = await referenceService.getAll();
 

@@ -117,6 +117,10 @@ export const useWorkOrderStore = defineStore({
     async fetchPhaseById(id: string) {
       this.workorderPhase = await Services.WorkOrderPhase.getById(id);
     },
+    async fetchExternalPhases() {
+      this.workorderPhases =
+        await Services.WorkOrderPhase.getExternalWorkOrderPhases();
+    },
     async createPhase(model: WorkOrderPhase) {
       const result = await Services.WorkOrderPhase.create(model);
       if (result) await this.fetchPhaseById(model.id);
@@ -176,8 +180,22 @@ export const useWorkOrderStore = defineStore({
         await Services.DetailedWorkOrder.getByWorkcenterId(id);
     },
     async fetchByWorkOrderId(id: string) {
-      this.detailedWorkOrders =
-        await Services.DetailedWorkOrder.getByWorkOrderId(id);
+      try {
+        const detailedWorkOrders =
+          await Services.DetailedWorkOrder.getByWorkOrderId(id);
+        if (detailedWorkOrders) {
+          this.detailedWorkOrders = detailedWorkOrders;
+          return detailedWorkOrders; // Devuelve las órdenes de trabajo detalladas
+        } else {
+          console.error(
+            `No se encontraron órdenes de trabajo detalladas para el ID: ${id}`
+          );
+          return undefined;
+        }
+      } catch (error) {
+        console.error(`Error al obtener la orden de trabajo: ${error}`);
+        return undefined;
+      }
     },
   },
 });

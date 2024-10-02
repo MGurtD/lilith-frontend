@@ -60,6 +60,7 @@
         <TabPanel header="Línea">
           <FormReceiptDetail
             :detail="selectedDetail"
+            :receipt="receipt"
             @submit="submitDetailForm"
           />
         </TabPanel>

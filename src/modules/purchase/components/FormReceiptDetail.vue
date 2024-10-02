@@ -6,6 +6,7 @@
           label="Material"
           v-model="detail.referenceId"
           :fullName="true"
+          @update:modelValue="getPrice"
         ></DropdownReference>
       </div>
       <div>
@@ -116,7 +117,7 @@
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
 import { ref } from "vue";
-import { ReceiptDetail } from "../types";
+import { Receipt, ReceiptDetail } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -126,9 +127,11 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { useReceiptsStore } from "../store/receipt";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   detail: ReceiptDetail;
+  receipt: Receipt;
 }>();
 
 const emit = defineEmits<{
@@ -138,6 +141,20 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const receiptStore = useReceiptsStore();
+const referenceStore = useReferenceStore();
+
+const getPrice = async (id: string | null) => {
+  if (id == null || props.receipt.supplierId == "") {
+    return;
+  }
+  const price = await referenceStore.getPrice(id, props.receipt.supplierId);
+  props.detail.kilogramPrice = price;
+  //await calculateAmount();
+};
+
+/*const calculateAmount = async () => {
+  props.detail.amount = props.detail.quantity * props.detail.unitPrice;
+};*/
 
 const calculate = async () => {
   const response = await receiptStore.calculateDetailWeightAndPrice(
