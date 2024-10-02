@@ -32,7 +32,7 @@
         >
           <Button
             size="small"
-            severity="success"
+            :severity="getStatusColorByWOId(slotProps.data.workOrderId)"
             :label="
               workOrderStore.getWorkOrderCodeById(slotProps.data.workOrderId)
             "
@@ -124,7 +124,7 @@
 </template>
 <script setup lang="ts">
 import LinkReference from "../../shared/components/LinkReference.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import FormCreateWorkorder from "../../production/components/FormCreateWorkorder.vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -133,7 +133,11 @@ import {
   SalesOrderDetail,
   CreateWorkOrderFromSalesOrderDto,
 } from "../types";
-import { CreateWorkOrderDto, WorkMaster } from "../../production/types";
+import {
+  CreateWorkOrderDto,
+  WorkMaster,
+  WorkOrder,
+} from "../../production/types";
 import { DialogOptions } from "../../../types/component";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
@@ -143,10 +147,13 @@ import {
   convertDDMMYYYYToDate,
   formatCurrency,
 } from "../../../utils/functions";
+import { Lifecycle } from "../../shared/types";
 
 const props = defineProps<{
   salesOrder: SalesOrderHeader;
   salesOrderDetails: Array<SalesOrderDetail> | undefined;
+  secondaryLifecycle: Lifecycle | undefined;
+  workorders: Array<WorkOrder> | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -169,6 +176,13 @@ const totalAmount = computed(() => {
     );
   }
   return 0;
+});
+
+onMounted(async () => {
+  workOrderStore.fetchBySalesOrder(props.salesOrder.id);
+  //console.log(props.workorders);
+  /*calculateStatusColor();
+  console.log(statusColors);*/
 });
 
 var selectedDetail = undefined as SalesOrderDetail | undefined;
@@ -239,8 +253,49 @@ const onWorkOrderCreateClick = (salesOrderDetail: SalesOrderDetail) => {
   dialogOptions.value.visible = true;
 };
 
+type StatusColor =
+  | "secondary"
+  | "success"
+  | "info"
+  | "warning"
+  | "help"
+  | "danger"
+  | "contrast";
+
+const getStatusColorByWOId = (workorderId: string): StatusColor | undefined => {
+  if (!workorderId) {
+    return "contrast";
+  }
+  const statusId = workOrderStore.getWorkOrderStatusById(workorderId);
+
+  if (statusId) {
+    console.log(statusId);
+    const status = props.secondaryLifecycle?.statuses.find(
+      (s) => s.id === statusId
+    );
+    if (status) {
+      return status.color as StatusColor;
+    }
+  }
+  return "contrast";
+};
+
+/*const calculateStatusColor = async () => {
+  if (props.salesOrderDetails) {
+    const colors = await Promise.all(
+      props.salesOrderDetails.map(async (detail) => {
+        const statusColor = await getStatusColorByWOId(detail?.workOrderId);
+        return {
+          id: detail.id, // Guarda l'id de la fila per associar el color
+          statusColor,
+        };
+      })
+    );
+    statusColors.value = colors;
+  }
+};*/
+
 const openWorkOrder = (workorderId: string) => {
-  console.log(workorderId);
   emit("openWorkOrder", workorderId);
   //router.push({ path: `/customers/${row.data.id}` });
 };

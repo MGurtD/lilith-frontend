@@ -1,6 +1,6 @@
 <template>
   <form>
-    <section class="two-columns">
+    <section class="three-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -9,6 +9,20 @@
           'p-invalid': validation.errors.baseAmount,
         }"
       ></BaseInput>
+      <div class="mb-4">
+        <label class="block text-900 mb-2">Color</label>
+        <Dropdown
+          v-model="status.color"
+          editable
+          :options="colors"
+          optionValue="id"
+          optionLabel="value"
+          class="w-full"
+          :class="{
+            'p-invalid': validation.errors.statusId,
+          }"
+        />
+      </div>
       <div class="mb-4">
         <label class="block text-900 mb-2">Deshabilitat</label>
         <Checkbox v-model="status.disabled" :binary="true" />
@@ -70,4 +84,20 @@ const submitForm = async () => {
     });
   }
 };
+
+type Color = {
+  id: string;
+  value: string;
+};
+
+const colors: Color[] = [
+  { id: "", value: "Cap" },
+  { id: "info", value: "Blau" },
+  { id: "secondary", value: "Gris" },
+  { id: "help", value: "Lila" },
+  { id: "contrast", value: "Negre" },
+  { id: "warn", value: "Taronja" },
+  { id: "success", value: "Verd" },
+  { id: "danger", value: "Vermell" },
+];
 </script>

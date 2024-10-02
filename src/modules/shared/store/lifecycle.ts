@@ -7,6 +7,7 @@ export const useLifecyclesStore = defineStore({
   id: "lifecycle",
   state: () => ({
     lifecycle: ref(undefined as Lifecycle | undefined),
+    secondaryLifecycle: ref(undefined as Lifecycle | undefined),
     lifecycles: ref(undefined as Array<Lifecycle> | undefined),
   }),
   getters: {
@@ -63,6 +64,9 @@ export const useLifecyclesStore = defineStore({
     },
     async fetchOneByName(name: string) {
       this.lifecycle = await Services.Lifecycle.getByName(name);
+    },
+    async fetchSecondaryByName(name: string) {
+      this.secondaryLifecycle = await Services.Lifecycle.getByName(name);
     },
     async create(model: Lifecycle) {
       const result = await Services.Lifecycle.create(model);

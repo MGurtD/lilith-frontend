@@ -20,6 +20,8 @@
         v-if="salesOrder"
         :salesOrder="salesOrder"
         :salesOrderDetails="salesOrder.salesOrderDetails"
+        :secondaryLifecycle="lifeCycleStore.secondaryLifecycle"
+        :workorders="workOrderStore.workorders"
         @edit="(det: SalesOrderDetail) => openOrderDetailDialog(FormActionMode.EDIT, det)"
         @delete="deleteOrderDetail"
         @createWorkOrder="createWorkOrder"
@@ -144,11 +146,13 @@ const loadView = async () => {
   await salesOrderStore.GetById(workOrderId);
   referenceStore.fetchReferencesByModule("sales");
   lifeCycleStore.fetchOneByName("SalesOrder");
+  lifeCycleStore.fetchSecondaryByName("WorkOrder");
   plantModelStore.fetchSites();
   exerciseStore.fetchAll();
   customerStore.fetchCustomers();
   taxesStore.fetchAll();
   workOrderStore.fetchBySalesOrder(workOrderId);
+  console.log("dins", workOrderStore.workorders);
 
   if (!workMasterStore.workmasters) {
     workMasterStore.fetchAllActives();
