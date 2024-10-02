@@ -4,9 +4,6 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="62vh"
-    sortMode="single"
-    sortField="description"
-    :sortOrder="1"
     :value="groupedDetails"
     rowGroupMode="subheader"
     groupRowsBy="deliveryNoteNumber"
@@ -30,7 +27,7 @@
     <Column header="" field="" style="width: 2%" />
 
     <Column header="Quantitat" field="quantity" style="width: 10%"></Column>
-    <Column header="Referència" style="width: 15%">
+    <Column header="Referència" field="reference.code" style="width: 15%">
       <template #body="slotProps">
         <span v-if="slotProps.data.deliveryNoteDetail">
           <LinkReference :id="slotProps.data.deliveryNoteDetail.referenceId" />
@@ -38,12 +35,7 @@
         <span v-else>--</span>
       </template>
     </Column>
-    <Column
-      header="Descripció"
-      sortable
-      field="description"
-      style="width: 40%"
-    ></Column>
+    <Column header="Descripció" field="description" style="width: 40%"></Column>
     <Column header="Preu unitat" style="width: 10%">
       <template #body="slotProps">
         {{ formatCurrency(slotProps.data.unitPrice) }}
@@ -78,13 +70,16 @@ import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSharedDataStore } from "../../shared/store/masterData";
+import { useReferenceStore } from "../../shared/store/reference";
 import { formatDate, formatCurrency } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import _ from "lodash";
+import { Reference } from "../../shared/types";
 
 const confirm = useConfirm();
 const lifecycleStore = useLifecyclesStore();
 const sharedData = useSharedDataStore();
+const referenceStore = useReferenceStore();
 
 const props = defineProps<{
   details: Array<SalesInvoiceDetail> | undefined;
@@ -120,6 +115,13 @@ const groupedDetails = computed(() => {
           ? `Entregat ${formatDate(deliveryNote.deliveryDate)}`
           : "No entregat";
 
+      if (referenceStore.references) {
+        const reference = referenceStore.references!.find(
+          (r: Reference) => r.id === d.deliveryNoteDetail?.referenceId
+        );
+        if (reference) d.reference = reference;
+      }
+
       return {
         deliveryNoteId: deliveryNote?.id,
         deliveryNoteNumber: `Albarà ${
@@ -135,7 +137,7 @@ const groupedDetails = computed(() => {
   if (deliveryNoteDetails.length > 0) grDetails.push(...deliveryNoteDetails);
 
   console.log(deliveryNoteDetails, grDetails);
-  return _.orderBy(grDetails, (d) => d.deliveryNoteNumber);
+  return _.orderBy(grDetails, (d) => [d.deliveryNoteNumber, d.description]);
 });
 
 onMounted(async () => {
