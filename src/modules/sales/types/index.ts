@@ -20,6 +20,7 @@ export interface Customer {
   paymentMethodId: string;
   accountNumber: string;
   observations: string;
+  invoiceNotes: string;
   contacts: Array<CustomerContact>;
   address: Array<CustomerAddress>;
 }

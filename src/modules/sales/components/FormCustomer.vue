@@ -88,6 +88,10 @@
       <label class="block text-900 mb-2">Observacions</label>
       <Textarea v-model="customer.observations" class="w-full" />
     </div>
+    <div>
+      <label class="block text-900 mb-2">Notes de factura</label>
+      <Textarea v-model="customer.invoiceNotes" class="w-full" />
+    </div>
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>
