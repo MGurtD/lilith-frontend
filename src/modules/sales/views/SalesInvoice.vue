@@ -246,13 +246,11 @@ const addDeliveryNotes = async (deliveryNotes: Array<DeliveryNote>) => {
   }
 
   dialogOptions.visible = false;
-
-  loadView();
+  await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
 };
 const deleteDeliveryNote = async (deliveryNote: DeliveryNote) => {
   await invoiceStore.RemoveDeliveryNote(invoice.value!.id, deliveryNote);
-
-  loadView();
+  await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
 };
 
 const currentInvoiceDetail = reactive({} as SalesInvoiceDetail);
@@ -272,14 +270,11 @@ const openAddDetail = () => {
   }
 };
 const createInvoiceDetail = async () => {
-  const response = await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
+  await invoiceStore.CreateInvoiceDetail(currentInvoiceDetail);
   dialogOptions.visible = false;
 };
 const deleteInvoiceDetail = async (detail: SalesInvoiceDetail) => {
   await invoiceStore.DeleteInvoiceDetail(detail);
-  invoiceStore.invoice!.invoiceDate = formatDate(
-    invoiceStore.invoice!.invoiceDate
-  );
 };
 
 // Create rectificative invoice

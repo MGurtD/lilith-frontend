@@ -33,6 +33,11 @@ export const useSalesInvoiceStore = defineStore({
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);
     },
+    async GetDetailsById(id: string) {
+      const updatedInvoice = await SalesService.SalesInvoice.getById(id);
+      if (this.invoice && updatedInvoice)
+        this.invoice.salesInvoiceDetails = updatedInvoice?.salesInvoiceDetails;
+    },
     async GetFiltered(
       startDate: string,
       endDate: string,
@@ -100,7 +105,7 @@ export const useSalesInvoiceStore = defineStore({
       const response = await SalesService.SalesInvoice.CreateDetail(
         invoiceDetail
       );
-      await this.GetById(invoiceDetail.salesInvoiceId);
+      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
       return response;
     },
     async UpdateInvoiceDetail(
@@ -109,7 +114,7 @@ export const useSalesInvoiceStore = defineStore({
       const updated = await SalesService.SalesInvoice.UpdateDetail(
         invoiceDetail
       );
-      await this.GetById(invoiceDetail.salesInvoiceId);
+      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
       return updated;
     },
     async DeleteInvoiceDetail(
@@ -118,7 +123,7 @@ export const useSalesInvoiceStore = defineStore({
       const deleted = await SalesService.SalesInvoice.DeleteDetail(
         invoiceDetail
       );
-      await this.GetById(invoiceDetail.salesInvoiceId);
+      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
       return deleted;
     },
   },

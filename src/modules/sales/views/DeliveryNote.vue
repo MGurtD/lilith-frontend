@@ -233,12 +233,12 @@ const addSalesOrdersToDeliveryNote = async (
     await deliveryNoteStore.AddOrder(deliveryNote.value!.id, order);
   }
 
+  await salesOrderStore.GetByDeliveryNote(deliveryNote.value!.id);
   isDialogVisible.value = false;
-  loadView();
 };
 
 const deleteSalesOrder = async (order: SalesOrderHeader) => {
   await deliveryNoteStore.DeleteOrder(deliveryNote.value!.id, order);
-  loadView();
+  await salesOrderStore.GetByDeliveryNote(deliveryNote.value!.id);
 };
 </script>

@@ -20,6 +20,13 @@ export const useDeliveryNoteStore = defineStore({
     async GetById(id: string) {
       this.deliveryNote = await SalesServices.DeliveryNote.getById(id);
     },
+    async GetDetailsById(id: string) {
+      const updatedDeliveryNote = await SalesServices.DeliveryNote.getById(id);
+      if (this.deliveryNote && updatedDeliveryNote) {
+        this.deliveryNote.details = [];
+        this.deliveryNote.details = updatedDeliveryNote?.details;
+      }
+    },
     async GetFiltered(startTime: string, endTime: string, customerId?: string) {
       if (customerId) {
         this.deliveryNotes =
@@ -64,6 +71,7 @@ export const useDeliveryNoteStore = defineStore({
       order: SalesOrderHeader
     ): Promise<GenericResponse<any>> {
       const response = await SalesServices.DeliveryNote.AddOrder(id, order);
+      await this.GetDetailsById(id);
       return response;
     },
     async DeleteOrder(
@@ -71,6 +79,7 @@ export const useDeliveryNoteStore = defineStore({
       order: SalesOrderHeader
     ): Promise<GenericResponse<any>> {
       const response = await SalesServices.DeliveryNote.DeleteOrder(id, order);
+      await this.GetDetailsById(id);
       return response;
     },
   },
