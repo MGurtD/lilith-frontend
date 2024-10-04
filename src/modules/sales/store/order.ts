@@ -37,6 +37,11 @@ export const useSalesOrderStore = defineStore({
     async GetById(id: string) {
       this.salesOrder = await SalesServices.SalesOrder.getById(id);
     },
+    async GetDetailsById(id: string) {
+      const updatedOrder = await SalesServices.SalesOrder.getById(id);
+      if (this.salesOrder && updatedOrder)
+        this.salesOrder.salesOrderDetails = updatedOrder?.salesOrderDetails;
+    },
     async GetFiltered(
       startTime: string,
       endTime: string,
@@ -83,17 +88,17 @@ export const useSalesOrderStore = defineStore({
     },
     async CreateDetail(detail: SalesOrderDetail): Promise<boolean> {
       const created = await SalesServices.SalesOrder.CreateDetail(detail);
-      if (created) await this.GetById(detail.salesOrderHeaderId);
+      if (created) await this.GetDetailsById(detail.salesOrderHeaderId);
       return created;
     },
     async UpdateDetail(detail: SalesOrderDetail): Promise<boolean> {
       const updated = await SalesServices.SalesOrder.UpdateDetail(detail);
-      //if (updated) await this.GetById(detail.salesOrderHeaderId);
+      //if (updated) await this.GetDetailsById(detail.salesOrderHeaderId);
       return updated;
     },
     async DeleteDetail(detail: SalesOrderDetail): Promise<boolean> {
       const deleted = await SalesServices.SalesOrder.DeleteDetail(detail);
-      if (deleted) await this.GetById(detail.salesOrderHeaderId);
+      if (deleted) await this.GetDetailsById(detail.salesOrderHeaderId);
       return deleted;
     },
   },

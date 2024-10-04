@@ -278,13 +278,6 @@ const onOrderDetailSubmit = async (detail: BudgetDetail | SalesOrderDetail) => {
     salesOrder.value!.salesOrderDetails![index] = detail;
   }
   isDetailDialogVisible.value = false;
-
-  if (salesOrder.value) {
-    salesOrder.value.date = formatDate(salesOrder.value.date);
-    if (salesOrder.value.expectedDate) {
-      salesOrder.value.expectedDate = formatDate(salesOrder.value.expectedDate);
-    }
-  }
 };
 
 const deleteOrderDetail = async (detail: SalesOrderDetail) => {
@@ -296,8 +289,6 @@ const deleteOrderDetail = async (detail: SalesOrderDetail) => {
   );
   salesOrder.value!.salesOrderDetails = afterDelete;
   isDetailDialogVisible.value = false;
-
-  salesOrder.value!.date = formatDate(salesOrder.value!.date);
 };
 
 const createWorkOrder = async (dto: CreateWorkOrderFromSalesOrderDto) => {
