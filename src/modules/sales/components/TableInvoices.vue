@@ -45,7 +45,9 @@
       </template>
     </Column>
     <Column header="Import" style="width: 15%">
-      <template #body="slotProps"> {{ slotProps.data.netAmount }} € </template>
+      <template #body="slotProps">
+        {{ formatCurrency(slotProps.data.netAmount) }}
+      </template>
     </Column>
     <Column style="width: 5%">
       <template #body="slotProps">
@@ -67,7 +69,7 @@ import { onMounted } from "vue";
 import { Customer, SalesInvoice } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { formatDate } from "../../../utils/functions";
+import { formatCurrency, formatDate } from "../../../utils/functions";
 import { DataTableRowClickEvent } from "primevue/datatable";
 
 const lifecycleStore = useLifecyclesStore();
