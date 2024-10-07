@@ -89,8 +89,10 @@ import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
 import { useSalesInvoiceStore } from "../store/invoice";
 import { useCustomersStore } from "../store/customers";
-import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useTaxesStore } from "../../shared/store/tax";
+import { useDeliveryNoteStore } from "../store/deliveryNote";
+import { useReferenceStore } from "../../shared/store/reference";
 import { PrimeIcons } from "primevue/api";
 import {
   convertDateTimeToJSON,
@@ -108,8 +110,6 @@ import TableInvoiceDetails from "../components/TableInvoiceDetails.vue";
 import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import FormRectificativeInvoice from "../components/FormRectificativeInvoice.vue";
 import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
-import { useDeliveryNoteStore } from "../store/deliveryNote";
-import { useReferenceStore } from "../../shared/store/reference";
 import Services from "../services";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
 import { useToast } from "primevue/usetoast";
@@ -131,7 +131,7 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
-const sharedData = useSharedDataStore();
+const taxesStore = useTaxesStore();
 const customersStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
@@ -157,10 +157,16 @@ const invoiceId = ref("");
 onMounted(async () => {
   invoiceId.value = route.params.id as string;
 
-  sharedData.fetchMasterData();
-  customersStore.fetchCustomers();
+  if (!taxesStore.taxes) await taxesStore.fetchAll();
+  if (!customersStore.customers) await customersStore.fetchCustomers();
   await referenceStore.fetchReferencesByModule("sales");
-  await loadView();
+  await lifecycleStore.fetchOneByName("SalesInvoice");
+  await invoiceStore.GetById(invoiceId.value);
+  await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
+
+  if (invoice.value) {
+    invoice.value.invoiceDate = formatDate(invoice.value.invoiceDate);
+  }
 
   store.setMenuItem({
     icon: PrimeIcons.WALLET,
@@ -170,17 +176,6 @@ onMounted(async () => {
     backButtonVisible: true,
   });
 });
-
-const loadView = async () => {
-  lifecycleStore.fetchOneByName("SalesInvoice");
-
-  await invoiceStore.GetById(invoiceId.value);
-  await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
-
-  if (invoice.value) {
-    invoice.value!.invoiceDate = formatDate(invoice.value.invoiceDate);
-  }
-};
 
 const isEditable = computed(() => {
   return (
@@ -246,11 +241,16 @@ const addDeliveryNotes = async (deliveryNotes: Array<DeliveryNote>) => {
   }
 
   dialogOptions.visible = false;
-  await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
+  loadDetails();
 };
 const deleteDeliveryNote = async (deliveryNote: DeliveryNote) => {
   await invoiceStore.RemoveDeliveryNote(invoice.value!.id, deliveryNote);
+  loadDetails();
+};
+const loadDetails = async () => {
+  lifecycleStore.fetchOneByName("SalesInvoice");
   await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
+  await invoiceStore.GetDetailsById(invoiceId.value);
 };
 
 const currentInvoiceDetail = reactive({} as SalesInvoiceDetail);
@@ -260,9 +260,11 @@ const openAddDetail = () => {
     currentInvoiceDetail.salesInvoiceId = invoice.value.id;
     currentInvoiceDetail.quantity = 1;
     currentInvoiceDetail.description = "";
+    currentInvoiceDetail.unitPrice = 0;
+    currentInvoiceDetail.amount = 0;
     currentInvoiceDetail.totalCost = 0;
 
-    const tax = sharedData.taxes?.find((t) => t.percentatge === 21);
+    const tax = taxesStore.taxes?.find((t) => t.percentatge === 21);
     if (tax) currentInvoiceDetail.taxId = tax.id;
 
     dialogOptions.title = "Introducció de línea lliure";
