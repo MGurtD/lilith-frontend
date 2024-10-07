@@ -69,16 +69,16 @@ import { computed, onMounted } from "vue";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { useSharedDataStore } from "../../shared/store/masterData";
 import { useReferenceStore } from "../../shared/store/reference";
 import { formatDate, formatCurrency } from "../../../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import _ from "lodash";
 import { Reference } from "../../shared/types";
+import { useTaxesStore } from "../../shared/store/tax";
 
 const confirm = useConfirm();
 const lifecycleStore = useLifecyclesStore();
-const sharedData = useSharedDataStore();
+const taxesStore = useTaxesStore();
 const referenceStore = useReferenceStore();
 
 const props = defineProps<{
@@ -144,7 +144,7 @@ onMounted(async () => {
   await lifecycleStore.fetchOneByName("SalesInvoice");
 });
 const getTaxNameById = (taxId: string) => {
-  const tax = sharedData.taxes?.find((t) => t.id === taxId);
+  const tax = taxesStore.taxes?.find((t) => t.id === taxId);
   if (tax) return `${tax.name}`;
 };
 
