@@ -31,12 +31,21 @@
           </div>
         </section>
 
-        <section class="five-columns">
+        <section class="six-columns">
           <div>
             <BaseInput
               class="mb-2"
-              label="Cost Intern"
+              label="Cost Producció"
               v-model="internalCosts"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Cost Material"
+              v-model="detail.materialCost"
               :type="BaseInputType.CURRENCY"
               disabled
             ></BaseInput>
@@ -80,7 +89,50 @@
             ></BaseInput>
           </div>
         </section>
-
+        <section class="six-columns">
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici Producció"
+              v-model="detail.productionProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici Material"
+              v-model="detail.materialProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici Externs"
+              v-model="detail.externalProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </section>
         <section class="five-columns">
           <div>
             <BaseInput
@@ -100,10 +152,10 @@
               label="% Benefici"
               v-model="detail.profit"
               :type="BaseInputType.NUMERIC"
-              @update:modelValue="updateImports()"
               :class="{
                 'p-invalid': validation.errors.profit,
               }"
+              disabled
             ></BaseInput>
           </div>
           <div>
@@ -112,6 +164,7 @@
               label="% Descompte"
               v-model="detail.discount"
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               @update:modelValue="updateImports()"
               :class="{
                 'p-invalid': validation.errors.discount,
@@ -204,7 +257,7 @@ const props = defineProps<{
 }>();
 
 const copyProfitAverage = (profitAverage: number) => {
-  props.detail.profit = profitAverage;
+  props.detail.productionProfit = profitAverage;
   updateImports();
 
   activeTab.value = 0;
@@ -268,20 +321,22 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
 
     if (costsResponse.result && costsResponse.content) {
       workmasterCosts.value = costsResponse.content as ProductionCosts;
-
       // avoid unnecessary updates when user update the quantity
       if (!blockExternalCosts) {
         detail.value.transportCost =
           workmasterCosts.value.externalTransportCost;
         detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
+        detail.value.productionCost =
+          workmasterCosts.value.machineCost +
+          workmasterCosts.value.operatorCost;
+        detail.value.materialCost = workmasterCosts.value.materialCost;
       }
 
       detail.value.totalCost =
-        workmasterCosts.value.machineCost +
-        workmasterCosts.value.materialCost +
-        workmasterCosts.value.operatorCost +
         detail.value.transportCost +
-        detail.value.serviceCost;
+        detail.value.serviceCost +
+        detail.value.productionCost +
+        detail.value.materialCost;
       detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
 
       updateImports();
@@ -290,6 +345,8 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
     getReferenceInfo();
     detail.value.transportCost = 0;
     detail.value.serviceCost = 0;
+    detail.value.productionCost = 0;
+    detail.value.materialCost = 0;
     detail.value.totalCost = 0;
   }
 };
@@ -299,7 +356,6 @@ const internalCosts = computed(() => {
     return 0;
   } else if (
     workmasterCosts.value.machineCost === 0 &&
-    workmasterCosts.value.materialCost === 0 &&
     workmasterCosts.value.operatorCost === 0
   ) {
     return (
@@ -352,8 +408,21 @@ const updateImports = () => {
   }
 
   // apply profit
-  if (detail.value.profit > 0) {
-    detail.value.unitPrice *= 1 + detail.value.profit / 100;
+  if (
+    detail.value.productionProfit > 0 ||
+    detail.value.externalProfit > 0 ||
+    detail.value.materialProfit > 0
+  ) {
+    detail.value.unitPrice =
+      detail.value.productionCost * (1 + detail.value.productionProfit / 100) +
+      detail.value.materialCost * (1 + detail.value.materialProfit / 100) +
+      (detail.value.transportCost + detail.value.serviceCost) *
+        (1 + detail.value.externalProfit / 100);
+
+    detail.value.profit = _.round(
+      (detail.value.unitPrice * 100) / detail.value.unitCost - 100,
+      2
+    );
   }
   // apply discount
   if (detail.value.discount > 0) {
