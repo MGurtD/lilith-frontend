@@ -230,7 +230,8 @@ const removeDetail = async (detail: PurchaseOrderDetail) => {
     acceptIcon: "pi pi-check",
     rejectIcon: "pi pi-times",
     accept: async () => {
-      const response = await orderStore.deleteDetail(detail.id);
+      const response = await orderStore.deleteDetail(detail.id, detail);
+      console.log(response);
       order.value!.date = formatDate(order.value!.date);
       if (!response.result) showResponseErrorToast(response);
     },
