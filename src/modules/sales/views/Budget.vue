@@ -41,7 +41,8 @@
 
   <Dialog
     :closable="true"
-    :style="{ width: '80%' }"
+    :style="{ width: '100%' }"
+    :maximizable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
     :modal="true"

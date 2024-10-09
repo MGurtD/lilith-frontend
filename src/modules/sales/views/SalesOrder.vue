@@ -56,10 +56,11 @@
 
   <Dialog
     v-if="salesOrder"
+    :style="{ width: '100%' }"
+    :maximizable="true"
     :closable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
-    :style="{ width: '80%' }"
     :modal="true"
   >
     <FormBudgetOrderDetail
@@ -226,6 +227,12 @@ const openOrderDetailDialog = (
       isInvoiced: false,
       workMasterId: null,
       workOrderId: null,
+      externalProfit: 0,
+      materialCost: 0,
+      materialProfit: 0,
+      materialUnitCost: 0,
+      productionCost: 0,
+      productionProfit: 0,
     } as SalesOrderDetail;
   }
 
