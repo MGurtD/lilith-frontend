@@ -31,19 +31,54 @@
           </div>
         </section>
 
-        <section class="five-columns">
+        <section class="seven-columns">
           <div>
             <BaseInput
-              class="mb-2"
-              label="Cost Intern"
-              v-model="internalCosts"
+              class="mb-2 budgetordercostinput"
+              label="Cost Producció"
+              v-model="detail.productionCost"
               :type="BaseInputType.CURRENCY"
               disabled
             ></BaseInput>
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
+              label="% Benefici Producció"
+              v-model="detail.productionProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2 budgetordercostinput"
+              label="Cost Material"
+              v-model="detail.materialCost"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2 budgetordercostinput"
+              label="% Benefici Material"
+              v-model="detail.materialProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2 budgetordercostinput"
               label="Cost Servei"
               v-model="detail.serviceCost"
               :type="BaseInputType.CURRENCY"
@@ -53,8 +88,8 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
-              label="Cost Transport"
+              class="mb-2 budgetordercostinput"
+              label="Cost Transport "
               v-model="detail.transportCost"
               :type="BaseInputType.CURRENCY"
               @update:modelValue="updateCosts()"
@@ -63,28 +98,22 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
-              label="Cost Unitari"
-              v-model="detail.unitCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Cost Total"
-              v-model="detail.totalCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
+              class="mb-2 budgetordercostinput"
+              label="% Benefici Externs"
+              v-model="detail.externalProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
             ></BaseInput>
           </div>
         </section>
-
-        <section class="five-columns">
+        <section class="seven-columns">
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Quantitat"
               v-model="detail.quantity"
               :type="BaseInputType.NUMERIC"
@@ -96,22 +125,41 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
-              label="% Benefici"
-              v-model="detail.profit"
-              :type="BaseInputType.NUMERIC"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
+              class="mb-2 budgetordercostinput"
+              label="Cost Unitari"
+              v-model="detail.unitCost"
+              :type="BaseInputType.CURRENCY"
+              disabled
             ></BaseInput>
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
+              label="Cost Total"
+              v-model="detail.totalCost"
+              :type="BaseInputType.CURRENCY"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2 budgetordercostinput"
+              label="% Benefici"
+              v-model="detail.profit"
+              :type="BaseInputType.NUMERIC"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+              disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2 budgetordercostinput"
               label="% Descompte"
               v-model="detail.discount"
               :type="BaseInputType.NUMERIC"
+              :decimals="2"
               @update:modelValue="updateImports()"
               :class="{
                 'p-invalid': validation.errors.discount,
@@ -119,7 +167,7 @@
             ></BaseInput>
           </div>
           <BaseInput
-            class="mb-2"
+            class="mb-2 budgetordercostinput"
             label="Preu Unitari"
             v-model="detail.unitPrice"
             :type="BaseInputType.CURRENCY"
@@ -127,7 +175,7 @@
           ></BaseInput>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Total"
               v-model="detail.amount"
               disabled
@@ -142,7 +190,7 @@
         <section>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Descripció"
               v-model="detail.description"
               :type="BaseInputType.TEXT"
@@ -172,7 +220,7 @@
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import { computed, ref, watch, toRefs, onMounted } from "vue";
+import { computed, ref, toRefs, onMounted } from "vue";
 import {
   Budget,
   BudgetDetail,
@@ -204,7 +252,7 @@ const props = defineProps<{
 }>();
 
 const copyProfitAverage = (profitAverage: number) => {
-  props.detail.profit = profitAverage;
+  props.detail.productionProfit = profitAverage;
   updateImports();
 
   activeTab.value = 0;
@@ -222,9 +270,31 @@ const textActionButton = computed(() => {
   return props.formAction === FormActionMode.CREATE ? "Afegir" : "Modificar";
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (props.formAction === FormActionMode.EDIT) {
-    getWorkmasterCost(true); // O el valor que necesites
+    if (
+      detail.value.productionCost === 0 &&
+      detail.value.productionProfit === 0 &&
+      detail.value.workMasterId !== null
+    ) {
+      detail.value.productionCost =
+        detail.value.totalCost -
+        (detail.value.serviceCost + detail.value.transportCost);
+
+      if (detail.value.productionCost > 0) {
+        detail.value.productionProfit = detail.value.profit;
+      }
+      if (detail.value.serviceCost > 0 && detail.value.transportCost > 0) {
+        detail.value.externalProfit = detail.value.profit;
+      }
+
+      console.log(
+        "regularització inicial 'productionCost', 'productionProfit' i 'externalProfit'",
+        detail.value.productionCost,
+        detail.value.productionProfit,
+        detail.value.externalProfit
+      );
+    }
   }
 });
 
@@ -268,20 +338,22 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
 
     if (costsResponse.result && costsResponse.content) {
       workmasterCosts.value = costsResponse.content as ProductionCosts;
-
       // avoid unnecessary updates when user update the quantity
       if (!blockExternalCosts) {
         detail.value.transportCost =
           workmasterCosts.value.externalTransportCost;
         detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
+        detail.value.productionCost =
+          workmasterCosts.value.machineCost +
+          workmasterCosts.value.operatorCost;
+        detail.value.materialCost = workmasterCosts.value.materialCost;
       }
 
       detail.value.totalCost =
-        workmasterCosts.value.machineCost +
-        workmasterCosts.value.materialCost +
-        workmasterCosts.value.operatorCost +
         detail.value.transportCost +
-        detail.value.serviceCost;
+        detail.value.serviceCost +
+        detail.value.productionCost +
+        detail.value.materialCost;
       detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
 
       updateImports();
@@ -290,35 +362,18 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
     getReferenceInfo();
     detail.value.transportCost = 0;
     detail.value.serviceCost = 0;
+    detail.value.productionCost = 0;
+    detail.value.materialCost = 0;
     detail.value.totalCost = 0;
   }
 };
 
-const internalCosts = computed(() => {
-  if (!detail.value.workMasterId) {
-    return 0;
-  } else if (
-    workmasterCosts.value.machineCost === 0 &&
-    workmasterCosts.value.materialCost === 0 &&
-    workmasterCosts.value.operatorCost === 0
-  ) {
-    return (
-      detail.value.totalCost -
-      detail.value.serviceCost -
-      detail.value.transportCost
-    );
-  } else {
-    return (
-      workmasterCosts.value.machineCost +
-      workmasterCosts.value.materialCost +
-      workmasterCosts.value.operatorCost
-    );
-  }
-});
-
 const updateCosts = () => {
   detail.value.totalCost =
-    internalCosts.value + detail.value.serviceCost + detail.value.transportCost;
+    detail.value.productionCost +
+    detail.value.serviceCost +
+    detail.value.materialCost +
+    detail.value.transportCost;
   detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
 
   updateImports();
@@ -352,8 +407,43 @@ const updateImports = () => {
   }
 
   // apply profit
-  if (detail.value.profit > 0) {
-    detail.value.unitPrice *= 1 + detail.value.profit / 100;
+  if (
+    detail.value.productionProfit > 0 ||
+    detail.value.externalProfit > 0 ||
+    detail.value.materialProfit > 0
+  ) {
+    console.log(
+      "production",
+      detail.value.productionCost * (1 + detail.value.productionProfit / 100)
+    );
+    console.log(
+      "material",
+      detail.value.materialCost * (1 + detail.value.materialProfit / 100)
+    );
+    console.log(
+      "external",
+      (detail.value.transportCost + detail.value.serviceCost) *
+        (1 + detail.value.externalProfit / 100)
+    );
+
+    detail.value.unitPrice =
+      (detail.value.productionCost * (1 + detail.value.productionProfit / 100) +
+        detail.value.materialCost * (1 + detail.value.materialProfit / 100) +
+        (detail.value.transportCost + detail.value.serviceCost) *
+          (1 + detail.value.externalProfit / 100)) /
+      detail.value.quantity;
+
+    console.log("unitcost", detail.value.unitCost);
+    console.log("unitprice", detail.value.unitPrice);
+
+    if (detail.value.unitCost > 0) {
+      detail.value.profit = _.round(
+        (detail.value.unitPrice * 100) / detail.value.unitCost - 100,
+        2
+      );
+    }
+
+    console.log("profit", detail.value.profit);
   }
   // apply discount
   if (detail.value.discount > 0) {

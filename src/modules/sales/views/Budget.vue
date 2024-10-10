@@ -41,7 +41,8 @@
 
   <Dialog
     :closable="true"
-    :style="{ width: '80%' }"
+    :style="{ width: '100%' }"
+    :maximizable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
     :modal="true"
@@ -176,9 +177,14 @@ const openBudgetDetailDialog = (
       referenceId: "",
       workMasterId: null,
       profit: 0,
+      productionProfit: 0,
+      materialProfit: 25,
+      externalProfit: 25,
       discount: 0,
       quantity: 1,
       unitCost: 0,
+      productionCost: 0,
+      materialCost: 0,
       unitPrice: 0,
       serviceCost: 0,
       transportCost: 0,

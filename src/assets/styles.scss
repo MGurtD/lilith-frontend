@@ -48,6 +48,21 @@ body {
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 }
+.six-columns {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+.seven-columns {
+  display: grid;
+  grid-template-columns: repeat(7, 0.5fr);
+  gap: 0.5rem;
+}
+
+.budgetordercostinput .p-inputnumber input {
+  width: 8em !important;
+  box-sizing: border-box;
+}
 
 .vsm--header {
   font-size: 1.5rem !important;
