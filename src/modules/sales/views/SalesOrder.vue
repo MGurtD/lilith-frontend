@@ -56,10 +56,11 @@
 
   <Dialog
     v-if="salesOrder"
+    :style="{ width: '100%' }"
+    :maximizable="true"
     :closable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
-    :style="{ width: '95%' }"
     :modal="true"
   >
     <FormBudgetOrderDetail
