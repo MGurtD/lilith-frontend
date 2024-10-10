@@ -59,7 +59,7 @@
     :closable="true"
     v-model:visible="isDetailDialogVisible"
     :header="detailDialogTitle"
-    :style="{ width: '80%' }"
+    :style="{ width: '95%' }"
     :modal="true"
   >
     <FormBudgetOrderDetail
@@ -210,10 +210,15 @@ const openOrderDetailDialog = (
       referenceId: "",
       quantity: 1,
       profit: 0,
+      productionProfit: 0,
+      materialProfit: 0,
+      externalProfit: 0,
       discount: 0,
       unitCost: 0,
       serviceCost: 0,
       transportCost: 0,
+      productionCost: 0,
+      materialCost: 0,
       unitPrice: 0,
       totalCost: 0,
       amount: 0,

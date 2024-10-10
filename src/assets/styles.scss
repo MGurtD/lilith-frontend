@@ -51,7 +51,16 @@ body {
 .six-columns {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
+  gap: 0.5rem;
+}
+.seven-columns {
+  display: grid;
+  grid-template-columns: repeat(7, 0.5fr);
+  gap: 0.5rem;
+}
+
+.budgetordercostinput {
+  width: 8em !important;
 }
 
 .vsm--header {

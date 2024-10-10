@@ -31,14 +31,27 @@
           </div>
         </section>
 
-        <section class="six-columns">
+        <section class="seven-columns">
           <div>
             <BaseInput
               class="mb-2"
               label="Cost Producció"
-              v-model="internalCosts"
+              v-model="detail.productionCost"
               :type="BaseInputType.CURRENCY"
               disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici Producció"
+              v-model="detail.productionProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
             ></BaseInput>
           </div>
           <div>
@@ -48,6 +61,19 @@
               v-model="detail.materialCost"
               :type="BaseInputType.CURRENCY"
               disabled
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="% Benefici Material"
+              v-model="detail.materialProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
             ></BaseInput>
           </div>
           <div>
@@ -73,6 +99,34 @@
           <div>
             <BaseInput
               class="mb-2"
+              label="% Benefici Externs"
+              v-model="detail.externalProfit"
+              :type="BaseInputType.NUMERIC"
+              :decimals="2"
+              @update:modelValue="updateImports()"
+              :class="{
+                'p-invalid': validation.errors.profit,
+              }"
+            ></BaseInput>
+          </div>
+        </section>
+        <section class="seven-columns">
+          <div>
+            <BaseInput
+              class="mb-2"
+              label="Quantitat"
+              v-model="detail.quantity"
+              :type="BaseInputType.NUMERIC"
+              style="width: 7em"
+              :class="{
+                'p-invalid': validation.errors.quantity,
+              }"
+              @update:modelValue="updateQuantity()"
+            ></BaseInput>
+          </div>
+          <div>
+            <BaseInput
+              class="mb-2"
               label="Cost Unitari"
               v-model="detail.unitCost"
               :type="BaseInputType.CURRENCY"
@@ -86,64 +140,6 @@
               v-model="detail.totalCost"
               :type="BaseInputType.CURRENCY"
               disabled
-            ></BaseInput>
-          </div>
-        </section>
-        <section class="six-columns">
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="% Benefici Producció"
-              v-model="detail.productionProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="% Benefici Material"
-              v-model="detail.materialProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="% Benefici Externs"
-              v-model="detail.externalProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </section>
-        <section class="five-columns">
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Quantitat"
-              v-model="detail.quantity"
-              :type="BaseInputType.NUMERIC"
-              :class="{
-                'p-invalid': validation.errors.quantity,
-              }"
-              @update:modelValue="updateQuantity()"
             ></BaseInput>
           </div>
           <div>
@@ -351,7 +347,7 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
   }
 };
 
-const internalCosts = computed(() => {
+/*const internalCosts = computed(() => {
   if (!detail.value.workMasterId) {
     return 0;
   } else if (
@@ -370,11 +366,14 @@ const internalCosts = computed(() => {
       workmasterCosts.value.operatorCost
     );
   }
-});
+});*/
 
 const updateCosts = () => {
   detail.value.totalCost =
-    internalCosts.value + detail.value.serviceCost + detail.value.transportCost;
+    detail.value.productionCost +
+    detail.value.serviceCost +
+    detail.value.materialCost +
+    detail.value.transportCost;
   detail.value.unitCost = detail.value.totalCost / detail.value.quantity;
 
   updateImports();
