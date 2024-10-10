@@ -471,7 +471,7 @@ const schema = Yup.object().shape({
     .min(1, "La quantitat ha de ser un número positiu"),
   amount: Yup.number()
     .required("El total és obligatori")
-    .min(1, "El total ha de ser un número positiu"),
+    .min(0, "El total ha de ser un número igual o major que 0"),
   profit: Yup.number().required("El benefici és obligatori"),
   discount: Yup.number().required("El descompte és obligatori"),
   unitPrice: Yup.number().required("El preu unitari és obligatori"),
