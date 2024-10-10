@@ -85,9 +85,9 @@ export const useOrderStore = defineStore({
       if (response.result) await this.fetchOne(detail.purchaseOrderId);
       return response;
     },
-    async deleteDetail(id: string) {
+    async deleteDetail(id: string, detail: PurchaseOrderDetail) {
       const response = await Services.Order.removeDetail(id);
-      if (response.result) await this.fetchOne(id);
+      if (response.result) await this.fetchOne(detail.purchaseOrderId);
       return response;
     },
     async getReceptions(orderId: string) {
