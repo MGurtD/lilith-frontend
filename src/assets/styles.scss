@@ -59,8 +59,9 @@ body {
   gap: 0.5rem;
 }
 
-.budgetordercostinput {
+.budgetordercostinput .p-inputnumber input {
   width: 8em !important;
+  box-sizing: border-box;
 }
 
 .vsm--header {

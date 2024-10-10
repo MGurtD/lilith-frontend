@@ -34,7 +34,7 @@
         <section class="seven-columns">
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Cost Producció"
               v-model="detail.productionCost"
               :type="BaseInputType.CURRENCY"
@@ -43,7 +43,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="% Benefici Producció"
               v-model="detail.productionProfit"
               :type="BaseInputType.NUMERIC"
@@ -56,7 +56,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Cost Material"
               v-model="detail.materialCost"
               :type="BaseInputType.CURRENCY"
@@ -65,7 +65,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="% Benefici Material"
               v-model="detail.materialProfit"
               :type="BaseInputType.NUMERIC"
@@ -78,7 +78,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Cost Servei"
               v-model="detail.serviceCost"
               :type="BaseInputType.CURRENCY"
@@ -88,8 +88,8 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
-              label="Cost Transport"
+              class="mb-2 budgetordercostinput"
+              label="Cost Transport "
               v-model="detail.transportCost"
               :type="BaseInputType.CURRENCY"
               @update:modelValue="updateCosts()"
@@ -98,7 +98,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="% Benefici Externs"
               v-model="detail.externalProfit"
               :type="BaseInputType.NUMERIC"
@@ -113,11 +113,10 @@
         <section class="seven-columns">
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Quantitat"
               v-model="detail.quantity"
               :type="BaseInputType.NUMERIC"
-              style="width: 7em"
               :class="{
                 'p-invalid': validation.errors.quantity,
               }"
@@ -126,7 +125,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Cost Unitari"
               v-model="detail.unitCost"
               :type="BaseInputType.CURRENCY"
@@ -135,7 +134,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Cost Total"
               v-model="detail.totalCost"
               :type="BaseInputType.CURRENCY"
@@ -144,7 +143,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="% Benefici"
               v-model="detail.profit"
               :type="BaseInputType.NUMERIC"
@@ -156,7 +155,7 @@
           </div>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="% Descompte"
               v-model="detail.discount"
               :type="BaseInputType.NUMERIC"
@@ -168,7 +167,7 @@
             ></BaseInput>
           </div>
           <BaseInput
-            class="mb-2"
+            class="mb-2 budgetordercostinput"
             label="Preu Unitari"
             v-model="detail.unitPrice"
             :type="BaseInputType.CURRENCY"
@@ -176,7 +175,7 @@
           ></BaseInput>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Total"
               v-model="detail.amount"
               disabled
@@ -191,7 +190,7 @@
         <section>
           <div>
             <BaseInput
-              class="mb-2"
+              class="mb-2 budgetordercostinput"
               label="Descripció"
               v-model="detail.description"
               :type="BaseInputType.TEXT"
