@@ -220,7 +220,7 @@
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import { computed, ref, watch, toRefs, onMounted } from "vue";
+import { computed, ref, toRefs, onMounted } from "vue";
 import {
   Budget,
   BudgetDetail,
@@ -270,9 +270,31 @@ const textActionButton = computed(() => {
   return props.formAction === FormActionMode.CREATE ? "Afegir" : "Modificar";
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (props.formAction === FormActionMode.EDIT) {
-    getWorkmasterCost(true); // O el valor que necesites
+    if (
+      detail.value.productionCost === 0 &&
+      detail.value.productionProfit === 0 &&
+      detail.value.workMasterId !== null
+    ) {
+      detail.value.productionCost =
+        detail.value.totalCost -
+        (detail.value.serviceCost + detail.value.transportCost);
+
+      if (detail.value.productionCost > 0) {
+        detail.value.productionProfit = detail.value.profit;
+      }
+      if (detail.value.serviceCost > 0 && detail.value.transportCost > 0) {
+        detail.value.externalProfit = detail.value.profit;
+      }
+
+      console.log(
+        "regularització inicial 'productionCost', 'productionProfit' i 'externalProfit'",
+        detail.value.productionCost,
+        detail.value.productionProfit,
+        detail.value.externalProfit
+      );
+    }
   }
 });
 
@@ -346,27 +368,6 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
   }
 };
 
-/*const internalCosts = computed(() => {
-  if (!detail.value.workMasterId) {
-    return 0;
-  } else if (
-    workmasterCosts.value.machineCost === 0 &&
-    workmasterCosts.value.operatorCost === 0
-  ) {
-    return (
-      detail.value.totalCost -
-      detail.value.serviceCost -
-      detail.value.transportCost
-    );
-  } else {
-    return (
-      workmasterCosts.value.machineCost +
-      workmasterCosts.value.materialCost +
-      workmasterCosts.value.operatorCost
-    );
-  }
-});*/
-
 const updateCosts = () => {
   detail.value.totalCost =
     detail.value.productionCost +
@@ -411,16 +412,38 @@ const updateImports = () => {
     detail.value.externalProfit > 0 ||
     detail.value.materialProfit > 0
   ) {
-    detail.value.unitPrice =
-      detail.value.productionCost * (1 + detail.value.productionProfit / 100) +
-      detail.value.materialCost * (1 + detail.value.materialProfit / 100) +
-      (detail.value.transportCost + detail.value.serviceCost) *
-        (1 + detail.value.externalProfit / 100);
-
-    detail.value.profit = _.round(
-      (detail.value.unitPrice * 100) / detail.value.unitCost - 100,
-      2
+    console.log(
+      "production",
+      detail.value.productionCost * (1 + detail.value.productionProfit / 100)
     );
+    console.log(
+      "material",
+      detail.value.materialCost * (1 + detail.value.materialProfit / 100)
+    );
+    console.log(
+      "external",
+      (detail.value.transportCost + detail.value.serviceCost) *
+        (1 + detail.value.externalProfit / 100)
+    );
+
+    detail.value.unitPrice =
+      (detail.value.productionCost * (1 + detail.value.productionProfit / 100) +
+        detail.value.materialCost * (1 + detail.value.materialProfit / 100) +
+        (detail.value.transportCost + detail.value.serviceCost) *
+          (1 + detail.value.externalProfit / 100)) /
+      detail.value.quantity;
+
+    console.log("unitcost", detail.value.unitCost);
+    console.log("unitprice", detail.value.unitPrice);
+
+    if (detail.value.unitCost > 0) {
+      detail.value.profit = _.round(
+        (detail.value.unitPrice * 100) / detail.value.unitCost - 100,
+        2
+      );
+    }
+
+    console.log("profit", detail.value.profit);
   }
   // apply discount
   if (detail.value.discount > 0) {
