@@ -66,6 +66,17 @@
           />
         </div>
       </section>
+      <section>
+        <div v-if="budget.notes">
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Notes"
+            id="notes"
+            v-model="budget.notes"
+            disabled
+          />
+        </div>
+      </section>
     </form>
   </div>
 </template>
