@@ -3,7 +3,7 @@
     <section class="three-columns">
       <div>
         <DropdownReference
-          label="Material"
+          label="Referència de compra"
           v-model="detail.referenceId"
           :fullName="true"
           :disabled="detail.receivedQuantity > 0"

@@ -3,7 +3,7 @@
     <section class="two-columns-7525">
       <div>
         <DropdownReference
-          label="Material"
+          label="Referència de compra"
           v-model="detail.referenceId"
           :fullName="true"
           @update:modelValue="getPrice"
