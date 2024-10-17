@@ -19,7 +19,7 @@
     <Column
       field="reference.code"
       sortable
-      header="Material"
+      header="Referència"
       style="width: 40%"
     >
       <template #body="{ data }">

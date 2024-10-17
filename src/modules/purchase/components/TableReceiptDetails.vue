@@ -14,7 +14,7 @@
     <Column field="quantity" header="Quantitat" style="width: 7.5%" />
     <Column
       sortable
-      header="Material"
+      header="Referència"
       field="reference.code"
       style="width: 25%"
     >
