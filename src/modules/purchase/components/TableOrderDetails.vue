@@ -20,7 +20,7 @@
       field="reference.code"
       sortable
       header="Referència"
-      style="width: 40%"
+      style="width: 20%"
     >
       <template #body="{ data }">
         <LinkReference

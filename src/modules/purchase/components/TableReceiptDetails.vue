@@ -16,7 +16,7 @@
       sortable
       header="Referència"
       field="reference.code"
-      style="width: 15%"
+      style="width: 20%"
     >
       <template #body="{ data }">
         <LinkReference :id="data.referenceId" :full-name="true" />
