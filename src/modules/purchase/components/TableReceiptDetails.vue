@@ -16,12 +16,13 @@
       sortable
       header="Referència"
       field="reference.code"
-      style="width: 25%"
+      style="width: 15%"
     >
       <template #body="{ data }">
         <LinkReference :id="data.referenceId" :full-name="true" />
       </template>
     </Column>
+    <Column field="description" header="Descripció" style="width: 20%"></Column>
     <Column field="width" header="Amplada" style="width: 7.5%"></Column>
     <Column field="height" header="Alçada" style="width: 7.5%"></Column>
     <Column field="lenght" header="Longitud" style="width: 7.5%"></Column>

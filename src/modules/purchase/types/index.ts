@@ -207,6 +207,7 @@ export interface PurchaseOrderDetail {
   statusId: string;
   workOrderPhaseId?: string | null;
   referenceId: string;
+  description: string;
   expectedReceiptDate?: string | Date | null;
   quantity: number;
   receivedQuantity: number;
@@ -233,6 +234,7 @@ export interface PurchaseOrderDetailWithPendingQuantity {
 export interface ReceiptDetail {
   receiptId: string;
   referenceId: string;
+  description: string;
   quantity: number;
   width: number;
   lenght: number;
