@@ -6,7 +6,7 @@
           label="Material"
           v-model="detail.referenceId"
           :fullName="true"
-          @update:modelValue="getPrice"
+          @update:modelValue="updateHandler"
         ></DropdownReference>
       </div>
       <div>
@@ -78,7 +78,7 @@
       </div>
     </section>
 
-    <section class="two-columns mt-2">
+    <section class="three-columns mt-2">
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
@@ -87,7 +87,14 @@
           v-model="detail.quantity"
         />
       </div>
-
+      <div>
+        <BaseInput
+          :type="BaseInputType.CURRENCY"
+          label="Preu unitari"
+          highlightOnFocus
+          v-model="detail.unitPrice"
+        />
+      </div>
       <div>
         <BaseInput
           :type="BaseInputType.CURRENCY"
@@ -128,6 +135,8 @@ import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { useReceiptsStore } from "../store/receipt";
 import { useReferenceStore } from "../../shared/store/reference";
+import { ReferenceService } from "../../shared/services/reference.service";
+import PurchaseServices from "../services";
 
 const props = defineProps<{
   detail: ReceiptDetail;
@@ -142,36 +151,76 @@ const emit = defineEmits<{
 const toast = useToast();
 const receiptStore = useReceiptsStore();
 const referenceStore = useReferenceStore();
+const referenceService = new ReferenceService("/reference");
+
+const format = ref<string>("");
 
 const getPrice = async (id: string | null) => {
   if (id == null || props.receipt.supplierId == "") {
     return;
   }
-  const price = await referenceStore.getPrice(id, props.receipt.supplierId);
-  props.detail.kilogramPrice = price;
+  var supplierReference =
+    await PurchaseServices.Supplier.getSupplierReferenceBySupplierIdAndReferenceId(
+      props.receipt.supplierId,
+      id
+    );
+  if (supplierReference && format.value != "UNITATS") {
+    props.detail.kilogramPrice = supplierReference.supplierPrice;
+  } else if (supplierReference && format.value == "UNITATS") {
+    props.detail.unitPrice = supplierReference.supplierPrice;
+  } else if (!supplierReference && format.value != "UNITATS") {
+    if (referenceStore.reference)
+      props.detail.kilogramPrice = referenceStore.reference?.price;
+  } else {
+    if (referenceStore.reference)
+      props.detail.unitPrice = referenceStore.reference?.price;
+  }
+
   //await calculateAmount();
 };
 
-/*const calculateAmount = async () => {
-  props.detail.amount = props.detail.quantity * props.detail.unitPrice;
-};*/
+const getFormat = async (id: string) => {
+  await referenceStore.fetchReference(props.detail.referenceId);
+
+  if (
+    referenceStore.reference &&
+    referenceStore.reference.referenceFormatId != null
+  ) {
+    const referenceFormat = await referenceService.getReferenceFormatById(
+      referenceStore.reference.referenceFormatId
+    );
+    if (referenceFormat) {
+      format.value = referenceFormat.code;
+    }
+  }
+};
+
+const updateHandler = async (id: string) => {
+  await getFormat(id);
+  await getPrice(id);
+};
 
 const calculate = async () => {
-  const response = await receiptStore.calculateDetailWeightAndPrice(
-    props.detail
-  );
-  if (response.result) {
-    props.detail.unitWeight = response.content!.unitWeight;
-    props.detail.totalWeight = response.content!.totalWeight;
-    props.detail.unitPrice = response.content!.unitPrice;
-    props.detail.amount = response.content!.amount;
+  if (format.value != "UNITATS") {
+    const response = await receiptStore.calculateDetailWeightAndPrice(
+      props.detail
+    );
+    if (response.result) {
+      props.detail.unitWeight = response.content!.unitWeight;
+      props.detail.totalWeight = response.content!.totalWeight;
+      props.detail.unitPrice = response.content!.unitPrice;
+      props.detail.amount = response.content!.amount;
+    } else {
+      toast.add({
+        summary: "Calculadora de pes/preu",
+        detail: response.errors[0],
+        severity: "warn",
+        life: 6000,
+      });
+    }
   } else {
-    toast.add({
-      summary: "Calculadora de pes/preu",
-      detail: response.errors[0],
-      severity: "warn",
-      life: 6000,
-    });
+    //props.detail.unitPrice = referenceStore.reference.price;
+    props.detail.amount = props.detail.unitPrice * props.detail.quantity;
   }
 };
 
