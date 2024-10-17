@@ -3,11 +3,11 @@
     <section class="three-columns">
       <div>
         <DropdownReference
-          label="Material"
+          label="Referència de compra"
           v-model="detail.referenceId"
           :fullName="true"
           :disabled="detail.receivedQuantity > 0"
-          @update:modelValue="getPrice"
+          @update:modelValue="getReferenceInfo"
         ></DropdownReference>
       </div>
       <div>
@@ -23,6 +23,16 @@
           label="Data prevista"
           v-model="detail.expectedReceiptDate"
           dateFormat="dd/mm/yy"
+        />
+      </div>
+    </section>
+    <section>
+      <div>
+        <BaseInput
+          :type="BaseInputType.TEXT"
+          label="Descripció"
+          id="description"
+          v-model="detail.description"
         />
       </div>
     </section>
@@ -108,7 +118,7 @@ watch(
   }
 );
 
-const getPrice = async (id: string | null) => {
+const getReferenceInfo = async (id: string | null) => {
   if (id == null || props.order.supplierId == "") {
     return;
   }
@@ -121,10 +131,12 @@ const getPrice = async (id: string | null) => {
   if (supplierReference) {
     props.detail.unitPrice = supplierReference.supplierPrice;
     props.detail.expectedReceiptDate = addDays(supplierReference.supplyDays);
+    props.detail.description = supplierReference.supplierDescription;
   } else {
     const reference = await SharedServices.Reference.getById(id);
     if (reference) {
       props.detail.unitPrice = reference.price;
+      props.detail.description = reference.description;
     }
   }
 
