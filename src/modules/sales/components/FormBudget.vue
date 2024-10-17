@@ -66,8 +66,8 @@
           />
         </div>
       </section>
-      <section>
-        <div v-if="budget.notes">
+      <section v-if="budget.notes && budget.notes.length > 0" class="mt-2">
+        <div>
           <BaseInput
             :type="BaseInputType.TEXT"
             label="Notes"
