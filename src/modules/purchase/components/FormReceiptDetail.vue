@@ -6,7 +6,7 @@
           label="Material"
           v-model="detail.referenceId"
           :fullName="true"
-          @update:modelValue="getPrice"
+          @update:modelValue="updateHandler"
         ></DropdownReference>
       </div>
       <div>
@@ -15,6 +15,16 @@
           label="Preu / Kilo"
           highlightOnFocus
           v-model="detail.kilogramPrice"
+        />
+      </div>
+    </section>
+    <section>
+      <div>
+        <BaseInput
+          :type="BaseInputType.TEXT"
+          label="Descripció"
+          highlightOnFocus
+          v-model="detail.description"
         />
       </div>
     </section>
@@ -143,6 +153,11 @@ const toast = useToast();
 const receiptStore = useReceiptsStore();
 const referenceStore = useReferenceStore();
 
+const updateHandler = async (id: string) => {
+  await getPrice(id);
+  await getReferenceInfo(id);
+};
+
 const getPrice = async (id: string | null) => {
   if (id == null || props.receipt.supplierId == "") {
     return;
@@ -150,6 +165,13 @@ const getPrice = async (id: string | null) => {
   const price = await referenceStore.getPrice(id, props.receipt.supplierId);
   props.detail.kilogramPrice = price;
   //await calculateAmount();
+};
+
+const getReferenceInfo = async (id: string) => {
+  if (props.detail.description == "" || props.detail.description == null) {
+    const reference = await referenceStore.getFullNameById(id);
+    props.detail.description = reference;
+  }
 };
 
 /*const calculateAmount = async () => {

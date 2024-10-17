@@ -20,7 +20,7 @@
       field="reference.code"
       sortable
       header="Material"
-      style="width: 40%"
+      style="width: 15%"
     >
       <template #body="{ data }">
         <LinkReference
@@ -29,6 +29,8 @@
           :fullName="true"
         />
       </template>
+    </Column>
+    <Column field="description" header="Descripció" style="width: 25%">
     </Column>
     <Column field="statusId" header="Estat" style="width: 7.5%">
       <template #body="{ data }">
@@ -100,6 +102,7 @@ import { formatCurrency, formatDate } from "../../../utils/functions";
 import { Lifecycle } from "../../shared/types";
 import { useOrderStore } from "../store/order";
 import sharedServices from "../../shared/services";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   details: Array<PurchaseOrderDetail> | undefined;
@@ -115,6 +118,7 @@ const orderStore = useOrderStore();
 const lifecycle = ref(undefined as undefined | Lifecycle);
 const expandedRows = ref({});
 const detailsWithReceptions = ref([] as Array<any>);
+const referenceStore = useReferenceStore();
 
 watch(
   () => props.details?.length,
