@@ -19,8 +19,8 @@
     <Column
       field="reference.code"
       sortable
-      header="Material"
-      style="width: 15%"
+      header="Referència"
+      style="width: 40%"
     >
       <template #body="{ data }">
         <LinkReference
