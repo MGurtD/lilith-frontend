@@ -13,6 +13,7 @@ const DeliveryNotes = () => import("./views/DeliveryNotes.vue");
 const DeliveryNote = () => import("./views/DeliveryNote.vue");
 const References = () => import("./views/References.vue");
 const Reference = () => import("./views/Reference.vue");
+const SalesInvoicesByDates = () => import("./views/SalesInvoicesByDates.vue");
 
 export default [
   {
@@ -43,4 +44,9 @@ export default [
   { path: "/salesorder/:id", name: "SalesOrder", component: SalesOrder },
   { path: "/deliverynote", name: "DeliveryNotes", component: DeliveryNotes },
   { path: "/deliverynote/:id", name: "DeliveryNote", component: DeliveryNote },
+  {
+    path: "/salesinvoices-by-period",
+    name: "SalesInvoicesByDates",
+    component: SalesInvoicesByDates,
+  },
 ] as Array<RouteRecordRaw>;

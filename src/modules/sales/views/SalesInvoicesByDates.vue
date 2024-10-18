@@ -6,7 +6,7 @@
       scrollable
       scrollHeight="80vh"
       sortMode="multiple"
-      :value="purchaseInvoiceStore.purchaseInvoices"
+      :value="invoiceStore.invoices"
       v-model:selection="selectedInvoices"
     >
       <template #header>
@@ -57,21 +57,16 @@
       </template>
       <Column selectionMode="multiple" style="width: 2%"></Column>
       <Column
-        field="number"
+        field="invoiceNumber"
         header="Número"
         sortable
         style="width: 10%"
       ></Column>
-      <Column header="Proveïdor" style="width: 15%">
+      <Column header="Client" style="width: 15%">
         <template #body="slotProps">
-          {{ getSupplierNameById(slotProps.data.supplierId) }}
+          {{ customerStore.getCustomerNameById(slotProps.data.customerId) }}
         </template>
       </Column>
-      <Column
-        header="Num Fra. Proveïdor"
-        style="width: 12%"
-        field="supplierNumber"
-      ></Column>
       <Column header="Estat" style="width: 15%">
         <template #body="slotProps">
           <span
@@ -83,14 +78,9 @@
           </span>
         </template>
       </Column>
-      <Column
-        header="Data"
-        field="purchaseInvoiceDate"
-        sortable
-        style="width: 15%"
-      >
+      <Column header="Data" field="invoiceDate" sortable style="width: 15%">
         <template #body="slotProps">
-          {{ formatDate(slotProps.data.purchaseInvoiceDate) }}
+          {{ formatDate(slotProps.data.invoiceDate) }}
         </template>
       </Column>
       <Column header="Venciment" style="width: 15%">
@@ -116,52 +106,47 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
-import { usePurchaseMasterDataStore } from "../store/purchase";
-import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
-import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
-import SharedServices from "../../../api/services";
+import { useSalesInvoiceStore } from "../store/invoice";
+import { SalesInvoice } from "../types";
 import {
-  createBlobAndDownloadFile,
   formatCurrency,
   formatDate,
   formatDateForQueryParameter,
 } from "../../../utils/functions";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useCustomersStore } from "../store/customers";
+import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
 
 const toast = useToast();
 const store = useStore();
-const purchaseStore = usePurchaseMasterDataStore();
+const customerStore = useCustomersStore();
 const lifecycleStore = useLifecyclesStore();
-const purchaseInvoiceStore = usePurchaseInvoiceStore();
+const invoiceStore = useSalesInvoiceStore();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
   showManaged: false,
 });
-const selectedInvoices = ref([] as Array<PurchaseInvoice>);
-const lifecycleName = "PurchaseInvoice";
+const selectedInvoices = ref([] as Array<SalesInvoice>);
+const lifecycleName = "SalesInvoice";
 
 onMounted(async () => {
-  purchaseInvoiceStore.purchaseInvoices = [];
+  invoiceStore.invoices = [];
 
-  purchaseStore.fetchMasterData();
+  if (!customerStore.customers) {
+    customerStore.fetchCustomers();
+  }
   lifecycleStore.fetchOneByName(lifecycleName);
 
   store.setMenuItem({
     icon: PrimeIcons.SERVER,
-    title: "Comptabilització de factures de compra",
+    title: "Comptabilització de factures de venta",
   });
 });
-
-const getSupplierNameById = (id: string) => {
-  const supplier = purchaseStore.masterData.suppliers?.find((s) => s.id === id);
-  if (supplier) return supplier.comercialName;
-  else return "";
-};
 
 const getStatusNameById = (id: string) => {
   const status = lifecycleStore.lifecycle?.statuses?.find((s) => s.id === id);
@@ -169,16 +154,15 @@ const getStatusNameById = (id: string) => {
   else return "";
 };
 
-const getLastDueDate = (invoice: PurchaseInvoice): string => {
-  if (!invoice.purchaseInvoiceDueDates) {
+const getLastDueDate = (invoice: SalesInvoice): string => {
+  if (!invoice.salesInvoiceDueDates) {
     return "";
-  } else if (invoice.purchaseInvoiceDueDates.length === 0) {
-    return formatDate(invoice.purchaseInvoiceDate);
+  } else if (invoice.salesInvoiceDueDates.length === 0) {
+    return formatDate(invoice.invoiceDate);
   } else {
     return formatDate(
-      invoice.purchaseInvoiceDueDates[
-        invoice.purchaseInvoiceDueDates.length - 1
-      ].dueDate
+      invoice.salesInvoiceDueDates[invoice.salesInvoiceDueDates.length - 1]
+        .dueDate
     );
   }
 };
@@ -204,9 +188,10 @@ const filterInvoices = async () => {
     const endTime = formatDateForQueryParameter(filter.value.dates[1]);
     const statusId = managedStatus ? managedStatus.id : undefined;
 
-    await purchaseInvoiceStore.GetFiltered(
+    await invoiceStore.GetFiltered(
       startTime,
       endTime,
+      undefined,
       undefined,
       statusId
     );
@@ -229,13 +214,13 @@ const updateSelectedInvoiceStatusToManaged = async () => {
     const request = {
       ids,
       statusToId: statusTo.id,
-    } as PurchaseInvoiceUpdateStatues;
+    } as InvoiceUpdateStatues;
 
-    const updated = await purchaseInvoiceStore.UpdateInvoicesStatus(request);
+    const updated = await invoiceStore.UpdateInvoicesStatuses(request);
     if (updated) {
       toast.add({
         severity: "success",
-        summary: "Comptabilització de factures",
+        summary: "Comptabilització de factures de venta",
         detail: `Factures comptabilitzades: ${selectedInvoices.value.length}`,
         life: 5000,
       });
@@ -245,15 +230,26 @@ const updateSelectedInvoiceStatusToManaged = async () => {
   }
 };
 
-const downloadInvoices = async (invoice: PurchaseInvoice) => {
-  const files = await SharedServices.File.GetEntityFiles(
-    "PurchaseInvoice",
-    invoice.id
+const downloadInvoices = async (invoice: SalesInvoice) => {
+  console.log("Download invoice", invoice);
+  const printed = await invoiceStore.PrintInvoice(
+    invoice.id,
+    invoice.invoiceNumber
   );
-  if (files) {
-    files.forEach(async (f) => {
-      const response = await SharedServices.File.Download(f);
-      createBlobAndDownloadFile(f.originalName, response);
+
+  if (printed) {
+    toast.add({
+      severity: "success",
+      summary: "Comptabilització de factures de venta",
+      detail: `Factura ${invoice.invoiceNumber} descarregada`,
+      life: 5000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Comptabilització de factures de venta",
+      detail: `Error al descarregar la factura ${invoice.invoiceNumber}`,
+      life: 5000,
     });
   }
 };

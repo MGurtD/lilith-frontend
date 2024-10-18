@@ -9,6 +9,9 @@ import {
   CreateRectificativeInvoiceRequest,
 } from "../types";
 import { GenericResponse } from "../../../types";
+import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { createBlobAndDownloadFile } from "../../../utils/functions";
 
 export const useSalesInvoiceStore = defineStore({
   id: "salseInvoices",
@@ -43,7 +46,7 @@ export const useSalesInvoiceStore = defineStore({
       endDate: string,
       statusId?: string,
       customerId?: string,
-      exerciseId?: string
+      excludeStatusId?: string
     ) {
       if (statusId) {
         this.invoices =
@@ -59,6 +62,13 @@ export const useSalesInvoiceStore = defineStore({
             endDate,
             customerId
           );
+      } else if (excludeStatusId) {
+        this.invoices =
+          await SalesService.SalesInvoice.GetBetweenDatesAndExcludeStatus(
+            startDate,
+            endDate,
+            excludeStatusId
+          );
       } else {
         this.invoices = await SalesService.SalesInvoice.GetBetweenDates(
           startDate,
@@ -70,6 +80,14 @@ export const useSalesInvoiceStore = defineStore({
       const updated = await SalesService.SalesInvoice.update(
         invoice.id,
         invoice
+      );
+      return updated;
+    },
+    async UpdateInvoicesStatuses(
+      invoiceImport: InvoiceUpdateStatues
+    ): Promise<boolean> {
+      const updated = await SalesService.SalesInvoice.UpdateStatuses(
+        invoiceImport
       );
       return updated;
     },
@@ -125,6 +143,27 @@ export const useSalesInvoiceStore = defineStore({
       );
       await this.GetDetailsById(invoiceDetail.salesInvoiceId);
       return deleted;
+    },
+    async PrintInvoice(id: string, number: string): Promise<boolean> {
+      const invoiceReport = await SalesService.SalesInvoice.GetReportDataById(
+        id
+      );
+      if (!invoiceReport) return false;
+
+      const fileName = `Factura_${number}.docx`;
+      const reportService = new ReportService();
+      const report = await reportService.Download(
+        invoiceReport,
+        REPORTS.Invoice,
+        fileName
+      );
+
+      if (report) {
+        createBlobAndDownloadFile(fileName, report);
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 });
