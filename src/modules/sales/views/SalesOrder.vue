@@ -153,7 +153,6 @@ const loadView = async () => {
   customerStore.fetchCustomers();
   taxesStore.fetchAll();
   workOrderStore.fetchBySalesOrder(workOrderId);
-  console.log("dins", workOrderStore.workorders);
 
   if (!workMasterStore.workmasters) {
     workMasterStore.fetchAllActives();
