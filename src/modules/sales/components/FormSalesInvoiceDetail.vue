@@ -86,8 +86,7 @@ const calcAmount = () => {
   if (
     detail.quantity &&
     detail.quantity > 0 &&
-    detail.unitPrice &&
-    detail.unitPrice > 0
+    detail.unitPrice
   ) {
     props.invoiceDetail.unitCost = detail.unitPrice;
     props.invoiceDetail.amount = round(detail.quantity * detail.unitPrice, 2);
@@ -97,7 +96,7 @@ const calcAmount = () => {
 
 const schema = Yup.object().shape({
   quantity: Yup.number().min(1).required("La quantitat ha de ser superior a 1"),
-  unitPrice: Yup.number().min(0.01).required("El preu unitat és obligatori"),
+  unitPrice: Yup.number().required("El preu unitat és obligatori"),
 });
 const validation = ref({
   result: false,

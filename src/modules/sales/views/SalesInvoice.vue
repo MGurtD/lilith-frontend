@@ -250,7 +250,6 @@ const deleteDeliveryNote = async (deliveryNote: DeliveryNote) => {
 const loadDetails = async () => {
   lifecycleStore.fetchOneByName("SalesInvoice");
   await deliveryNoteStore.GetByInvoiceId(invoiceId.value);
-  await invoiceStore.GetDetailsById(invoiceId.value);
 };
 
 const currentInvoiceDetail = reactive({} as SalesInvoiceDetail);
