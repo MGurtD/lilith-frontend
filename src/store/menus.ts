@@ -273,9 +273,21 @@ export const applicationMenus = [
 export const managmentMenus = [
   header,
   {
-    icon: PrimeIcons.MONEY_BILL,
+    icon: PrimeIcons.BOOK,
     title: "Gestió de factures",
-    href: "/purchaseinvoices-by-period",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.DOWNLOAD,
+        title: "Factures de compra",
+        href: "/purchaseinvoices-by-period",
+      },
+      {
+        icon: PrimeIcons.UPLOAD,
+        title: "Factures de venta",
+        href: "/salesinvoices-by-period",
+      },
+    ],
   },
 ];
 
