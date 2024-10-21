@@ -15,6 +15,8 @@
           label="Preu / Kilo"
           highlightOnFocus
           v-model="detail.kilogramPrice"
+          :disabled="isDisabled('kilogramprice')"
+          @update:modelValue="calculate"
         />
       </div>
     </section>
@@ -27,6 +29,8 @@
           label="Amplada (mm)"
           :decimals="2"
           v-model="detail.width"
+          :disabled="isDisabled('width')"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -36,6 +40,8 @@
           label="Alçada (mm)"
           highlightOnFocus
           v-model="detail.height"
+          :disabled="isDisabled('height')"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -45,6 +51,8 @@
           label="Longitud (mm)"
           highlightOnFocus
           v-model="detail.lenght"
+          :disabled="isDisabled('length')"
+          @update:modelValue="calculate"
         />
       </div>
     </section>
@@ -57,6 +65,8 @@
           label="Diàmetre (mm)"
           highlightOnFocus
           v-model="detail.diameter"
+          :disabled="isDisabled('diameter')"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -66,6 +76,8 @@
           label="Gruix (mm)"
           highlightOnFocus
           v-model="detail.thickness"
+          :disabled="isDisabled('thickness')"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -74,6 +86,7 @@
           :decimals="2"
           label="Pes (kg)"
           v-model="detail.totalWeight"
+          :disabled="isDisabled('totalweight')"
         />
       </div>
     </section>
@@ -85,6 +98,7 @@
           label="Quantitat"
           highlightOnFocus
           v-model="detail.quantity"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -93,6 +107,7 @@
           label="Preu unitari"
           highlightOnFocus
           v-model="detail.unitPrice"
+          @update:modelValue="calculate"
         />
       </div>
       <div>
@@ -111,19 +126,19 @@
       :size="'small'"
       class="mt-2"
     />
-    <Button
+    <!--<Button
       label="Calcular"
       @click="calculate"
       style="float: right"
       :size="'small'"
       class="mt-2 mr-2"
-    />
+    />-->
   </form>
 </template>
 
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Receipt, ReceiptDetail } from "../types";
 import * as Yup from "yup";
 import {
@@ -137,6 +152,7 @@ import { useReceiptsStore } from "../store/receipt";
 import { useReferenceStore } from "../../shared/store/reference";
 import { ReferenceService } from "../../shared/services/reference.service";
 import PurchaseServices from "../services";
+import { update } from "lodash";
 
 const props = defineProps<{
   detail: ReceiptDetail;
@@ -175,8 +191,6 @@ const getPrice = async (id: string | null) => {
     if (referenceStore.reference)
       props.detail.unitPrice = referenceStore.reference?.price;
   }
-
-  //await calculateAmount();
 };
 
 const getFormat = async (id: string) => {
@@ -194,14 +208,68 @@ const getFormat = async (id: string) => {
     }
   }
 };
+onMounted(async () => {
+  await getFormat(props.detail.referenceId);
+});
 
 const updateHandler = async (id: string) => {
+  if (id == null || props.receipt.supplierId == "") {
+    return;
+  }
+  await restartInputs();
   await getFormat(id);
   await getPrice(id);
 };
 
+const restartInputs = async () => {
+  props.detail.thickness = 0;
+  props.detail.lenght = 0;
+  props.detail.diameter = 0;
+  props.detail.height = 0;
+  props.detail.kilogramPrice = 0;
+  props.detail.quantity = 0;
+  props.detail.totalWeight = 0;
+  props.detail.width = 0;
+  props.detail.unitPrice = 0;
+  props.detail.unitWeight = 0;
+  props.detail.amount = 0;
+};
+
+const isDisabled = (field: string) => {
+  if (format.value === "UNITATS") {
+    return (
+      field === "thickness" ||
+      field === "width" ||
+      field === "height" ||
+      field === "kilogramprice" ||
+      field === "length" ||
+      field === "diameter" ||
+      field === "thickness" ||
+      field === "totalweight"
+    );
+  } else if (format.value === "RODO") {
+    return (
+      field === "thickness" ||
+      field === "width" ||
+      field === "height" ||
+      field === "totalweight"
+    );
+  } else if (format.value === "TUB") {
+    field === "width" || field === "height" || field === "totalweight";
+  } else if (format.value === "PLACA") {
+    return (
+      field === "thickness" || field === "diameter" || field === "totalweight"
+    );
+  }
+  return false;
+};
+
 const calculate = async () => {
-  if (format.value != "UNITATS") {
+  if (
+    format.value == "RODO" &&
+    props.detail.diameter != 0 &&
+    props.detail.lenght != 0
+  ) {
     const response = await receiptStore.calculateDetailWeightAndPrice(
       props.detail
     );
@@ -218,7 +286,51 @@ const calculate = async () => {
         life: 6000,
       });
     }
-  } else {
+  } else if (
+    format.value == "TUB" &&
+    props.detail.diameter != 0 &&
+    props.detail.lenght != 0 &&
+    props.detail.thickness != 0
+  ) {
+    const response = await receiptStore.calculateDetailWeightAndPrice(
+      props.detail
+    );
+    if (response.result) {
+      props.detail.unitWeight = response.content!.unitWeight;
+      props.detail.totalWeight = response.content!.totalWeight;
+      props.detail.unitPrice = response.content!.unitPrice;
+      props.detail.amount = response.content!.amount;
+    } else {
+      toast.add({
+        summary: "Calculadora de pes/preu",
+        detail: response.errors[0],
+        severity: "warn",
+        life: 6000,
+      });
+    }
+  } else if (
+    format.value == "PLACA" &&
+    props.detail.lenght != 0 &&
+    props.detail.width != 0 &&
+    props.detail.height != 0
+  ) {
+    const response = await receiptStore.calculateDetailWeightAndPrice(
+      props.detail
+    );
+    if (response.result) {
+      props.detail.unitWeight = response.content!.unitWeight;
+      props.detail.totalWeight = response.content!.totalWeight;
+      props.detail.unitPrice = response.content!.unitPrice;
+      props.detail.amount = response.content!.amount;
+    } else {
+      toast.add({
+        summary: "Calculadora de pes/preu",
+        detail: response.errors[0],
+        severity: "warn",
+        life: 6000,
+      });
+    }
+  } else if (format.value == "UNITATS") {
     //props.detail.unitPrice = referenceStore.reference.price;
     props.detail.amount = props.detail.unitPrice * props.detail.quantity;
   }
