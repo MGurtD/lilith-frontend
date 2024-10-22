@@ -1,6 +1,6 @@
 <template>
   <DataTable
-    :value="purchaseOrders"
+    :value="workOrderStore.workorderPhases"
     v-model:selection="selectedPhases"
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
@@ -10,14 +10,35 @@
     sort-field="date"
     paginator
     :rows="25"
-    dataKey="phaseId"
-  >
-    <template #header>
+    dataKey="id"
+    ><template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
         <span class="text-xl text-900 font-bold">Seleccionar fases</span>
-        <div>
+        <div class="datatable-filter-3">
+          <div class="filter-field">
+            <ExerciseDatePicker
+              :exercises="sharedStore.exercises"
+              @range-selected="fetchWorkOrderPhases"
+            />
+          </div>
+        </div>
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER"
+            rounded
+            raised
+            @click="fetchWorkOrderPhases"
+          />
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
           <Button
             :size="'small'"
             label="Crear comandes"
@@ -26,25 +47,31 @@
           />
         </div>
       </div>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <div></div>
+      </div>
     </template>
     <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>
-    <Column field="workorderDescription" header="Ordre de fabricació"> </Column>
-    <Column field="phaseDescription" header="Fase" style="width: 15%"></Column>
+    <Column field="workOrder.code" header="Ordre de fabricació"> </Column>
+    <Column field="description" header="Fase" style="width: 15%"></Column>
     <Column header="Referència">
       <template #body="slotProps">
         {{ getName(slotProps.data.serviceReferenceId) }}
       </template>
     </Column>
-    <Column field="quantity" header="Quantitat planificada"> </Column>
+    <Column field="workOrder.plannedQuantity" header="Quantitat planificada">
+    </Column>
     <Column header="Proveïdor">
       <template #body="slotProps">
         <Dropdown
-          v-model="selectedSuppliers[slotProps.data.phaseId]"
-          :options="suppliersByReference[slotProps.data.phaseId]"
+          v-model="selectedSuppliers[slotProps.data.id]"
+          :options="suppliersByReference[slotProps.data.id]"
           placeholder="Selecciona..."
           optionValue="id"
           optionLabel="comercialName"
-          @change="(event) => updatePhase(slotProps.data.phaseId, event.value)"
+          @change="(event) => updatePhase(slotProps.data.id, event.value)"
         >
         </Dropdown>
       </template>
@@ -57,14 +84,22 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { SupplierService } from "../services/suppliers.service";
 import { PurchaseOrderFromWO, Supplier } from "../types";
 import { useReferenceStore } from "../../shared/store/reference";
-import { DetailedWorkOrder } from "../../production/types";
+import { useSharedDataStore } from "../../shared/store/masterData";
+import {
+  DetailedWorkOrder,
+  WorkOrder,
+  WorkOrderPhase,
+} from "../../production/types";
 import { DetailedWorkOrderService } from "../../production/services/workorder.service";
 import { useOrderStore } from "../store/order";
+import { useUserFilterStore } from "../../../store/userfilter";
+import { formatDateForQueryParameter } from "../../../utils/functions";
+import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 
 const router = useRouter();
 const store = useStore();
@@ -72,55 +107,75 @@ const toast = useToast();
 const workOrderStore = useWorkOrderStore();
 const supplierService = new SupplierService("/supplier");
 const referenceStore = useReferenceStore();
+const sharedStore = useSharedDataStore();
 const orderStore = useOrderStore();
+const userFilterStore = useUserFilterStore();
 
-const selectedPhases = ref<PurchaseOrderFromWO[]>([]);
+const selectedPhases = ref<WorkOrderPhase[]>([]);
 const suppliersByReference = ref<{ [key: string]: Supplier[] }>({});
 const selectedSuppliers = ref<{ [key: string]: string }>({});
 const purchaseOrders = ref<PurchaseOrderFromWO[]>([]);
 
+const mostrarToastError = (summary: string, detail: string) => {
+  toast.add({
+    severity: "error",
+    summary: summary,
+    detail: detail,
+    life: 5000,
+  });
+};
+
+const mostrarToastInfo = (summary: string, detail: string) => {
+  toast.add({
+    severity: "info",
+    summary: summary,
+    detail: detail,
+    life: 5000,
+  });
+};
+
+const obtenirDates = () => {
+  if (store.exercisePicker.dates) {
+    const startTime = formatDateForQueryParameter(
+      store.exercisePicker.dates[0]
+    );
+    const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
+    return [startTime, endTime];
+  }
+  return ["", ""];
+};
+const supplierMapping = ref<{ [key: string]: string }>({});
+
 const updatePhase = (phaseId: string, selectedSupplierId: string) => {
-  const phaseIndex = selectedPhases.value.findIndex(
-    (phase) => phase.phaseId === phaseId
+  const phaseIndex = workOrderStore.workorderPhases?.findIndex(
+    (phase) => phase.id === phaseId
   );
 
   if (phaseIndex !== -1) {
-    selectedPhases.value[phaseIndex].supplierId = selectedSupplierId;
+    supplierMapping.value[phaseId] = selectedSupplierId;
   } else {
     const selectedPhase = purchaseOrders.value.find(
       (phase) => phase.phaseId === phaseId
     );
 
     if (selectedPhase) {
-      selectedPhase.supplierId = selectedSupplierId;
+      supplierMapping.value[phaseId] = selectedSupplierId;
     }
   }
 };
 
 const fetchWorkOrderPhases = async () => {
-  await workOrderStore.fetchExternalPhases();
-
-  if (workOrderStore.workorderPhases) {
-    for (const phase of workOrderStore.workorderPhases) {
-      if (phase) {
-        await workOrderStore.fetchOne(phase.workOrderId);
-        if (workOrderStore.workorder) {
-          const purchaseOrder: PurchaseOrderFromWO = {
-            workorderId: phase.workOrderId,
-            workorderDescription: workOrderStore.workorder.code || "",
-            phaseId: phase.id,
-            phaseDescription: phase.code + " - " + phase.description || "",
-            serviceReferenceId: phase.serviceReferenceId ?? "",
-            serviceReferenceName:
-              getName(phase.serviceReferenceId ?? "") ?? "Desconeguda",
-            supplierId: selectedSuppliers.value[phase.id],
-            quantity: workOrderStore.workorder.plannedQuantity || 0,
-          };
-          purchaseOrders.value.push(purchaseOrder);
-        }
-      }
-    }
+  if (!store.exercisePicker.dates) {
+    mostrarToastInfo("Filtre Invàlid", "Seleccioni un perióde");
+    return;
   }
+  const [startTime, endTime] = obtenirDates();
+  if (endTime == "") {
+    return;
+  }
+
+  await workOrderStore.fetchExternalPhases(startTime, endTime);
+  await fetchSuppliersForPhases();
 };
 
 onMounted(async () => {
@@ -128,48 +183,109 @@ onMounted(async () => {
     icon: PrimeIcons.SHOPPING_CART,
     title: "Generació de comandes de compra",
   });
-  await workOrderStore.fetchExternalPhases();
+  await sharedStore.fetchMasterData();
   await referenceStore.fetchReferences();
-  await fetchWorkOrderPhases();
+  setCurrentYear();
+  getUserFilter();
+});
 
-  if (purchaseOrders.value && purchaseOrders.value.length > 0) {
-    for (const phase of purchaseOrders.value) {
+const fetchSuppliersForPhases = async () => {
+  const allsuppliers = await supplierService.getAll();
+  if (
+    workOrderStore.workorderPhases &&
+    workOrderStore.workorderPhases.length > 0
+  ) {
+    for (const phase of workOrderStore.workorderPhases) {
       if (phase && phase.serviceReferenceId != null) {
         const suppliers = await supplierService.getSuppliersReferenceById(
           phase.serviceReferenceId
         );
-        suppliersByReference.value[phase.phaseId] = suppliers;
-        if (suppliers.length == 0) {
-          const allsuppliers = await supplierService.getAll();
+        if (suppliers === null) {
           if (allsuppliers) {
-            suppliersByReference.value[phase.phaseId] = allsuppliers;
+            suppliersByReference.value[phase.id] = allsuppliers;
           }
+        } else {
+          suppliersByReference.value[phase.id] = suppliers;
         }
       }
+      //console.log(suppliersByReference.value[phase.id]);
     }
   }
+};
+
+onUnmounted(() => {
+  const savedFilter = {
+    exercisePicker: store.exercisePicker,
+  };
+
+  userFilterStore.addFilter("ExternalPhasesToPurhcaseOrders", "", savedFilter);
 });
+
+const getUserFilter = () => {
+  const userFilter = userFilterStore.getFilter(
+    "ExternalPhasesToPurhcaseOrders",
+    ""
+  );
+  if (userFilter) {
+    if (userFilter.exercisePicker) {
+      store.exercisePicker.exercise = userFilter.exercisePicker.exercise;
+      store.exercisePicker.dates = [
+        new Date(userFilter.exercisePicker.dates[0]),
+        new Date(userFilter.exercisePicker.dates[1]),
+      ];
+    }
+  }
+};
+
+const setCurrentYear = () => {
+  const year = new Date().getFullYear().toString();
+  const currentExercise = sharedStore.exercises?.find((e) => e.name === year);
+
+  if (currentExercise) {
+    store.exercisePicker.exercise = currentExercise;
+    store.exercisePicker.dates = [
+      new Date(store.exercisePicker.exercise.startDate),
+      new Date(store.exercisePicker.exercise.endDate),
+    ];
+  }
+};
+
+const cleanFilter = () => {
+  setCurrentYear();
+
+  //filterPhases();
+};
+
 const getName = (id: string) => {
   return referenceStore.getFullNameById(id) || "Desconeguda";
 };
 
 const sendData = async () => {
-  for (const phase of selectedPhases.value) {
-    if (
-      phase.supplierId == undefined ||
-      !phase.supplierId ||
-      phase.supplierId == ""
-    ) {
-      toast.add({
-        severity: "error",
-        summary: "Proveïdors buits",
-        detail: "No poden haver-hi proveïdors buits",
-        life: 5000,
-      });
+  for (const phaseId of Object.keys(supplierMapping.value)) {
+    const supplierId = supplierMapping.value[phaseId];
+    if (!supplierId) {
+      mostrarToastError(
+        "Proveïdors buits",
+        "No poden haver-hi proveïdors buits"
+      );
       return;
     }
   }
-  const result = await orderStore.createFromWo(selectedPhases.value);
+  for (const phase of selectedPhases.value) {
+    purchaseOrders.value.push({
+      workorderId: phase.workOrder?.id || "",
+      workorderDescription: phase.description || "",
+      phaseId: phase.id,
+      phaseDescription: phase.description,
+      serviceReferenceId: phase.serviceReferenceId || "",
+      serviceReferenceName: getName(phase.serviceReferenceId || ""),
+      supplierId: supplierMapping.value[phase.id],
+      quantity: phase.workOrder?.plannedQuantity || 0, // o l'atribut que estigui adequat
+    });
+  }
+
+  console.log("sendData: ", purchaseOrders.value);
+  const result = await orderStore.createFromWo(purchaseOrders.value);
   if (!result.result) {
     toast.add({
       severity: "error",
