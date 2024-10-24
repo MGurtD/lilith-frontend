@@ -1,7 +1,6 @@
 <template>
   <DataTable
     :value="workOrderStore.workorderPhases"
-    v-model:selection="selectedPhases"
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
@@ -53,8 +52,8 @@
         <div></div>
       </div>
     </template>
-    <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>
-    <Column field="workOrder.code" header="Ordre de fabricació"> </Column>
+    <!--    <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>-->
+    <Column field="workOrder.code" header="Ordre de fabricació"></Column>
     <Column field="description" header="Fase" style="width: 15%"></Column>
     <Column header="Referència">
       <template #body="slotProps">
@@ -71,7 +70,8 @@
           placeholder="Selecciona..."
           optionValue="id"
           optionLabel="comercialName"
-          @change="(event) => updatePhase(slotProps.data.id, event.value)"
+          @change="(event) => selectPhase(slotProps.data, event.value)"
+          showClear
         >
         </Dropdown>
       </template>
@@ -100,6 +100,7 @@ import { useOrderStore } from "../store/order";
 import { useUserFilterStore } from "../../../store/userfilter";
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import WorkorderPhase from "../../production/views/WorkorderPhase.vue";
 
 const router = useRouter();
 const store = useStore();
@@ -145,6 +146,21 @@ const obtenirDates = () => {
   return ["", ""];
 };
 const supplierMapping = ref<{ [key: string]: string }>({});
+
+const selectPhase = (phase: WorkOrderPhase, selectedSupplierId: string) => {
+  //console.log(selectedSupplierId);
+  updatePhase(phase.id, selectedSupplierId);
+  if (selectedSupplierId) {
+    //console.log("aqui");
+    selectedPhases.value.push(phase);
+  } else {
+    //console.log("aqui no: ", phase);
+    selectedPhases.value = selectedPhases.value.filter(
+      (p, ind) => p.id !== phase.id
+    );
+  }
+  //console.log("phases: ", selectedPhases.value);
+};
 
 const updatePhase = (phaseId: string, selectedSupplierId: string) => {
   const phaseIndex = workOrderStore.workorderPhases?.findIndex(
@@ -261,7 +277,14 @@ const getName = (id: string) => {
 };
 
 const sendData = async () => {
-  for (const phaseId of Object.keys(supplierMapping.value)) {
+  if (selectedPhases.value.length == 0) {
+    mostrarToastInfo(
+      "OFs no seleccionades",
+      "Has de seleccionar una OF com a mínim"
+    );
+    return;
+  }
+  /*for (const phaseId of Object.keys(supplierMapping.value)) {
     const supplierId = supplierMapping.value[phaseId];
     if (!supplierId) {
       mostrarToastError(
@@ -270,8 +293,10 @@ const sendData = async () => {
       );
       return;
     }
-  }
+  }*/
+
   for (const phase of selectedPhases.value) {
+    console.log(phase.workOrder?.id, " - ", supplierMapping.value[phase.id]);
     purchaseOrders.value.push({
       workorderId: phase.workOrder?.id || "",
       workorderDescription: phase.description || "",
@@ -284,7 +309,7 @@ const sendData = async () => {
     });
   }
 
-  console.log("sendData: ", purchaseOrders.value);
+  //console.log("sendData: ", purchaseOrders.value);
   const result = await orderStore.createFromWo(purchaseOrders.value);
   if (!result.result) {
     toast.add({
