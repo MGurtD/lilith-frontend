@@ -1,11 +1,13 @@
 <template>
   <div>
     <DataTable
-      class="small-datatable"
+      class="p-datatable-sm small-datatable"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="75vh"
+      scrollHeight="80vh"
       sortMode="multiple"
+      :paginator="receiptsStore.receipts && receiptsStore.receipts.length > 20"
+      :rows="20"
       :value="receiptsStore.receipts"
       @row-click="editReceipt"
     >

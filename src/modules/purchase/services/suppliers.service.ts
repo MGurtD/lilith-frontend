@@ -60,11 +60,14 @@ export class SupplierService extends BaseService<Supplier> {
     );
     return response.status === 200 || response.status === 201;
   }
-  async getSuppliersReferenceById(id: string): Promise<Array<Supplier>> {
+  async getSuppliersReferenceById(id: string): Promise<Array<Supplier> | null> {
     const response = await this.apiClient.get(
       `${this.resource}/GetByReference/${id}`
     );
-    return response.data;
+    if (response.status === 200) {
+      return response.data;
+    }
+    return null;
   }
   async getSupplierReferenceBySupplierIdAndReferenceId(
     supplierId: string,

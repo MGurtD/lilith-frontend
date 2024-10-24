@@ -64,13 +64,24 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
     if (response.status === 200) return response.data as Array<WorkOrderPhase>;
   }
 
-  async getExternalWorkOrderPhases(): Promise<
-    Array<WorkOrderPhase> | undefined
-  > {
-    const response = await this.apiClient.get(`${this.resource}/External`);
-    if (response.status === 200) return response.data as Array<WorkOrderPhase>;
+  async getExternalWorkOrderPhases(
+    startTime: string,
+    endTime: string
+  ): Promise<Array<WorkOrderPhase> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/External?startTime=${startTime}&endTime=${endTime}`
+    );
+    if (response.status === 200) {
+      const data = response.data as Array<{ workOrder: any; phase: any }>;
+      const workOrderPhases: Array<WorkOrderPhase> = data.map((item) => ({
+        ...item.phase,
+        workOrder: item.workOrder,
+      }));
+      return workOrderPhases;
+    }
   }
 }
+
 export class WorkOrderPhaseDetailService extends BaseService<WorkOrderPhaseDetail> {
   async getByWorkOrderPhaseId(
     workOrderPhaseId: string
