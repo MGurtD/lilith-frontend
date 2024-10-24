@@ -1,6 +1,6 @@
 <template>
   <form v-if="detail">
-    <section class="two-columns-7525">
+    <section class="three-columns-7525">
       <div>
         <DropdownReference
           label="Material"
@@ -8,6 +8,14 @@
           :fullName="true"
           @update:modelValue="updateHandler"
         ></DropdownReference>
+      </div>
+      <div>
+        <BaseInput
+          :type="BaseInputType.TEXT"
+          label="Format"
+          v-model="format"
+          disabled
+        />
       </div>
       <div>
         <BaseInput
@@ -255,7 +263,7 @@ const isDisabled = (field: string) => {
       field === "totalweight"
     );
   } else if (format.value === "TUB") {
-    field === "width" || field === "height" || field === "totalweight";
+    return field === "width" || field === "height" || field === "totalweight";
   } else if (format.value === "PLACA") {
     return (
       field === "thickness" || field === "diameter" || field === "totalweight"
