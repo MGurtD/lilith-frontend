@@ -33,6 +33,15 @@ export const useSalesInvoiceStore = defineStore({
       );
       return response;
     },
+    async GetHeaderById(id: string) {
+      const updatedInvoice = await SalesService.SalesInvoice.GetHeader(id);
+      if (updatedInvoice && this.invoice) {
+        this.invoice.baseAmount = updatedInvoice.baseAmount;
+        this.invoice.taxAmount = updatedInvoice.taxAmount;
+        this.invoice.grossAmount = updatedInvoice.grossAmount;
+        this.invoice.netAmount = updatedInvoice.netAmount;
+      }
+    },
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);
     },
@@ -104,6 +113,8 @@ export const useSalesInvoiceStore = defineStore({
         id,
         deliveryNote
       );
+      this.GetDetailsById(id);
+      this.GetHeaderById(id);
       return response;
     },
     async RemoveDeliveryNote(
@@ -114,6 +125,8 @@ export const useSalesInvoiceStore = defineStore({
         id,
         deliveryNote
       );
+      this.GetDetailsById(id);
+      this.GetHeaderById(id);
       return response;
     },
 
@@ -123,7 +136,8 @@ export const useSalesInvoiceStore = defineStore({
       const response = await SalesService.SalesInvoice.CreateDetail(
         invoiceDetail
       );
-      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return response;
     },
     async UpdateInvoiceDetail(
@@ -132,7 +146,8 @@ export const useSalesInvoiceStore = defineStore({
       const updated = await SalesService.SalesInvoice.UpdateDetail(
         invoiceDetail
       );
-      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return updated;
     },
     async DeleteInvoiceDetail(
@@ -141,7 +156,8 @@ export const useSalesInvoiceStore = defineStore({
       const deleted = await SalesService.SalesInvoice.DeleteDetail(
         invoiceDetail
       );
-      await this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetDetailsById(invoiceDetail.salesInvoiceId);
+      this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return deleted;
     },
     async PrintInvoice(id: string, number: string): Promise<boolean> {

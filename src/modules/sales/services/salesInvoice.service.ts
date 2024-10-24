@@ -34,7 +34,13 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     if (response.status === 200)
       return response.data as GenericResponse<SalesInvoice>;
   }
-
+  async GetHeader(id: string): Promise<SalesInvoice | undefined> {
+    const endpoint = `${this.resource}/header/${id}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as SalesInvoice;
+    }
+  }
   async GetBetweenDates(
     startTime: string,
     endTime: string

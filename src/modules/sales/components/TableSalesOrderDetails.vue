@@ -180,9 +180,6 @@ const totalAmount = computed(() => {
 
 onMounted(async () => {
   workOrderStore.fetchBySalesOrder(props.salesOrder.id);
-  //console.log(props.workorders);
-  /*calculateStatusColor();
-  console.log(statusColors);*/
 });
 
 var selectedDetail = undefined as SalesOrderDetail | undefined;
@@ -269,7 +266,6 @@ const getStatusColorByWOId = (workorderId: string): StatusColor | undefined => {
   const statusId = workOrderStore.getWorkOrderStatusById(workorderId);
 
   if (statusId) {
-    console.log(statusId);
     const status = props.secondaryLifecycle?.statuses.find(
       (s) => s.id === statusId
     );
@@ -280,24 +276,8 @@ const getStatusColorByWOId = (workorderId: string): StatusColor | undefined => {
   return "contrast";
 };
 
-/*const calculateStatusColor = async () => {
-  if (props.salesOrderDetails) {
-    const colors = await Promise.all(
-      props.salesOrderDetails.map(async (detail) => {
-        const statusColor = await getStatusColorByWOId(detail?.workOrderId);
-        return {
-          id: detail.id, // Guarda l'id de la fila per associar el color
-          statusColor,
-        };
-      })
-    );
-    statusColors.value = colors;
-  }
-};*/
-
 const openWorkOrder = (workorderId: string) => {
   emit("openWorkOrder", workorderId);
-  //router.push({ path: `/customers/${row.data.id}` });
 };
 
 const onWorkOrderCreateSubmit = () => {
