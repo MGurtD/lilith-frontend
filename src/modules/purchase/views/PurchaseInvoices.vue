@@ -1,10 +1,15 @@
 <template>
   <div>
     <DataTable
-      class="small-datatable"
+      class="p-datatable-sm small-datatable"
       tableStyle="min-width: 100%"
       scrollable
       scrollHeight="80vh"
+      :paginator="
+        purchaseInvoiceStore.purchaseInvoices &&
+        purchaseInvoiceStore.purchaseInvoices.length > 20
+      "
+      :rows="20"
       sortMode="multiple"
       :value="purchaseInvoiceStore.purchaseInvoices"
       @row-click="editPurchaseInvoice"
