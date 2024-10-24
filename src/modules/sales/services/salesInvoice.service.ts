@@ -4,6 +4,7 @@ import {
   createDateFromNow,
   formatDateForQueryParameter,
 } from "../../../utils/functions";
+import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
 import {
   CreateInvoiceDetailsFromOrderDetailsRequest,
   CreateRectificativeInvoiceRequest,
@@ -56,6 +57,17 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
       return response.data as Array<SalesInvoice>;
     }
   }
+  async GetBetweenDatesAndExcludeStatus(
+    startTime: string,
+    endTime: string,
+    excludeStatusId: string
+  ): Promise<Array<SalesInvoice> | undefined> {
+    const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}&excludeStatusId=${excludeStatusId}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<SalesInvoice>;
+    }
+  }
 
   async GetBetweenDatesAndCustomer(
     startTime: string,
@@ -80,6 +92,12 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
   async Update(request: SalesInvoice) {
     const endpoint = `${this.resource}/${request.id}`;
     const response = await this.apiClient.put(endpoint, request);
+    return response.status === 200;
+  }
+
+  async UpdateStatuses(request: InvoiceUpdateStatues): Promise<boolean> {
+    const endpoint = `${this.resource}/UpdateStatuses`;
+    const response = await this.apiClient.post(endpoint, request);
     return response.status === 200;
   }
 
