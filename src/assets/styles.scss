@@ -31,6 +31,12 @@ body {
   gap: 1rem;
 }
 
+.three-columns-7525 {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+
 .three-columns {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

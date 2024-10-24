@@ -34,6 +34,15 @@ export class ReferenceService extends BaseService<Reference> {
     }
   }
 
+  async getReferenceFormatById(
+    id: string
+  ): Promise<ReferenceFormat | undefined> {
+    const response = await this.apiClient.get(`${this.resource}/Formats/${id}`);
+    if (response.status === 200) {
+      return response.data as ReferenceFormat;
+    }
+  }
+
   async deleteReference(id: string): Promise<GenericResponse<Reference>> {
     const response = await this.apiClient.delete(`${this.resource}/${id}`);
     if (response.status === 200) {
