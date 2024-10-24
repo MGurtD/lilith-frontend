@@ -62,6 +62,7 @@ export interface Budget {
   amount: number;
   acceptanceDate: string | null;
   statusId: string;
+  notes: string;
   details: Array<BudgetDetail> | undefined;
 }
 

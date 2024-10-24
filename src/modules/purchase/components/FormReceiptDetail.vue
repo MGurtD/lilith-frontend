@@ -3,7 +3,7 @@
     <section class="three-columns-7525">
       <div>
         <DropdownReference
-          label="Material"
+          label="Referència de compra"
           v-model="detail.referenceId"
           :fullName="true"
           @update:modelValue="updateHandler"
@@ -25,6 +25,16 @@
           v-model="detail.kilogramPrice"
           :disabled="isDisabled('kilogramprice')"
           @update:modelValue="calculate"
+        />
+      </div>
+    </section>
+    <section>
+      <div>
+        <BaseInput
+          :type="BaseInputType.TEXT"
+          label="Descripció"
+          highlightOnFocus
+          v-model="detail.description"
         />
       </div>
     </section>
@@ -176,7 +186,6 @@ const toast = useToast();
 const receiptStore = useReceiptsStore();
 const referenceStore = useReferenceStore();
 const referenceService = new ReferenceService("/reference");
-
 const format = ref<string>("");
 
 const getPrice = async (id: string | null) => {
@@ -219,6 +228,12 @@ const getFormat = async (id: string) => {
 onMounted(async () => {
   await getFormat(props.detail.referenceId);
 });
+const getReferenceInfo = async (id: string) => {
+  if (props.detail.description == "" || props.detail.description == null) {
+    const reference = await referenceStore.getFullNameById(id);
+    props.detail.description = reference;
+  }
+};
 
 const updateHandler = async (id: string) => {
   if (id == null || props.receipt.supplierId == "") {
@@ -227,6 +242,7 @@ const updateHandler = async (id: string) => {
   await restartInputs();
   await getFormat(id);
   await getPrice(id);
+  await getReferenceInfo(id);
 };
 
 const restartInputs = async () => {
