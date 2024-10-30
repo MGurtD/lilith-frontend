@@ -1,6 +1,7 @@
 <template>
   <DataTable
     @row-click="onEditRow"
+    class="p-datatable-sm"
     :value="workorderPhases"
     tableStyle="min-width: 100%"
     sort-field="code"

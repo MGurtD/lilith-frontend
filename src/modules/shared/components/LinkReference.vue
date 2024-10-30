@@ -28,7 +28,13 @@ const router = useRouter();
 const navegateToReference = () => {
   let path = "";
   if (referenceStore.module === "purchase") {
-    path = `/material/${props.id}/${props.category}`;
+    let category = props.category;
+    let reference = referenceStore.references!.find((r) => r.id === props.id);
+    if (!category && reference) {
+      category = reference.categoryName;
+    }
+
+    path = `/material/${props.id}/${category}`;
   } else if (referenceStore.module === "sales") {
     path = `/sales/reference/${props.id}`;
   }

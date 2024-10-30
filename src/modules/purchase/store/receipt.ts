@@ -57,6 +57,11 @@ export const useReceiptsStore = defineStore({
     async fetchReceipt(id: string) {
       this.receipt = await Services.Receipt.getById(id);
     },
+    async fetchReceiptDetails(id: string) {
+      const updatedReceipt = await Services.Receipt.getById(id);
+      if (this.receipt && updatedReceipt)
+        this.receipt.details = updatedReceipt.details;
+    },
     async createReceipt(createRequest: CreatePurchaseDocumentRequest) {
       const result = await Services.Receipt.create(createRequest);
       if (result) await this.fetchReceipts();
@@ -85,22 +90,22 @@ export const useReceiptsStore = defineStore({
 
     async createReceiptDetail(detail: ReceiptDetail) {
       const response = await Services.Receipt.addDetail(detail);
-      if (response.result) await this.fetchReceipt(detail.receiptId);
+      if (response.result) {
+        await this.fetchReceiptDetails(this.receipt!.id);
+      }
       return response;
     },
     async updateReceiptDetail(id: string, detail: ReceiptDetail) {
       const response = await Services.Receipt.updateDetail(detail);
-      if (response.result) await this.fetchReceipt(detail.receiptId);
+      if (response.result) {
+        await this.fetchReceiptDetails(this.receipt!.id);
+      }
       return response;
     },
     async deleteReceiptDetail(id: string) {
       const response = await Services.Receipt.removeDetail(id);
       if (response.result) {
-        const detail = this.receipt!.details.find((d) => d.id === id);
-        if (detail) {
-          const index = this.receipt!.details.indexOf(detail);
-          this.receipt!.details.splice(index);
-        }
+        await this.fetchReceiptDetails(this.receipt!.id);
       }
       return response;
     },
