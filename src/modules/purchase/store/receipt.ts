@@ -54,6 +54,9 @@ export const useReceiptsStore = defineStore({
     async fetchReceipts() {
       this.receipts = await Services.Receipt.getAll();
     },
+    async fetchReceiptsByReferenceId(id: string) {
+      this.receipts = await Services.Receipt.GetByReferenceId(id);
+    },
     async fetchReceipt(id: string) {
       this.receipt = await Services.Receipt.getById(id);
     },
