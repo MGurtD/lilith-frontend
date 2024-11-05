@@ -5,6 +5,7 @@ import SalesRoutes from "./modules/sales/routes";
 import ProductionRoutes from "./modules/production/routes";
 import WarehouseRoutes from "./modules/warehouse/routes";
 import ShoopfloorRoutes from "./modules/shoopfloor/routes";
+import GlobalStatisticsRoutes from "./modules/globalstatistics/routes";
 
 const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
@@ -25,6 +26,7 @@ const router = createRouter({
     ...ProductionRoutes,
     ...WarehouseRoutes,
     ...ShoopfloorRoutes,
+    ...GlobalStatisticsRoutes,
   ],
 });
 
