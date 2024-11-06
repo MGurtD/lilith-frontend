@@ -107,12 +107,6 @@ export const applicationMenus = [
           },
         ],
       },
-
-      {
-        icon: PrimeIcons.CHART_PIE,
-        title: "Dashboard",
-        href: "/expense-dashboard",
-      },
     ],
   },
   {
@@ -234,11 +228,6 @@ export const applicationMenus = [
         title: "Tiquets de producció",
         href: "/productionpart",
       },
-      {
-        icon: PrimeIcons.EURO,
-        title: "Dashboard Costs",
-        href: "/productioncost",
-      },
     ],
   },
   {
@@ -265,6 +254,28 @@ export const applicationMenus = [
         icon: PrimeIcons.SORT_ALT,
         title: "Inventari",
         href: "/inventory",
+      },
+    ],
+  },
+  {
+    icon: PrimeIcons.CHART_PIE,
+    title: "Estadístiques",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Facturació vs Despeses",
+        href: "/incomesandexpensesdashboard",
+      },
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Despeses",
+        href: "/expense-dashboard",
+      },
+      {
+        icon: PrimeIcons.EURO,
+        title: "Costs Producció",
+        href: "/productioncost",
       },
     ],
   },
