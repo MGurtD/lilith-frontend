@@ -184,7 +184,7 @@ const setChartData = () => {
   });
   const incomeDataset = {
     type: "line",
-    label: "Incomes",
+    label: "Ingressos",
     borderColor: "#B3FFBA",
     backgroundColor: "#B3FFBA",
     data: labels.map((month) => incomesGroupedByMonth[month] || 0),
@@ -192,7 +192,7 @@ const setChartData = () => {
   };
   const expenseDataset = {
     type: "line",
-    label: "Expenses",
+    label: "Despeses",
     borderColor: "#ff336f",
     backgroundColor: "#ff336f",
     data: labels.map((month) => expensesGroupedByMonth[month] || 0),
