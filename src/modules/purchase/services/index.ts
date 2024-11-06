@@ -3,7 +3,7 @@ import { OrderService } from "./order.service";
 import {
   PurchaseInvoiceSerieService,
   PurchaseInvoiceService,
-} from "./purchase.service";
+} from "./invoice.service";
 import { ReceiptService } from "./receipt.service";
 import { SupplierService } from "./suppliers.service";
 

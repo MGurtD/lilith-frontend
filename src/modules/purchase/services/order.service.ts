@@ -3,6 +3,7 @@ import {
   PurchaseOrderDetail,
   PurchaseOrderReceiptDetail,
   PurchaseOrderFromWO,
+  ReceiptOrderDetailGroup,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -32,11 +33,11 @@ export class OrderService extends BaseService<PurchaseOrder> {
   }
   async getOrdersToReciptBySupplierId(
     supplierId: string
-  ): Promise<Array<PurchaseOrder> | undefined> {
+  ): Promise<Array<ReceiptOrderDetailGroup> | undefined> {
     let endpoint = `${this.resource}/ToReceipt?supplierId=${supplierId}`;
     const response = await this.apiClient.get(endpoint);
     if (response.status === 200) {
-      return response.data as Array<PurchaseOrder>;
+      return response.data as Array<ReceiptOrderDetailGroup>;
     }
   }
   async createFromWo(

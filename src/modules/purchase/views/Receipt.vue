@@ -41,11 +41,11 @@
       :header="dialogOptionsSelector.title"
       :closable="dialogOptionsSelector.closable"
       :modal="dialogOptionsSelector.modal"
-      :style="{ width: '50vw' }"
+      :style="{ width: '60vw' }"
     >
       <SelectorOrdersDetailsToReceipt
         :receipt="receipt"
-        :orders="orderStore.ordersToReceipt"
+        :groupedOrderDetails="orderStore.ordersToReceipt"
         @selected="onOrderDetailsSelected"
       />
     </Dialog>
@@ -290,8 +290,13 @@ const openOrderDetailsToReceiptSelector = async () => {
   dialogOptionsSelector.visible = true;
 };
 const onOrderDetailsSelected = async (
-  addReceptionRequest: AddReceptionsRequest
+  addReceptionRequest: AddReceptionsRequest | null
 ) => {
+  if (!addReceptionRequest) {
+    dialogOptionsSelector.visible = false;
+    return;
+  }
+
   dialogOptionsSelector.visible = false;
 
   const response = await receiptStore.addReceptions(addReceptionRequest);
@@ -309,7 +314,7 @@ const onOrderDetailsSelected = async (
       life: 5000,
     });
 
-    receiptStore.fetchReceipt(addReceptionRequest.receiptId);
+    receiptStore.fetchReceiptDetails(addReceptionRequest.receiptId);
   }
 };
 </script>

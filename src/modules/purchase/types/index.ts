@@ -1,4 +1,9 @@
-import { Exercise, PaymentMethod, Tax } from "../../../modules/shared/types";
+import {
+  Exercise,
+  PaymentMethod,
+  Reference,
+  Tax,
+} from "../../../modules/shared/types";
 
 export interface SupplierType {
   id: string;
@@ -230,6 +235,25 @@ export interface PurchaseOrderDetailWithPendingQuantity {
   disabled: boolean;
   pendingQuantity: number;
 }
+export interface ReceiptOrderDetailGroup {
+  reference: Reference;
+  description: string;
+  quantity: number;
+  receivedQuantity: number;
+  price: number;
+  details: ReceiptOrderDetail[];
+}
+
+export interface ReceiptOrderDetail {
+  id: string;
+  orderNumber: string;
+  expectedReceiptDate: Date | null;
+  workOrder: string;
+  workOrderPhase: string;
+  quantity: number;
+  receivedQuantity: number;
+  pendingQuantity: number;
+}
 
 export interface ReceiptDetail {
   receiptId: string;
@@ -254,6 +278,7 @@ export interface PurchaseOrderReceiptDetail {
   purchaseOrderDetailId: string;
   receiptDetailId: string;
   quantity: number;
+  price: number;
   user: string;
   createdOn: string;
   id: string;

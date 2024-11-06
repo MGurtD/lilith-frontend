@@ -1,6 +1,7 @@
 <template>
   <DataTable
     @row-click="onEditRow"
+    class="p-datatable-sm"
     :value="billOfMaterials"
     tableStyle="min-width: 100%"
   >

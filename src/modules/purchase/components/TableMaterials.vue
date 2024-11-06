@@ -2,10 +2,11 @@
   <DataTable
     :value="filteredData"
     tableStyle="min-width: 100%"
+    class="p-datatable-sm"
     scrollable
     scrollHeight="80vh"
     paginator
-    :rows="12"
+    :rows="19"
     @row-click="editRow"
   >
     <template #header>

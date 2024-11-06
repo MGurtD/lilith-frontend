@@ -5,6 +5,7 @@ import {
   PurchaseOrderDetail,
   PurchaseOrderReceiptDetail,
   PurchaseOrderFromWO,
+  ReceiptOrderDetailGroup,
 } from "../types";
 import Services from "../services";
 
@@ -13,7 +14,7 @@ export const useOrderStore = defineStore({
   state: () => ({
     orders: undefined as Array<PurchaseOrder> | undefined,
     order: undefined as PurchaseOrder | undefined,
-    ordersToReceipt: undefined as Array<PurchaseOrder> | undefined,
+    ordersToReceipt: undefined as Array<ReceiptOrderDetailGroup> | undefined,
     receptions: undefined as Array<PurchaseOrderReceiptDetail> | undefined,
   }),
   getters: {},

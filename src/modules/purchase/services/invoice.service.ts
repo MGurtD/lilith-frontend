@@ -74,7 +74,7 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     const response = await apiClient.post(
       `${this.resource}/RecreateDueDates`,
       purchaseInvoice
-    );
+    );2
     return response.status === 200;
   }
 
