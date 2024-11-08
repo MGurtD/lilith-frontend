@@ -31,6 +31,16 @@ export class ReceiptService extends BaseService<Receipt> {
     }
   }
 
+  async GetByReferenceId(
+    referenceId: string
+  ): Promise<Array<Receipt> | undefined> {
+    let endpoint = `${this.resource}/ByReferenceId/${referenceId}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<Receipt>;
+    }
+  }
+
   async GetByInvoice(invoiceId: string): Promise<Array<Receipt> | undefined> {
     let endpoint = `${this.resource}/Invoice/${invoiceId}`;
     const response = await this.apiClient.get(endpoint);

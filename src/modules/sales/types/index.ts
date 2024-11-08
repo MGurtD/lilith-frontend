@@ -307,7 +307,7 @@ export interface ConsolidatedIncomes {
   week: number;
   date: string;
   type: string;
-  typedetail: string;
+  typeDetail: string;
   description: string;
   amount: number;
 }
