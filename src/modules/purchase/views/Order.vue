@@ -108,10 +108,6 @@ const loadView = async () => {
   if (!referenceStore.references || referenceStore.module !== "purchase")
     referenceStore.fetchReferencesByModule("purchase");
 
-  if (order.value) {
-    order.value.date = formatDate(order.value.date);
-  }
-
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     title: `Comanda de compra ${order.value?.number}`,
@@ -206,20 +202,16 @@ const submitDetailForm = async (detail: PurchaseOrderDetail) => {
   }
 
   dialogOptions.visible = false;
-  //router.push({ path: route.path, query: route.query });
   await orderStore.fetchOne(route.params.id as string);
-  console.log(order.value?.details);
 };
 
 const addDetail = async (detail: PurchaseOrderDetail) => {
   const response = await orderStore.createDetail(detail);
-  order.value!.date = formatDate(order.value!.date);
   if (!response.result) showResponseErrorToast(response);
 };
 
 const editDetail = async (detail: PurchaseOrderDetail) => {
   const response = await orderStore.updateDetail(detail.id, detail);
-  order.value!.date = formatDate(order.value!.date);
   if (!response.result) showResponseErrorToast(response);
 };
 
@@ -231,8 +223,6 @@ const removeDetail = async (detail: PurchaseOrderDetail) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       const response = await orderStore.deleteDetail(detail.id, detail);
-      console.log(response);
-      order.value!.date = formatDate(order.value!.date);
       if (!response.result) showResponseErrorToast(response);
     },
   });

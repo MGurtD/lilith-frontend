@@ -8,6 +8,7 @@ import {
   ReceiptOrderDetailGroup,
 } from "../types";
 import Services from "../services";
+import { formatDate } from "../../../utils/functions";
 
 export const useOrderStore = defineStore({
   id: "purchaseOrders",
@@ -50,6 +51,7 @@ export const useOrderStore = defineStore({
     },
     async fetchOne(id: string) {
       this.order = await Services.Order.getById(id);
+      if (this.order) this.order.date = formatDate(this.order.date!);
     },
     async fetchOrdersToReceiptBySupplier(supplierId: string) {
       this.ordersToReceipt = await Services.Order.getOrdersToReciptBySupplierId(

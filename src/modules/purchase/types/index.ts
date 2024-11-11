@@ -200,7 +200,7 @@ export interface CreatePurchaseDocumentRequest {
 export interface PurchaseOrder {
   id: string;
   number: string;
-  date: string;
+  date: string | null;
   supplierId: string;
   exerciseId: string;
   statusId: string;
