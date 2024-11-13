@@ -82,6 +82,7 @@ import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import PurchaseServices from "../services";
 import SharedServices from "../../shared/services";
+import { useReferenceStore } from "../../shared/store/reference";
 
 const props = defineProps<{
   detail: PurchaseOrderDetail;
@@ -103,6 +104,7 @@ const validation = ref({
   result: false,
   errors: {},
 } as FormValidationResult);
+const referenceStore = useReferenceStore();
 
 const validate = () => {
   const formValidation = new FormValidation(schema);
@@ -150,7 +152,16 @@ function addDays(days: number) {
 }
 
 const calculateAmount = () => {
-  props.detail.amount = props.detail.quantity * props.detail.unitPrice;
+  const reference = referenceStore.references!.find(
+    (r) => r.id == props.detail.referenceId
+  );
+  if (reference) {
+    if (reference.categoryName == "Service") {
+      props.detail.amount = props.detail.unitPrice;
+    } else {
+      props.detail.amount = props.detail.quantity * props.detail.unitPrice;
+    }
+  }
 };
 
 const submitForm = async () => {
