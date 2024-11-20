@@ -129,13 +129,30 @@ const getStatus = (id: string) => {
   return entity.name;
 };
 
+const getNextPhaseCode = () => {
+  // Obtener el array de phases
+  const phases = props.workorder.phases;
+
+  // Calcular el máximo valor de code
+  const maxCode = phases.reduce((max, phase) => {
+    const codeValue = parseInt(phase.code, 10) || 0; // Asegúrate de convertir a número
+    return Math.max(max, codeValue);
+  }, 0); // Valor inicial 0
+
+  // Calcular el próximo número que termine en 0
+  const nextCode = Math.ceil((maxCode + 1) / 10) * 10;
+
+  // Retornar el resultado como string
+  return nextCode.toString();
+};
+
 const newPhase = ref({} as WorkOrderPhase);
 const onAddClick = () => {
   newPhase.value = {
     id: getNewUuid(),
     workOrderId: props.workorder.id,
     disabled: false,
-    code: ((props.workorder.phases.length + 1) * 10).toString(),
+    code: getNextPhaseCode(),
     description: "",
     operatorTypeId: null,
     workcenterTypeId: null,
