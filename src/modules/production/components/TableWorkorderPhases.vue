@@ -79,6 +79,7 @@ import FormWorkOrderPhase from "./FormWorkorderPhase.vue";
 import { DialogOptions } from "../../../types/component";
 import { reactive, ref } from "vue";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
   workorder: WorkOrder;
@@ -99,6 +100,7 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
+const toast = useToast();
 const confirm = useConfirm();
 const plantModelStore = usePlantModelStore();
 const lifecycleStore = useLifecyclesStore();
@@ -173,6 +175,17 @@ const onAddClick = () => {
 };
 
 const onAddHandler = (phase: WorkOrderPhase) => {
+  const existsPhase = props.workorder.phases.find((p) => p.code === phase.code);
+  if (existsPhase) {
+    toast.add({
+      severity: "warn",
+      summary: `Fase invàlida`,
+      detail: `La fase ${phase.code} ja existeix`,
+      life: 5000,
+    });
+    return;
+  }
+
   dialogOptions.visible = false;
   emit("add", phase);
 };

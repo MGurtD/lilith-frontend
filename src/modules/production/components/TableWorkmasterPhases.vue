@@ -73,6 +73,7 @@ import { usePlantModelStore } from "../store/plantmodel";
 import FormWorkmasterPhase from "./FormWorkmasterPhase.vue";
 import { DialogOptions } from "../../../types/component";
 import { reactive, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -93,6 +94,7 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
+const toast = useToast();
 const confirm = useConfirm();
 const plantModelStore = usePlantModelStore();
 
@@ -156,6 +158,19 @@ const onAddClick = () => {
 };
 
 const onAddHandler = (phase: WorkMasterPhase) => {
+  const existsPhase = props.workmaster.phases.find(
+    (p) => p.code === phase.code
+  );
+  if (existsPhase) {
+    toast.add({
+      severity: "warn",
+      summary: `Fase invàlida`,
+      detail: `La fase ${phase.code} ja existeix`,
+      life: 5000,
+    });
+    return;
+  }
+
   dialogOptions.visible = false;
   emit("add", phase);
 };
