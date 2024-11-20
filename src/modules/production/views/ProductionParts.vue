@@ -19,6 +19,22 @@
             <ExerciseDatePicker :exercises="exerciseStore.exercises" />
           </div>
           <div class="filter-field">
+            <label>Màquina</label>
+            <Dropdown
+              v-model="filter.workcenterId"
+              :show-clear="true"
+              :filter="true"
+              :options="
+                plantModelStore.workcenters?.sort((a, b) =>
+                  a.description.localeCompare(b.description)
+                )
+              "
+              optionValue="id"
+              optionLabel="description"
+              class="w-full"
+            />
+          </div>
+          <div class="filter-field">
             <label>Operari</label>
             <Dropdown
               v-model="filter.operatorId"
@@ -34,22 +50,6 @@
               "
               optionValue="value"
               optionLabel="label"
-              class="w-full"
-            />
-          </div>
-          <div class="filter-field">
-            <label>Màquina</label>
-            <Dropdown
-              v-model="filter.workcenterId"
-              :show-clear="true"
-              :filter="true"
-              :options="
-                plantModelStore.workcenters?.sort((a, b) =>
-                  a.description.localeCompare(b.description)
-                )
-              "
-              optionValue="id"
-              optionLabel="description"
               class="w-full"
             />
           </div>
@@ -92,14 +92,14 @@
     </template>
     <template #empty> No s'han trobat tiquets. </template>
     <template #loading> Carregant tiquets. Si us plau espera. </template>
-    <Column field="operatorId" header="Operari" style="width: 15%">
-      <template #body="slotProps">
-        {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
-      </template>
-    </Column>
     <Column field="workcenterId" header="Màquina" style="width: 15%">
       <template #body="slotProps">
         {{ plantModelStore.getWorkcenterNameById(slotProps.data.workcenterId) }}
+      </template>
+    </Column>
+    <Column field="operatorId" header="Operari" style="width: 15%">
+      <template #body="slotProps">
+        {{ plantModelStore.getOperatorNameById(slotProps.data.operatorId) }}
       </template>
     </Column>
     <Column field="workOrderId" header="OF" style="width: 20%">
@@ -114,13 +114,13 @@
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 5%"></Column>
     <Column
-      field="operatorTime"
-      header="Temps Oper."
+      field="workcenterTime"
+      header="Temps Maq."
       style="width: 10%"
     ></Column>
     <Column
-      field="workcenterTime"
-      header="Temps Maq."
+      field="operatorTime"
+      header="Temps Oper."
       style="width: 10%"
     ></Column>
     <Column header="Cost Operari" style="width: 10%" field="operatorHourCost">
