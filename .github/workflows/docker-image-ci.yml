@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - "main"
+      - "dev"
 env:
-  BRANCH: ${{ github.ref }}
+  BRANCH: ${{ github.ref_name }}
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -19,8 +20,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Build and push
+
+      - name: Build and push (main branch)
+        if: ${{ github.ref_name == 'main' }}
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: marcgurt/lilith-frontend:latest
+
+      - name: Build and push (dev branch)
+        if: ${{ github.ref_name == 'dev' }}
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: marcgurt/lilith-frontend:dev
