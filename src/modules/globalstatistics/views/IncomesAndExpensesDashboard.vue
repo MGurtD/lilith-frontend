@@ -139,27 +139,12 @@ type Total = {
 const totals = ref<Total[]>([]);
 
 const setChartData = () => {
-  const monthNames = [
-    "Gener",
-    "Febrer",
-    "Març",
-    "Abril",
-    "Maig",
-    "Juny",
-    "Juliol",
-    "Agost",
-    "Setembre",
-    "Octubre",
-    "Novembre",
-    "Desembre",
-  ];
-
-  const incomesGroupedByMonth = {} as { [key: string]: number };
-  const expensesGroupedByMonth = {} as { [key: string]: number };
+  const incomesGroupedByYearMonth = {} as { [key: string]: number };
+  const expensesGroupedByYearMonth = {} as { [key: string]: number };
   incomes.value.forEach((income) => {
-    const month = monthNames[new Date(income.date).getMonth()];
-    incomesGroupedByMonth[month] =
-      (incomesGroupedByMonth[month] || 0) + income.amount;
+    const yearMonth = `${income.year}-${String(income.month).padStart(2, "0")}`;
+    incomesGroupedByYearMonth[yearMonth] =
+      (incomesGroupedByYearMonth[yearMonth] || 0) + income.amount;
     totals.value.push({
       date: income.date,
       type: income.type,
@@ -168,11 +153,13 @@ const setChartData = () => {
       total: income.amount,
     });
   });
-  const labels = monthNames;
+
   expenses.value.forEach((expense) => {
-    const month = monthNames[new Date(expense.paymentDate).getMonth()];
-    expensesGroupedByMonth[month] =
-      (expensesGroupedByMonth[month] || 0) + expense.amount;
+    const yearMonth = `${expense.yearPaymentDate}-${String(
+      expense.monthPaymentDate
+    ).padStart(2, "0")}`;
+    expensesGroupedByYearMonth[yearMonth] =
+      (expensesGroupedByYearMonth[yearMonth] || 0) + expense.amount;
 
     totals.value.push({
       date: expense.paymentDate,
@@ -182,12 +169,18 @@ const setChartData = () => {
       total: expense.amount,
     });
   });
+
+  const labels = Object.keys(incomesGroupedByYearMonth)
+    .concat(Object.keys(expensesGroupedByYearMonth))
+    .filter((value, index, self) => self.indexOf(value) === index)
+    .sort();
+
   const incomeDataset = {
     type: "line",
     label: "Ingressos",
     borderColor: "#B3FFBA",
     backgroundColor: "#B3FFBA",
-    data: labels.map((month) => incomesGroupedByMonth[month] || 0),
+    data: labels.map((month) => incomesGroupedByYearMonth[month] || 0),
     fill: false,
   };
   const expenseDataset = {
@@ -195,10 +188,11 @@ const setChartData = () => {
     label: "Despeses",
     borderColor: "#ff336f",
     backgroundColor: "#ff336f",
-    data: labels.map((month) => expensesGroupedByMonth[month] || 0),
+    data: labels.map((month) => expensesGroupedByYearMonth[month] || 0),
     fill: false,
   };
-  const datasets = [incomeDataset, expenseDataset];
+  //expenseDataset,
+  const datasets = [expenseDataset, incomeDataset];
   return {
     labels,
     datasets,
@@ -231,7 +225,7 @@ const setChartOptions = () => {
     },
     scales: {
       x: {
-        stacked: true,
+        //stacked: true,
         ticks: {
           color: textColorSecondary,
         },
@@ -240,7 +234,7 @@ const setChartOptions = () => {
         },
       },
       y: {
-        stacked: true,
+        //stacked: true,
         ticks: {
           color: textColorSecondary,
         },
