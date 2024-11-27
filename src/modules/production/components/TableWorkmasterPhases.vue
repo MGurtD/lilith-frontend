@@ -6,6 +6,8 @@
     tableStyle="min-width: 100%"
     sort-field="code"
     :sort-order="1"
+    :scrollable="scrollHeight !== undefined"
+    :scrollHeight="scrollHeight ? `${scrollHeight}vh` : ''"
   >
     <template #header>
       <div
@@ -77,6 +79,7 @@ import { reactive, ref } from "vue";
 const props = defineProps<{
   workmaster: WorkMaster;
   workmasterPhases: Array<WorkMasterPhase>;
+  scrollHeight?: number;
 }>();
 
 const emit = defineEmits<{

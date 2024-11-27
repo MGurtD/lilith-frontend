@@ -106,6 +106,7 @@ export interface WorkMaster {
   machineCost: number;
   externalCost: number;
   materialCost: number;
+  totalWeight: number;
   mode: number;
   disabled: boolean;
   phases: Array<WorkMasterPhase>;

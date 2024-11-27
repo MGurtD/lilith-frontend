@@ -38,7 +38,7 @@
         <Checkbox v-model="workmaster.disabled" class="w-full" :binary="true" />
       </div>
     </section>
-    <section class="five-columns">
+    <section class="six-columns">
       <div class="mt-1">
         <label class="block text-900 mb-2">Cost Operari:</label>
         <span class="summary-field">{{
@@ -66,6 +66,10 @@
       <div class="mt-1">
         <label class="block text-900 mb-2">Cost Total:</label>
         <span class="summary-field">{{ formatCurrency(totalCost) }}</span>
+      </div>
+      <div class="mt-1">
+        <label class="block text-900 mb-2">Pes Total:</label>
+        <span class="summary-field">{{ workmaster.totalWeight }} KG</span>
       </div>
     </section>
   </form>
