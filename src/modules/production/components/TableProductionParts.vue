@@ -32,14 +32,14 @@
       </template>
     </Column>
     <Column field="quantity" header="Quantitat" style="width: 7.5%"></Column>
-    <Column field="operatorTime" header="Temps operari" style="width: 10%">
-      <template #body="slotProps">
-        {{ slotProps.data.operatorTime }} min.
-      </template>
-    </Column>
     <Column field="workcenterTime" header="Temps màquina" style="width: 10%">
       <template #body="slotProps">
         {{ slotProps.data.workcenterTime }} min.
+      </template>
+    </Column>
+    <Column field="operatorTime" header="Temps operari" style="width: 10%">
+      <template #body="slotProps">
+        {{ slotProps.data.operatorTime }} min.
       </template>
     </Column>
     <Column style="width: 5%">
