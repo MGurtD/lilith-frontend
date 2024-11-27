@@ -69,7 +69,7 @@
       </div>
       <div class="mt-1">
         <label class="block text-900 mb-2">Pes Total:</label>
-        <span class="summary-field">{{ workmaster.totalWeight }}</span>
+        <span class="summary-field">{{ workmaster.totalWeight }} KG</span>
       </div>
     </section>
   </form>
