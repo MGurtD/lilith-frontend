@@ -6,6 +6,8 @@
     tableStyle="min-width: 100%"
     sort-field="code"
     :sort-order="1"
+    :scrollable="scrollHeight !== undefined"
+    :scrollHeight="scrollHeight ? `${scrollHeight}vh` : ''"
   >
     <template #header>
       <div
@@ -73,10 +75,12 @@ import { usePlantModelStore } from "../store/plantmodel";
 import FormWorkmasterPhase from "./FormWorkmasterPhase.vue";
 import { DialogOptions } from "../../../types/component";
 import { reactive, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
   workmaster: WorkMaster;
   workmasterPhases: Array<WorkMasterPhase>;
+  scrollHeight?: number;
 }>();
 
 const emit = defineEmits<{
@@ -93,6 +97,7 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
+const toast = useToast();
 const confirm = useConfirm();
 const plantModelStore = usePlantModelStore();
 
@@ -115,13 +120,30 @@ const getOperatorType = (id: string) => {
   return entity.name;
 };
 
+const getNextPhaseCode = () => {
+  // Obtener el array de phases
+  const phases = props.workmaster.phases;
+
+  // Calcular el máximo valor de code
+  const maxCode = phases.reduce((max, phase) => {
+    const codeValue = parseInt(phase.code, 10) || 0; // Asegúrate de convertir a número
+    return Math.max(max, codeValue);
+  }, 0); // Valor inicial 0
+
+  // Calcular el próximo número que termine en 0
+  const nextCode = Math.ceil((maxCode + 1) / 10) * 10;
+
+  // Retornar el resultado como string
+  return nextCode.toString();
+};
+
 const newPhase = ref({} as WorkMasterPhase);
 const onAddClick = () => {
   newPhase.value = {
     id: getNewUuid(),
     workMasterId: props.workmaster.id,
     disabled: false,
-    code: ((props.workmaster.phases.length + 1) * 10).toString(),
+    code: getNextPhaseCode(),
     description: "",
     operatorTypeId: null,
     workcenterTypeId: null,
@@ -139,6 +161,19 @@ const onAddClick = () => {
 };
 
 const onAddHandler = (phase: WorkMasterPhase) => {
+  const existsPhase = props.workmaster.phases.find(
+    (p) => p.code === phase.code
+  );
+  if (existsPhase) {
+    toast.add({
+      severity: "warn",
+      summary: `Fase invàlida`,
+      detail: `La fase ${phase.code} ja existeix`,
+      life: 5000,
+    });
+    return;
+  }
+
   dialogOptions.visible = false;
   emit("add", phase);
 };

@@ -12,6 +12,7 @@
       v-if="workmaster && workmaster.phases"
       :workmaster="workmaster"
       :workmasterPhases="workmaster.phases"
+      :scroll-height="67"
       @add="addWorkMasterPhase"
       @edit="editWorkMasterPhase"
       @delete="deleteWorkMasterPhase"
