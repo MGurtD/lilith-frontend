@@ -56,7 +56,7 @@ import TableWorkOrderPhaseBillOfMaterials from "../components/TableWorkorderPhas
 import FormWorkOrderPhaseBomItem from "../components/FormWorkorderPhaseBomItem.vue";
 
 import { onMounted, reactive, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
 import { usePlantModelStore } from "../store/plantmodel";
@@ -125,8 +125,6 @@ const onWorkOrderPhaseSubmit = async (phase: WorkOrderPhase) => {
       life: 10000,
     });
   }
-
-  //if (updated) router.back();
 };
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref(undefined as WorkOrderPhaseDetail | undefined);
@@ -195,7 +193,10 @@ const onEditBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
   dialogOptions.visible = true;
 };
 const onDeleteBomItem = async (bomItem: WorkOrderPhaseBillOfMaterials) => {
-  await workorderStore.updatePhase(phaseId.value, workorderStore.workorderPhase!);
+  await workorderStore.updatePhase(
+    phaseId.value,
+    workorderStore.workorderPhase!
+  );
   await workorderStore.deletePhaseBomItem(bomItem.id);
 };
 

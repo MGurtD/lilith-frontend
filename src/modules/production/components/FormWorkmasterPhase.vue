@@ -134,7 +134,6 @@ import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useReferenceStore } from "../../shared/store/reference";
 import { Reference, ReferenceCategoryEnum } from "../../shared/types";
-import WorkcenterType from "../views/WorkcenterType.vue";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -212,6 +211,11 @@ const onServiceReferenceChanged = () => {
 
 const schema = Yup.object().shape({
   code: Yup.string().required("El codi és obligatori"),
+  /*.test("unique-code", "El codi ja existeix", function (value) {
+      const { phases } = props.workmaster || {}; // Accede a workmaster.phases
+      if (!phases || !Array.isArray(phases)) return true; // Si no hay fases, no valida como duplicado
+      return  !phases.some((phase) => phase.code === value); // Verifica duplicados
+    }),*/
 });
 const validation = ref({
   result: false,
