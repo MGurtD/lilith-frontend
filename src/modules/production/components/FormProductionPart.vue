@@ -2,6 +2,23 @@
   <form v-if="productionPart">
     <section class="three-columns mt-2">
       <div>
+        <label class="block text-900 mb-2">Màquina</label>
+        <Dropdown
+          v-model="productionPart.workcenterId"
+          editable
+          :filter="true"
+          :options="
+            plantModelStore.workcenters?.sort((a, b) =>
+              a.description.localeCompare(b.description)
+            )
+          "
+          optionValue="id"
+          optionLabel="description"
+          class="w-full"
+          @change="getWorkOrders(productionPart.workcenterId)"
+        />
+      </div>
+      <div>
         <label class="block text-900 mb-2">Operari</label>
         <Dropdown
           v-model="productionPart.operatorId"
@@ -21,23 +38,6 @@
           :class="{
             'p-invalid': validation.errors.operatorid,
           }"
-        />
-      </div>
-      <div>
-        <label class="block text-900 mb-2">Màquina</label>
-        <Dropdown
-          v-model="productionPart.workcenterId"
-          editable
-          :filter="true"
-          :options="
-            plantModelStore.workcenters?.sort((a, b) =>
-              a.description.localeCompare(b.description)
-            )
-          "
-          optionValue="id"
-          optionLabel="description"
-          class="w-full"
-          @change="getWorkOrders(productionPart.workcenterId)"
         />
       </div>
       <div>
@@ -92,17 +92,17 @@
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps operari (minuts)"
+          label="Temps centre de treball (minuts)"
           id="time"
-          v-model="productionPart.operatorTime"
+          v-model="productionPart.workcenterTime"
         />
       </div>
       <div>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          label="Temps centre de treball (minuts)"
+          label="Temps operari (minuts)"
           id="time"
-          v-model="productionPart.workcenterTime"
+          v-model="productionPart.operatorTime"
         />
       </div>
     </section>
