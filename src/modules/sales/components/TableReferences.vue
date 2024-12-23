@@ -12,10 +12,14 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter">
+        <div class="datatable-filter-3">
           <div class="filter-field">
             <label>Codi</label>
-            <BaseInput v-model="filter.code"  />
+            <BaseInput v-model="filter.code" />
+          </div>
+          <div class="filter-field">
+            <label>Descripció</label>
+            <BaseInput v-model="filter.description" />
           </div>
           <div class="filter-field">
             <label>Client</label>
@@ -91,6 +95,7 @@ const userFilterStore = useUserFilterStore();
 const customerStore = useCustomersStore();
 const filter = ref({
   code: "",
+  description: "",
   customerId: "",
 });
 
@@ -134,6 +139,15 @@ const filteredData = computed(() => {
   if (filter.value.code && filter.value.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
       r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+    );
+  }
+
+  // Description filter
+  if (filter.value.description && filter.value.description.length > 0) {
+    filteredReferences = filteredReferences.filter((r) =>
+      r.description
+        .toLowerCase()
+        .includes(filter.value.description.toLowerCase())
     );
   }
 
