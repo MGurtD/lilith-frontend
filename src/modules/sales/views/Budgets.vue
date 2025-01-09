@@ -19,7 +19,7 @@
         <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker
-              :exercises="sharedStore.exercises"
+              :exercises="exerciseStore.exercises"
               @range-selected="filterBudget"
             />
           </div>
@@ -142,17 +142,18 @@ import {
 } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { Budget, CreateSalesHeaderRequest } from "../types";
-import { useSharedDataStore } from "../../shared/store/masterData";
 import { useConfirm } from "primevue/useconfirm";
 import { useBudgetStore } from "../store/budget";
 import { useUserFilterStore } from "../../../store/userfilter";
+import { useExerciseStore } from "../../shared/store/exercise";
+import { Exercise } from "../../shared/types";
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 const store = useStore();
 const userFilterStore = useUserFilterStore();
-const sharedStore = useSharedDataStore();
+const exerciseStore = useExerciseStore();
 const budgetStore = useBudgetStore();
 const referenceStore = useReferenceStore();
 const customerStore = useCustomersStore();
@@ -170,11 +171,13 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
+const currentExercise = ref(undefined as Exercise | undefined);
+
 onMounted(async () => {
   lifecycleStore.fetchOneByName("Budget");
   referenceStore.fetchReferences();
   customerStore.fetchCustomers();
-  await sharedStore.fetchMasterData();
+  await exerciseStore.fetchActive();
 
   setCurrentYear();
   getUserFilter();
@@ -212,10 +215,10 @@ const getUserFilter = () => {
 
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
-  const currentExercise = sharedStore.exercises?.find((e) => e.name === year);
+  currentExercise.value = exerciseStore.exercises?.find((e) => e.name === year);
 
-  if (currentExercise) {
-    store.exercisePicker.exercise = currentExercise;
+  if (currentExercise.value) {
+    store.exercisePicker.exercise = currentExercise.value;
     store.exercisePicker.dates = [
       new Date(store.exercisePicker.exercise.startDate),
       new Date(store.exercisePicker.exercise.endDate),
@@ -236,7 +239,7 @@ const generateNewRequest = (): CreateSalesHeaderRequest => {
   return {
     id: getNewUuid(),
     customerId: "",
-    exerciseId: "",
+    exerciseId: currentExercise.value?.id || "",
     date: new Date(),
   };
 };
