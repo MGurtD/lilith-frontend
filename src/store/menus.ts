@@ -264,6 +264,11 @@ export const applicationMenus = [
     child: [
       {
         icon: PrimeIcons.WALLET,
+        title: "Globals",
+        href: "/dashboard",
+      },
+      {
+        icon: PrimeIcons.WALLET,
         title: "Facturació vs Despeses",
         href: "/incomesandexpensesdashboard",
       },
