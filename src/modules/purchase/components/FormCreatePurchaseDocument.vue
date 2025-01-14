@@ -33,7 +33,7 @@
   </form>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useSuppliersStore } from "../store/suppliers";
 import { useToast } from "primevue/usetoast";
 import { CreatePurchaseDocumentRequest } from "../types";
@@ -55,6 +55,20 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "submit", createRequest: CreatePurchaseDocumentRequest): void;
 }>();
+
+onMounted(async () => {
+  if (!exerciseStore.exercises) {
+    await exerciseStore.fetchActive();
+  }
+
+  var currentExercise = exerciseStore.exercises?.find(
+    (e) => e.name === new Date().getFullYear().toString()
+  );
+
+  if (currentExercise) {
+    props.createRequest.exerciseId = currentExercise.id;
+  }
+});
 
 const schema = Yup.object().shape({
   exerciseId: Yup.string().required("L'exercici és obligatori"),

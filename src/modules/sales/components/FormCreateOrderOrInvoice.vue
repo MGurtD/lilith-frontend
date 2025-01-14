@@ -17,7 +17,7 @@
         class="w-full"
         v-model="createRequest.exerciseId"
         editable
-        :options="sharedData.exercises"
+        :options="exerciseStore.exercises"
         optionValue="id"
         optionLabel="name"
       />
@@ -33,9 +33,8 @@
   </form>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useCustomersStore } from "../store/customers";
-import { useSharedDataStore } from "../../shared/store/masterData";
 import { useToast } from "primevue/usetoast";
 import { CreateSalesHeaderRequest } from "../types";
 import * as Yup from "yup";
@@ -44,9 +43,10 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { convertDateTimeToJSON } from "../../../utils/functions";
+import { useExerciseStore } from "../../shared/store/exercise";
 
 const toast = useToast();
-const sharedData = useSharedDataStore();
+const exerciseStore = useExerciseStore();
 const customersStore = useCustomersStore();
 
 const props = defineProps<{
@@ -55,6 +55,20 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "submit", createRequest: CreateSalesHeaderRequest): void;
 }>();
+
+onMounted(async () => {
+  if (!exerciseStore.exercises) {
+    await exerciseStore.fetchActive();
+  }
+
+  var currentExercise = exerciseStore.exercises?.find(
+    (e) => e.name === new Date().getFullYear().toString()
+  );
+
+  if (currentExercise) {
+    props.createRequest.exerciseId = currentExercise.id;
+  }
+});
 
 const schema = Yup.object().shape({
   exerciseId: Yup.string().required("L'exercici és obligatori"),
