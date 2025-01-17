@@ -10,7 +10,6 @@ const Lifecycles = () => import("./views/Lifecycles.vue");
 const Lifecycle = () => import("./views/Lifecycle.vue");
 const ReferenceTypes = () => import("./views/ReferenceTypes.vue");
 const ReferenceType = () => import("./views/ReferenceType.vue");
-const Dashboard = () => import("./views/Dashboard.vue");
 
 export default [
   {
@@ -66,10 +65,5 @@ export default [
     path: "/referencetype/:id",
     name: "ReferenceType",
     component: ReferenceType,
-  },
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    component: Dashboard,
   },
 ] as Array<RouteRecordRaw>;
