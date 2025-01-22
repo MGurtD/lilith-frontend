@@ -1,93 +1,102 @@
 <template>
+  <section></section>
   <TabView>
     <TabPanel header="General">
-      <section class="three-columns mt-2">
-        <div>
-          <Card v-if="revenue" class="w-full">
-            <template #title
-              >Revenue
-              <span class="relative group">
-                <i
-                  class="pi pi-question-circle"
-                  v-tooltip="
-                    'Xifra de negoci. Entrades i sortides amb imposts i segons data de creació'
-                  "
-                ></i>
-              </span>
-            </template>
-            <template #content>
-              <h1
-                :class="
-                  revenue.revenueAmount > 0 ? 'text-green-500' : 'text-red-500'
-                "
-                class="text-4xl font-bold"
-              >
-                {{ revenue.revenueAmount }} €
-              </h1>
-              <section class="three-columns">
-                <h3 class="text-xs">Income: {{ revenue.incomeAmount }} €</h3>
-                <h3 class="text-xs">Expense: {{ revenue.expenseAmount }} €</h3>
-                <h3 class="text-xs">Outcome: {{ revenue.outcomeAmount }} €</h3>
-              </section>
-            </template>
-          </Card>
-        </div>
-        <div>
-          <Card class="w-full">
-            <template #title
-              >Cash flow
-              <span class="relative group">
-                <i
-                  class="pi pi-question-circle"
-                  v-tooltip="
-                    'Flux de caixa. Entrades i sortides sense imposts i segons data de venciment'
-                  "
-                ></i>
-              </span>
-            </template>
-            <template #content>
-              <h1
-                :class="
-                  currentMonthIncomes > currentMonthExpenses
-                    ? 'text-green-500'
-                    : 'text-red-500'
-                "
-                class="text-4xl font-bold"
-              >
-                {{ currentMonthIncomes - currentMonthExpenses }} €
-              </h1>
-              <section class="three-columns">
-                <h3 class="text-xs">Income: {{ currentMonthIncomes }} €</h3>
-                <h3 class="text-xs">Expense: {{ currentMonthExpenses }} €</h3>
-                <h3 class="text-xs">
-                  Past Month: {{ pastMonthIncomes - pastMonthExpenses }} €
-                </h3>
-              </section>
-            </template>
-          </Card>
-        </div>
-        <div></div>
+      <section class="mt-2 dashboard-card-container">
+        <DashboardCard
+          v-if="revenue"
+          :isPositive="revenue.revenueAmount > 0"
+          title="Revenue"
+          tooltip="Xifra de negoci. Entrades i sortides amb imposts i segons data de creació"
+          :indicatorValue="revenue.revenueAmount"
+          text1="Income"
+          :value1="revenue.incomeAmount"
+          text2="Expense"
+          :value2="revenue.expenseAmount"
+          text3="Outcome"
+          :value3="revenue.outcomeAmount"
+        >
+        </DashboardCard>
+        <DashboardCard
+          title="Cash flow"
+          :isPositive="currentMonthIncomes > currentMonthExpenses"
+          tooltip="Flux de caixa. Entrades i sortides sense imposts i segons data de venciment"
+          :indicatorValue="currentMonthIncomes - currentMonthExpenses"
+          text1="Income"
+          :value1="currentMonthIncomes"
+          text2="Expense"
+          :value2="currentMonthExpenses"
+          text3="Past Month"
+          :value3="pastMonthIncomes - pastMonthExpenses"
+        />
+        <DashboardCard
+          title="Stock value"
+          :isPositive="true"
+          tooltip="Valor de l'estoc actual del magatzem"
+          :indicatorValue="2560"
+          text3="Past Month"
+          :value3="2800"
+        />
       </section>
     </TabPanel>
-    <TabPanel header="Magatzem"></TabPanel>
-    <TabPanel header="Comercial"></TabPanel>
+  </TabView>
+  <TabView>
+    <TabPanel header="Comercial">
+      <section class="mt-2 dashboard-card-container">
+        <DashboardCard
+          title="% Budgets assertion"
+          :isPositive="true"
+          tooltip="Percentatge d'acceptació dels pressupostos enviats"
+          unit="%"
+          :indicatorValue="72"
+          text3="Past Month"
+          :value3="56"
+        />
+        <div class="dashboard-card">
+          <Card>
+            <template #title>
+              Top 5 customers
+              <span class="relative group">
+                <i
+                  class="pi pi-question-circle"
+                  v-tooltip="'Los cinco clientes con más facturación del mes'"
+                ></i>
+              </span>
+            </template>
+            <template #content>
+              <TopCustomers :customers="customers" />
+            </template>
+          </Card>
+        </div>
+      </section>
+    </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
+import { useStore } from "../../../store";
 import { useRevenueStore } from "../../sales/store/revenue";
 import { IncomeService } from "../../sales/services/income.service";
 import { ExpenseService } from "../../purchase/services/expense.service";
+import DashboardCard from "../components/DashboardCard.vue";
+import TopCustomers from "../components/DashboardBarHoritzontalBar.vue";
+
+const customers = ref([
+  { name: "Customer A", value: 15000 },
+  { name: "Customer B", value: 3500 },
+  { name: "Customer C", value: 2000 },
+  { name: "Customer D", value: 800 },
+  { name: "Customer E", value: 1000 },
+]);
 
 const incomeService = new IncomeService("/income");
 const expenseService = new ExpenseService("/expense");
 
-const route = useRoute();
-const router = useRouter();
+const store = useStore();
 const revenueStore = useRevenueStore();
 
 const { revenue } = storeToRefs(revenueStore);
@@ -101,6 +110,11 @@ const pastMonthExpenses = ref<number>(0);
 const pastMonthIncomes = ref<number>(0);
 
 onMounted(async () => {
+  store.setMenuItem({
+    icon: PrimeIcons.MONEY_BILL,
+    title: "Dashboard global",
+  });
+
   currentYear.value = new Date().getFullYear();
   currentMonth.value = new Date().getMonth() + 1;
   if (currentMonth.value === 1) {
@@ -123,3 +137,23 @@ onMounted(async () => {
     (await incomeService.getMonthly(pastYear.value, pastMonth.value)) ?? 0;
 });
 </script>
+
+<style lang="css" scoped>
+/* Container styles */
+.dashboard-card-container {
+  display: flex;
+  justify-content: space-around; /* Espacio uniforme entre las cajas */
+  align-items: center; /* Centrado vertical de las cajas */
+  width: 100%;
+  height: 30vh;
+  gap: 2rem; /* Espacio entre las cajas */
+}
+
+/* Box styles */
+.dashboard-card {
+  width: 33.33%; /* Un tercio del ancho */
+  background-color: lightblue;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+</style>
