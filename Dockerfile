@@ -9,7 +9,6 @@ COPY package*.json ./
 
 # Instalar dependencias
 RUN npm ci
-RUN npm install
 
 # Copiar el resto de los archivos del proyecto
 COPY . .
