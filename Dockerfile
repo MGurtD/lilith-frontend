@@ -1,5 +1,5 @@
 # Etapa 1: Construcción del proyecto Vue
-FROM node:14-alpine as build-stage
+FROM node:18-alpine as build-stage
 
 # Establecer el directorio de trabajo
 WORKDIR /app
