@@ -27,7 +27,7 @@
     <div>
       <label class="block text-900 mb-2">Data Prevista</label>
       <Calendar
-        v-model="createWorkOrderDto.plannedDate"
+        v-model="createWorkOrderDto.plannedDate as unknown as Date"
         dateFormat="dd/mm/yy"
         class="mt-2"
       />
