@@ -10,7 +10,10 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Data Factura</label>
-        <Calendar v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
+        <Calendar
+          v-model="(invoice.invoiceDate as unknown as Date)"
+          dateFormat="dd/mm/yy"
+        />
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Estat</label>

@@ -34,7 +34,10 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Data Albarà</label>
-          <Calendar v-model="receipt.date" dateFormat="dd/mm/yy" />
+          <Calendar
+            v-model="(receipt.date as unknown as Date)"
+            dateFormat="dd/mm/yy"
+          />
         </div>
       </section>
       <section class="three-columns">

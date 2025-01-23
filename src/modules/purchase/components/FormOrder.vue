@@ -26,7 +26,10 @@
       </div>
       <div class="mt-1">
         <label class="block text-900 mb-2">Data Comanda</label>
-        <Calendar v-model="order.date" dateFormat="dd/mm/yy" />
+        <Calendar
+          v-model="(order.date as unknown as Date)"
+          dateFormat="dd/mm/yy"
+        />
       </div>
     </section>
     <section class="three-columns">

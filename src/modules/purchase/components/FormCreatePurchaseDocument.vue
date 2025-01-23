@@ -24,7 +24,7 @@
     </div>
     <div class="mt-2">
       <label class="block text-900 mb-2">Data</label>
-      <Calendar v-model="createRequest.date" />
+      <Calendar v-model="(createRequest.date as unknown as Date)" />
     </div>
 
     <footer class="mt-2">

@@ -79,7 +79,7 @@
           <label class="block text-900 mb-2">Data Factura</label>
           <Calendar
             id="purchaseInvoiceDate"
-            v-model="purchaseInvoice.purchaseInvoiceDate"
+            v-model="(purchaseInvoice.purchaseInvoiceDate as unknown as Date)"
             @date-select="calcAmounts()"
           />
         </div>
