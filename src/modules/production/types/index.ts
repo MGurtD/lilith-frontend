@@ -167,7 +167,7 @@ export interface WorkOrder {
   code: string;
   reference?: Reference;
   plannedQuantity: number;
-  plannedDate: string;
+  plannedDate: any;
   statusId: string;
   exerciceId: string;
   startTime: any;
