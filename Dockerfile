@@ -1,4 +1,4 @@
-FROM nginx:alpine as production-build
+FROM nginx:alpine
 
 # Set configuration for nginx
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
