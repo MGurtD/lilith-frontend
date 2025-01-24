@@ -21,7 +21,7 @@
         <label class="block text-900 mb-2">Data prevista</label>
         <Calendar
           label="Data prevista"
-          v-model="(detail.expectedReceiptDate as unknown as Date)"
+          v-model="detail.expectedReceiptDate"
           dateFormat="dd/mm/yy"
         />
       </div>

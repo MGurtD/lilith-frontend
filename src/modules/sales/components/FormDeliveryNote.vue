@@ -51,7 +51,7 @@
         <div class="mt-2">
           <label class="block text-900 mb-2">Data Entrega</label>
           <Calendar
-            v-model="(deliveryNote.deliveryDate as unknown as Date)"
+            v-model="deliveryNote.deliveryDate"
             dateFormat="dd/mm/yy"
             class="mt-2"
           />

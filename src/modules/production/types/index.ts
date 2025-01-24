@@ -170,8 +170,8 @@ export interface WorkOrder {
   plannedDate: string;
   statusId: string;
   exerciceId: string;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: any;
+  endTime: any;
   order: number;
   comment: string;
   disabled: boolean;
@@ -238,7 +238,7 @@ export interface WorkOrderPhaseBillOfMaterials {
 export interface CreateWorkOrderDto {
   workMasterId: string;
   plannedQuantity: number;
-  plannedDate: string;
+  plannedDate: any;
   comment: string;
 }
 
@@ -305,8 +305,8 @@ export interface Shift {
 
 export interface ShiftDetail {
   id: string;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: any;
+  endTime: any;
   isProductiveTime: boolean;
   shiftId: string;
 }

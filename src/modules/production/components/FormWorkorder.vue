@@ -34,7 +34,7 @@
       <div>
         <label class="block text-900 mb-2">Data Prevista</label>
         <Calendar
-          v-model="(workorder.plannedDate as unknown as Date)"
+          v-model="workorder.plannedDate"
           dateFormat="dd/mm/yy"
           class="mt-2"
           :class="{
@@ -58,7 +58,7 @@
       <div>
         <label class="block text-900 mb-2">Data Inici</label>
         <Calendar
-          v-model="(workorder.startTime as unknown as Date)"
+          v-model="workorder.startTime"
           dateFormat="dd/mm/yy"
           class="mt-2"
         />
@@ -66,7 +66,7 @@
       <div>
         <label class="block text-900 mb-2">Data Fi</label>
         <Calendar
-          v-model="(workorder.endTime as unknown as Date)"
+          v-model="workorder.endTime"
           dateFormat="dd/mm/yy"
           class="mt-2"
         />

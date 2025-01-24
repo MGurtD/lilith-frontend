@@ -4,14 +4,14 @@
       <Calendar
         class="mb-2"
         label="Inici Torn:"
-        v-model="(shiftdetail.startTime as unknown as Date)"
+        v-model="shiftdetail.startTime"
         timeOnly
         hourFormat="24"
       />
       <Calendar
         class="mb-2"
         label="Fi Torn:"
-        v-model="(shiftdetail.endTime as unknown as Date)"
+        v-model="shiftdetail.endTime"
         timeOnly
         hourFormat="24"
       />

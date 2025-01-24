@@ -19,7 +19,7 @@
         <label class="block text-900 mb-2">Data Alta</label>
         <Calendar
           id="creationDate"
-          v-model="(expense.creationDate as unknown as Date)"
+          v-model="expense.creationDate"
           :class="{
             'p-invalid': validation.errors.creationDate,
           }"
@@ -29,7 +29,7 @@
         <label class="block text-900 mb-2">Data Pagament</label>
         <Calendar
           id="paymentDate"
-          v-model="(expense.paymentDate as unknown as Date)"
+          v-model="expense.paymentDate"
           :class="{
             'p-invalid': validation.errors.paymentDate,
           }"
@@ -79,7 +79,7 @@
         <label class="block text-900 mb-2">Data fi</label>
         <Calendar
           id="endDate"
-          v-model="(expense.endDate as unknown as Date)"
+          v-model="expense.endDate"
           :disabled="!expense.recurring"
         />
       </div>

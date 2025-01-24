@@ -13,17 +13,11 @@
         </div>
         <div>
           <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar
-            v-model="(budget.date as unknown as Date)"
-            dateFormat="dd/mm/yy"
-          />
+          <Calendar v-model="budget.date" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <label class="block text-900 mb-2">Data Acceptació</label>
-          <Calendar
-            v-model="(budget.acceptanceDate as unknown as Date)"
-            dateFormat="dd/mm/yy"
-          />
+          <Calendar v-model="budget.acceptanceDate" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <BaseInput

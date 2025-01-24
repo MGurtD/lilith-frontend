@@ -52,17 +52,11 @@
       <section class="four-columns mt-2">
         <div>
           <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar
-            v-model="(salesOrder.date as unknown as Date)"
-            dateFormat="dd/mm/yy"
-          />
+          <Calendar v-model="salesOrder.date" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <label class="block text-900 mb-2">Data Entrega</label>
-          <Calendar
-            v-model="(salesOrder.expectedDate as unknown as Date)"
-            dateFormat="dd/mm/yy"
-          />
+          <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <BaseInput
