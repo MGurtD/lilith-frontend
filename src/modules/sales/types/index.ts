@@ -56,11 +56,11 @@ export interface Budget {
   id: string;
   customerId: string;
   exerciseId: string;
-  date: string;
+  date: any;
   number: string;
   deliveryDays: number;
   amount: number;
-  acceptanceDate: string | null;
+  acceptanceDate: any;
   statusId: string;
   notes: string;
   details: Array<BudgetDetail> | undefined;
@@ -93,9 +93,9 @@ export interface SalesOrderHeader {
   customerId: string;
   exerciseId: string;
   budgetId: string | null;
-  date: string;
+  date: any;
   number: string;
-  expectedDate: string | null;
+  expectedDate: any;
   customerCode: string;
   customerComercialName: string;
   customerNumber: string;
@@ -156,7 +156,7 @@ export interface CreateInvoiceDetailsFromOrderDetailsRequest {
 
 export interface CreateSalesHeaderRequest {
   id: string;
-  date: string | Date;
+  date: any;
   exerciseId: string;
   customerId: string;
   initialStatusId?: string;
@@ -172,7 +172,7 @@ export interface SalesInvoice {
   parentSalesInvoiceId: string | null;
   disabled: boolean;
   invoiceNumber: string;
-  invoiceDate: string;
+  invoiceDate: any;
   baseAmount: number;
   taxAmount: number;
   transportAmount: number;
@@ -270,7 +270,7 @@ export interface DeliveryNoteReport {
 export interface DeliveryNote {
   createdOn?: string;
   number: string;
-  deliveryDate: string;
+  deliveryDate: any;
   exerciseId: string;
   customerId: string;
   siteId: string;
