@@ -2,7 +2,7 @@ import { PrimeIcons } from "primevue/api";
 import { User } from "../types";
 
 const header = {
-  header: "TEMGES",
+  header: "ZENITH",
   hiddenOnCollapse: true,
 };
 
