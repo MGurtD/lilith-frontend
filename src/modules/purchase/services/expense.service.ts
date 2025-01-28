@@ -30,6 +30,13 @@ export class ExpenseService extends BaseService<Expense> {
       return response.data as Array<ConsolidatedExpense>;
     }
   }
+  async getMonthly(year: number, month: number): Promise<number | undefined> {
+    let endpoint = `${this.resource}/Monthly?year=${year}&month=${month}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as number;
+    }
+  }
   async getByExpenseType(
     expensetypeid: string
   ): Promise<Array<Expense> | undefined> {

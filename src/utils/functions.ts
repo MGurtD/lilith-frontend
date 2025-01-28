@@ -122,6 +122,10 @@ export const extractTime = (isoString: string | null): string => {
   }
 };
 
+export function ensureStringDateForCalendarCompatibility(date: string) {
+  return date as unknown as Date;
+}
+
 export function calculateTimeDifference(startDateString: string) {
   const startDate = new Date(startDateString);
   const now = new Date();

@@ -2,7 +2,7 @@ import { PrimeIcons } from "primevue/api";
 import { User } from "../types";
 
 const header = {
-  header: "TEMGES",
+  header: "ZENITH",
   hiddenOnCollapse: true,
 };
 
@@ -262,6 +262,11 @@ export const applicationMenus = [
     title: "Estadístiques",
     href: "",
     child: [
+      {
+        icon: PrimeIcons.WALLET,
+        title: "Globals",
+        href: "/dashboard",
+      },
       {
         icon: PrimeIcons.WALLET,
         title: "Facturació vs Despeses",
