@@ -339,15 +339,13 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
     if (costsResponse.result && costsResponse.content) {
       workmasterCosts.value = costsResponse.content as ProductionCosts;
       // avoid unnecessary updates when user update the quantity
-      if (!blockExternalCosts) {
-        detail.value.transportCost =
-          workmasterCosts.value.externalTransportCost;
-        detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
-        detail.value.productionCost =
-          workmasterCosts.value.machineCost +
-          workmasterCosts.value.operatorCost;
-        detail.value.materialCost = workmasterCosts.value.materialCost;
-      }
+      //if (!blockExternalCosts) {
+      detail.value.transportCost = workmasterCosts.value.externalTransportCost;
+      detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
+      detail.value.productionCost =
+        workmasterCosts.value.machineCost + workmasterCosts.value.operatorCost;
+      detail.value.materialCost = workmasterCosts.value.materialCost;
+      //}
 
       detail.value.totalCost =
         detail.value.transportCost +
@@ -397,6 +395,9 @@ const updateQuantity = () => {
 const updateImports = () => {
   // starting from unit cost
   detail.value.unitPrice = detail.value.unitCost;
+  console.log("1");
+  console.log("unitcost: ", detail.value.unitCost);
+  console.log("unitprice: ", detail.value.unitPrice);
 
   // no cost, get price from reference
   if (detail.value.unitPrice === 0) {
