@@ -338,16 +338,11 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
 
     if (costsResponse.result && costsResponse.content) {
       workmasterCosts.value = costsResponse.content as ProductionCosts;
-      // avoid unnecessary updates when user update the quantity
-      if (!blockExternalCosts) {
-        detail.value.transportCost =
-          workmasterCosts.value.externalTransportCost;
-        detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
-        detail.value.productionCost =
-          workmasterCosts.value.machineCost +
-          workmasterCosts.value.operatorCost;
-        detail.value.materialCost = workmasterCosts.value.materialCost;
-      }
+      detail.value.transportCost = workmasterCosts.value.externalTransportCost;
+      detail.value.serviceCost = workmasterCosts.value.externalServiceCost;
+      detail.value.productionCost =
+        workmasterCosts.value.machineCost + workmasterCosts.value.operatorCost;
+      detail.value.materialCost = workmasterCosts.value.materialCost;
 
       detail.value.totalCost =
         detail.value.transportCost +
