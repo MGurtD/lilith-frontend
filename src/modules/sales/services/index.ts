@@ -3,6 +3,7 @@ import { CustomerTypeService, CustomerService } from "./customer.service";
 import { DeliveryNoteService } from "./deliveryNote.service";
 import { SalesInvoiceService } from "./salesInvoice.service";
 import { SalesOrderHeaderService } from "./salesOrder.service";
+import { RevenueService } from "./revenue.service";
 
 export default {
   CustomerType: new CustomerTypeService("/CustomerType"),
@@ -11,4 +12,5 @@ export default {
   SalesOrder: new SalesOrderHeaderService("/SalesOrder"),
   DeliveryNote: new DeliveryNoteService("/DeliveryNote"),
   SalesInvoice: new SalesInvoiceService("/SalesInvoice"),
+  Revenue: new RevenueService("/Revenue"),
 };
