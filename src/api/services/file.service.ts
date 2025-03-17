@@ -3,6 +3,9 @@ import { File } from "../../types";
 import apiClient from "../api.client";
 import { Parameter } from "../../modules/shared/types";
 
+const fileRequestTimeout =
+  (import.meta.env.VITE_API_FILE_REQUEST_TIMEOUT as number) ?? 20000;
+
 export class FileService {
   public apiClient: AxiosInstance;
   private resource: string;
@@ -27,7 +30,7 @@ export class FileService {
     let response = await this.apiClient.post(
       `${this.resource}/Download`,
       file,
-      { responseType: "blob" }
+      { responseType: "blob", timeout: fileRequestTimeout }
     );
     if (response.status === 200) {
       return response.data;
@@ -61,6 +64,7 @@ export class FileService {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: fileRequestTimeout,
       }
     );
     if (response.status === 200) {
