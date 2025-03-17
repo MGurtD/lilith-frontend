@@ -40,7 +40,7 @@ export interface StockMovement {
   height: number;
   diameter: number;
   thickness: number;
-  movementDate: Date;
+  movementDate: any;
   description: string;
 }
 
@@ -57,5 +57,5 @@ export interface Inventory {
   height: number;
   diameter: number;
   thickness: number;
-  movementDate: Date;
+  movementDate: any;
 }

@@ -25,6 +25,6 @@ dist-ssr
 *.sw?
 .env
 .env.production
+.env.preprod
 .env.test
 docker-compose.yml
-.env.test

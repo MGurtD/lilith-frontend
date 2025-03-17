@@ -2,6 +2,8 @@ import axios from "axios";
 import { useApiStore } from "../store/backend";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
+const requestTimeout =
+  (import.meta.env.VITE_API_REQUEST_TIMEOUT as number) ?? 5000;
 
 const apiClient = axios.create({
   baseURL: baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}`,

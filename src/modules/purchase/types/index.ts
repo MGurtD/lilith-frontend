@@ -97,7 +97,7 @@ export interface PurchaseInvoice {
   id: string;
   number: string;
   supplierNumber: string;
-  purchaseInvoiceDate: Date | string;
+  purchaseInvoiceDate: any;
   baseAmount: number;
   transportAmount: number;
   subtotal: number;
@@ -141,9 +141,9 @@ export interface ExpenseType {
 export interface Expense {
   id: string;
   description: string;
-  creationDate: Date | string;
-  paymentDate: Date | string;
-  endDate: Date | string;
+  creationDate: any;
+  paymentDate: any;
+  endDate: any;
   amount: number;
   recurring: boolean;
   frecuency: number;
@@ -168,7 +168,7 @@ export interface ConsolidatedExpense {
 
 export interface Receipt {
   number: string;
-  date: string;
+  date: any;
   supplierId: string;
   exerciseId: string;
   statusId: string;
@@ -192,7 +192,7 @@ export interface PurchaseOrderFromWO {
 
 export interface CreatePurchaseDocumentRequest {
   id: string;
-  date: string | Date;
+  date: any;
   supplierId: string;
   exerciseId: string;
 }
@@ -200,7 +200,7 @@ export interface CreatePurchaseDocumentRequest {
 export interface PurchaseOrder {
   id: string;
   number: string;
-  date: string | null;
+  date: any;
   supplierId: string;
   exerciseId: string;
   statusId: string;
@@ -213,7 +213,7 @@ export interface PurchaseOrderDetail {
   workOrderPhaseId?: string | null;
   referenceId: string;
   description: string;
-  expectedReceiptDate?: string | Date | null;
+  expectedReceiptDate?: any;
   quantity: number;
   receivedQuantity: number;
   unitPrice: number;
@@ -226,7 +226,7 @@ export interface PurchaseOrderDetailWithPendingQuantity {
   statusId: string;
   workOrderPhaseId?: string | null;
   referenceId: string;
-  expectedReceiptDate?: string | null;
+  expectedReceiptDate?: any;
   quantity: number;
   receivedQuantity: number;
   unitPrice: number;
@@ -247,7 +247,7 @@ export interface ReceiptOrderDetailGroup {
 export interface ReceiptOrderDetail {
   id: string;
   orderNumber: string;
-  expectedReceiptDate: Date | null;
+  expectedReceiptDate: any;
   workOrder: string;
   workOrderPhase: string;
   quantity: number;
