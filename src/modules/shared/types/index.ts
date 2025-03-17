@@ -13,8 +13,8 @@ export interface Exercise {
   id: string;
   name: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: any;
+  endDate: any;
   purchaseOrderCounter: string;
   budgetCounter: string;
   salesOrderCounter: string;

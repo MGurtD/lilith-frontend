@@ -167,11 +167,11 @@ export interface WorkOrder {
   code: string;
   reference?: Reference;
   plannedQuantity: number;
-  plannedDate: string;
+  plannedDate: any;
   statusId: string;
   exerciceId: string;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: any;
+  endTime: any;
   order: number;
   comment: string;
   disabled: boolean;
@@ -204,8 +204,8 @@ export interface WorkOrderPhase {
   externalWorkCost: number;
   transportCost: number;
   statusId: string;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: any;
+  endTime: any;
   purchaseOrderId?: string | null;
   workOrder?: WorkOrder;
   details?: Array<WorkOrderPhaseDetail>;
@@ -238,7 +238,7 @@ export interface WorkOrderPhaseBillOfMaterials {
 export interface CreateWorkOrderDto {
   workMasterId: string;
   plannedQuantity: number;
-  plannedDate: string;
+  plannedDate: any;
   comment: string;
 }
 
@@ -253,7 +253,7 @@ export interface ProductionPart {
   operatorHourCost: number;
   workcenterTime: number;
   machineHourCost: number;
-  date: Date;
+  date: any;
   quantity: number;
   workOrder?: WorkOrder;
   workOrderPhase?: WorkOrderPhase;
@@ -266,11 +266,11 @@ export interface DetailedWorkOrder {
   workOrderStatusCode: string;
   workOrderStatusDescription: string;
   plannedQuantity: number;
-  workOrderStartTime: string | null;
-  workOrderEndTime: string | null;
+  workOrderStartTime: any;
+  workOrderEndTime: any;
   workOrderOrder: number;
   workOrderComment: string;
-  plannedDate: string | null;
+  plannedDate: any;
   referenceCode: string;
   referenceDescription: string;
   referenceVersion: string;
@@ -281,8 +281,8 @@ export interface DetailedWorkOrder {
   workOrderPhaseComment: string;
   workOrderPhaseStatusCode: string;
   workOrderPhaseStatusDescription: string;
-  workOrderPhaseStartTime: string | null;
-  workOrderPhaseEndTime: string | null;
+  workOrderPhaseStartTime: any;
+  workOrderPhaseEndTime: any;
   workOrderPhaseDetailId: string;
   workOrderPhaseDetailOrder: number;
   workOrderPhaseDetailEstimatedTime: number;
@@ -305,8 +305,8 @@ export interface Shift {
 
 export interface ShiftDetail {
   id: string;
-  startTime: string | null;
-  endTime: string | null;
+  startTime: any;
+  endTime: any;
   isProductiveTime: boolean;
   shiftId: string;
 }
