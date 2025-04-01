@@ -18,6 +18,8 @@ export interface Site {
   country: string;
   phoneNumber: string;
   email: string;
+  emailSales: string;
+  emailPurchase: string;
   vatNumber: string;
   enterpriseId: string;
   disabled: boolean;

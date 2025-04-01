@@ -234,6 +234,8 @@ export const usePlantModelStore = defineStore({
         country: "",
         phoneNumber: "",
         email: "",
+        emailSales: "",
+        emailPurchase: "",
         vatNumber: "",
         enterpriseId: "",
         disabled: false,
