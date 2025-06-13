@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import PurchaseService from "../services";
-import { PurchaseInvoiceSerie } from "../types";
+import { InvoiceSerie } from "../types";
 
 export const usePurchaseInvoiceSeries = defineStore({
   id: "purchaseInvoiceSeries",
   state: () => ({
-    purchaseInvoiceSerie: undefined as PurchaseInvoiceSerie | undefined,
-    purchaseInvoiceSeries: undefined as Array<PurchaseInvoiceSerie> | undefined,
+    purchaseInvoiceSerie: undefined as InvoiceSerie | undefined,
+    purchaseInvoiceSeries: undefined as Array<InvoiceSerie> | undefined,
   }),
   getters: {},
   actions: {
@@ -17,7 +17,7 @@ export const usePurchaseInvoiceSeries = defineStore({
         name: "",
         description: "",
         disabled: false,
-      } as PurchaseInvoiceSerie;
+      } as InvoiceSerie;
     },
 
     async fetchPurchaseInvoiceSeries() {
@@ -30,9 +30,7 @@ export const usePurchaseInvoiceSeries = defineStore({
         await PurchaseService.PurchaseInvoiceSerie.getById(id);
     },
 
-    async createPurchaseInvoiceSerie(
-      purchaseInvoiceSerie: PurchaseInvoiceSerie
-    ) {
+    async createPurchaseInvoiceSerie(purchaseInvoiceSerie: InvoiceSerie) {
       const result = await PurchaseService.PurchaseInvoiceSerie.create(
         purchaseInvoiceSerie
       );
@@ -42,7 +40,7 @@ export const usePurchaseInvoiceSeries = defineStore({
 
     async updatePurchaseInvoiceSerie(
       id: string,
-      purchaseInvoiceSerie: PurchaseInvoiceSerie
+      purchaseInvoiceSerie: InvoiceSerie
     ) {
       const result = await PurchaseService.PurchaseInvoiceSerie.update(
         id,
