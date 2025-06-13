@@ -1,6 +1,6 @@
 <template>
   <form v-if="lifecycle">
-    <section class="three-columns">
+    <section class="four-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -30,13 +30,18 @@
           optionLabel="name"
         />
       </div>
-    </section>
-    <!-- <section class="two-columns">
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox v-model="lifecycle.disabled" class="w-full" :binary="true" />
+        <label class="block text-900 mb-2">Estat final</label>
+        <Dropdown
+          class="w-full"
+          v-model="lifecycle.finalStatusId"
+          editable
+          :options="lifecycle.statuses"
+          optionValue="id"
+          optionLabel="name"
+        />
       </div>
-    </section> -->
+    </section>
   </form>
 </template>
 

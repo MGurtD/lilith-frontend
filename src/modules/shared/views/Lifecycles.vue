@@ -17,11 +17,16 @@
         />
       </div>
     </template>
-    <Column field="name" header="Nom" style="width: 33%"></Column>
-    <Column field="description" header="Descripció" style="width: 33%"></Column>
-    <Column header="Estat Inicial" style="width: 33%">
+    <Column field="name" header="Nom" style="width: 25%"></Column>
+    <Column field="description" header="Descripció" style="width: 25%"></Column>
+    <Column header="Estat Inicial" style="width: 25%">
       <template #body="slotProps">
         {{ getInitialStatusName(slotProps.data) }}
+      </template>
+    </Column>
+    <Column header="Estat Final" style="width: 25%">
+      <template #body="slotProps">
+        {{ getFinalStatusName(slotProps.data) }}
       </template>
     </Column>
     <Column>
@@ -61,20 +66,25 @@ onMounted(async () => {
   });
 });
 
-const getInitialStatusName = (lifecycle: Lifecycle) => {
-  let name = "";
-
-  if (lifecycle.initialStatusId && lifecycle.initialStatusId.length > 0) {
-    const initialStatus = lifecycle.statuses.find(
-      (s) => s.id === lifecycle.initialStatusId
-    );
-    if (initialStatus) {
-      name = initialStatus.name;
-    }
+// Generic function to get status name by ID
+const getStatusNameById = (
+  lifecycle: Lifecycle,
+  statusId: string | undefined
+) => {
+  if (!statusId || statusId.length === 0) {
+    return "";
   }
 
-  return name;
+  const status = lifecycle.statuses.find((s) => s.id === statusId);
+  return status?.name || "";
 };
+
+// Helper functions for better readability
+const getInitialStatusName = (lifecycle: Lifecycle) =>
+  getStatusNameById(lifecycle, lifecycle.initialStatusId);
+
+const getFinalStatusName = (lifecycle: Lifecycle) =>
+  getStatusNameById(lifecycle, lifecycle.finalStatusId);
 
 const createButtonClick = () => {
   router.push({ path: `/${resource}/${uuidv4()}` });
