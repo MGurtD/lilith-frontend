@@ -49,6 +49,15 @@
         {{ formatCurrency(slotProps.data.netAmount) }}
       </template>
     </Column>
+    <Column header="Verifactu" style="width: 10%">
+      <template #body="slotProps">
+        {{
+          invoiceStore.getVerifactuStatusById(
+            slotProps.data.integrationStatusId
+          )
+        }}
+      </template>
+    </Column>
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
@@ -69,10 +78,12 @@ import { onMounted } from "vue";
 import { Customer, SalesInvoice } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useSalesInvoiceStore } from "../store/invoice";
 import { formatCurrency, formatDate } from "../../../utils/functions";
 import { DataTableRowClickEvent } from "primevue/datatable";
 
 const lifecycleStore = useLifecyclesStore();
+const invoiceStore = useSalesInvoiceStore();
 
 const props = defineProps<{
   invoices: Array<SalesInvoice> | undefined;

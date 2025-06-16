@@ -24,6 +24,17 @@
         />
       </div>
       <div class="mt-2">
+        <label class="block text-900 mb-2">Verifactu</label>
+        <Dropdown
+          v-model="invoice.integrationStatusId"
+          editable
+          :options="invoiceStore.verifactuLifecycle?.statuses"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
+        />
+      </div>
+      <div class="mt-2">
         <label class="block text-900 mb-2">Métode Pagament</label>
         <Dropdown
           v-model="invoice.paymentMethodId"
@@ -61,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { SalesInvoice } from "../types";
 import * as Yup from "yup";
 import { formatCurrency } from "../../../utils/functions";
@@ -72,6 +83,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useSalesInvoiceStore } from "../store/invoice";
 
 const props = defineProps<{
   invoice: SalesInvoice;
@@ -85,6 +97,7 @@ const emit = defineEmits<{
 const toast = useToast();
 const sharedData = useSharedDataStore();
 const lifecycleStore = useLifecyclesStore();
+const invoiceStore = useSalesInvoiceStore();
 
 const schema = Yup.object().shape({
   invoiceDate: Yup.string().required("La data és obligatoria"),

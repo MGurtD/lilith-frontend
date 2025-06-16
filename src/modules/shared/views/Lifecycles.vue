@@ -24,11 +24,6 @@
         {{ getInitialStatusName(slotProps.data) }}
       </template>
     </Column>
-    <Column header="Estat Final" style="width: 25%">
-      <template #body="slotProps">
-        {{ getFinalStatusName(slotProps.data) }}
-      </template>
-    </Column>
     <Column>
       <template #body="slotProps">
         <i
@@ -82,9 +77,6 @@ const getStatusNameById = (
 // Helper functions for better readability
 const getInitialStatusName = (lifecycle: Lifecycle) =>
   getStatusNameById(lifecycle, lifecycle.initialStatusId);
-
-const getFinalStatusName = (lifecycle: Lifecycle) =>
-  getStatusNameById(lifecycle, lifecycle.finalStatusId);
 
 const createButtonClick = () => {
   router.push({ path: `/${resource}/${uuidv4()}` });
