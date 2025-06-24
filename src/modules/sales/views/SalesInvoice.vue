@@ -1,11 +1,21 @@
 <template>
-  <SplitButton
-    label="Guardar"
-    @click="updateInvoice"
-    :model="items"
-    :size="'small'"
-    class="grid_add_row_button"
-  />
+  <div class="flex align-items-end justify-content-end">
+    <Button
+      v-if="invoice && invoice.integrationStatusId"
+      label="Verifactu"
+      icon="pi pi-check"
+      :size="'small'"
+      class="mr-2"
+      @click="sendToVerifactu"
+    />
+    <SplitButton
+      label="Guardar"
+      @click="updateInvoice"
+      :model="items"
+      :size="'small'"
+    />
+  </div>
+
   <main v-if="invoice">
     <FormSalesInvoice class="mt-3 mr-3" :invoice="invoice" />
 
@@ -312,6 +322,29 @@ const createRectificativeInvoice = async () => {
         detail: "Error en la creació de la factura",
         severity: "error",
         life: 10000,
+      });
+    }
+  }
+};
+
+// Send to Verifactu
+const sendToVerifactu = async () => {
+  if (invoice.value) {
+    const response = await invoiceStore.SendToVerifactu(invoice.value.id);
+    if (response && response.result) {
+      toast.add({
+        severity: "success",
+        summary: "Enviament a Verifactu",
+        detail: "Factura enviada correctament a Verifactu",
+        life: 5000,
+      });
+      await invoiceStore.GetById(invoiceId.value);
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error en l'enviament",
+        detail: "No s'ha pogut enviar la factura",
+        life: 5000,
       });
     }
   }
