@@ -279,6 +279,18 @@ export const applicationMenus = [
       },
     ],
   },
+  {
+    icon: PrimeIcons.SHIELD,
+    title: "Verifactu",
+    href: "",
+    child: [
+      {
+        icon: PrimeIcons.SEARCH,
+        title: "Consulta factures",
+        href: "/verifactu/find-invoices",
+      },
+    ],
+  },
 ];
 
 export const managmentMenus = [

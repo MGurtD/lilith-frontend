@@ -51,11 +51,15 @@
     </Column>
     <Column header="Verifactu" style="width: 10%">
       <template #body="slotProps">
-        {{
-          invoiceStore.getVerifactuStatusById(
-            slotProps.data.integrationStatusId
-          )
-        }}
+        <span
+          :class="getVerifactuStatusClass(slotProps.data.integrationStatusId)"
+        >
+          {{
+            invoiceStore.getVerifactuStatusById(
+              slotProps.data.integrationStatusId
+            )
+          }}
+        </span>
       </template>
     </Column>
     <Column style="width: 5%">
@@ -124,6 +128,20 @@ const getLastDueDate = (invoice: SalesInvoice): string => {
   }
 };
 
+const getVerifactuStatusClass = (integrationStatusId: string) => {
+  const status = invoiceStore.getVerifactuStatusById(integrationStatusId);
+
+  if (status === "OK") {
+    return "status-ok";
+  } else if (status === "Error") {
+    return "status-error";
+  } else if (status === "Pendent") {
+    return "status-pending";
+  }
+
+  return "";
+};
+
 const editButtonClick = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
@@ -138,3 +156,20 @@ const deleteButtonClick = (event: any, invoice: SalesInvoice) => {
   emit("delete", invoice);
 };
 </script>
+
+<style scoped>
+.status-ok {
+  color: #28a745; /* Green */
+  font-weight: bold;
+}
+
+.status-error {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #6c757d; /* Gray */
+  font-weight: bold;
+}
+</style>

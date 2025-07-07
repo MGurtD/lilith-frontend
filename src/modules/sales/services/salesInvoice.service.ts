@@ -34,15 +34,6 @@ export class SalesInvoiceService extends BaseService<SalesInvoice> {
     if (response.status === 200)
       return response.data as GenericResponse<SalesInvoice>;
   }
-  async SendToVerifactu(id: string): Promise<GenericResponse<any> | undefined> {
-    const endpoint = `${this.resource}`;
-    const response = await this.apiClient.post(
-      `${endpoint}/${id}/SendToVerifactu`
-    );
-
-    if (response.status === 200)
-      return response.data as GenericResponse<SalesInvoice>;
-  }
   async GetHeader(id: string): Promise<SalesInvoice | undefined> {
     const endpoint = `${this.resource}/header/${id}`;
     const response = await this.apiClient.get(endpoint);

@@ -1,19 +1,21 @@
 <template>
-  <div class="flex align-items-end justify-content-end">
-    <Button
-      v-if="invoice && invoice.integrationStatusId"
-      label="Verifactu"
-      icon="pi pi-check"
-      :size="'small'"
-      class="mr-2"
-      @click="sendToVerifactu"
-    />
-    <SplitButton
-      label="Guardar"
-      @click="updateInvoice"
-      :model="items"
-      :size="'small'"
-    />
+  <div class="button-panel">
+    <div class="flex align-items-end justify-content-end">
+      <Button
+        v-if="invoice && invoice.integrationStatusId"
+        label="Verifactu"
+        icon="pi pi-check"
+        :size="'small'"
+        class="mr-2"
+        @click="sendToVerifactu"
+      />
+      <SplitButton
+        label="Guardar"
+        @click="updateInvoice"
+        :model="items"
+        :size="'small'"
+      />
+    </div>
   </div>
 
   <main v-if="invoice">
@@ -123,6 +125,7 @@ import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import Services from "../services";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
 import { useToast } from "primevue/usetoast";
+import { useVerifactuStore } from "../../verifactu/store/verifactu";
 
 const items = [
   {
@@ -147,6 +150,7 @@ const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const referenceStore = useReferenceStore();
+const verifactuStore = useVerifactuStore();
 const { invoice } = storeToRefs(invoiceStore);
 
 const dialogType = {
@@ -330,7 +334,7 @@ const createRectificativeInvoice = async () => {
 // Send to Verifactu
 const sendToVerifactu = async () => {
   if (invoice.value) {
-    const response = await invoiceStore.SendToVerifactu(invoice.value.id);
+    const response = await verifactuStore.SendToVerifactu(invoice.value.id);
     if (response && response.result) {
       toast.add({
         severity: "success",
@@ -343,10 +347,23 @@ const sendToVerifactu = async () => {
       toast.add({
         severity: "error",
         summary: "Error en l'enviament",
-        detail: "No s'ha pogut enviar la factura",
+        detail:
+          "No s'ha pogut enviar la factura" +
+          (response?.errors && response?.errors.length > 0
+            ? `: ${response.errors[0]}`
+            : ""),
         life: 5000,
       });
     }
   }
 };
 </script>
+
+<style scoped>
+.button-panel {
+  position: absolute;
+  top: 0;
+  right: 2rem;
+  z-index: 1000;
+}
+</style>

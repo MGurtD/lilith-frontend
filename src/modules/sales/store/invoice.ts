@@ -35,12 +35,6 @@ export const useSalesInvoiceStore = defineStore({
       const created = await SalesService.SalesInvoice.Create(createRequest);
       return created;
     },
-    async SendToVerifactu(
-      id: string
-    ): Promise<GenericResponse<any> | undefined> {
-      const response = await SalesService.SalesInvoice.SendToVerifactu(id);
-      return response;
-    },
     async CreateRectificative(
       request: CreateRectificativeInvoiceRequest
     ): Promise<GenericResponse<SalesInvoice> | undefined> {
@@ -79,6 +73,12 @@ export const useSalesInvoiceStore = defineStore({
       customerId?: string,
       excludeStatusId?: string
     ) {
+      if (!this.verifactuLifecycle) {
+        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
+          "Verifactu"
+        );
+      }
+
       if (statusId) {
         this.invoices =
           await SalesService.SalesInvoice.GetBetweenDatesAndStatus(

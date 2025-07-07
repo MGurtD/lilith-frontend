@@ -24,17 +24,6 @@
         />
       </div>
       <div class="mt-2">
-        <label class="block text-900 mb-2">Verifactu</label>
-        <Dropdown
-          v-model="invoice.integrationStatusId"
-          editable
-          :options="invoiceStore.verifactuLifecycle?.statuses"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
-        />
-      </div>
-      <div class="mt-2">
         <label class="block text-900 mb-2">Métode Pagament</label>
         <Dropdown
           v-model="invoice.paymentMethodId"
@@ -46,25 +35,32 @@
         />
       </div>
     </section>
-    <section class="four-columns">
-      <div class="mt-1">
+    <section class="four-columns mt-2">
+      <div>
         <label class="block text-900 mb-2">Base</label>
         <span class="summary-field">{{
           formatCurrency(invoice.baseAmount)
         }}</span>
       </div>
 
-      <div class="mt-1">
+      <div>
         <label class="block text-900 mb-2">Impostos</label>
         <span class="summary-field">{{
           formatCurrency(invoice.taxAmount)
         }}</span>
       </div>
 
-      <div class="mt-1">
+      <div>
         <label class="block text-900 mb-2">Total</label>
         <span class="summary-field">{{
           formatCurrency(invoice.netAmount)
+        }}</span>
+      </div>
+
+      <div>
+        <label class="block text-900 mb-2">Verifactu</label>
+        <span class="summary-field" :class="getVerifactuStatusClass()">{{
+          invoiceStore.getVerifactuStatusById(invoice.integrationStatusId!)
         }}</span>
       </div>
     </section>
@@ -113,6 +109,22 @@ const validate = () => {
   validation.value = formValidation.validate(props.invoice);
 };
 
+const getVerifactuStatusClass = () => {
+  const status = invoiceStore.getVerifactuStatusById(
+    props.invoice.integrationStatusId!
+  );
+
+  if (status === "OK") {
+    return "status-ok";
+  } else if (status === "Error") {
+    return "status-error";
+  } else if (status === "Pendent") {
+    return "status-pending";
+  }
+
+  return "";
+};
+
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
@@ -131,3 +143,20 @@ const submitForm = async () => {
   }
 };
 </script>
+
+<style scoped>
+.status-ok {
+  color: #28a745; /* Green */
+  font-weight: bold;
+}
+
+.status-error {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #6c757d; /* Gray */
+  font-weight: bold;
+}
+</style>
