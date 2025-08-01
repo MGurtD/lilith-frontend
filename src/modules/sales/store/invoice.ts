@@ -79,19 +79,19 @@ export const useSalesInvoiceStore = defineStore({
         );
       }
 
-      if (statusId) {
-        this.invoices =
-          await SalesService.SalesInvoice.GetBetweenDatesAndStatus(
-            startDate,
-            endDate,
-            statusId
-          );
-      } else if (customerId) {
+      if (customerId) {
         this.invoices =
           await SalesService.SalesInvoice.GetBetweenDatesAndCustomer(
             startDate,
             endDate,
             customerId
+          );
+      } else if (statusId) {
+        this.invoices =
+          await SalesService.SalesInvoice.GetBetweenDatesAndStatus(
+            startDate,
+            endDate,
+            statusId
           );
       } else if (excludeStatusId) {
         this.invoices =
