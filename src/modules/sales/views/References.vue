@@ -17,11 +17,9 @@ import { Reference } from "../../../modules/shared/types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { getNewUuid } from "../../../utils/functions";
-import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
 const store = useStore();
-const userFilterStore = useUserFilterStore();
 const referenceStore = useReferenceStore();
 const confirm = useConfirm();
 const toast = useToast();
