@@ -22,15 +22,8 @@
             />
           </div>
           <div class="filter-field">
-            <label class="block text-900 mb-2">Client</label>
-            <Dropdown
-              v-model="filter.customerId"
-              editable
-              :options="customerStore.customers"
-              optionValue="id"
-              optionLabel="comercialName"
-              class="w-full"
-            />
+            <label>Client</label>
+            <DropdownCustomers label="" v-model="filter.customerId" />
           </div>
         </div>
         <div class="datatable-buttons">
@@ -112,6 +105,7 @@
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import FormCreateOrderOrInvoice from "../components/FormCreateOrderOrInvoice.vue";
+import DropdownCustomers from "../components/DropdownCustomers.vue";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -129,7 +123,6 @@ import {
 import { DialogOptions } from "../../../types/component";
 import { CreateSalesHeaderRequest, SalesOrderHeader } from "../types";
 import { useConfirm } from "primevue/useconfirm";
-import { useExerciseStore } from "../../shared/store/exercise";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useUserFilterStore } from "../../../store/userfilter";
