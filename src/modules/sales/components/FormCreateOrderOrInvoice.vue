@@ -2,14 +2,11 @@
   <form>
     <div class="mt-2">
       <label class="block text-900 mb-2">Client</label>
-      <Dropdown
-        class="w-full"
+      <DropdownCustomers
+        label=""
+        placeholder=""
         v-model="createRequest.customerId"
-        editable
-        :options="customersStore.customers"
-        optionValue="id"
-        optionLabel="comercialName"
-      />
+      ></DropdownCustomers>
     </div>
     <div class="mt-2">
       <label class="block text-900 mb-2">Exercici</label>
@@ -34,8 +31,8 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useCustomersStore } from "../store/customers";
 import { useToast } from "primevue/usetoast";
+import DropdownCustomers from "../components/DropdownCustomers.vue";
 import { CreateSalesHeaderRequest } from "../types";
 import * as Yup from "yup";
 import {
@@ -47,7 +44,6 @@ import { useExerciseStore } from "../../shared/store/exercise";
 
 const toast = useToast();
 const exerciseStore = useExerciseStore();
-const customersStore = useCustomersStore();
 
 const props = defineProps<{
   createRequest: CreateSalesHeaderRequest;

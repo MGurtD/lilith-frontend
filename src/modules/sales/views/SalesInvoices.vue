@@ -189,8 +189,6 @@ const createButtonClick = () => {
 
 const createInvoice = async () => {
   const response = await invoiceStore.Create(createRequest.value);
-  console.log("Response from create invoice:", response);
-
   if (response && !response?.result) {
     const errorMessage =
       response.errors.length > 0
