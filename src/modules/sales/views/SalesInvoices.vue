@@ -188,8 +188,25 @@ const createButtonClick = () => {
 };
 
 const createInvoice = async () => {
-  const created = await invoiceStore.Create(createRequest.value);
-  if (created)
+  const response = await invoiceStore.Create(createRequest.value);
+  console.log("Response from create invoice:", response);
+
+  if (response && !response?.result) {
+    const errorMessage =
+      response.errors.length > 0
+        ? response.errors[0]
+        : "Error desconegut, contacte amb l'administrador.";
+
+    toast.add({
+      severity: "warn",
+      summary: "Error al crear la factura",
+      detail: errorMessage,
+      life: 10000,
+    });
+    return;
+  }
+
+  if (response)
     router.push({ path: `/sales-invoice/${createRequest.value.id}` });
 };
 

@@ -1,26 +1,24 @@
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
-import {
-  createDateFromNow,
-  formatDateForQueryParameter,
-} from "../../../utils/functions";
 import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
 import {
-  CreateInvoiceDetailsFromOrderDetailsRequest,
   CreateRectificativeInvoiceRequest,
   CreateSalesHeaderRequest,
   DeliveryNote,
-  InvoiceableOrderDetail,
   SalesInvoice,
   SalesInvoiceDetail,
 } from "../types";
 
 export class SalesInvoiceService extends BaseService<SalesInvoice> {
-  async Create(request: CreateSalesHeaderRequest): Promise<boolean> {
+  async Create(
+    request: CreateSalesHeaderRequest
+  ): Promise<GenericResponse<SalesInvoice> | undefined> {
     const endpoint = `${this.resource}`;
     const response = await this.apiClient.post(endpoint, request);
 
-    return response.status === 200;
+    if (response.status === 200) {
+      return response.data as GenericResponse<SalesInvoice>;
+    }
   }
   async CreateRectificative(
     request: CreateRectificativeInvoiceRequest
