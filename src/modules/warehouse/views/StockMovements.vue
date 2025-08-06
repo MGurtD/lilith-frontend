@@ -8,6 +8,11 @@
       sortField="movementDate"
       :sortOrder="1"
       :value="stockMovementStore.stockMovements"
+      paginator
+      :rows="20"
+      :rowsPerPageOptions="[20, 50]"
+      paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+      currentPageReportTemplate="{first} a {last} de {totalRecords} entrades"
     >
       <template #header>
         <div
