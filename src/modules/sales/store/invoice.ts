@@ -21,9 +21,11 @@ export const useSalesInvoiceStore = defineStore({
   }),
   getters: {},
   actions: {
-    async Create(createRequest: CreateSalesHeaderRequest) {
-      const created = await SalesService.SalesInvoice.Create(createRequest);
-      return created;
+    async Create(
+      createRequest: CreateSalesHeaderRequest
+    ): Promise<GenericResponse<SalesInvoice> | undefined> {
+      const response = await SalesService.SalesInvoice.Create(createRequest);
+      return response;
     },
     async CreateRectificative(
       request: CreateRectificativeInvoiceRequest

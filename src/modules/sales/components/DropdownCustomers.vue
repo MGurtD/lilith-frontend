@@ -7,7 +7,7 @@
       showClear
       filter
       :options="customersStore.customers"
-      placeholder="Selecciona..."
+      :placeholder="placeholder || 'Selecciona un client'"
       optionValue="id"
       optionLabel="comercialName"
       class="w-full"
@@ -36,6 +36,7 @@ onMounted(() => {
 const props = defineProps<{
   label: string;
   modelValue: string | null | undefined;
+  placeholder?: string;
 }>();
 
 const emit = defineEmits<{
