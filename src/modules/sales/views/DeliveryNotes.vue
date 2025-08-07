@@ -165,6 +165,7 @@ onMounted(async () => {
     title: "Albarans d'entrega",
   });
 });
+
 onUnmounted(() => {
   const savedFilter = {
     referenceId: filter.value.referenceId,
@@ -173,6 +174,8 @@ onUnmounted(() => {
   };
 
   userFilterStore.addFilter("DeliveryNotes", "", savedFilter);
+
+  deliveryNoteStore.deliveryNotes = undefined;
 });
 
 const getUserFilter = () => {

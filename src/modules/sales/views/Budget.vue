@@ -60,7 +60,7 @@
   <!--:readonly="budgetStore.order !== null"-->
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
@@ -151,6 +151,11 @@ const loadView = async () => {
 
 onMounted(async () => {
   await loadView();
+});
+
+onUnmounted(() => {
+  budgetStore.budget = undefined;
+  budgetStore.order = undefined;
 });
 
 const submitForm = () => {

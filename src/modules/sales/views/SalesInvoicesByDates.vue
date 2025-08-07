@@ -106,7 +106,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
@@ -146,6 +146,10 @@ onMounted(async () => {
     icon: PrimeIcons.SERVER,
     title: "Comptabilització de factures de venta",
   });
+});
+
+onUnmounted(() => {
+  invoiceStore.invoices = undefined;
 });
 
 const getStatusNameById = (id: string) => {

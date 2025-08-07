@@ -83,7 +83,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
@@ -175,6 +175,11 @@ onMounted(async () => {
     }`,
     backButtonVisible: true,
   });
+});
+
+onUnmounted(() => {
+  invoiceStore.invoice = undefined;
+  deliveryNoteStore.deliveryNotes = undefined;
 });
 
 const isEditable = computed(() => {
