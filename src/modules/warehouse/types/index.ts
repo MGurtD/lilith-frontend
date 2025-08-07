@@ -49,7 +49,9 @@ export interface Inventory {
   stockId: string;
   movementType: string;
   locationId: string;
+  locationName?: string; // Optional for UI purposes
   referenceId: string;
+  referenceName?: string; // Optional for UI purposes
   oldQuantity: number;
   newQuantity: number;
   width: number;

@@ -8,7 +8,7 @@
         @click="submitForm"
       />
     </div>
-    <section class="two-columns">
+    <section class="three-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -27,8 +27,6 @@
           'p-invalid': validation.errors.description,
         }"
       ></BaseInput>
-    </section>
-    <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Local</label>
         <Dropdown
@@ -43,6 +41,8 @@
           }"
         />
       </div>
+    </section>
+    <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Ubicació predeterminada</label>
         <Dropdown

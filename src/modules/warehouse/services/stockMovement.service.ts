@@ -3,7 +3,7 @@ import BaseService from "../../../api/base.service";
 import { StockMovement } from "../types";
 
 export class StockMovementService extends BaseService<StockMovement> {
-  async Create(request: StockMovement): Promise<boolean> {
+  async create(request: StockMovement): Promise<boolean> {
     let result: boolean = false;
     try {
       const endpoint = `${this.resource}`;
@@ -17,11 +17,16 @@ export class StockMovementService extends BaseService<StockMovement> {
     return result;
   }
 
-  async GetBetweenDates(
+  async getBetweenDates(
     startTime: string,
-    endTime: string
+    endTime: string,
+    locationId?: string
   ): Promise<Array<StockMovement> | undefined> {
-    const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}`;
+    const endpoint = `${
+      this.resource
+    }?startTime=${startTime}&endTime=${endTime}${
+      locationId ? `&locationId=${locationId}` : ""
+    }`;
     const response = await this.apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as Array<StockMovement>;

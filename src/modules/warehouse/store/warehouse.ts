@@ -8,7 +8,32 @@ export const useWarehouseStore = defineStore({
     warehouse: undefined as Warehouse | undefined,
     warehouses: undefined as Array<Warehouse> | undefined,
   }),
-  getters: {},
+  getters: {
+    warehousesHaveLocations: (state) => {
+      if (!state.warehouses || state.warehouses.length === 0) return false;
+      return state.warehouses.some(
+        (warehouse) => warehouse.locations && warehouse.locations.length > 0
+      );
+    },
+    getLocationName:
+      (state) =>
+      (locationId: string): string | undefined => {
+        if (!state.warehouses || state.warehouses.length === 0)
+          return undefined;
+
+        for (const warehouse of state.warehouses) {
+          if (warehouse.locations && warehouse.locations.length > 0) {
+            const location = warehouse.locations.find(
+              (loc) => loc.id === locationId
+            );
+            if (location) {
+              return location.name;
+            }
+          }
+        }
+        return undefined;
+      },
+  },
   actions: {
     // Warehouse
     setNewWarehouse(id: string) {
@@ -23,6 +48,12 @@ export const useWarehouseStore = defineStore({
     },
     async fetchWarehouses() {
       this.warehouses = await Services.Warehouse.getAll();
+    },
+    async fetchWarehousesBySite(siteId: string) {
+      this.warehouses = await Services.Warehouse.getBySite(siteId);
+    },
+    async fetchWarehousesWithLocations() {
+      this.warehouses = await Services.Warehouse.getAllWithLocations();
     },
     async fetchWarehouse(id: string) {
       this.warehouse = await Services.Warehouse.getById(id);
@@ -44,17 +75,17 @@ export const useWarehouseStore = defineStore({
     },
 
     async createLocation(location: Location) {
-      const result = await Services.Warehouse.CreateLocation(location);
+      const result = await Services.Warehouse.createLocation(location);
       if (result) await this.fetchWarehouse(location.warehouseId);
       return result;
     },
     async updateLocation(id: string, location: Location) {
-      const result = await Services.Warehouse.UpdateLocation(id, location);
+      const result = await Services.Warehouse.updateLocation(id, location);
       if (result) await this.fetchWarehouse(location.warehouseId);
       return result;
     },
     async deleteLocation(id: string) {
-      const result = await Services.Warehouse.DeleteLocation(id);
+      const result = await Services.Warehouse.deleteLocation(id);
       if (result && this.warehouse)
         await this.fetchWarehouse(this.warehouse.id);
       return result;

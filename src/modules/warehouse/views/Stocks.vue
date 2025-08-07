@@ -1,9 +1,10 @@
 <template>
   <DataTable
+    class="p-datatable-sm"
     :value="stockStore.stocks"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="75vh"
     paginator
     :rows="20"
     :rowsPerPageOptions="[20, 50]"
@@ -14,7 +15,12 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Estocs</span>
+        <div class="datatable-filter flex flex-wrap gap-4 flex-1">
+          <div class="filter-field flex gap-2">
+            <label>Magatzem</label>
+            <DropdownWarehouses label="" v-model="filter.warehouseId" />
+          </div>
+        </div>
       </div>
     </template>
     <Column header="Producte" style="width: 28%">
@@ -31,17 +37,22 @@
   </DataTable>
 </template>
 <script setup lang="ts">
+import DropdownWarehouses from "../components/DropdownWarehouses.vue";
 import { useStore } from "../../../store";
 import { useStockStore } from "../store/stock";
 import { useReferenceStore } from "../../shared/store/reference";
 
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 
 const store = useStore();
 
 const stockStore = useStockStore();
 const referenceStore = useReferenceStore();
+
+const filter = ref({
+  warehouseId: undefined as string | undefined,
+});
 
 onMounted(async () => {
   await stockStore.fetchStocks();

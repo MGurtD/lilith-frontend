@@ -4,7 +4,7 @@
       class="p-datatable-sm"
       tableStyle="min-width:100%"
       scrollable
-      scrollHeight="80vh"
+      scrollHeight="75vh"
       sortField="movementDate"
       :sortOrder="1"
       :value="stockMovementStore.stockMovements"
@@ -18,24 +18,31 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <div class="datatable-filter">
+          <div class="datatable-filter flex flex-wrap gap-4 flex-1">
             <div class="filter-field">
               <ExerciseDatePicker
                 :exercises="exerciseStore.exercises"
                 @range-selected="filterMovements"
               />
             </div>
+            <div class="filter-field flex gap-2">
+              <label>Ubicació</label>
+              <DropdownWarehousesWithLocations
+                label=""
+                v-model="filter.locationId"
+              />
+            </div>
           </div>
-          <div class="datatable-buttons">
+          <div class="datatable-buttons flex gap-2 flex-shrink-0">
             <Button
-              class="datatable-button mr-2"
+              class="datatable-button"
               :icon="PrimeIcons.FILTER"
               rounded
               raised
               @click="filterMovements"
             />
             <Button
-              class="datatable-button mr-2"
+              class="datatable-button"
               :icon="PrimeIcons.FILTER_SLASH"
               rounded
               raised
@@ -75,6 +82,7 @@
 </template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
+import DropdownWarehousesWithLocations from "../components/DropdownWarehousesWithLocations.vue";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { useStockMovementStore } from "../store/stockMovement";
@@ -96,6 +104,7 @@ const exerciseStore = useExerciseStore();
 
 const filter = ref({
   exercise: undefined as Exercise | undefined,
+  locationId: undefined as string | undefined,
 });
 
 onMounted(async () => {
@@ -123,9 +132,9 @@ const setCurrentYear = () => {
 
 const cleanFilter = () => {
   store.cleanExercisePicker();
+  filter.value.locationId = undefined;
 };
 
-const filterLocalStorageKey = "temges.stockMovements.filter";
 const filterMovements = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
@@ -133,9 +142,11 @@ const filterMovements = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    await stockMovementStore.GetBetweenDates(startTime, endTime);
-
-    localStorage.setItem(filterLocalStorageKey, JSON.stringify(filter.value));
+    await stockMovementStore.getBetweenDates(
+      startTime,
+      endTime,
+      filter.value.locationId
+    );
   } else {
     toast.add({
       severity: "info",
@@ -144,11 +155,5 @@ const filterMovements = async () => {
       life: 5000,
     });
   }
-};
-
-const getReferenceNameById = (id: string) => {
-  const reference = referenceStore.references?.find((s) => s.id === id);
-  if (reference) return reference.description;
-  else return "";
 };
 </script>
