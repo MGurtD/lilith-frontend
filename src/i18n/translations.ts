@@ -1,3 +1,5 @@
+import { has } from "lodash";
+
 const messages = {
   ca: {
     general: {
@@ -9,9 +11,16 @@ const messages = {
     },
     home: {},
     login: {
-      loginTitle: "Benvingut a Temges",
+      welcome: "Benvingut a Temges",
+      subtitle: "Inicia sessió per continuar",
       username: "Nom d'usuari",
+      usernamePlaceholder: "Introdueix el teu nom d'usuari",
       password: "Contrasenya",
+      passwordPlaceholder: "Introdueix la teva contrasenya",
+      noAccount: "No tens un compte?",
+      hasAccount: "Ja tens un compte?",
+      signIn: "Inicia sessió",
+      createAccount: "Crea un compte",
       rememberMe: "Recorda'm",
       forgotPassword: "Contrasenya oblidada?",
       btnSignIn: "Iniciar sessió",
@@ -21,6 +30,7 @@ const messages = {
       mail: "Correu electrònic",
       registerTitle: "Registre d'usuari",
       register: "Registra't",
+      registerSubtitle: "Omple el formulari per crear un compte",
     },
   },
   es: {

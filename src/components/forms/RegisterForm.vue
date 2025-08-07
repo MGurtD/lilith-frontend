@@ -1,10 +1,157 @@
+<template>
+  <div class="register-card surface-card p-6 shadow-8 border-round-xl w-full">
+    <div class="text-center mb-6">
+      <div class="logo-container mb-4">
+        <img src="../../assets/images/logo.jpg" alt="Logo" class="logo-image" />
+      </div>
+      <h1 class="text-3xl font-bold text-blue-700 mb-2">
+        {{ $t("login.register") }}
+      </h1>
+      <p class="text-600 text-lg">
+        {{ $t("login.registerSubtitle") || "Crea el teu compte per començar" }}
+      </p>
+    </div>
+
+    <form @submit.prevent="register" class="register-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName" class="form-label">
+            {{ $t("login.firstName") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-user input-icon" />
+            <InputText
+              id="firstName"
+              type="text"
+              class="form-input"
+              :class="{ 'p-invalid': v$.firstName.$errors.length > 0 }"
+              v-model="state.firstName"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="form-label">
+            {{ $t("login.lastName") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-user input-icon" />
+            <InputText
+              id="lastName"
+              type="text"
+              class="form-input"
+              v-model="state.lastName"
+              :class="{ 'p-invalid': v$.lastName.$errors.length > 0 }"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="username" class="form-label">
+            {{ $t("login.username") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-user input-icon" />
+            <InputText
+              id="username"
+              type="text"
+              class="form-input"
+              v-model="state.username"
+              :class="{ 'p-invalid': v$.username.$errors.length > 0 }"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">
+            {{ $t("login.mail") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-envelope input-icon" />
+            <InputText
+              id="email"
+              type="email"
+              class="form-input"
+              v-model="state.mail"
+              :class="{ 'p-invalid': v$.mail.$errors.length > 0 }"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row mb-6">
+        <div class="form-group">
+          <label for="password1" class="form-label">
+            {{ $t("login.password") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-key input-icon" />
+            <InputText
+              id="password1"
+              type="password"
+              class="form-input"
+              v-model="state.password"
+              :class="{ 'p-invalid': !arePasswordsEqual }"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="password2" class="form-label">
+            {{ $t("login.repeatPassword") }}
+          </label>
+          <span class="input-wrapper">
+            <i class="pi pi-verified input-icon" />
+            <InputText
+              id="password2"
+              type="password"
+              class="form-input"
+              v-model="state.repeatPassword"
+              :class="{ 'p-invalid': !arePasswordsEqual }"
+              @keyup.enter="register"
+            />
+          </span>
+        </div>
+      </div>
+
+      <Button
+        type="submit"
+        :label="$t('login.register')"
+        class="register-button w-full mb-4"
+        size="large"
+        :disabled="!arePasswordsEqual || v$.$invalid"
+      />
+
+      <div class="text-center">
+        <span class="text-600">{{
+          $t("login.hasAccount") || "Ja tens compte?"
+        }}</span>
+        <Button
+          :label="$t('login.signIn') || 'Inicia sessió'"
+          link
+          class="login-link p-0 ml-2"
+          @click="loginClick"
+        />
+      </div>
+    </form>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { computed, reactive } from "vue";
 import { UserRegister } from "../../api/services/authentications.service";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useToast } from "primevue/usetoast";
-import { ToastSeverity } from "primevue/api";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 
 const emits = defineEmits(["register", "loginClick"]);
 const toast = useToast();
@@ -52,148 +199,261 @@ const register = () => {
 const loginClick = () => emits("loginClick");
 </script>
 
-<template>
-  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
-    <div class="text-center mb-5">
-      <img
-        src="../../assets/images/logo.png"
-        alt="Image"
-        height="50"
-        class="mb-3"
-      />
-      <div class="text-blue-700 text-3xl font-medium mb-3">
-        {{ $t("login.register") }}
-      </div>
-    </div>
+<style lang="scss" scoped>
+.register-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  max-width: 600px;
 
-    <form>
-      <section class="two-columns">
-        <div>
-          <label for="firstName" class="block text-900 font-medium mb-2">{{
-            $t("login.firstName")
-          }}</label>
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-user" />
-            <InputText
-              id="firstName"
-              type="text"
-              class="w-full"
-              :class="{ 'p-invalid': v$.firstName.$errors.length > 0 }"
-              v-model="state.firstName"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+}
 
-        <div>
-          <label for="lastName" class="block text-900 font-medium mb-2">{{
-            $t("login.lastName")
-          }}</label>
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-user" />
-            <InputText
-              id="lastName"
-              type="text"
-              class="w-full"
-              v-model="state.lastName"
-              :class="{ 'p-invalid': v$.lastName.$errors.length > 0 }"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
-      </section>
+.logo-container {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--blue-50) 0%, var(--blue-100) 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(var(--blue-500), 0.1);
+  transition: all 0.3s ease;
 
-      <section class="two-columns">
-        <div>
-          <label for="username" class="block text-900 font-medium mb-2">{{
-            $t("login.username")
-          }}</label>
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-user" />
-            <InputText
-              id="username"
-              type="text"
-              class="w-full"
-              v-model="state.username"
-              :class="{ 'p-invalid': v$.username.$errors.length > 0 }"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--blue-500), 0.15);
+  }
+}
 
-        <div>
-          <label for="email" class="block text-900 font-medium mb-2">{{
-            $t("login.mail")
-          }}</label>
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-envelope" />
-            <InputText
-              id="email"
-              type="text"
-              class="w-full"
-              v-model="state.mail"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
-      </section>
+.logo-image {
+  height: 80px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  border-radius: 20px;
+  border: 2px solid var(--blue-200);
+  transition: all 0.3s ease;
+  display: block;
 
-      <section class="two-columns mb-6">
-        <div>
-          <label for="password1" class="block text-900 font-medium mb-2">
-            {{ $t("login.password") }}
-          </label>
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-key" />
+  &:hover {
+    transform: scale(1.02);
+    border-color: var(--blue-400);
+  }
+}
 
-            <InputText
-              id="password1"
-              type="password"
-              class="w-full"
-              v-model="state.password"
-              :class="{ 'p-invalid': !arePasswordsEqual }"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
-        <div>
-          <label for="password2" class="block text-900 font-medium mb-2">
-            {{ $t("login.repeatPassword") }}</label
-          >
-          <span class="p-input-icon-left w-full mb-3">
-            <i class="pi pi-verified" />
-            <InputText
-              id="password2"
-              type="password"
-              class="w-full"
-              v-model="state.repeatPassword"
-              :class="{ 'p-invalid': !arePasswordsEqual }"
-              @keyup.enter="register"
-            />
-          </span>
-        </div>
-      </section>
+.register-form {
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 
-      <Button
-        :label="$t('login.register')"
-        class="w-full"
-        @click="register"
-      ></Button>
-    </form>
-    <div class="flex align-items-center justify-content-between mb-4 mt-4">
-      <a
-        class="links-section font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
-        @click="loginClick"
-        >Si tens usuari, inicia sessió</a
-      >
-    </div>
-  </div>
-</template>
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
 
-<style scoped>
-.two-columns {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  .form-group {
+    position: relative;
+  }
+
+  .form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: block;
+    transition: all 0.3s ease;
+
+    &:focus-within {
+      transform: translateY(-1px);
+
+      .input-icon {
+        color: var(--blue-600);
+      }
+
+      .form-input {
+        border-color: var(--blue-500);
+        box-shadow: 0 8px 25px rgba(var(--blue-500), 0.15);
+      }
+    }
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-secondary);
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid var(--surface-300);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--surface-0);
+
+    &:focus {
+      outline: none;
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 3px rgba(var(--blue-500), 0.1);
+    }
+
+    &::placeholder {
+      color: var(--text-color-secondary);
+      opacity: 0.7;
+    }
+
+    &.p-invalid {
+      border-color: var(--red-500);
+
+      &:focus {
+        border-color: var(--red-500);
+        box-shadow: 0 0 0 3px rgba(var(--red-500), 0.1);
+      }
+    }
+  }
+
+  .register-button {
+    background: linear-gradient(
+      135deg,
+      var(--blue-600) 0%,
+      var(--blue-500) 100%
+    );
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(var(--blue-500), 0.3);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(var(--blue-500), 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .login-link {
+    color: var(--blue-600);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: var(--blue-700);
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .register-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .logo-image {
+    height: 50px;
+    width: auto;
+    max-width: 75px;
+    border-radius: 8px;
+  }
+
+  .register-form {
+    .form-input {
+      padding: 0.875rem 0.875rem 0.875rem 2.5rem;
+    }
+
+    .input-icon {
+      left: 0.875rem;
+    }
+
+    .register-button {
+      padding: 0.875rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1.25rem;
+    margin: 0.5rem;
+  }
+
+  .register-form {
+    .form-row {
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+/* Form validation feedback */
+.form-input.p-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Focus accessibility improvements */
+.form-input:focus,
+.register-button:focus,
+.login-link:focus {
+  outline: 2px solid var(--blue-400);
+  outline-offset: 2px;
 }
 </style>
