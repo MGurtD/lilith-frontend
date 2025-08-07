@@ -59,7 +59,7 @@ onMounted(async () => {
   await referenceStore.fetchReferences();
   store.setMenuItem({
     icon: PrimeIcons.BOX,
-    title: "Gestió de magatzems",
+    title: "Gestió de magatzems - Estocs",
   });
 });
 </script>
