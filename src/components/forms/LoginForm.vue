@@ -102,7 +102,7 @@ const registerClick = () => {
         :loading="false"
       />
 
-      <div class="text-center">
+      <!--<div class="text-center">
         <span class="text-600">{{
           $t("login.noAccount") || "No tens compte?"
         }}</span>
@@ -113,6 +113,7 @@ const registerClick = () => {
           @click="registerClick"
         />
       </div>
+      -->
     </form>
   </div>
 </template>
