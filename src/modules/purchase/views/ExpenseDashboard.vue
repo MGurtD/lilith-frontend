@@ -25,7 +25,7 @@
     <div class="dashboard-filter-field">
       <label class="block text-900">
         <i :class="PrimeIcons.WALLET"></i>
-        &nbsp; Total despesa <b>{{ totalAmount.toFixed(2) }} € </b>
+        &nbsp; Total despesa <b>{{ formatCurrency(totalAmount) }}</b>
       </label>
     </div>
     <Button
@@ -91,7 +91,10 @@ import { PrimeIcons } from "primevue/api";
 import { useStore } from "../../../store";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import _ from "lodash";
-import { formatDateForQueryParameter } from "../../../utils/functions";
+import {
+  formatCurrency,
+  formatDateForQueryParameter,
+} from "../../../utils/functions";
 import ExpenseServices from "../services";
 import { ConsolidatedExpense, ExpenseType } from "../types";
 import TableConsolidatedExpenses from "../components/TableConsolidatedExpenses.vue";
