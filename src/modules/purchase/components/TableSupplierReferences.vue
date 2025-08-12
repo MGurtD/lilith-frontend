@@ -19,6 +19,7 @@
       v-if="supplierReferences"
       :value="supplierReferences"
       tableStyle="min-width: 100%"
+      :scroll-height="'calc(100vh - 260px)'"
       @row-click="rowContactClick"
     >
       <template #header>

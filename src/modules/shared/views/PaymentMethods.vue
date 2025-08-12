@@ -2,6 +2,7 @@
   <DataTable
     :value="paymentMethodStore.paymentMethods"
     tableStyle="min-width: 100%"
+    :scrollHeight="`calc(100vh - 180px)`"
     @row-click="editPaymentMethod"
   >
     <template #header>
