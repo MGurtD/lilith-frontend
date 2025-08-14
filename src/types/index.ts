@@ -51,3 +51,12 @@ export interface File {
   updatedOn: string;
   disabled: boolean;
 }
+
+export interface Language {
+  id: string;
+  code: string;
+  name: string;
+  icon?: string;
+  isDefault: boolean;
+  sortOrder?: number;
+}

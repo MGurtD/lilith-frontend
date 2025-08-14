@@ -1,7 +1,33 @@
-import { has } from "lodash";
-
 const messages = {
   ca: {
+    forms: {
+      user: {
+        usernameLabel: "Nom d'usuari",
+        roleLabel: "Rol",
+        firstNameLabel: "Nom",
+        lastNameLabel: "Cognoms",
+        languageLabel: "Idioma",
+        passwordLabel: "Contrasenya",
+        passwordRepeatLabel: "Repetir contrasenya",
+        saveButton: "Guardar",
+        activateButton: "Activar",
+        deactivateButton: "Desactivar",
+        changePasswordButton: "Canviar contrasenya",
+        modifyButton: "Modificar",
+        validation: {
+          usernameRequired: "El nom d'usuari és obligatori",
+          usernameMax: "El nom d'usuari no pot superar els 250 caràcters",
+          firstNameRequired: "El nom és obligatori",
+          firstNameMax: "El nom no pot superar els 250 caràcters",
+          lastNameRequired: "Els cognoms són obligatoris",
+          lastNameMax: "Els cognoms no poden superar els 250 caràcters",
+          invalidForm: "Formulari invàlid",
+          invalidPassword: "Contrasenya invàlida",
+          invalidPasswordDetail:
+            "Les contrasenyes han de coincidir i contenir més de 4 caràcters",
+        },
+      },
+    },
     general: {
       menu: {
         home: "Inici",
@@ -34,6 +60,35 @@ const messages = {
     },
   },
   es: {
+    forms: {
+      user: {
+        usernameLabel: "Nombre de usuario",
+        roleLabel: "Rol",
+        firstNameLabel: "Nombre",
+        lastNameLabel: "Apellidos",
+        languageLabel: "Idioma",
+        passwordLabel: "Contraseña",
+        passwordRepeatLabel: "Repetir contraseña",
+        saveButton: "Guardar",
+        activateButton: "Activar",
+        deactivateButton: "Desactivar",
+        changePasswordButton: "Cambiar contraseña",
+        modifyButton: "Modificar",
+        validation: {
+          usernameRequired: "El nombre de usuario es obligatorio",
+          usernameMax:
+            "El nombre de usuario no puede superar los 250 caracteres",
+          firstNameRequired: "El nombre es obligatorio",
+          firstNameMax: "El nombre no puede superar los 250 caracteres",
+          lastNameRequired: "Los apellidos son obligatorios",
+          lastNameMax: "Los apellidos no pueden superar los 250 caracteres",
+          invalidForm: "Formulario inválido",
+          invalidPassword: "Contraseña inválida",
+          invalidPasswordDetail:
+            "Las contraseñas deben coincidir y contener más de 4 caracteres",
+        },
+      },
+    },
     general: {
       menu: {
         home: "Inicio",
@@ -55,6 +110,66 @@ const messages = {
       mail: "Correu electrònic",
       registerTitle: "Registre d'usuari",
       register: "Registra't",
+    },
+  },
+  en: {
+    forms: {
+      user: {
+        usernameLabel: "Username",
+        roleLabel: "Role",
+        firstNameLabel: "First name",
+        lastNameLabel: "Last name",
+        languageLabel: "Language",
+        passwordLabel: "Password",
+        passwordRepeatLabel: "Repeat password",
+        saveButton: "Save",
+        activateButton: "Activate",
+        deactivateButton: "Deactivate",
+        changePasswordButton: "Change password",
+        modifyButton: "Update",
+        validation: {
+          usernameRequired: "Username is required",
+          usernameMax: "Username cannot exceed 250 characters",
+          firstNameRequired: "First name is required",
+          firstNameMax: "First name cannot exceed 250 characters",
+          lastNameRequired: "Last name is required",
+          lastNameMax: "Last name cannot exceed 250 characters",
+          invalidForm: "Invalid form",
+          invalidPassword: "Invalid password",
+          invalidPasswordDetail:
+            "Passwords must match and contain more than 4 characters",
+        },
+      },
+    },
+    general: {
+      menu: {
+        home: "Home",
+        suppliers: "Suppliers",
+        customers: "Customers",
+      },
+    },
+    home: {},
+    login: {
+      welcome: "Welcome to Temges",
+      subtitle: "Sign in to continue",
+      username: "Username",
+      usernamePlaceholder: "Enter your username",
+      password: "Password",
+      passwordPlaceholder: "Enter your password",
+      noAccount: "Don't have an account?",
+      hasAccount: "Already have an account?",
+      signIn: "Sign in",
+      createAccount: "Create an account",
+      rememberMe: "Remember me",
+      forgotPassword: "Forgot password?",
+      btnSignIn: "Sign in",
+      repeatPassword: "Repeat password",
+      firstName: "First name",
+      lastName: "Last name",
+      mail: "Email",
+      registerTitle: "User registration",
+      register: "Register",
+      registerSubtitle: "Fill the form to create an account",
     },
   },
 };

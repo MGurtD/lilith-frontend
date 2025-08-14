@@ -35,10 +35,36 @@
         @click="showOverlayPanel"
       />
       <OverlayPanel ref="op">
-        <p class="title-bar__user__overlaypanel__text">
-          {{ store.user.firstName }} {{ store.user.lastName }}
-        </p>
-        <Button label="Tancar sessió" @click="logoutClick" />
+        <div class="user-menu">
+          <div class="user-menu__header">
+            <Avatar
+              :label="store.user.username.substring(0, 1).toUpperCase()"
+              class="user-menu__avatar"
+              size="large"
+              shape="circle"
+            />
+            <div class="user-menu__name">
+              {{ store.user.firstName }} {{ store.user.lastName }}
+            </div>
+            <div class="user-menu__username">@{{ store.user.username }}</div>
+          </div>
+
+          <div class="divider" />
+
+          <div class="user-menu__section">
+            <label class="user-menu__label">Idioma</label>
+            <LanguageSwitcher />
+          </div>
+
+          <div class="user-menu__actions">
+            <Button
+              :icon="PrimeIcons.SIGN_OUT"
+              label="Tancar sessió"
+              class="w-full p-button-lg"
+              @click="logoutClick"
+            />
+          </div>
+        </div>
       </OverlayPanel>
     </div>
   </div>
@@ -52,6 +78,7 @@ import OverlayPanel from "primevue/overlaypanel";
 import { PrimeIcons } from "primevue/api";
 import { useRouter } from "vue-router";
 import { useShoopfloorStore } from "../modules/shoopfloor/store";
+import LanguageSwitcher from "./LanguageSwitcher.vue";
 
 const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
 const shopfloorStore = useShoopfloorStore();
@@ -123,6 +150,54 @@ const goBack = () => router.back();
 
 .title-bar__user__overlaypanel__text {
   text-align: center;
+}
+
+/* New user overlay menu styles */
+.user-menu {
+  min-width: 16rem;
+  padding: 0.75rem;
+}
+
+.user-menu__header {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.75rem;
+  align-items: center;
+}
+
+.user-menu__avatar {
+  grid-row: span 2;
+}
+
+.user-menu__name {
+  font-weight: 600;
+  color: var(--surface-900, #1f2937);
+}
+
+.user-menu__username {
+  font-size: 0.85rem;
+  color: var(--surface-500, #6b7280);
+}
+
+.divider {
+  height: 1px;
+  background: var(--surface-200, #e5e7eb);
+  margin: 0.75rem 0;
+}
+
+.user-menu__section {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.user-menu__label {
+  font-size: 0.85rem;
+  color: var(--surface-600, #4b5563);
+}
+
+.user-menu__actions {
+  margin-top: 0.75rem;
 }
 
 .title-bar__operator {
