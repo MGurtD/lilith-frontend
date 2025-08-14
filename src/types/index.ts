@@ -27,6 +27,7 @@ export interface User {
   firstName: string;
   lastName: string;
   disabled: boolean;
+  preferredLanguage: string;
   roleId: string;
   role?: Role;
 }

@@ -53,7 +53,10 @@
         <label class="block text-900 mb-2">{{
           $t("forms.user.languageLabel")
         }}</label>
-        <LanguageSwitcher />
+        <LanguageSwitcher
+          v-model="user.preferredLanguage"
+          :changeAppLanguage="appStore.user?.id === user.id"
+        />
       </div>
     </section>
 
@@ -120,6 +123,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useStore } from "../../store";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -132,6 +136,7 @@ import { User, Role } from "../../types";
 import LanguageSwitcher from "../LanguageSwitcher.vue";
 
 const { t } = useI18n();
+const appStore = useStore();
 
 const props = defineProps<{
   roles: Role[] | undefined;
