@@ -21,6 +21,7 @@ export interface Customer {
   accountNumber: string;
   observations: string;
   invoiceNotes: string;
+  preferredLanguage: string;
   contacts: Array<CustomerContact>;
   address: Array<CustomerAddress>;
 }

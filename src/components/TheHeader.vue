@@ -53,7 +53,10 @@
 
           <div class="user-menu__section">
             <label class="user-menu__label">Idioma</label>
-            <LanguageSwitcher />
+            <LanguageSwitcher
+              v-model="store.user.preferredLanguage"
+              :changeAppLanguage="true"
+            />
           </div>
 
           <div class="user-menu__actions">

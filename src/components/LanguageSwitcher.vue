@@ -6,11 +6,17 @@ import { useLanguageStore } from "../store/languages";
 const appStore = useStore();
 const langStore = useLanguageStore();
 
+const props = defineProps<{
+  changeAppLanguage: boolean;
+}>();
+
 const options = computed(() => langStore.options);
 const model = computed({
   get: () => appStore.language.current,
   set: async (val: string) => {
-    await appStore.changeLanguage(val);
+    if (props.changeAppLanguage) {
+      await appStore.changeLanguage(val);
+    }
   },
 });
 
