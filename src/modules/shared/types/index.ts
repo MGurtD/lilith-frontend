@@ -38,6 +38,7 @@ export interface Lifecycle {
   description: string;
   disabled: boolean;
   initialStatusId?: string;
+  finalStatusId?: string;
   statuses: Array<Status>;
 }
 

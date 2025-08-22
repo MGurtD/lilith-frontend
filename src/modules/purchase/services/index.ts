@@ -9,9 +9,7 @@ import { SupplierService } from "./suppliers.service";
 
 export default {
   PurchaseInvoice: new PurchaseInvoiceService("/PurchaseInvoice"),
-  PurchaseInvoiceSerie: new PurchaseInvoiceSerieService(
-    "/PurchaseInvoiceSerie"
-  ),
+  PurchaseInvoiceSerie: new PurchaseInvoiceSerieService("/InvoiceSerie"),
   Supplier: new SupplierService("/Supplier"),
   SupplierType: new SupplierService("/SupplierType"),
   Expense: new ExpenseService("Expense"),

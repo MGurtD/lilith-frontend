@@ -181,6 +181,7 @@ export interface SalesInvoice {
   netAmount: number;
   exerciseId: string;
   statusId: string;
+  integrationStatusId: string | null;
   customerId: string;
   paymentMethodId: string;
   customerCode: string;

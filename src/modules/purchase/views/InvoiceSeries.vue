@@ -43,7 +43,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { PurchaseInvoiceSerie } from "../types";
+import { InvoiceSerie } from "../types";
 import { useStore } from "../../../store";
 import { usePurchaseInvoiceSeries } from "../store/purchaseInvoiceSeries";
 
@@ -76,7 +76,7 @@ const editPurchaseInvoiceSerie = (row: DataTableRowClickEvent) => {
 
 const deletePurchaseInvoiceSerie = (
   event: any,
-  purchaseInvoiceSerie: PurchaseInvoiceSerie
+  purchaseInvoiceSerie: InvoiceSerie
 ) => {
   confirm.require({
     target: event.currentTarget,

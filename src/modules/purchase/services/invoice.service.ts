@@ -3,12 +3,12 @@ import BaseService from "../../../api/base.service";
 import {
   PurchaseInvoiceDueDate,
   PurchaseInvoice,
-  PurchaseInvoiceSerie,
+  InvoiceSerie,
   PurchaseInvoiceUpdateStatues,
   PurchaseInvoiceImport,
 } from "../types";
 
-export class PurchaseInvoiceSerieService extends BaseService<PurchaseInvoiceSerie> {}
+export class PurchaseInvoiceSerieService extends BaseService<InvoiceSerie> {}
 
 export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
   async GetBetweenDates(
@@ -74,7 +74,8 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     const response = await apiClient.post(
       `${this.resource}/RecreateDueDates`,
       purchaseInvoice
-    );2
+    );
+    2;
     return response.status === 200;
   }
 
