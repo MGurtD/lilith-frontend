@@ -10,11 +10,8 @@ import { useRouter } from "vue-router";
 import { useShoopfloorStore } from "./modules/shoopfloor/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
+import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
-import { setI18nLocale } from "./i18n";
-import catalan from "./i18n/catalan";
-import spanish from "./i18n/spanish";
-import english from "./i18n/english";
 
 const store = useStore();
 const shopfloorStore = useShoopfloorStore();
@@ -23,26 +20,17 @@ const spanishGeography = useSpanishGeography();
 const router = useRouter();
 const primevue = usePrimeVue();
 
-const applyPrimeVueLocale = (code: string) => {
-  const lang = (code || "ca").toLowerCase();
-  primevue.config.locale = (
-    lang === "es" ? spanish : lang === "en" ? english : catalan
-  ) as any;
-  setI18nLocale(lang);
-};
-
 onMounted(async () => {
+  spanishGeography.fetch();
+
   // Initialize language for anonymous users; JWT-based locale will be handled in setAuthorization
   await store.initLanguage();
-  applyPrimeVueLocale(store.language.current);
-
-  spanishGeography.fetch();
   await store.getAuthorization();
 });
 
 watch(
   () => store.language.current,
-  (val) => applyPrimeVueLocale(val)
+  (val) => applyPrimeVueLocale(primevue.config, val)
 );
 
 const logout = () => {

@@ -40,7 +40,7 @@ import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
-import catalan from "./i18n/catalan";
+import catalan from "./i18n/primevue/catalan";
 
 app.use(PrimeVue, {
   locale: catalan,
