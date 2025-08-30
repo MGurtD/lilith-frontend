@@ -313,3 +313,12 @@ export interface ConsolidatedIncomes {
   description: string;
   amount: number;
 }
+
+export interface Revenue {
+  year: number;
+  month: number;
+  outcomeAmount: number;
+  incomeAmount: number;
+  expenseAmount: number;
+  revenueAmount: number;
+}

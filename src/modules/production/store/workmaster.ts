@@ -47,6 +47,7 @@ export const useWorkMasterStore = defineStore({
         totalWeight: 0,
         mode: 1,
         phases: [],
+        totalWeight: 0,
       } as WorkMaster;
 
       if (referenceId) this.workmaster.referenceId = referenceId;

@@ -14,4 +14,11 @@ export class IncomeService extends BaseService<ConsolidatedIncomes> {
       return response.data as Array<ConsolidatedIncomes>;
     }
   }
+  async getMonthly(year: number, month: number): Promise<number | undefined> {
+    let endpoint = `${this.resource}/Monthly?year=${year}&month=${month}`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as number;
+    }
+  }
 }
