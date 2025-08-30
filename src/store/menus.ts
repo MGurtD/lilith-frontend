@@ -285,8 +285,18 @@ export const applicationMenus = [
     href: "",
     child: [
       {
+        icon: PrimeIcons.UPLOAD,
+        title: "Integració de factures",
+        href: "/verifactu/invoice-integration",
+      },
+      {
         icon: PrimeIcons.SEARCH,
-        title: "Consulta factures",
+        title: "Peticions d'integració",
+        href: "/verifactu/integration-requests",
+      },
+      {
+        icon: PrimeIcons.SEARCH_PLUS,
+        title: "Consulta a Verifactu",
         href: "/verifactu/find-invoices",
       },
     ],

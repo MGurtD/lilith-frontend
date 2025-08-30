@@ -1,14 +1,6 @@
 <template>
   <div class="button-panel">
     <div class="flex align-items-end justify-content-end">
-      <Button
-        v-if="invoice && invoice.integrationStatusId"
-        label="Verifactu"
-        icon="pi pi-check"
-        :size="'small'"
-        class="mr-2"
-        @click="sendToVerifactu"
-      />
       <SplitButton
         label="Guardar"
         @click="updateInvoice"

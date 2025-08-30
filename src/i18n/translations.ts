@@ -1,5 +1,133 @@
 const messages = {
   ca: {
+    common: {
+      success: "Èxit",
+      error: "Error",
+      info: "Informació",
+      search: "Cercar",
+      actions: "Accions",
+      date: "Data",
+      amount: "Import",
+      status: "Estat",
+      customer: "Client",
+      number: "Número",
+      type: "Tipus",
+      detail: "Detall",
+      description: "Descripció",
+      total: "Total",
+      close: "Tancar",
+      exportCsv: "Exporta CSV",
+    },
+    analytics: {
+      cashflow: {
+        tabs: {
+          chart: "Gràfics",
+          data: "Dades",
+        },
+        series: {
+          incomes: "Ingressos",
+          expenses: "Despeses",
+          net: "Net",
+          balance: "Saldo acumulat",
+        },
+        kpi: {
+          incomes: "Ingressos",
+          expenses: "Despeses",
+          net: "Net",
+          avgMonthlyNet: "Mitjana mensual neta",
+        },
+        messages: {
+          loadError: "Error carregant dades del quadre de comandament",
+        },
+      },
+    },
+    verifactu: {
+      invoiceIntegration: {
+        title: "Integració de Factures a Verifactu",
+        filters: {
+          toDate: "Venciment fins",
+        },
+        actions: {
+          search: "Cercar",
+          integrate: "Integrar",
+          integrateSelected: "Integrar Seleccionades",
+          viewRequests: "Veure Sol·licituds",
+        },
+        table: {
+          title: "Factures Pendents d'Integració",
+          search: "Cercar factures...",
+          empty: "No s'han trobat factures pendents d'integració",
+          columns: {
+            number: "Número",
+            date: "Data",
+            dueDate: "Venciment",
+            customer: "Client",
+            amount: "Import",
+            status: "Estat Integració",
+            actions: "Accions",
+          },
+        },
+        messages: {
+          loadError: "Error carregant les factures pendents",
+          integrateSuccess: "Factura {number} integrada correctament",
+          integrateError: "Error integrant la factura {number}",
+          bulkIntegrateSuccess:
+            "Factures seleccionades integrades correctament",
+          bulkIntegrateError: "Error integrant les factures seleccionades",
+          requestsError: "Error carregant les sol·licituds de la factura",
+        },
+        requestsDialog: {
+          title: "Sol·licituds de Verifactu",
+        },
+        tableInvoiceRequests: {
+          columns: {
+            date: "Data",
+            request: "Petició",
+            status: "Èxit",
+            statusCode: "Estat",
+            response: "Resposta",
+            qrImage: "QR",
+            hash: "Hash",
+            qrCode: "QR",
+          },
+          actions: {
+            copy: "Copiar",
+            open: "Obrir",
+          },
+        },
+        validation: {
+          bothDatesRequired: "Les dues dates són obligatòries",
+          fromDateFuture: "La data d'inici no pot ser en el futur",
+          toDateFuture: "La data final no pot ser en el futur",
+          toDateAfterFromDate:
+            "La data final ha de ser posterior a la data d'inici",
+          toDateAdjusted: "La data final s'ha ajustat automàticament",
+        },
+      },
+      integrationRequests: {
+        title: "Peticions d'integració Verifactu",
+        filters: {
+          fromDate: "Des de",
+          toDate: "Fins a",
+        },
+        table: {
+          empty: "No s'han trobat peticions d'integració",
+          columns: {
+            invoiceNumber: "Número",
+            customer: "Client",
+            date: "Data",
+            request: "Petició",
+            success: "Èxit",
+            statusCode: "Estat",
+            response: "Resposta",
+            qrCode: "QR",
+          },
+        },
+        messages: {
+          loadError: "Error carregant les peticions d'integració",
+        },
+      },
+    },
     forms: {
       user: {
         usernameLabel: "Nom d'usuari",
@@ -60,6 +188,131 @@ const messages = {
     },
   },
   es: {
+    common: {
+      success: "Éxito",
+      error: "Error",
+      info: "Información",
+      search: "Buscar",
+      actions: "Acciones",
+      date: "Fecha",
+      amount: "Importe",
+      status: "Estado",
+      customer: "Cliente",
+      number: "Número",
+      type: "Tipo",
+      detail: "Detalle",
+      description: "Descripción",
+      total: "Total",
+      close: "Cerrar",
+      exportCsv: "Exportar CSV",
+    },
+    analytics: {
+      cashflow: {
+        tabs: {
+          chart: "Gráficos",
+          data: "Datos",
+        },
+        series: {
+          incomes: "Ingresos",
+          expenses: "Gastos",
+          net: "Neto",
+          balance: "Saldo acumulado",
+        },
+        kpi: {
+          incomes: "Ingresos",
+          expenses: "Gastos",
+          net: "Neto",
+          avgMonthlyNet: "Media mensual neta",
+        },
+        messages: {
+          loadError: "Error cargando datos del panel",
+        },
+      },
+    },
+    verifactu: {
+      invoiceIntegration: {
+        title: "Integración de Facturas en Verifactu",
+        filters: {
+          toDate: "Vencimiento hasta",
+        },
+        actions: {
+          integrateSelected: "Integrar Pendientes",
+        },
+        table: {
+          title: "Facturas Pendientes de Integración",
+          search: "Buscar facturas...",
+          empty: "No se encontraron facturas pendientes de integración",
+          columns: {
+            number: "Número",
+            date: "Fecha",
+            dueDate: "Vencimiento",
+            customer: "Cliente",
+            amount: "Importe",
+            status: "Estado Integración",
+            actions: "Acciones",
+          },
+        },
+        messages: {
+          loadError: "Error cargando las facturas pendientes",
+          integrateSuccess: "Factura {number} integrada correctamente",
+          integrateError: "Error integrando la factura {number}",
+          bulkIntegrateSuccess:
+            "Facturas seleccionadas integradas correctamente",
+          bulkIntegrateError: "Error integrando las facturas seleccionadas",
+          requestsError: "Error cargando las solicitudes de la factura",
+        },
+        requestsDialog: {
+          title: "Solicitudes de Verifactu",
+        },
+        tableInvoiceRequests: {
+          columns: {
+            date: "Fecha",
+            request: "Petición",
+            status: "Éxito",
+            statusCode: "Estado",
+            response: "Respuesta",
+            qrImage: "QR",
+            hash: "Hash",
+            qrCode: "QR",
+          },
+          actions: {
+            copy: "Copiar",
+            open: "Abrir",
+          },
+        },
+        validation: {
+          bothDatesRequired: "Las dos fechas son obligatorias",
+          fromDateFuture: "La fecha de inicio no puede estar en el futuro",
+          toDateFuture: "La fecha final no puede estar en el futuro",
+          toDateAfterFromDate:
+            "La fecha final debe ser posterior a la fecha de inicio",
+          toDateAdjusted: "La fecha final se ha ajustado automáticamente",
+        },
+      },
+      integrationRequests: {
+        title: "Solicitudes de integración Verifactu",
+        filters: {
+          fromDate: "Desde",
+          toDate: "Hasta",
+        },
+        table: {
+          empty: "No se encontraron solicitudes de integración",
+          columns: {
+            invoiceNumber: "Número",
+            customer: "Cliente",
+            date: "Fecha",
+            request: "Petición",
+            success: "Éxito",
+            statusCode: "Estado",
+            response: "Respuesta",
+            qrCode: "QR",
+          },
+        },
+        messages: {
+          loadError: "Error cargando las solicitudes de integración",
+        },
+      },
+    },
     forms: {
       user: {
         usernameLabel: "Nombre de usuario",
@@ -113,6 +366,129 @@ const messages = {
     },
   },
   en: {
+    common: {
+      success: "Success",
+      error: "Error",
+      info: "Information",
+      search: "Search",
+      actions: "Actions",
+      date: "Date",
+      amount: "Amount",
+      status: "Status",
+      customer: "Customer",
+      number: "Number",
+      type: "Type",
+      detail: "Detail",
+      description: "Description",
+      total: "Total",
+      close: "Close",
+      exportCsv: "Export CSV",
+    },
+    analytics: {
+      cashflow: {
+        tabs: {
+          chart: "Charts",
+          data: "Data",
+        },
+        series: {
+          incomes: "Incomes",
+          expenses: "Expenses",
+          net: "Net",
+          balance: "Cumulative balance",
+        },
+        kpi: {
+          incomes: "Incomes",
+          expenses: "Expenses",
+          net: "Net",
+          avgMonthlyNet: "Avg monthly net",
+        },
+        messages: {
+          loadError: "Error loading dashboard data",
+        },
+      },
+    },
+    verifactu: {
+      invoiceIntegration: {
+        title: "Invoice Integration to Verifactu",
+        filters: {
+          toDate: "To due date",
+        },
+        actions: {
+          integrateSelected: "Integrate remaining",
+        },
+        table: {
+          title: "Pending Integration Invoices",
+          search: "Search invoices...",
+          empty: "No pending integration invoices found",
+          columns: {
+            number: "Number",
+            date: "Date",
+            dueDate: "Due date",
+            customer: "Customer",
+            amount: "Amount",
+            status: "Integration Status",
+            actions: "Actions",
+          },
+        },
+        messages: {
+          loadError: "Error loading pending invoices",
+          integrateSuccess: "Invoice {number} integrated successfully",
+          integrateError: "Error integrating invoice {number}",
+          bulkIntegrateSuccess: "Selected invoices integrated successfully",
+          bulkIntegrateError: "Error integrating selected invoices",
+          requestsError: "Error loading invoice requests",
+        },
+        requestsDialog: {
+          title: "Verifactu Requests",
+        },
+        tableInvoiceRequests: {
+          columns: {
+            date: "Date",
+            request: "Request",
+            status: "Success",
+            statusCode: "Status",
+            response: "Response",
+            qrImage: "QR",
+            hash: "Hash",
+            qrCode: "QR",
+          },
+          actions: {
+            copy: "Copy",
+            open: "Open",
+          },
+        },
+        validation: {
+          bothDatesRequired: "Both dates are required",
+          fromDateFuture: "From date cannot be in the future",
+          toDateFuture: "To date cannot be in the future",
+          toDateAfterFromDate: "To date must be after from date",
+          toDateAdjusted: "To date has been automatically adjusted",
+        },
+      },
+      integrationRequests: {
+        title: "Verifactu Integration Requests",
+        filters: {
+          fromDate: "From",
+          toDate: "To",
+        },
+        table: {
+          empty: "No integration requests found",
+          columns: {
+            invoiceNumber: "Number",
+            customer: "Customer",
+            date: "Date",
+            request: "Request",
+            success: "Success",
+            statusCode: "Status",
+            response: "Response",
+            qrCode: "QR",
+          },
+        },
+        messages: {
+          loadError: "Error loading integration requests",
+        },
+      },
+    },
     forms: {
       user: {
         usernameLabel: "Username",

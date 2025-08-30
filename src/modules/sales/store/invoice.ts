@@ -54,6 +54,13 @@ export const useSalesInvoiceStore = defineStore({
         this.invoice.netAmount = updatedInvoice.netAmount;
       }
     },
+    async GetVerifactuLifecycle() {
+      if (!this.verifactuLifecycle) {
+        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
+          "Verifactu"
+        );
+      }
+    },
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);
 
