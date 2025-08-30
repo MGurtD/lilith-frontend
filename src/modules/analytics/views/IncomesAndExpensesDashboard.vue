@@ -1,60 +1,134 @@
 <template>
   <div class="dashboard-filter">
-    <div class="dashboard-filter-field">
-      <ExerciseDatePicker
-        :exercises="exercicesStore.exercises"
-        @range-selected="filterDashboard"
-      />
-    </div>
-    <Button
-      class="grid_add_row_button"
-      :icon="PrimeIcons.FILTER_SLASH"
-      @click="clearFilter"
-    />
-  </div>
-  <TabView>
-    <TabPanel header="Grafics">
-      <div class="dashboard-container">
-        <Chart
-          type="line"
-          :data="chartData"
-          :options="chartOptions"
-          class="w-full h-[70rem]"
+    <div class="dashboard-filter-left">
+      <div class="dashboard-filter-field">
+        <ExerciseDatePicker
+          :exercises="exercicesStore.exercises"
+          @range-selected="onRangeSelected"
         />
       </div>
+      <Button
+        class="grid_add_row_button"
+        :icon="PrimeIcons.FILTER_SLASH"
+        @click="clearFilter"
+      />
+    </div>
+    <div class="dashboard-kpis">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          {{ t("analytics.cashflow.kpi.incomes") || "Ingressos" }}
+        </div>
+        <div class="kpi-value text-green-500">
+          {{ formatCurrency(totalIncomes) }}
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          {{ t("analytics.cashflow.kpi.expenses") || "Despeses" }}
+        </div>
+        <div class="kpi-value text-pink-500">
+          {{ formatCurrency(totalExpenses) }}
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          {{ t("analytics.cashflow.kpi.net") || "Nete" }}
+        </div>
+        <div
+          :class="[
+            'kpi-value',
+            netTotal >= 0 ? 'text-green-600' : 'text-red-500',
+          ]"
+        >
+          {{ formatCurrency(netTotal) }}
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          {{
+            t("analytics.cashflow.kpi.avgMonthlyNet") || "Mitjana mensual neta"
+          }}
+        </div>
+        <div
+          :class="[
+            'kpi-value',
+            avgMonthlyNet >= 0 ? 'text-green-600' : 'text-red-500',
+          ]"
+        >
+          {{ formatCurrency(avgMonthlyNet) }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <TabView>
+    <TabPanel :header="t('analytics.cashflow.tabs.chart') || 'Gràfics'">
+      <div class="dashboard-container">
+        <div class="chart-area">
+          <Chart
+            type="line"
+            :data="chartData"
+            :options="chartOptions"
+            class="w-full"
+            style="height: 100%"
+          />
+        </div>
+      </div>
     </TabPanel>
-    <TabPanel header="Data">
+    <TabPanel :header="t('analytics.cashflow.tabs.data') || 'Dades'">
       <DataTable
         :value="totals"
         class="small-datatable"
         tableStyle="min-width: 100%"
         scrollable
-        scrollHeight="80vh"
+        :scrollHeight="`calc(100vh - var(--top-panel-height) - 10rem)`"
         paginator
         sortField="date"
         :sortOrder="1"
         :rows="12"
       >
-        <Column field="date" header="Data" style="width: 15%" sortable>
+        <Column
+          field="date"
+          :header="t('common.date') || 'Data'"
+          style="width: 15%"
+          sortable
+        >
           <template #body="slotProps">
             {{ formatDate(slotProps.data.date) }}
           </template>
         </Column>
-        <Column header="Tipus" field="type" />
-        <Column header="Detall" field="detail" />
-        <Column header="Descripció" field="description" />
-        <Column header="Total" field="total" />
+        <Column :header="t('common.type') || 'Tipus'" field="type" />
+        <Column :header="t('common.detail') || 'Detall'" field="detail" />
+        <Column
+          :header="t('common.description') || 'Descripció'"
+          field="description"
+        />
+        <Column :header="t('common.total') || 'Total'" field="total">
+          <template #body="slotProps">
+            <span
+              :class="
+                slotProps.data.source === 'income'
+                  ? 'text-green-600 font-semibold'
+                  : 'text-red-500 font-semibold'
+              "
+            >
+              {{ formatCurrency(slotProps.data.total) }}
+            </span>
+          </template>
+        </Column>
       </DataTable>
     </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useStore } from "../../../store";
+import { useI18n } from "vue-i18n";
+import { useToast } from "primevue/usetoast";
 
 import {
   formatDateForQueryParameter,
   formatDate,
+  formatCurrency,
 } from "../../../utils/functions";
 import { useExerciseStore } from "../../shared/store/exercise";
 
@@ -70,6 +144,8 @@ import { ConsolidatedExpense, ExpenseType } from "../../purchase/types";
 const store = useStore();
 const exercicesStore = useExerciseStore();
 const incomeService = new IncomeService("/income");
+const { t } = useI18n();
+const toast = useToast();
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
@@ -79,6 +155,7 @@ const filter = ref({
 const clearFilter = () => {
   store.cleanExercisePicker();
   filter.value.consolidatedBy = "";
+  filterDashboard();
 };
 
 const incomes = ref([] as Array<ConsolidatedIncomes>);
@@ -96,6 +173,14 @@ onMounted(async () => {
   filterDashboard();
 });
 
+let debounceTimer: number | undefined;
+const onRangeSelected = () => {
+  if (debounceTimer) window.clearTimeout(debounceTimer);
+  debounceTimer = window.setTimeout(() => {
+    filterDashboard();
+  }, 300);
+};
+
 const filterDashboard = async () => {
   totals.value = [];
   if (store.exercisePicker.dates) {
@@ -104,16 +189,28 @@ const filterDashboard = async () => {
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-    var incomeResponse: Array<ConsolidatedIncomes> | undefined;
-    var expenseResponse: Array<ConsolidatedExpense> | undefined;
+    let incomeResponse: Array<ConsolidatedIncomes> | undefined;
+    let expenseResponse: Array<ConsolidatedExpense> | undefined;
 
-    incomeResponse = await incomeService.GetBetweenDates(startTime, endTime);
-    expenseResponse = await ExpenseServices.Expense.getConsolidated(
-      startTime,
-      endTime,
-      "",
-      ""
-    );
+    try {
+      const [incRes, expRes] = await Promise.all([
+        incomeService.GetBetweenDates(startTime, endTime),
+        ExpenseServices.Expense.getConsolidated(startTime, endTime, "", ""),
+      ]);
+      incomeResponse = incRes;
+      expenseResponse = expRes;
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+      toast.add({
+        severity: "error",
+        summary: t("common.error"),
+        detail:
+          t("analytics.cashflow.messages.loadError") ||
+          "Error loading dashboard data",
+        life: 5000,
+      });
+      return;
+    }
 
     if (incomeResponse) incomes.value = incomeResponse;
     if (expenseResponse) expenses.value = expenseResponse;
@@ -134,6 +231,7 @@ type Total = {
   detail: string;
   description: string;
   total: number;
+  source: "income" | "expense";
 };
 
 const totals = ref<Total[]>([]);
@@ -151,6 +249,7 @@ const setChartData = () => {
       detail: income.typeDetail,
       description: income.description,
       total: income.amount,
+      source: "income",
     });
   });
 
@@ -167,6 +266,7 @@ const setChartData = () => {
       detail: expense.typeDetail,
       description: expense.description,
       total: expense.amount,
+      source: "expense",
     });
   });
 
@@ -177,22 +277,48 @@ const setChartData = () => {
 
   const incomeDataset = {
     type: "line",
-    label: "Ingressos",
+    label: t("analytics.cashflow.series.incomes") || "Ingressos",
     borderColor: "#B3FFBA",
     backgroundColor: "#B3FFBA",
     data: labels.map((month) => incomesGroupedByYearMonth[month] || 0),
     fill: false,
+    tension: 0.3,
+    pointRadius: 3,
   };
   const expenseDataset = {
     type: "line",
-    label: "Despeses",
+    label: t("analytics.cashflow.series.expenses") || "Despeses",
     borderColor: "#ff336f",
     backgroundColor: "#ff336f",
     data: labels.map((month) => expensesGroupedByYearMonth[month] || 0),
     fill: false,
+    tension: 0.3,
+    pointRadius: 3,
+  };
+  const balanceData: number[] = [];
+  let running = 0;
+  for (const m of labels) {
+    const net =
+      (incomesGroupedByYearMonth[m] || 0) -
+      (expensesGroupedByYearMonth[m] || 0);
+    running += net;
+    balanceData.push(running);
+  }
+  const balanceDataset = {
+    type: "line",
+    label: t("analytics.cashflow.series.balance") || "Saldo acumulat",
+    borderColor: "#8a8a8a",
+    backgroundColor: "rgba(138, 138, 138, 0.15)",
+    data: balanceData,
+    fill: true,
+    borderDash: [],
+    tension: 0.25,
+    pointRadius: 0,
+    order: 0,
   };
   //expenseDataset,
-  const datasets = [expenseDataset, incomeDataset];
+  // Ensure balance area is rendered behind line series
+  const datasets: any[] = [balanceDataset, expenseDataset, incomeDataset];
   return {
     labels,
     datasets,
@@ -213,9 +339,29 @@ const setChartOptions = () => {
     aspectRatio: 0.8,
     plugins: {
       datalabels: {},
+      // Chart.js v2 compatibility
       tooltips: {
         mode: "index",
         intersect: false,
+        callbacks: {
+          label: function (tooltipItem: any, data: any) {
+            const value = tooltipItem.yLabel || 0;
+            const label = data.datasets[tooltipItem.datasetIndex].label || "";
+            return `${label}: ${formatCurrency(Number(value))}`;
+          },
+        },
+      },
+      // Chart.js v3+
+      tooltip: {
+        mode: "index" as const,
+        intersect: false,
+        callbacks: {
+          label: (ctx: any) => {
+            const label = ctx.dataset?.label || "";
+            const value = ctx.parsed?.y ?? ctx.raw ?? 0;
+            return `${label}: ${formatCurrency(Number(value))}`;
+          },
+        },
       },
       legend: {
         labels: {
@@ -237,6 +383,7 @@ const setChartOptions = () => {
         //stacked: true,
         ticks: {
           color: textColorSecondary,
+          callback: (value: any) => formatCurrency(Number(value)),
         },
         grid: {
           color: surfaceBorder,
@@ -245,6 +392,55 @@ const setChartOptions = () => {
     },
   };
 };
+
+// Derived metrics for KPIs
+const totalIncomes = computed(() =>
+  incomes.value.reduce((acc, i) => acc + (i?.amount || 0), 0)
+);
+const totalExpenses = computed(() =>
+  expenses.value.reduce((acc, e) => acc + (e?.amount || 0), 0)
+);
+const netTotal = computed(() => totalIncomes.value - totalExpenses.value);
+const allMonths = computed(() => {
+  const set = new Set<string>();
+  incomes.value.forEach((i) =>
+    set.add(`${i.year}-${String(i.month).padStart(2, "0")}`)
+  );
+  expenses.value.forEach((e) =>
+    set.add(
+      `${e.yearPaymentDate}-${String(e.monthPaymentDate).padStart(2, "0")}`
+    )
+  );
+  return Array.from(set).sort();
+});
+const avgMonthlyNet = computed(() => {
+  const months = allMonths.value;
+  if (!months.length) return 0;
+  // Map by month
+  const inc: Record<string, number> = {};
+  const exp: Record<string, number> = {};
+  incomes.value.forEach((i) => {
+    const m = `${i.year}-${String(i.month).padStart(2, "0")}`;
+    inc[m] = (inc[m] || 0) + i.amount;
+  });
+  expenses.value.forEach((e) => {
+    const m = `${e.yearPaymentDate}-${String(e.monthPaymentDate).padStart(
+      2,
+      "0"
+    )}`;
+    exp[m] = (exp[m] || 0) + e.amount;
+  });
+  const sumNet = months.reduce(
+    (acc, m) => acc + ((inc[m] || 0) - (exp[m] || 0)),
+    0
+  );
+  return sumNet / months.length;
+});
+
+// Recompute chart when data changes
+watch([incomes, expenses], () => {
+  chartData.value = setChartData();
+});
 </script>
 <style scoped>
 :root {
@@ -301,25 +497,29 @@ const setChartOptions = () => {
 }
 .dashboard-filter {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
   gap: 1rem;
+  align-items: stretch;
+  justify-content: space-between;
   color: black;
+  flex-wrap: wrap;
 }
-
-.dashboard-filter-field {
+.dashboard-filter-left {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
   gap: 1rem;
   align-items: center;
 }
+.dashboard-filter-field {
+  display: contents;
+}
 
 .dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  height: 70vh;
-  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--top-panel-height) - 10rem);
+}
+.chart-area {
+  flex: 1;
+  min-height: 24rem;
 }
 
 .dashboard-item {
@@ -347,12 +547,10 @@ const setChartOptions = () => {
 /* phone */
 @media only screen and (max-width: 767px) {
   .dashboard-container {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 2rem;
-    height: 100vh;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: calc(100vh - var(--top-panel-height) - 10rem);
   }
 
   .dashboard-filter {
@@ -373,6 +571,41 @@ const setChartOptions = () => {
     display: block;
     height: 50%;
     width: 90%;
+  }
+}
+
+/* KPI styles */
+.dashboard-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  align-items: stretch;
+  flex: 1;
+}
+.kpi-card {
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  background: var(--p-content-background, var(--surface-card, #fff));
+}
+.kpi-label {
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+}
+.kpi-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+@media only screen and (max-width: 1200px) {
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, minmax(10rem, 1fr));
+  }
+}
+@media only screen and (max-width: 640px) {
+  .dashboard-kpis {
+    grid-template-columns: repeat(1, minmax(10rem, 1fr));
   }
 }
 </style>
