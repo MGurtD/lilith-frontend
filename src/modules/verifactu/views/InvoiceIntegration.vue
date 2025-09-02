@@ -180,7 +180,6 @@ import Dialog from "primevue/dialog";
 import ProgressBar from "primevue/progressbar";
 import { useVerifactuStore } from "../store/verifactu";
 import { useStore } from "../../../store";
-import { SalesInvoice } from "../../sales/types";
 import { formatDate, formatCurrency } from "../../../utils/functions";
 import { PrimeIcons } from "primevue/api";
 
@@ -279,37 +278,6 @@ const loadInvoices = async () => {
   }
 };
 
-const integrateInvoice = async (invoice: SalesInvoice) => {
-  try {
-    const response = await verifactuStore.SendToVerifactu(invoice.id);
-
-    if (response?.result) {
-      toast.add({
-        severity: "success",
-        summary: t("common.success"),
-        detail: t("verifactu.invoiceIntegration.messages.integrateSuccess", {
-          number: invoice.invoiceNumber,
-        }),
-        life: 5000,
-      });
-    } else {
-      throw new Error(response?.errors?.join(", ") || "Integration failed");
-    }
-  } catch (error) {
-    console.error("Error integrating invoice:", error);
-    toast.add({
-      severity: "error",
-      summary: t("common.error"),
-      detail: t("verifactu.invoiceIntegration.messages.integrateError", {
-        number: invoice.invoiceNumber,
-      }),
-      life: 5000,
-    });
-  } finally {
-    // no-op per invoice
-  }
-};
-
 const integrateVisibleInvoices = async () => {
   if (!invoices.value.length) return;
   integrating.value = true;
@@ -328,7 +296,6 @@ const integrateVisibleInvoices = async () => {
 
   try {
     for (const inv of ordered) {
-      progress.value.current += 1;
       progress.value.currentInvoiceNumber = String(inv.invoiceNumber ?? "");
 
       try {
@@ -339,6 +306,8 @@ const integrateVisibleInvoices = async () => {
             invoiceNumber: String(inv.invoiceNumber ?? ""),
             status: "success",
           });
+
+          progress.value.current += 1;
         } else {
           const errMsg = response?.errors?.join(", ") || "Integration failed";
           batchResults.value.push({

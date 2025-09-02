@@ -1,8 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 
 const VerifactuFindInvoices = () => import("./views/VerifactuFindInvoices.vue");
-const VerifactuInvoiceIntegration = () =>
-  import("./views/VerifactuInvoiceIntegration.vue");
+const InvoiceIntegration = () => import("./views/InvoiceIntegration.vue");
 const InvoiceIntegrationRequests = () =>
   import("./views/InvoiceIntegrationRequests.vue");
 
@@ -14,8 +13,8 @@ export default [
   },
   {
     path: "/verifactu/invoice-integration",
-    name: "VerifactuInvoiceIntegration",
-    component: VerifactuInvoiceIntegration,
+    name: "InvoiceIntegration",
+    component: InvoiceIntegration,
   },
   {
     path: "/verifactu/integration-requests",
