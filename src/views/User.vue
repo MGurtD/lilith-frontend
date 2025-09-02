@@ -8,18 +8,16 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
-
-import FormUser from "../components/forms/FormUser.vue";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
-
 import { useToast } from "primevue/usetoast";
-import { UserService } from "../api/services/user.service";
 import { Role, UserLogin } from "../api/services/authentications.service";
 import { AuthenticationService } from "../api/services/authentications.service";
+import { UserService } from "../api/services/user.service";
 import { RoleService } from "../api/services/role.service";
 import { User } from "../types";
+import FormUser from "../components/forms/FormUser.vue";
 
 const router = useRouter();
 const route = useRoute();

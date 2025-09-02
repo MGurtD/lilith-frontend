@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import SalesService from "../services";
+import SharedService from "../../shared/services";
 import {
   SalesInvoice,
   SalesInvoiceDetail,
   CreateSalesHeaderRequest,
-  CreateInvoiceDetailsFromOrderDetailsRequest,
   DeliveryNote,
   CreateRectificativeInvoiceRequest,
 } from "../types";
@@ -12,14 +12,24 @@ import { GenericResponse } from "../../../types";
 import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
 import { REPORTS, ReportService } from "../../../api/services/report.service";
 import { createBlobAndDownloadFile } from "../../../utils/functions";
+import { Lifecycle } from "../../shared/types";
 
 export const useSalesInvoiceStore = defineStore({
   id: "salseInvoices",
   state: () => ({
     invoice: undefined as SalesInvoice | undefined,
     invoices: undefined as Array<SalesInvoice> | undefined,
+    verifactuLifecycle: undefined as Lifecycle | undefined,
   }),
-  getters: {},
+  getters: {
+    getVerifactuStatusById: (state) => (statusId: string) => {
+      if (!state.verifactuLifecycle) return "";
+      const status = state.verifactuLifecycle.statuses.find(
+        (status) => status.id === statusId
+      );
+      return status ? status.name : "";
+    },
+  },
   actions: {
     async Create(
       createRequest: CreateSalesHeaderRequest
@@ -44,8 +54,21 @@ export const useSalesInvoiceStore = defineStore({
         this.invoice.netAmount = updatedInvoice.netAmount;
       }
     },
+    async GetVerifactuLifecycle() {
+      if (!this.verifactuLifecycle) {
+        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
+          "Verifactu"
+        );
+      }
+    },
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);
+
+      if (!this.verifactuLifecycle) {
+        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
+          "Verifactu"
+        );
+      }
     },
     async GetDetailsById(id: string) {
       const updatedInvoice = await SalesService.SalesInvoice.getById(id);
@@ -59,6 +82,12 @@ export const useSalesInvoiceStore = defineStore({
       customerId?: string,
       excludeStatusId?: string
     ) {
+      if (!this.verifactuLifecycle) {
+        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
+          "Verifactu"
+        );
+      }
+
       if (customerId) {
         this.invoices =
           await SalesService.SalesInvoice.GetBetweenDatesAndCustomer(

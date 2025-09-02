@@ -1,18 +1,10 @@
 import { App as VueApp, createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
-import { createI18n } from "vue-i18n";
-import messages from "./i18n/translations";
+import { i18n } from "./i18n";
 import router from "./router";
 
 const pinia = createPinia();
-const i18n = createI18n({
-  locale: "ca", // set locale
-  fallbackLocale: "es", // set fallback locale
-  messages, // set locale messages
-  // If you need to specify other options, you can set other options
-  // ...
-});
 const app: VueApp<Element> = createApp(App).use(router).use(pinia).use(i18n);
 
 import "primevue/resources/primevue.min.css";
@@ -48,7 +40,7 @@ import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
-import catalan from "./i18n/catalan";
+import catalan from "./i18n/primevue/catalan";
 
 app.use(PrimeVue, {
   locale: catalan,

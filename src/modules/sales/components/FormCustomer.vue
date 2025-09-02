@@ -36,7 +36,7 @@
       </div>
     </section>
 
-    <section class="two-columns mb-2">
+    <section class="three-columns mb-2">
       <BaseInput
         name="vatNumber"
         class="mb-2"
@@ -57,8 +57,17 @@
           'p-invalid': validation.errors.web,
         }"
       ></BaseInput>
+      <div>
+        <label class="block text-900 mb-2">{{
+          $t("forms.user.languageLabel")
+        }}</label>
+        <LanguageSwitcher
+          v-model="customer.preferredLanguage"
+          :changeAppLanguage="false"
+        />
+      </div>
     </section>
-    <section class="two-columns mb-2">
+    <section class="three-columns mb-2">
       <BaseInput
         name="accountNumber"
         class="mb-2"
@@ -110,6 +119,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { useSharedDataStore } from "../../../modules/shared/store/masterData";
+import LanguageSwitcher from "../../../components/LanguageSwitcher.vue";
 
 const emit = defineEmits<{
   (e: "submit", customer: Customer): void;

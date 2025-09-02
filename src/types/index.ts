@@ -27,6 +27,7 @@ export interface User {
   firstName: string;
   lastName: string;
   disabled: boolean;
+  preferredLanguage: string;
   roleId: string;
   role?: Role;
 }
@@ -50,4 +51,13 @@ export interface File {
   createdOn: string;
   updatedOn: string;
   disabled: boolean;
+}
+
+export interface Language {
+  id: string;
+  code: string;
+  name: string;
+  icon?: string;
+  isDefault: boolean;
+  sortOrder?: number;
 }

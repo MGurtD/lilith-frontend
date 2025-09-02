@@ -9,8 +9,10 @@ import { getMenusByRole } from "./menus";
 import { Exercise } from "../modules/shared/types";
 import { useUserFilterStore } from "./userfilter";
 import { useExerciseStore } from "../modules/shared/store/exercise";
+import { AuthenticationService } from "../api/services/authentications.service";
 
 const localStorageAuthKey = "temges.authorization";
+const localStorageLangKey = "app.lang";
 
 export const useStore = defineStore("applicationStore", {
   state: () => {
@@ -28,6 +30,10 @@ export const useStore = defineStore("applicationStore", {
         exercise: undefined as Exercise | undefined,
         dates: undefined as Array<Date> | undefined,
       },
+      language: {
+        current: "ca" as string,
+        cultureOverride: undefined as string | undefined,
+      },
     };
   },
   actions: {
@@ -35,7 +41,9 @@ export const useStore = defineStore("applicationStore", {
       const exerciseStore = useExerciseStore();
       if (exerciseStore.exercises === undefined) exerciseStore.fetchActive();
       const year = new Date().getFullYear().toString();
-      const currentExercise = exerciseStore.exercises?.find((e) => e.name === year);
+      const currentExercise = exerciseStore.exercises?.find(
+        (e) => e.name === year
+      );
 
       if (currentExercise) {
         this.exercisePicker.exercise = currentExercise;
@@ -55,6 +63,24 @@ export const useStore = defineStore("applicationStore", {
     setMenusByRole(user: User) {
       this.menus = getMenusByRole(user);
     },
+
+    // Language helpers
+    async initLanguage() {
+      const fromLs = localStorage.getItem(localStorageLangKey);
+      const fromNavigator = (navigator.language || "ca")
+        .slice(0, 2)
+        .toLowerCase();
+      const lang = (fromLs || fromNavigator || "ca").toLowerCase();
+      this.setLanguage(lang);
+    },
+    setLanguage(code: string) {
+      const normalized = (code || "ca").slice(0, 2).toLowerCase();
+      this.language.current = normalized;
+      localStorage.setItem(localStorageLangKey, normalized);
+    },
+    setCultureOverride(code?: string) {
+      this.language.cultureOverride = code;
+    },
     async getAuthorization() {
       if (this.authorization !== undefined) {
         return this.authorization;
@@ -70,6 +96,10 @@ export const useStore = defineStore("applicationStore", {
       localStorage.setItem(localStorageAuthKey, JSON.stringify(response));
 
       const jwtDecoded = jwtDecode(this.authorization.token) as JwtDecoded;
+      // Apply locale from JWT if present
+      if ((jwtDecoded as any)?.locale) {
+        this.setLanguage((jwtDecoded as any).locale as string);
+      }
       if (jwtDecoded.id) {
         const service = new UserService();
         this.user = await service.GetById(jwtDecoded.id);
@@ -87,6 +117,28 @@ export const useStore = defineStore("applicationStore", {
       this.authorization = undefined;
       localStorage.removeItem(localStorageAuthKey);
     },
+    // Language change flow: update app and refresh token if available
+    async changeLanguage(code: string) {
+      this.setLanguage(code);
+      if (this.authorization?.refreshToken) {
+        // temporary override so server uses culture priority #1
+        this.setCultureOverride(code);
+        // refresh token to get new JWT with updated locale (backend should honor Accept-Language)
+        try {
+          /*
+          const auth = new AuthenticationService();
+          const refreshed = await auth.Refresh(this.authorization.refreshToken);
+          if (refreshed?.token) {
+            await this.setAuthorization(refreshed as AuthenticationResponse);
+          }
+            */
+        } catch {
+          // ignore
+        } finally {
+          this.setCultureOverride(undefined);
+        }
+      }
+    },
   },
 });
 
@@ -94,4 +146,5 @@ export interface JwtDecoded {
   jti: string;
   id: string;
   sub: string;
+  locale?: string;
 }

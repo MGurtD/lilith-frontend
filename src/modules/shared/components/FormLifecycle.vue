@@ -30,13 +30,8 @@
           optionLabel="name"
         />
       </div>
+  
     </section>
-    <!-- <section class="two-columns">
-      <div>
-        <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox v-model="lifecycle.disabled" class="w-full" :binary="true" />
-      </div>
-    </section> -->
   </form>
 </template>
 

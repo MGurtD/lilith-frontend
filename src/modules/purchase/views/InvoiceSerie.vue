@@ -1,5 +1,5 @@
 <template>
-  <FormPurchaseInvoiceSerie
+  <FormInvoiceSerie
     v-if="purchaseInvoiceSerie"
     :purchaseInvoiceSerie="purchaseInvoiceSerie"
     @submit="submitForm"
@@ -15,8 +15,8 @@ import { storeToRefs } from "pinia";
 import { usePurchaseInvoiceSeries } from "../store/purchaseInvoiceSeries";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
-import FormPurchaseInvoiceSerie from "../components/FormPurchaseInvoiceSerie.vue";
-import { PurchaseInvoiceSerie } from "../types";
+import FormInvoiceSerie from "../components/FormInvoiceSerie.vue";
+import { InvoiceSerie } from "../types";
 
 const formMode = ref(FormActionMode.EDIT);
 const router = useRouter();
@@ -55,7 +55,7 @@ onMounted(async () => {
 
 const toast = useToast();
 const submitForm = async () => {
-  const data = purchaseInvoiceSerie.value as PurchaseInvoiceSerie;
+  const data = purchaseInvoiceSerie.value as InvoiceSerie;
   let result = false;
   let message = "";
 

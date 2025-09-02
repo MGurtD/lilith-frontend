@@ -4,7 +4,7 @@
       <BaseInput
         id="username"
         class="mb-2"
-        label="Nom d'usuari"
+        :label="$t('forms.user.usernameLabel') as string"
         v-model="user.username"
         disabled="true"
         :class="{
@@ -13,7 +13,9 @@
       ></BaseInput>
 
       <div>
-        <label class="block text-900 mb-2">Rol</label>
+        <label class="block text-900 mb-2">{{
+          $t("forms.user.roleLabel")
+        }}</label>
         <Dropdown
           v-model="user.roleId"
           editable
@@ -28,11 +30,11 @@
       </div>
     </section>
 
-    <section class="two-columns">
+    <section class="three-columns">
       <BaseInput
         id="firstName"
         class="mb-2"
-        label="Nom"
+        :label="$t('forms.user.firstNameLabel') as string"
         v-model="user.firstName"
         :class="{
           'p-invalid': validation.errors.firstName,
@@ -41,12 +43,21 @@
       <BaseInput
         id="lastName"
         class="mb-2"
-        label="Cognoms"
+        :label="$t('forms.user.lastNameLabel') as string"
         v-model="user.lastName"
         :class="{
           'p-invalid': validation.errors.lastName,
         }"
       ></BaseInput>
+      <div>
+        <label class="block text-900 mb-2">{{
+          $t("forms.user.languageLabel")
+        }}</label>
+        <LanguageSwitcher
+          v-model="user.preferredLanguage"
+          :changeAppLanguage="appStore.user?.id === user.id"
+        />
+      </div>
     </section>
 
     <section
@@ -57,35 +68,43 @@
         :type="BaseInputType.PASSWORD"
         id="passwordOne"
         class="mb-2 w-full"
-        label="Contrasenya"
+        :label="$t('forms.user.passwordLabel') as string"
         v-model="passwordOne"
       ></BaseInput>
       <BaseInput
         :type="BaseInputType.PASSWORD"
         id="passwordTwo"
         class="mb-2"
-        label="Repetir contrasenya"
+        :label="$t('forms.user.passwordRepeatLabel') as string"
         v-model="passwordTwo"
       ></BaseInput>
       <div>
         <label class="block mb-2" style="color: #fff">...</label>
-        <Button label="Modificar" class="mr-2" @click="changePassword" />
+        <Button
+          :label="$t('forms.user.modifyButton') as string"
+          class="mr-2"
+          @click="changePassword"
+        />
       </div>
     </section>
 
     <div class="mt-2">
-      <Button type="submit" label="Guardar" class="mr-2" />
+      <Button
+        type="submit"
+        :label="$t('forms.user.saveButton') as string"
+        class="mr-2"
+      />
 
       <Button
         v-if="user.disabled"
         severity="success"
-        label="Activar"
+        :label="$t('forms.user.activateButton') as string"
         class="mr-2"
         @click="changeUserAvailability(false)"
       />
       <Button
         v-else
-        label="Desactivar"
+        :label="$t('forms.user.deactivateButton') as string"
         severity="danger"
         class="mr-2"
         @click="changeUserAvailability(true)"
@@ -93,7 +112,7 @@
 
       <Button
         severity="secondary"
-        label="Canviar contrasenya"
+        :label="$t('forms.user.changePasswordButton') as string"
         class="mr-2"
         @click="enablePasswordMode"
       />
@@ -103,6 +122,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useStore } from "../../store";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -112,6 +133,10 @@ import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../types/component";
 import { UserLogin } from "../../api/services/authentications.service";
 import { User, Role } from "../../types";
+import LanguageSwitcher from "../LanguageSwitcher.vue";
+
+const { t } = useI18n();
+const appStore = useStore();
 
 const props = defineProps<{
   roles: Role[] | undefined;
@@ -130,14 +155,14 @@ const toast = useToast();
 
 const schema = Yup.object().shape({
   username: Yup.string()
-    .required("El correu és obligatori")
-    .max(250, "El nom d'usuari no pot superar els 250 carácters"),
+    .required(t("forms.user.validation.usernameRequired") as string)
+    .max(250, t("forms.user.validation.usernameMax") as string),
   firstName: Yup.string()
-    .required("El nom és obligatori")
-    .max(250, "El nom no pot superar els 250 carácters"),
+    .required(t("forms.user.validation.firstNameRequired") as string)
+    .max(250, t("forms.user.validation.firstNameMax") as string),
   lastName: Yup.string()
-    .required("Els cognoms són obligatoris")
-    .max(250, "Els cognoms no poden superar els 250 carácters"),
+    .required(t("forms.user.validation.lastNameRequired") as string)
+    .max(250, t("forms.user.validation.lastNameMax") as string),
   disabled: Yup.boolean().required(),
 });
 const validation = ref({
@@ -167,7 +192,7 @@ const submit = async () => {
     });
     toast.add({
       severity: "warn",
-      summary: "Formulari inválid",
+      summary: t("forms.user.validation.invalidForm") as string,
       detail: errors,
       life: 5000,
     });
@@ -186,8 +211,8 @@ const changePassword = () => {
   if (!isValid) {
     toast.add({
       severity: "warn",
-      summary: "Contrasenya invàlida",
-      detail: "Les contrasenyes han de coincidir i contenir més de 4 caràcters",
+      summary: t("forms.user.validation.invalidPassword") as string,
+      detail: t("forms.user.validation.invalidPasswordDetail") as string,
     });
     return;
   }

@@ -3,7 +3,7 @@ import SharedServices from "../../../modules/shared/services";
 import PurchaseServices from "../services";
 import {
   PurchaseInvoice,
-  PurchaseInvoiceSerie,
+  InvoiceSerie,
   PurchaseInvoiceStatus,
   PurchaseMasterData,
 } from "../types";
@@ -15,7 +15,7 @@ export const usePurchaseMasterDataStore = defineStore({
   state: () => ({
     masterData: {
       paymentMethods: [] as Array<PaymentMethod>,
-      series: [] as Array<PurchaseInvoiceSerie>,
+      series: [] as Array<InvoiceSerie>,
       suppliers: [] as Array<Supplier>,
       taxes: [] as Array<Tax>,
       exercises: [] as Array<Exercise>,
