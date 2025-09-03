@@ -45,7 +45,7 @@ const messages = {
       invoiceIntegration: {
         title: "Integració de Factures a Verifactu",
         filters: {
-          toDate: "Venciment fins",
+          toDate: "Data factura fins",
         },
         actions: {
           search: "Cercar",
@@ -233,7 +233,7 @@ const messages = {
       invoiceIntegration: {
         title: "Integración de Facturas en Verifactu",
         filters: {
-          toDate: "Vencimiento hasta",
+          toDate: "Fecha factura hasta",
         },
         actions: {
           integrateSelected: "Integrar Pendientes",
@@ -411,7 +411,7 @@ const messages = {
       invoiceIntegration: {
         title: "Invoice Integration to Verifactu",
         filters: {
-          toDate: "To due date",
+          toDate: "To invoice date",
         },
         actions: {
           integrateSelected: "Integrate remaining",
