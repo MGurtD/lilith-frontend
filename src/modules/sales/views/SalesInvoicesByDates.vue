@@ -235,7 +235,6 @@ const updateSelectedInvoiceStatusToManaged = async () => {
 };
 
 const downloadInvoices = async (invoice: SalesInvoice) => {
-  console.log("Download invoice", invoice);
   const printed = await invoiceStore.PrintInvoice(
     invoice.id,
     invoice.invoiceNumber

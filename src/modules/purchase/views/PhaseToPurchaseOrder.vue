@@ -278,19 +278,8 @@ const sendData = async () => {
     );
     return;
   }
-  /*for (const phaseId of Object.keys(supplierMapping.value)) {
-    const supplierId = supplierMapping.value[phaseId];
-    if (!supplierId) {
-      mostrarToastError(
-        "Proveïdors buits",
-        "No poden haver-hi proveïdors buits"
-      );
-      return;
-    }
-  }*/
 
   for (const phase of selectedPhases.value) {
-    console.log(phase.workOrder?.id, " - ", supplierMapping.value[phase.id]);
     purchaseOrders.value.push({
       workorderId: phase.workOrder?.id || "",
       workorderDescription: phase.description || "",
@@ -303,7 +292,6 @@ const sendData = async () => {
     });
   }
 
-  //console.log("sendData: ", purchaseOrders.value);
   const result = await orderStore.createFromWo(purchaseOrders.value);
   if (!result.result) {
     toast.add({

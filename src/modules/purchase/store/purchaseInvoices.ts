@@ -4,6 +4,7 @@ import {
   PurchaseInvoice,
   PurchaseInvoiceImport,
   PurchaseInvoiceUpdateStatues,
+  PurchaseInvoiceDueDate,
 } from "../types";
 
 export const usePurchaseInvoiceStore = defineStore({
@@ -91,8 +92,6 @@ export const usePurchaseInvoiceStore = defineStore({
         purchaseInvoice.id,
         purchaseInvoice
       );
-      // const dueDatesRecreated =
-      //   await PurchaseService.PurchaseInvoice.RecreateDueDates(purchaseInvoice);
       return updated;
     },
     async Delete(id: string): Promise<boolean> {
@@ -138,6 +137,32 @@ export const usePurchaseInvoiceStore = defineStore({
       const created = await PurchaseService.PurchaseInvoice.DeleteImport(
         invoiceImport
       );
+      return created;
+    },
+
+    async AddDueDates(
+      dueDates: Array<PurchaseInvoiceDueDate>
+    ): Promise<boolean> {
+      const added = await PurchaseService.PurchaseInvoice.AddDueDates(dueDates);
+      return added;
+    },
+    async RemoveDueDates(ids: Array<string>): Promise<boolean> {
+      const removed = await PurchaseService.PurchaseInvoice.RemoveDueDates(ids);
+      return removed;
+    },
+    async ReplaceDueDates(
+      newDueDates: Array<PurchaseInvoiceDueDate>
+    ): Promise<boolean> {
+      if (!this.purchaseInvoice) return false;
+      // remove existing first
+      const existingIds = this.purchaseInvoice.purchaseInvoiceDueDates.map(
+        (d) => d.id
+      );
+      if (existingIds.length) await this.RemoveDueDates(existingIds);
+      const created = await this.AddDueDates(newDueDates);
+      if (created) {
+        this.purchaseInvoice.purchaseInvoiceDueDates = newDueDates;
+      }
       return created;
     },
   },

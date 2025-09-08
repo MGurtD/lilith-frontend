@@ -104,4 +104,17 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     const response = await apiClient.delete(endpoint);
     return response.status === 200;
   }
+
+  async AddDueDates(dueDates: Array<PurchaseInvoiceDueDate>): Promise<boolean> {
+    const endpoint = `${this.resource}/DueDate`;
+    const response = await apiClient.post(endpoint, dueDates);
+    return response.status === 200;
+  }
+
+  async RemoveDueDates(ids: Array<string>): Promise<boolean> {
+    const params = ids.map((i) => `ids=${i}`).join("&");
+    const endpoint = `${this.resource}/DueDate?${params}`;
+    const response = await apiClient.delete(endpoint);
+    return response.status === 200;
+  }
 }

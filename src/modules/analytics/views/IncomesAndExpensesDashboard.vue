@@ -217,8 +217,6 @@ const filterDashboard = async () => {
 
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
-    //console.log(chartData.value);
-    //console.log(chartOptions.value);
   }
 };
 

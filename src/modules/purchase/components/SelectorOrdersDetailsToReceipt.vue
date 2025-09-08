@@ -108,26 +108,6 @@ import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { BaseInputType } from "../../../types/component";
 
-/* Events for row selection
-import {
-  DataTableRowSelectAllEvent,
-  DataTableRowUnselectAllEvent,
-} from "primevue/datatable";
-
-const rowSelectAll = (e: DataTableRowSelectAllEvent) => {
-  // Combina los elementos de selectedOrderDetails.value y e.data
-  const combinedArray = [...selectedOrderDetails.value, ...e.data];
-
-  selectedOrderDetails.value = combinedArray.filter(
-    (item, index, self) => index === self.findIndex((t) => t.id === item.id) // Cambia 'id' por la propiedad única de tus objetos
-  );
-
-  console.log("Row select all", selectedOrderDetails.value);
-};
-const rowUnselectAll = (e: DataTableRowUnselectAllEvent) => {
-  console.log("Row unselect all", e);
-}; */
-
 const toast = useToast();
 const store = useStore();
 const referenceStore = useReferenceStore();

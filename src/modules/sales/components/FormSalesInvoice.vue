@@ -57,7 +57,7 @@
         }}</span>
       </div>
 
-      <div>
+      <div v-if="invoice.integrationStatusId !== null">
         <label class="block text-900 mb-2">Verifactu</label>
         <span class="summary-field" :class="getVerifactuStatusClass()">{{
           invoiceStore.getVerifactuStatusById(invoice.integrationStatusId!)

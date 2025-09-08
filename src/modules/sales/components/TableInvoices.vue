@@ -49,7 +49,7 @@
         {{ formatCurrency(slotProps.data.netAmount) }}
       </template>
     </Column>
-    <Column header="Verifactu" style="width: 10%">
+    <!-- <Column header="Verifactu" style="width: 10%">
       <template #body="slotProps">
         <span
           :class="getVerifactuStatusClass(slotProps.data.integrationStatusId)"
@@ -61,7 +61,7 @@
           }}
         </span>
       </template>
-    </Column>
+    </Column> -->
     <Column style="width: 5%">
       <template #body="slotProps">
         <i

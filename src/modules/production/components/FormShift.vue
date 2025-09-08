@@ -55,7 +55,6 @@ const validate = () => {
 };
 
 const submitForm = async () => {
-  console.log("submit");
   validate();
   if (validation.value.result) {
     emit("submit", props.shift);

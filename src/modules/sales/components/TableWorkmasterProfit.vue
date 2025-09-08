@@ -240,9 +240,6 @@ const calculateWeightedProfit = () => {
     weightedSum += time * profit;
   });
 
-  console.log(weightedSum);
-  console.log(totalTime);
-  console.log(Number((weightedSum / totalTime).toFixed(2)));
   profitAverage.value =
     !isNaN(totalTime) && totalTime > 0 && !isNaN(weightedSum)
       ? Number((weightedSum / totalTime).toFixed(2))
