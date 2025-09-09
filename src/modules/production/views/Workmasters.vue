@@ -16,19 +16,20 @@
       >
         <div class="datatable-filter">
           <div class="filter-field">
-            <label class="block text-900">Referència</label>
-            <DropdownReference
-              label=""
-              v-model="filter.referenceId"
-              :fullName="true"
-            ></DropdownReference>
-          </div>
-          <div class="filter-field">
             <label class="block text-900">Client</label>
             <DropdownCustomers
               label=""
               v-model="filter.customerId"
             ></DropdownCustomers>
+          </div>
+          <div class="filter-field">
+            <label class="block text-900">Referència</label>
+            <DropdownReference
+              label=""
+              v-model="filter.referenceId"
+              :customer-id="filter.customerId"
+              :fullName="true"
+            ></DropdownReference>
           </div>
         </div>
         <div class="datatable-buttons">
@@ -124,6 +125,7 @@
       <DropdownReference
         label="Referència"
         v-model="workmasterStore.workmaster!.referenceId"
+        class="w-full"
         :fullName="true"
       ></DropdownReference>
     </div>
@@ -141,6 +143,7 @@
     :header="copyDialogOptions.title"
     :closable="true"
     :modal="true"
+    :style="{ width: '60vw' }"
   >
     <section class="two-columns">
       <div><h3>Origen</h3></div>
@@ -169,8 +172,8 @@
           :options="workmasterStore.workmasterModes"
           optionLabel="value"
           optionValue="id"
-          placeholder="Seleccione el modo"
-          class="w-full"
+          placeholder="Seleccione el mode"
+          class="w-full mb-2"
         />
 
         <BaseInput

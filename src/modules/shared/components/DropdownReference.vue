@@ -4,6 +4,7 @@
       label
     }}</label>
     <Dropdown
+      :virtualScrollerOptions="{ itemSize: 38 }"
       showClear
       filter
       :filter-fields="['code', 'description']"
@@ -23,7 +24,7 @@
       @change="emit('update:modelValue', $event.value)"
     >
       <template #value="slotProps">
-        <div v-if="slotProps.value" class="flex align-items-center">
+        <div v-if="slotProps.value" class="flex align-items-center p-2">
           {{ getReferenceName(slotProps.value) }}
         </div>
         <span v-else>
@@ -31,7 +32,7 @@
         </span>
       </template>
       <template #option="slotProps">
-        <div v-if="slotProps.option" class="flex align-items-center">
+        <div v-if="slotProps.option" class="flex align-items-center p-2">
           {{ getReferenceName(slotProps.option) }}
         </div>
       </template>
