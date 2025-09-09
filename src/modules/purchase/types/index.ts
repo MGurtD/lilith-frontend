@@ -70,11 +70,15 @@ export interface PurchaseInvoiceStatus {
   transitions?: Array<PurchaseInvoiceStatus>;
 }
 
-export interface PurchaseInvoiceSerie {
+export interface InvoiceSerie {
   id: string;
   name: string;
   description: string;
   disabled: boolean;
+  prefix: string;
+  suffix: string;
+  nextNumber: number;
+  length: number;
 }
 
 export interface PurchaseInvoiceDueDate {
@@ -123,7 +127,7 @@ export interface PurchaseMasterData {
   taxes: Array<Tax> | undefined;
   paymentMethods: Array<PaymentMethod> | undefined;
   statuses: Array<PurchaseInvoiceStatus> | undefined;
-  series: Array<PurchaseInvoiceSerie> | undefined;
+  series: Array<InvoiceSerie> | undefined;
 }
 
 export interface PurchaseInvoiceUpdateStatues {

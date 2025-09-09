@@ -196,6 +196,8 @@ onUnmounted(() => {
   };
 
   userFilterStore.addFilter("Budgets", "", savedFilter);
+
+  budgetStore.budgets = undefined;
 });
 
 const getUserFilter = () => {

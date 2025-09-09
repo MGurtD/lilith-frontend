@@ -73,7 +73,6 @@ const filteredOrders = computed(() => {
 });
 
 const onSelectedClick = () => {
-  console.log("onSelectedClick", selectedReceipts.value);
   if (selectedReceipts.value.length === 0) return;
 
   emits("selected", selectedReceipts.value);

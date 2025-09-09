@@ -3,16 +3,39 @@
     :value="inventoryStore.inventories"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="75vh"
+    paginator
+    :rows="10"
+    :rowsPerPageOptions="[10, 20, 50]"
+    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+    currentPageReportTemplate="{first} a {last} de {totalRecords} entrades"
   >
     <template #header>
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Inventari</span>
-        <div>
+        <div class="datatable-filter flex flex-wrap gap-4 flex-1">
+          <div class="filter-field flex gap-4">
+            <label>Referencia</label>
+            <BaseInput
+              class="mb-2"
+              label=""
+              v-model="filter.referenceName"
+              @update:modelValue="filterMovements"
+            />
+          </div>
+          <div class="filter-field flex gap-4">
+            <label>Ubicació</label>
+            <BaseInput
+              class="mb-2"
+              label=""
+              v-model="filter.locationName"
+              @update:modelValue="filterMovements"
+            />
+          </div>
+        </div>
+        <div class="flex gap-2 flex-shrink-0">
           <Button :icon="PrimeIcons.PLUS" rounded raised @click="newMovement" />
-          &nbsp;
           <Button
             :icon="PrimeIcons.SAVE"
             rounded
@@ -22,12 +45,10 @@
         </div>
       </div>
     </template>
-    <Column header="Producte" style="width: 28%">
-      <template #body="slotProps">
-        {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
-      </template>
+    <Column field="referenceName" header="Producte" style="width: 28%">
     </Column>
-    <Column field="oldQuantity" header="Uds." style="width: 12%"></Column>
+    <Column field="locationName" header="Ubicació"></Column>
+    <Column field="oldQuantity" header="Uds."></Column>
     <Column header="Recompte" style="width: 12%">
       <template #body="slotProps">
         <BaseInput
@@ -38,11 +59,11 @@
         ></BaseInput>
       </template>
     </Column>
-    <Column field="width" header="Ample (x) mm" style="width: 12%"></Column>
-    <Column field="length" header="Llarg (y) mm" style="width: 12%"></Column>
-    <Column field="height" header="Alt (z) mm" style="width: 12%"></Column>
-    <Column field="diameter" header="Diàmetre mm" style="width: 12%"></Column>
-    <Column field="thickness" header="Gruix mm" style="width: 12%"></Column>
+    <Column field="width" header="Ample (x) mm"></Column>
+    <Column field="length" header="Llarg (y) mm"></Column>
+    <Column field="height" header="Alt (z) mm"></Column>
+    <Column field="diameter" header="Diàmetre mm"></Column>
+    <Column field="thickness" header="Gruix mm"></Column>
   </DataTable>
   <Dialog :closable="true" v-model:visible="isDialogVisible" :modal="true">
     <FormInventoryNewMovements
@@ -66,14 +87,21 @@ import { Inventory, StockMovement } from "../types";
 import { useStockMovementStore } from "../store/stockMovement";
 import FormInventoryNewMovements from "../components/FormInventoryNewMovements.vue";
 import { getNewUuid } from "../../../utils/functions";
+import { useWarehouseStore } from "../store/warehouse";
 
 const store = useStore();
+const toast = useToast();
 
 const stockStore = useStockStore();
 const referenceStore = useReferenceStore();
 const inventoryStore = useInventoryStore();
 const stockMovementStore = useStockMovementStore();
-const toast = useToast();
+const warehouseStore = useWarehouseStore();
+
+const filter = ref({
+  referenceName: "",
+  locationName: "",
+});
 
 onMounted(async () => {
   store.setMenuItem({
@@ -85,6 +113,8 @@ onMounted(async () => {
 });
 
 const refreshData = async () => {
+  await warehouseStore.fetchWarehousesWithLocations();
+  await referenceStore.fetchReferences();
   await stockStore.fetchStocks();
   inventoryStore.inventories = [];
   stockStore.stocks?.forEach((stock) => {
@@ -93,7 +123,9 @@ const refreshData = async () => {
       stockId: stock.id,
       movementType: "bal",
       locationId: stock.locationId,
+      locationName: warehouseStore.getLocationName(stock.locationId),
       referenceId: stock.referenceId,
+      referenceName: referenceStore.getFullNameById(stock.referenceId),
       oldQuantity: stock.quantity,
       newQuantity: stock.quantity,
       width: stock.width,
@@ -105,7 +137,23 @@ const refreshData = async () => {
     } as Inventory;
     inventoryStore.inventories?.push(invent);
   });
-  await referenceStore.fetchReferences();
+};
+
+const filterMovements = () => {
+  if (filter.value.referenceName) {
+    inventoryStore.inventories = inventoryStore.inventories?.filter((inv) =>
+      inv.referenceName
+        ?.toLowerCase()
+        .includes(filter.value.referenceName.toLowerCase())
+    );
+  }
+  if (filter.value.locationName) {
+    inventoryStore.inventories = inventoryStore.inventories?.filter((inv) =>
+      inv.locationName
+        ?.toLowerCase()
+        .includes(filter.value.locationName.toLowerCase())
+    );
+  }
 };
 
 const isDialogVisible = ref(false);
@@ -151,7 +199,6 @@ const saveMovement = async () => {
     movementDate: new Date(),
     description: "",
   } as StockMovement;
-  let result = false;
   let promises = [] as Array<Promise<boolean>>;
 
   inventoryStore.inventories
@@ -191,11 +238,11 @@ const saveMovement = async () => {
         };
       }
 
-      promises.push(stockMovementStore.Create(stock));
+      promises.push(stockMovementStore.create(stock));
     });
 
   const results = await Promise.all(promises);
-  console.log(results);
+  // Check if all promises resolved successfully
   if (results.filter((p) => p === true).length === promises.length) {
     toast.add({
       severity: "success",

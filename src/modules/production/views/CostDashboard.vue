@@ -126,8 +126,6 @@ const filterDashboard = async () => {
 
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
-    //console.log(chartData.value);
-    //console.log(chartOptions.value);
     if (dataResponse) costs.value = dataResponse;
   }
 };
@@ -205,7 +203,6 @@ const setChartData = () => {
       };
     });
   }
-  //console.log(labels, datasets);
   return {
     labels,
     datasets,

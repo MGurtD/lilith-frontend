@@ -1,3 +1,82 @@
+<template>
+  <div class="base_input">
+    <Toolbar>
+      <template #start>
+        <p class="file_viewer_title">{{ title }}</p>
+      </template>
+      <template #end>
+        <Button
+          size="small"
+          :disabled="!canLoadMoreFiles() || loading"
+          :loading="loading"
+          rounded
+          :icon="PrimeIcons.UPLOAD"
+          @click="uploadFile"
+        />
+      </template>
+    </Toolbar>
+
+    <section v-if="!loading" class="file-viewer">
+      <article class="file-viewer-item" v-for="file in files" :key="file.id">
+        <div class="file-viewer-item-type">
+          <i
+            v-if="file.type === FileType.DOCUMENT"
+            :class="
+              file.originalName.endsWith('docx')
+                ? PrimeIcons.FILE_WORD
+                : PrimeIcons.FILE_PDF
+            "
+            style="font-size: 2.5rem"
+          />
+          <i
+            v-if="file.type === FileType.IMAGE"
+            :class="PrimeIcons.IMAGE"
+            style="font-size: 2.5rem"
+          />
+          <p>
+            {{ file.originalName.substring(0, 20) }}
+          </p>
+        </div>
+        <div
+          :class="
+            file.type === FileType.IMAGE
+              ? 'file-viewer-item-actions-image'
+              : 'file-viewer-item-actions-file'
+          "
+        >
+          <div
+            v-if="file.type === FileType.IMAGE"
+            class="file-viewer-item-action file-viewer-item-action-show"
+            @click="showFile(file)"
+          >
+            <i :class="PrimeIcons.EYE" style="font-size: 1rem" />
+          </div>
+          <div
+            class="file-viewer-item-action file-viewer-item-action-download"
+            @click="downloadFile(file)"
+          >
+            <i :class="PrimeIcons.DOWNLOAD" style="font-size: 1rem" />
+          </div>
+          <div
+            class="file-viewer-item-action file-viewer-item-action-delete"
+            @click="deleteFile(file)"
+          >
+            <i :class="PrimeIcons.TIMES" />
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <Dialog
+    v-model:visible="dialogOptions.visible"
+    :header="dialogOptions.title"
+    :closable="dialogOptions.closable"
+    :modal="dialogOptions.modal"
+  >
+    <div id="img-container"></div>
+  </Dialog>
+</template>
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
 import { FileService } from "../api/services/file.service";
@@ -21,6 +100,7 @@ const confirm = useConfirm();
 
 const service = new FileService();
 const files = ref(undefined as undefined | Array<File>);
+const loading = ref(false);
 
 // Instancia para controlar el diálogo
 const dialogOptions = reactive({
@@ -31,30 +111,38 @@ const dialogOptions = reactive({
   modal: true,
 } as DialogOptions);
 
-// Crea una referencia reactiva para almacenar la prop
-const idRef = ref(props.id);
+const fetchData = async () => {
+  if (!props.id || loading.value) return;
 
-// Usa la función watch para observar cambios en la prop
+  loading.value = true;
+  try {
+    files.value = await service.GetEntityFiles(props.entity, props.id);
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    toast.add({
+      severity: "error",
+      detail: "Error al carregar els arxius",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Watch solo para cambios después del mount inicial
 watch(
   () => props.id,
   (newValue, oldValue) => {
-    // Actualiza la referencia reactiva
-    idRef.value = newValue;
-
-    if (newValue && newValue !== oldValue) {
+    // Solo ejecutar si el componente ya está montado y el valor realmente cambió
+    if (newValue && newValue !== oldValue && oldValue !== undefined) {
       fetchData();
     }
   }
 );
 
-const fetchData = async () => {
-  files.value = await service.GetEntityFiles(props.entity, idRef.value);
-};
-
 onMounted(async () => {
-  setTimeout(() => {
-    fetchData();
-  }, 200);
+  if (props.id) {
+    await fetchData();
+  }
 });
 
 const canLoadMoreFiles = () => {
@@ -120,144 +208,215 @@ const deleteFile = async (file: File) => {
   });
 };
 </script>
-<template>
-  <div class="base_input">
-    <Toolbar>
-      <template #start>
-        <p class="file_viewer_title">{{ title }}</p>
-      </template>
-      <template #end>
-        <Button
-          size="small"
-          :disabled="!canLoadMoreFiles()"
-          rounded
-          :icon="PrimeIcons.UPLOAD"
-          @click="uploadFile"
-        />
-      </template>
-    </Toolbar>
-    <section class="file-viewer">
-      <article class="file-viewer-item" v-for="file in files" :key="id">
-        <div class="file-viewer-item-type">
-          <i
-            v-if="file.type === FileType.DOCUMENT"
-            :class="
-              file.originalName.endsWith('docx')
-                ? PrimeIcons.FILE_WORD
-                : PrimeIcons.FILE_PDF
-            "
-            style="font-size: 3.5rem"
-          />
-          <i
-            v-if="file.type === FileType.IMAGE"
-            :class="PrimeIcons.IMAGE"
-            style="font-size: 3.5rem"
-          />
-          <p>
-            {{ file.originalName.substring(0, 20) }}
-          </p>
-        </div>
-        <div
-          :class="
-            file.type === FileType.IMAGE
-              ? 'file-viewer-item-actions-image'
-              : 'file-viewer-item-actions-file'
-          "
-        >
-          <div
-            v-if="file.type === FileType.IMAGE"
-            class="file-viewer-item-action file-viewer-item-action-show"
-            @click="showFile(file)"
-          >
-            <i :class="PrimeIcons.EYE" style="font-size: 1rem" />
-          </div>
-          <div
-            class="file-viewer-item-action file-viewer-item-action-download"
-            @click="downloadFile(file)"
-          >
-            <i :class="PrimeIcons.DOWNLOAD" style="font-size: 1rem" />
-          </div>
-          <div
-            class="file-viewer-item-action file-viewer-item-action-delete"
-            @click="deleteFile(file)"
-          >
-            <i :class="PrimeIcons.TIMES" />
-          </div>
-        </div>
-      </article>
-    </section>
-  </div>
-
-  <Dialog
-    v-model:visible="dialogOptions.visible"
-    :header="dialogOptions.title"
-    :closable="dialogOptions.closable"
-    :modal="dialogOptions.modal"
-  >
-    <div id="img-container"></div>
-  </Dialog>
-</template>
 <style scoped>
-.file-viewer {
-  padding-top: 1rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 150px);
-  grid-template-rows: repeat(auto-fill, 150px);
-  gap: 1rem;
+.base_input {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
+.base_input:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Toolbar moderno */
 .file_viewer_title {
-  font-weight: bold;
+  font-weight: 700;
   font-size: 1rem;
-  color: black;
+  color: #000;
+  margin: 0;
 }
 
-.file-viewer-item {
-  border: 1px solid var(--blue-800);
-  font-size: 0.8rem;
+/* Grid responsive moderno */
+.file-viewer {
+  padding: 1.5rem;
   display: grid;
-  grid-template-rows: 0.8fr 0.2fr;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 150px;
+}
+
+@media (max-width: 768px) {
+  .file-viewer {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-viewer {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+/* Cards modernas */
+.file-viewer-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  aspect-ratio: 0.85;
+  max-height: 180px;
+}
+
+.file-viewer-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
 }
 
 .file-viewer-item-type {
-  padding-top: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  position: relative;
+}
+
+.file-viewer-item-type i {
+  color: #3b82f6;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 2.5rem !important;
+}
+
+.file-viewer-item:hover .file-viewer-item-type i {
+  transform: scale(1.1);
+  color: #1e40af;
+}
+
+.file-viewer-item-type p {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
   text-align: center;
-  color: darkgray;
+  line-height: 1.2;
+  word-break: break-word;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-.file-viewer-item-actions-file {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-}
-
+/* Actions bar moderna */
+.file-viewer-item-actions-file,
 .file-viewer-item-actions-image {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  height: 40px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
 }
 
 .file-viewer-item-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-viewer-item-action::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
   height: 100%;
-  padding-top: 6px;
-  text-align: center;
-  opacity: 0.9;
-  color: #fff;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.file-viewer-item-action:hover::before {
+  left: 100%;
 }
 
 .file-viewer-item-action:hover {
+  transform: translateY(-1px);
   cursor: pointer;
-  opacity: 0.6;
 }
 
-.file-viewer-item-action-delete {
-  background-color: var(--red-800);
+.file-viewer-item-action i {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.file-viewer-item-action:hover i {
+  transform: scale(1.1);
+}
+
+/* Colores modernos para las acciones */
+.file-viewer-item-action-show {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.file-viewer-item-action-show:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 .file-viewer-item-action-download {
-  background-color: var(--blue-800);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 }
 
-.file-viewer-item-action-show {
-  background-color: var(--gray-800);
+.file-viewer-item-action-download:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.file-viewer-item-action-delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.file-viewer-item-action-delete:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Separadores entre acciones */
+.file-viewer-item-actions-file .file-viewer-item-action:not(:last-child),
+.file-viewer-item-actions-image .file-viewer-item-action:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  max-height: 70vh;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+#img-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

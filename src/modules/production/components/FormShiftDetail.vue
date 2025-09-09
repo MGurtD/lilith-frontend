@@ -60,7 +60,7 @@ const validate = () => {
 const submitForm = async () => {
   props.shiftdetail.startTime = extractTime(props.shiftdetail.startTime);
   props.shiftdetail.endTime = extractTime(props.shiftdetail.endTime);
-  console.log(props.shiftdetail);
+
   validate();
   if (validation.value.result) {
     emit("submit", props.shiftdetail);

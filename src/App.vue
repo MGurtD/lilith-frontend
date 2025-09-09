@@ -5,22 +5,33 @@ import { useSpanishGeography } from "./store/geography";
 import Header from "./components/TheHeader.vue";
 import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useShoopfloorStore } from "./modules/shoopfloor/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
+import { applyPrimeVueLocale } from "./i18n";
+import { usePrimeVue } from "primevue/config";
 
 const store = useStore();
 const shopfloorStore = useShoopfloorStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
+const primevue = usePrimeVue();
 
 onMounted(async () => {
   spanishGeography.fetch();
+
+  // Initialize language for anonymous users; JWT-based locale will be handled in setAuthorization
+  await store.initLanguage();
   await store.getAuthorization();
 });
+
+watch(
+  () => store.language.current,
+  (val) => applyPrimeVueLocale(primevue.config, val)
+);
 
 const logout = () => {
   store.removeAuthorization();

@@ -35,25 +35,32 @@
         />
       </div>
     </section>
-    <section class="four-columns">
-      <div class="mt-1">
+    <section class="four-columns mt-2">
+      <div>
         <label class="block text-900 mb-2">Base</label>
         <span class="summary-field">{{
           formatCurrency(invoice.baseAmount)
         }}</span>
       </div>
 
-      <div class="mt-1">
+      <div>
         <label class="block text-900 mb-2">Impostos</label>
         <span class="summary-field">{{
           formatCurrency(invoice.taxAmount)
         }}</span>
       </div>
 
-      <div class="mt-1">
+      <div>
         <label class="block text-900 mb-2">Total</label>
         <span class="summary-field">{{
           formatCurrency(invoice.netAmount)
+        }}</span>
+      </div>
+
+      <div v-if="invoice.integrationStatusId !== null">
+        <label class="block text-900 mb-2">Verifactu</label>
+        <span class="summary-field" :class="getVerifactuStatusClass()">{{
+          invoiceStore.getVerifactuStatusById(invoice.integrationStatusId!)
         }}</span>
       </div>
     </section>
@@ -61,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { SalesInvoice } from "../types";
 import * as Yup from "yup";
 import { formatCurrency } from "../../../utils/functions";
@@ -72,6 +79,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useSalesInvoiceStore } from "../store/invoice";
 
 const props = defineProps<{
   invoice: SalesInvoice;
@@ -85,6 +93,7 @@ const emit = defineEmits<{
 const toast = useToast();
 const sharedData = useSharedDataStore();
 const lifecycleStore = useLifecyclesStore();
+const invoiceStore = useSalesInvoiceStore();
 
 const schema = Yup.object().shape({
   invoiceDate: Yup.string().required("La data és obligatoria"),
@@ -98,6 +107,22 @@ const validation = ref({
 const validate = () => {
   const formValidation = new FormValidation(schema);
   validation.value = formValidation.validate(props.invoice);
+};
+
+const getVerifactuStatusClass = () => {
+  const status = invoiceStore.getVerifactuStatusById(
+    props.invoice.integrationStatusId!
+  );
+
+  if (status === "OK") {
+    return "status-ok";
+  } else if (status === "Error") {
+    return "status-error";
+  } else if (status === "Pendent") {
+    return "status-pending";
+  }
+
+  return "";
 };
 
 const submitForm = async () => {
@@ -118,3 +143,20 @@ const submitForm = async () => {
   }
 };
 </script>
+
+<style scoped>
+.status-ok {
+  color: #28a745; /* Green */
+  font-weight: bold;
+}
+
+.status-error {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #6c757d; /* Gray */
+  font-weight: bold;
+}
+</style>

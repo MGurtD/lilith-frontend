@@ -21,6 +21,11 @@
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
     <Column field="description" header="Descripció" style="width: 50%"></Column>
+    <Column field="defaultSiteId" header="Seu per defecte" style="width: 15%">
+      <template #body="slotProps">
+        {{ plantmodelStore.getSiteNameById(slotProps.data.defaultSiteId) }}
+      </template>
+    </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
@@ -57,6 +62,7 @@ const plantmodelStore = usePlantModelStore();
 
 onMounted(async () => {
   await plantmodelStore.fetchEnterprises();
+  if (!plantmodelStore.sites) await plantmodelStore.fetchSites();
 
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,

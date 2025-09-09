@@ -56,7 +56,7 @@
 import SelectorOrders from "../components/SelectorOrders.vue";
 import FormDeliveryNote from "../components/FormDeliveryNote.vue";
 import TableDeliveryNoteDetails from "../components/TableDeliveryNoteDetails.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
@@ -82,6 +82,7 @@ const deliveryNoteForm = ref();
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const router = useRouter();
+
 const store = useStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const salesOrderStore = useSalesOrderStore();
@@ -98,33 +99,6 @@ const items = [
     command: () => printInvoice(),
   },
 ];
-
-const printInvoice = async () => {
-  const deliveryNoteReport = await Services.DeliveryNote.GetReportDataById(
-    deliveryNote.value!.id
-  );
-
-  if (deliveryNoteReport) {
-    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}.docx`;
-
-    const reportService = new ReportService();
-    const report = await reportService.Download(
-      deliveryNoteReport,
-      REPORTS.DeliveryNote,
-      fileName
-    );
-
-    if (report) {
-      createBlobAndDownloadFile(fileName, report);
-    } else {
-      toast.add({
-        severity: "warn",
-        summary: "Error",
-        detail: "No s'ha pugut generar fulla de la comanda",
-      });
-    }
-  }
-};
 
 const dialogTitle = "Selector de comandes";
 const isDialogVisible = ref(false);
@@ -184,6 +158,12 @@ onMounted(async () => {
   await loadView();
 });
 
+onUnmounted(() => {
+  deliveryNoteStore.deliveryNote = undefined;
+  salesOrderStore.salesOrders = undefined;
+  salesOrderStore.salesOrdersToDeliver = undefined;
+});
+
 const submitForm = () => {
   if (!deliveryNote.value?.createdOn) {
     toast.add({
@@ -240,5 +220,32 @@ const addSalesOrdersToDeliveryNote = async (
 const deleteSalesOrder = async (order: SalesOrderHeader) => {
   await deliveryNoteStore.DeleteOrder(deliveryNote.value!.id, order);
   await salesOrderStore.GetByDeliveryNote(deliveryNote.value!.id);
+};
+
+const printInvoice = async () => {
+  const deliveryNoteReport = await Services.DeliveryNote.GetReportDataById(
+    deliveryNote.value!.id
+  );
+
+  if (deliveryNoteReport) {
+    const fileName = `AlbaraEntrega_${deliveryNote.value?.number}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      deliveryNoteReport,
+      REPORTS.DeliveryNote,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar fulla de la comanda",
+      });
+    }
+  }
 };
 </script>

@@ -33,14 +33,12 @@ export class ReportService {
         "No hi ha informes disponibles. Carrega'ls a la ruta /reports"
       );
     }
-    console.log(files);
     const file = files.find((f) => f.originalName.includes(report));
     if (!file) {
       throw new Error(
         `L'informe ${report} no existeix. Carrega'l amb aquest nom a la ruta /reports`
       );
     }
-    console.log(file);
 
     let response = await this.apiClient.post(
       `/download`,

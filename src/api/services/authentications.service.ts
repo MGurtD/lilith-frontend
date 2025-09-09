@@ -45,6 +45,17 @@ export class AuthenticationService {
       console.error(error);
     }
   }
+
+  public async Refresh(refreshToken: string) {
+    try {
+      const response = await this.apiClient.post(`${this.resource}/Refresh`, {
+        refreshToken,
+      });
+      return response.data;
+    } catch (err) {
+      logException(err);
+    }
+  }
 }
 
 export interface UserRegister {

@@ -3,12 +3,12 @@ import BaseService from "../../../api/base.service";
 import {
   PurchaseInvoiceDueDate,
   PurchaseInvoice,
-  PurchaseInvoiceSerie,
+  InvoiceSerie,
   PurchaseInvoiceUpdateStatues,
   PurchaseInvoiceImport,
 } from "../types";
 
-export class PurchaseInvoiceSerieService extends BaseService<PurchaseInvoiceSerie> {}
+export class PurchaseInvoiceSerieService extends BaseService<InvoiceSerie> {}
 
 export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
   async GetBetweenDates(
@@ -74,7 +74,8 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     const response = await apiClient.post(
       `${this.resource}/RecreateDueDates`,
       purchaseInvoice
-    );2
+    );
+    2;
     return response.status === 200;
   }
 
@@ -100,6 +101,19 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
 
   async DeleteImport(request: PurchaseInvoiceImport): Promise<boolean> {
     const endpoint = `${this.resource}/Import/${request.id}`;
+    const response = await apiClient.delete(endpoint);
+    return response.status === 200;
+  }
+
+  async AddDueDates(dueDates: Array<PurchaseInvoiceDueDate>): Promise<boolean> {
+    const endpoint = `${this.resource}/DueDate`;
+    const response = await apiClient.post(endpoint, dueDates);
+    return response.status === 200;
+  }
+
+  async RemoveDueDates(ids: Array<string>): Promise<boolean> {
+    const params = ids.map((i) => `ids=${i}`).join("&");
+    const endpoint = `${this.resource}/DueDate?${params}`;
     const response = await apiClient.delete(endpoint);
     return response.status === 200;
   }

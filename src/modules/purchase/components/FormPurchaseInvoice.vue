@@ -314,8 +314,6 @@ const calcAmounts = async () => {
         invoice
       )) as Array<PurchaseInvoiceDueDate>;
   }
-
-  console.log("calcAmounts", purchaseInvoice.value);
 };
 
 const getBaseAmountFromImports = (): number => {

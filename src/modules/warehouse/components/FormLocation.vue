@@ -20,7 +20,7 @@
         }"
       ></BaseInput>
       <div>
-        <label class="block text-900 mb-2">Desactivat</label>
+        <label class="block text-900 mb-2">Desactivada</label>
         <Checkbox v-model="location.disabled" class="w-full" :binary="true" />
       </div>
     </section>

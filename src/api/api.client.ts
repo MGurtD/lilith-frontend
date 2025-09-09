@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useApiStore } from "../store/backend";
+import { useStore } from "../store";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 const requestTimeout =
@@ -22,6 +23,20 @@ apiClient.interceptors.request.use(
   function (config) {
     const store = useApiStore();
     store.isWaiting = true;
+    // Attach language headers and optional culture override
+    const appStore = useStore();
+    if (!config.headers) config.headers = {} as any;
+    const lang = (appStore as any)?.language?.current;
+    if (lang) {
+      (config.headers as any)["Accept-Language"] = lang;
+    }
+    const cultureOverride = (appStore as any)?.language?.cultureOverride;
+    if (cultureOverride) {
+      config.params = {
+        ...(config.params ?? {}),
+        culture: cultureOverride,
+      } as any;
+    }
 
     // Do something before request is sent
     return config;

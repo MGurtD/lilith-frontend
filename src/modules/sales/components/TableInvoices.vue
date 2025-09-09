@@ -49,6 +49,19 @@
         {{ formatCurrency(slotProps.data.netAmount) }}
       </template>
     </Column>
+    <!-- <Column header="Verifactu" style="width: 10%">
+      <template #body="slotProps">
+        <span
+          :class="getVerifactuStatusClass(slotProps.data.integrationStatusId)"
+        >
+          {{
+            invoiceStore.getVerifactuStatusById(
+              slotProps.data.integrationStatusId
+            )
+          }}
+        </span>
+      </template>
+    </Column> -->
     <Column style="width: 5%">
       <template #body="slotProps">
         <i
@@ -69,10 +82,12 @@ import { onMounted } from "vue";
 import { Customer, SalesInvoice } from "../types";
 import { PrimeIcons } from "primevue/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import { useSalesInvoiceStore } from "../store/invoice";
 import { formatCurrency, formatDate } from "../../../utils/functions";
 import { DataTableRowClickEvent } from "primevue/datatable";
 
 const lifecycleStore = useLifecyclesStore();
+const invoiceStore = useSalesInvoiceStore();
 
 const props = defineProps<{
   invoices: Array<SalesInvoice> | undefined;
@@ -113,6 +128,20 @@ const getLastDueDate = (invoice: SalesInvoice): string => {
   }
 };
 
+const getVerifactuStatusClass = (integrationStatusId: string) => {
+  const status = invoiceStore.getVerifactuStatusById(integrationStatusId);
+
+  if (status === "OK") {
+    return "status-ok";
+  } else if (status === "Error") {
+    return "status-error";
+  } else if (status === "Pendent") {
+    return "status-pending";
+  }
+
+  return "";
+};
+
 const editButtonClick = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
@@ -127,3 +156,20 @@ const deleteButtonClick = (event: any, invoice: SalesInvoice) => {
   emit("delete", invoice);
 };
 </script>
+
+<style scoped>
+.status-ok {
+  color: #28a745; /* Green */
+  font-weight: bold;
+}
+
+.status-error {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #6c757d; /* Gray */
+  font-weight: bold;
+}
+</style>

@@ -86,6 +86,13 @@ export const usePlantModelStore = defineStore({
         return machineStatus ? `${machineStatus.description}` : "";
       };
     },
+    getSiteNameById: (state) => {
+      return (id?: string | null): string => {
+        if (!id || !state.sites) return "";
+        const site = state.sites.find((s) => s.id === id);
+        return site ? site.name : "";
+      };
+    },
   },
   actions: {
     //workcenter
@@ -269,9 +276,9 @@ export const usePlantModelStore = defineStore({
         id: id,
         name: "",
         description: "",
-        siteId: "",
+        defaultSiteId: "",
         disabled: false,
-      } as Area;
+      } as Enterprise;
     },
     async fetchEnterprises() {
       this.enterprises = await enterpriseService.getAll();

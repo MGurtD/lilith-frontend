@@ -6,6 +6,7 @@ import ProductionRoutes from "./modules/production/routes";
 import WarehouseRoutes from "./modules/warehouse/routes";
 import ShoopfloorRoutes from "./modules/shoopfloor/routes";
 import AnalyticsRoutes from "./modules/analytics/routes";
+import VerifactuRoutes from "./modules/verifactu/routes";
 
 const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
@@ -27,6 +28,7 @@ const router = createRouter({
     ...WarehouseRoutes,
     ...ShoopfloorRoutes,
     ...AnalyticsRoutes,
+    ...VerifactuRoutes,
   ],
 });
 

@@ -4,6 +4,7 @@ export interface Enterprise {
   id: string;
   name: string;
   description: string;
+  defaultSiteId?: string | null;
   disabled: boolean;
 }
 

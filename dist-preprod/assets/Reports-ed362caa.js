@@ -1,0 +1,1 @@
+import{F as t}from"./FileEntityPicker-6ebb7fcb.js";import{d as o,u as s,o as n,q as r,l as a,a as i,y as c}from"./index-f6af8c81.js";const f=o({__name:"Reports",setup(m){const e=s();return n(()=>{e.setMenuItem({title:"Gestor d'informes",icon:""})}),(p,u)=>(i(),r(t,{entity:"Reports",id:a(c),title:"Informes"},null,8,["id"]))}});export{f as default};

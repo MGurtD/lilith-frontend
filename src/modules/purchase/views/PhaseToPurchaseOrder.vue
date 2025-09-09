@@ -70,6 +70,8 @@
           placeholder="Selecciona..."
           optionValue="id"
           optionLabel="comercialName"
+          @show="() => onSupplierDropdownShow(slotProps.data)"
+          @focus="() => onSupplierDropdownShow(slotProps.data)"
           @change="(event) => selectPhase(slotProps.data, event.value)"
           showClear
         >
@@ -90,17 +92,11 @@ import { SupplierService } from "../services/suppliers.service";
 import { PurchaseOrderFromWO, Supplier } from "../types";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useSharedDataStore } from "../../shared/store/masterData";
-import {
-  DetailedWorkOrder,
-  WorkOrder,
-  WorkOrderPhase,
-} from "../../production/types";
-import { DetailedWorkOrderService } from "../../production/services/workorder.service";
+import { WorkOrderPhase } from "../../production/types";
 import { useOrderStore } from "../store/order";
 import { useUserFilterStore } from "../../../store/userfilter";
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
-import WorkorderPhase from "../../production/views/WorkorderPhase.vue";
 
 const router = useRouter();
 const store = useStore();
@@ -114,17 +110,10 @@ const userFilterStore = useUserFilterStore();
 
 const selectedPhases = ref<WorkOrderPhase[]>([]);
 const suppliersByReference = ref<{ [key: string]: Supplier[] }>({});
+const phaseLoading = ref<{ [key: string]: boolean }>({});
+const allSuppliers = ref<Supplier[] | null>(null);
 const selectedSuppliers = ref<{ [key: string]: string }>({});
 const purchaseOrders = ref<PurchaseOrderFromWO[]>([]);
-
-const mostrarToastError = (summary: string, detail: string) => {
-  toast.add({
-    severity: "error",
-    summary: summary,
-    detail: detail,
-    life: 5000,
-  });
-};
 
 const mostrarToastInfo = (summary: string, detail: string) => {
   toast.add({
@@ -148,18 +137,14 @@ const obtenirDates = () => {
 const supplierMapping = ref<{ [key: string]: string }>({});
 
 const selectPhase = (phase: WorkOrderPhase, selectedSupplierId: string) => {
-  //console.log(selectedSupplierId);
   updatePhase(phase.id, selectedSupplierId);
   if (selectedSupplierId) {
-    //console.log("aqui");
     selectedPhases.value.push(phase);
   } else {
-    //console.log("aqui no: ", phase);
     selectedPhases.value = selectedPhases.value.filter(
       (p, ind) => p.id !== phase.id
     );
   }
-  //console.log("phases: ", selectedPhases.value);
 };
 
 const updatePhase = (phaseId: string, selectedSupplierId: string) => {
@@ -191,7 +176,6 @@ const fetchWorkOrderPhases = async () => {
   }
 
   await workOrderStore.fetchExternalPhases(startTime, endTime);
-  await fetchSuppliersForPhases();
 };
 
 onMounted(async () => {
@@ -205,28 +189,38 @@ onMounted(async () => {
   getUserFilter();
 });
 
-const fetchSuppliersForPhases = async () => {
-  const allsuppliers = await supplierService.getAll();
-  if (
-    workOrderStore.workorderPhases &&
-    workOrderStore.workorderPhases.length > 0
-  ) {
-    for (const phase of workOrderStore.workorderPhases) {
-      if (phase && phase.serviceReferenceId != null) {
-        const suppliers = await supplierService.getSuppliersReferenceById(
-          phase.serviceReferenceId
-        );
-        if (suppliers === null) {
-          if (allsuppliers) {
-            suppliersByReference.value[phase.id] = allsuppliers;
-          }
-        } else {
-          suppliersByReference.value[phase.id] = suppliers;
-        }
-      }
-      //console.log(suppliersByReference.value[phase.id]);
-    }
+// Lazy load suppliers when user opens the dropdown for a phase
+const fetchSuppliersForPhase = async (phase: WorkOrderPhase) => {
+  if (!phase || !phase.serviceReferenceId) return;
+  if (suppliersByReference.value[phase.id] || phaseLoading.value[phase.id]) {
+    return; // already loaded or in progress
   }
+  try {
+    phaseLoading.value[phase.id] = true;
+    const suppliers = await supplierService.getSuppliersReferenceById(
+      phase.serviceReferenceId
+    );
+    if (suppliers === null) {
+      // fallback: load all suppliers once if not yet
+      if (!allSuppliers.value) {
+        const all = await supplierService.getAll();
+        allSuppliers.value = all ? all : [];
+      }
+      if (allSuppliers.value) {
+        suppliersByReference.value[phase.id] = allSuppliers.value;
+      }
+    } else {
+      suppliersByReference.value[phase.id] = suppliers;
+    }
+  } catch (e) {
+    // optional: could add a toast here
+  } finally {
+    phaseLoading.value[phase.id] = false;
+  }
+};
+
+const onSupplierDropdownShow = (phase: WorkOrderPhase) => {
+  fetchSuppliersForPhase(phase);
 };
 
 onUnmounted(() => {
@@ -284,19 +278,8 @@ const sendData = async () => {
     );
     return;
   }
-  /*for (const phaseId of Object.keys(supplierMapping.value)) {
-    const supplierId = supplierMapping.value[phaseId];
-    if (!supplierId) {
-      mostrarToastError(
-        "Proveïdors buits",
-        "No poden haver-hi proveïdors buits"
-      );
-      return;
-    }
-  }*/
 
   for (const phase of selectedPhases.value) {
-    console.log(phase.workOrder?.id, " - ", supplierMapping.value[phase.id]);
     purchaseOrders.value.push({
       workorderId: phase.workOrder?.id || "",
       workorderDescription: phase.description || "",
@@ -309,7 +292,6 @@ const sendData = async () => {
     });
   }
 
-  //console.log("sendData: ", purchaseOrders.value);
   const result = await orderStore.createFromWo(purchaseOrders.value);
   if (!result.result) {
     toast.add({

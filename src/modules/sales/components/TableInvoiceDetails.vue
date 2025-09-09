@@ -136,7 +136,6 @@ const groupedDetails = computed(() => {
     });
   if (deliveryNoteDetails.length > 0) grDetails.push(...deliveryNoteDetails);
 
-  console.log(deliveryNoteDetails, grDetails);
   return _.orderBy(grDetails, (d) => [d.deliveryNoteNumber, d.description]);
 });
 

@@ -61,11 +61,6 @@
       </div>
     </template>
     <Column field="number" header="Número" sortable style="width: 10%"></Column>
-    <!-- <Column
-      field="budgetNumber"
-      header="Pressupost"
-      style="width: 10%"
-    ></Column> -->
     <Column field="date" header="Data" style="width: 10%" sortable>
       <template #body="slotProps">
         {{ formatDate(slotProps.data.date) }}
@@ -156,6 +151,7 @@ import { useUserFilterStore } from "../../../store/userfilter";
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
+
 const store = useStore();
 const userFilterStore = useUserFilterStore();
 const sharedStore = useSharedDataStore();
@@ -199,6 +195,8 @@ onUnmounted(() => {
   };
 
   userFilterStore.addFilter("SalesOrders", "", savedFilter);
+
+  salesOrderStore.salesOrders = undefined;
 });
 
 const getUserFilter = () => {

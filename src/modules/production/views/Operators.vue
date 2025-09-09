@@ -17,10 +17,22 @@
         />
       </div>
     </template>
-    <Column field="code" header="Codi" style="width: 20%"></Column>
-    <Column field="surname" header="Cognom" style="width: 25%"></Column>
-    <Column field="name" header="Nom" style="width: 25%"></Column>
-    <Column field="vatNumber" header="NIF" style="width: 20%"></Column>
+    <Column field="code" header="Codi" style="width: 15%"></Column>
+    <Column header="Nom complet" style="width: 35%">
+      <template #body="slotProps">
+        {{ slotProps.data.name }} {{ slotProps.data.surname }}
+      </template>
+    </Column>
+    <Column field="vatNumber" header="NIF" style="width: 15%"></Column>
+    <Column header="Tipus" style="width: 15%">
+      <template #body="slotProps">
+        {{
+          operatorTypeStore.getOperatorTypeNameById(
+            slotProps.data.operatorTypeId
+          )
+        }}
+      </template>
+    </Column>
     <Column header="Desactivat" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
@@ -44,6 +56,7 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
+import { useOperatorTypeStore } from "../store/operatortype";
 import { onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -52,11 +65,15 @@ import { Operator } from "../types";
 const router = useRouter();
 const store = useStore();
 const plantmodelStore = usePlantModelStore();
+const operatorTypeStore = useOperatorTypeStore();
 const toast = useToast();
 const confirm = useConfirm();
 
 onMounted(async () => {
   await plantmodelStore.fetchOperators();
+  if (!operatorTypeStore.operatorTypes) {
+    await operatorTypeStore.fetchOperatorTypes();
+  }
 
   store.setMenuItem({
     icon: PrimeIcons.CALENDAR,

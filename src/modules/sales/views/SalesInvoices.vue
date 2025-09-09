@@ -113,13 +113,15 @@ onMounted(async () => {
     title: "Factures de venta",
   });
 });
+
 onUnmounted(() => {
   const savedFilter = {
     customerId: filter.value.customerId,
     exercisePicker: store.exercisePicker,
   };
-
   userFilterStore.addFilter("SalesInvoices", "", savedFilter);
+
+  invoiceStore.invoices = undefined;
 });
 
 const getUserFilter = () => {

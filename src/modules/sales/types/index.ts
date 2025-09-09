@@ -21,6 +21,7 @@ export interface Customer {
   accountNumber: string;
   observations: string;
   invoiceNotes: string;
+  preferredLanguage: string;
   contacts: Array<CustomerContact>;
   address: Array<CustomerAddress>;
 }
@@ -180,6 +181,7 @@ export interface SalesInvoice {
   netAmount: number;
   exerciseId: string;
   statusId: string;
+  integrationStatusId: string | null;
   customerId: string;
   paymentMethodId: string;
   customerCode: string;
