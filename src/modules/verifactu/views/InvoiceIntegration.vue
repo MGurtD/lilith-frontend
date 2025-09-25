@@ -92,7 +92,7 @@
       >
         <template #body="slotProps">
           <span class="font-semibold">{{
-            formatCurrency(slotProps.data.netAmount + slotProps.data.taxAmount)
+            formatCurrency(slotProps.data.baseAmount + slotProps.data.taxAmount)
           }}</span>
         </template>
       </Column>
