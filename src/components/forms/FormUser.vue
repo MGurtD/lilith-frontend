@@ -1,6 +1,6 @@
 <template>
   <form v-if="user" @submit.prevent="submit">
-    <section class="two-columns">
+    <section class="three-columns">
       <BaseInput
         id="username"
         class="mb-2"
@@ -23,9 +23,19 @@
           optionValue="id"
           optionLabel="name"
           class="w-full"
-          :class="{
-            'p-invalid': validation.errors.city,
-          }"
+          :class="{ 'p-invalid': validation.errors.city }"
+        />
+      </div>
+      <div v-if="profiles?.length">
+        <label class="block text-900 mb-2">{{
+          $t("forms.user.profileLabel")
+        }}</label>
+        <Dropdown
+          v-model="user.profileId"
+          :options="profiles"
+          optionValue="id"
+          optionLabel="name"
+          class="w-full"
         />
       </div>
     </section>
@@ -132,7 +142,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../types/component";
 import { UserLogin } from "../../api/services/authentications.service";
-import { User, Role } from "../../types";
+import { User, Role, Profile } from "../../types";
 import LanguageSwitcher from "../LanguageSwitcher.vue";
 
 const { t } = useI18n();
@@ -140,6 +150,7 @@ const appStore = useStore();
 
 const props = defineProps<{
   roles: Role[] | undefined;
+  profiles?: Profile[] | undefined;
   user: User | undefined;
 }>();
 const passwordChangeModeOn = ref(false);

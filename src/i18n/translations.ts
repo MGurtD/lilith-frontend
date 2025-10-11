@@ -132,6 +132,7 @@ const messages = {
       user: {
         usernameLabel: "Nom d'usuari",
         roleLabel: "Rol",
+        profileLabel: "Perfil",
         firstNameLabel: "Nom",
         lastNameLabel: "Cognoms",
         languageLabel: "Idioma",
@@ -317,6 +318,7 @@ const messages = {
       user: {
         usernameLabel: "Nombre de usuario",
         roleLabel: "Rol",
+        profileLabel: "Perfil",
         firstNameLabel: "Nombre",
         lastNameLabel: "Apellidos",
         languageLabel: "Idioma",
@@ -493,6 +495,7 @@ const messages = {
       user: {
         usernameLabel: "Username",
         roleLabel: "Role",
+        profileLabel: "Profile",
         firstNameLabel: "First name",
         lastNameLabel: "Last name",
         languageLabel: "Language",

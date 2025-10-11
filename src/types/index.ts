@@ -30,6 +30,8 @@ export interface User {
   preferredLanguage: string;
   roleId: string;
   role?: Role;
+  profileId?: string | null;
+  profile?: Profile;
 }
 
 export interface UserFilter {
@@ -60,4 +62,11 @@ export interface Language {
   icon?: string;
   isDefault: boolean;
   sortOrder?: number;
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  description?: string;
+  isSystem?: boolean;
 }
