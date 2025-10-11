@@ -21,6 +21,11 @@
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
     <Column field="description" header="Descripció" style="width: 50%"></Column>
+    <Column header="Visible planta" style="width: 10%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isVisibleInPlant" />
+      </template>
+    </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />

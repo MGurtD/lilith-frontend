@@ -31,6 +31,7 @@ export interface Area {
   name: string;
   description: string;
   siteId: string;
+  isVisibleInPlant: boolean;
   disabled: boolean;
 }
 

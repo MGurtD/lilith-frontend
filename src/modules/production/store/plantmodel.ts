@@ -204,6 +204,7 @@ export const usePlantModelStore = defineStore({
         name: "",
         description: "",
         siteId: "",
+        isVisibleInPlant: true,
         disabled: false,
       } as Area;
     },

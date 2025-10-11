@@ -1,1 +1,0 @@
-import{Q as s}from"./index-f6af8c81.js";import{S as o}from"./warehouse-48423be3.js";const a=s({id:"stockMovement",state:()=>({stockMovement:void 0,stockMovements:void 0}),getters:{},actions:{async create(e){return o.StockMovementService.create(e)},async getBetweenDates(e,t,c){this.stockMovements=await o.StockMovementService.getBetweenDates(e,t,c)}}});export{a as u};
