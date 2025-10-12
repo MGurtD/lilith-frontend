@@ -63,7 +63,8 @@ const logoutOperator = () => {
 </template>
 
 <style lang="scss">
-@import "./assets/styles.scss";
+// Replaced deprecated @import with @use. Using 'as *' to preserve existing global class availability.
+@use "./assets/styles.scss" as *;
 
 .app__view {
   position: fixed;

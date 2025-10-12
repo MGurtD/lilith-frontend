@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "build-development": "vue-tsc && vite build --mode development --outDir dist-test",
-    "build-preprod": "vue-tsc && vite build --mode preprod --outDir dist-preprod",
+    "typecheck": "vue-tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "build:versioned": "VITE_APP_VERSION=%npm_package_version% npm run build",
+    "build-development": "npm run typecheck && vite build --mode development --outDir dist-test",
+    "build-preprod": "npm run typecheck && vite build --mode preprod --outDir dist-preprod",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,27 +21,27 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "material-icons": "^1.13.12",
-    "pinia": "^2.0.28",
+    "pinia": "^2.1.7",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
-    "primevue": "^3.51.0",
+    "primevue": "^3.53.0",
     "uuid": "^9.0.0",
     "vee-validate": "^4.10.1",
-    "vue": "^3.2.45",
-    "vue-chartjs": "^5.2.0",
-    "vue-i18n": "^9.2.2",
-    "vue-router": "^4.1.6",
+    "vue": "^3.4.38",
+    "vue-chartjs": "^5.3.1",
+    "vue-i18n": "^9.9.0",
+    "vue-router": "^4.4.5",
     "vue-sidebar-menu": "^5.2.8",
-    "yup": "^1.1.1"
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195",
-    "@types/uuid": "^9.0.1",
-    "@vitejs/plugin-vue": "^4.0.0",
-    "prettier": "2.8.1",
-    "sass": "^1.58.3",
-    "typescript": "^4.9.3",
-    "vite": "^4.0.0",
-    "vue-tsc": "^1.0.11"
+    "@types/lodash": "^4.17.10",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "prettier": "^3.3.3",
+    "sass": "^1.80.3",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.8",
+    "vue-tsc": "^2.0.29"
   }
 }
