@@ -64,7 +64,7 @@ onMounted(async () => {
     >
       <template #header>
         <div class="flex justify-content-between align-items-center w-full">
-          <span class="text-xl font-bold">{{ t("profiles.listTitle") }}</span>
+          <span class="font-bold">{{ t("profiles.listTitle") }}</span>
           <Button
             :label="t('profiles.newButton')"
             icon="pi pi-plus"

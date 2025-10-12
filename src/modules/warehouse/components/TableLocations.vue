@@ -9,12 +9,16 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <span class="text-xl text-900 font-bold">Ubicacions</span>
+          <span class="text-900 font-bold">Ubicacions</span>
           <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
         </div>
       </template>
       <Column field="name" header="Nom" style="width: 25%"></Column>
-      <Column field="description" header="Descripció" style="width: 60%"></Column>
+      <Column
+        field="description"
+        header="Descripció"
+        style="width: 60%"
+      ></Column>
       <Column header="Desactivada" style="width: 10%">
         <template #body="slotProps">
           <BooleanColumn :value="slotProps.data.disabled"></BooleanColumn>

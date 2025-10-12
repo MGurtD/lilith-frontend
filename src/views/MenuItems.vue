@@ -95,7 +95,7 @@ onMounted(async () => {
     >
       <template #header>
         <div class="flex justify-content-between align-items-center w-full">
-          <span class="text-xl font-bold">{{ t("menuItems.listTitle") }}</span>
+          <span class="font-bold">{{ t("menuItems.listTitle") }}</span>
           <div class="flex gap-2">
             <Button
               :label="t('menuItems.newButton')"

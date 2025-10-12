@@ -20,7 +20,7 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <span class="text-xl text-900 font-bold">Detall de la comanda</span>
+          <span class="text-900 font-bold">Detall de la comanda</span>
           <div>
             <Button
               :size="'small'"

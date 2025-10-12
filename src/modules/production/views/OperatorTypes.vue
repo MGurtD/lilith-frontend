@@ -10,7 +10,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Tipus d' operari</span>
+        <span class="text-900 font-bold">Tipus d' operari</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded

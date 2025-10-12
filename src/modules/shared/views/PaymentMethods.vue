@@ -9,7 +9,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Formes de pagament</span>
+        <span class="text-900 font-bold">Formes de pagament</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded

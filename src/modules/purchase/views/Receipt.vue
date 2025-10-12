@@ -11,7 +11,7 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <span class="text-xl text-900 font-bold">Detall de l'albarà</span>
+          <span class="text-900 font-bold">Detall de l'albarà</span>
           <div
             class="flex flex-wrap align-items-center justify-content-between gap-2"
           >
