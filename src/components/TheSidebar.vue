@@ -3,48 +3,99 @@
     :menu="store.menus"
     :collapsed="store.menuCollapsed"
     :showOneChild="true"
-    @update:collapsed="store.menuCollapsed = !store.menuCollapsed"
-  />
+    @update:collapsed="toggleCollapse"
+  >
+    <template #header>
+      <div class="brand">
+        <img
+          v-if="branding.logoPath"
+          :src="branding.logoPath"
+          :alt="branding.logoAlt || companyName"
+          class="brand-logo"
+          draggable="false"
+        />
+        <span class="brand-name" :title="companyName">{{ companyName }}</span>
+      </div>
+    </template>
+    <template #footer>
+      <div class="sidebar-footer" :class="{ collapsed: store.menuCollapsed }">
+        <small>v{{ appVersion }}</small>
+      </div>
+    </template>
+  </sidebar-menu>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-
 import { useStore } from "../store";
+import { branding, getCompanyName } from "../config/branding";
+
 const store = useStore();
+
+// Derive dynamic company name depending on collapsed state
+const companyName = computed(() => getCompanyName(store.menuCollapsed));
+// Use Vite env var VITE_APP_VERSION if defined (add to build script) otherwise fallback
+const appVersion = (import.meta as any).env?.VITE_APP_VERSION || "1.0.0";
+
+function toggleCollapse() {
+  store.menuCollapsed = !store.menuCollapsed;
+}
+
+function t(text: string) {
+  // Placeholder translation hook; integrate with existing i18n if available
+  return text;
+}
 </script>
 
 <style scoped>
-.side-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: var(--side-bar-width);
-  background-color: var(--blue-900);
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
-  text-align: center;
-}
-
 .v-sidebar-menu {
   background-color: var(--blue-900);
   width: var(--side-bar-width);
 }
 
-.collapsed {
-  width: var(--side-bar-collapsed-width);
+.v-sidebar-menu .vsm--header {
+  text-align: left;
+  border-bottom: 1px solid var(--surface-400);
 }
 
-.side-menu-header {
-  display: block;
-  color: #fff;
-  height: var(--top-panel-height);
-  width: var(--side-bar-collapsed-width);
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: transparent;
+  border: none;
+  color: var(--surface-0);
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.hide {
-  visibility: hidden;
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  transition: transform 0.25s ease;
+}
+
+.brand-name {
+  line-height: 1;
+}
+
+.sidebar-footer {
+  padding: 0.65rem 0.85rem;
+  color: var(--surface-300);
+  display: flex;
+  justify-content: center;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 </style>

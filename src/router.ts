@@ -12,6 +12,10 @@ const Home = () => import("./views/Home.vue");
 const Users = () => import("./views/Users.vue");
 const User = () => import("./views/User.vue");
 const Reports = () => import("./views/Reports.vue");
+const MenuItems = () => import("./views/MenuItems.vue");
+const MenuItem = () => import("./views/MenuItem.vue");
+const Profiles = () => import("./views/Profiles.vue");
+const Profile = () => import("./views/Profile.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,6 +25,10 @@ const router = createRouter({
     { path: "/users", name: "Users", component: Users },
     { path: "/user/:id", name: "User", component: User },
     { path: "/reports", name: "Reports", component: Reports },
+    { path: "/menuitems", name: "MenuItems", component: MenuItems },
+    { path: "/menuitem/:id", name: "MenuItem", component: MenuItem },
+    { path: "/profiles", name: "Profiles", component: Profiles },
+    { path: "/profile/:id", name: "Profile", component: Profile },
     ...SharedRoutes,
     ...SalesRoutes,
     ...PurchaseRoutes,

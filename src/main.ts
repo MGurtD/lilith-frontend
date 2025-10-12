@@ -40,6 +40,7 @@ import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
+import TreeTable from "primevue/treetable";
 import catalan from "./i18n/primevue/catalan";
 
 app.use(PrimeVue, {
@@ -72,6 +73,7 @@ app
   .component("RadioButton", RadioButton)
   .component("BaseInput", BaseInput)
   .component("BooleanColumn", BooleanColumn)
-  .component("ColorPicker", ColorPicker);
+  .component("ColorPicker", ColorPicker)
+  .component("TreeTable", TreeTable);
 
 app.mount("#app");

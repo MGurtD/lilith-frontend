@@ -5,7 +5,7 @@ import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
 import { ref } from "vue";
-import { getMenusByRole } from "./menus"; // fallback
+import { getMenusByRole } from "./raw.menus"; // fallback
 import { AppProfileService } from "../api/services/profile.service";
 import { UserMenuResponse, MenuNode } from "../types/profile";
 import { Exercise } from "../modules/shared/types";
@@ -69,7 +69,7 @@ export const useStore = defineStore("applicationStore", {
       const userMenu: UserMenuResponse | undefined =
         await AppProfileService.GetUserMenu(user.id);
       if (!userMenu || !userMenu.items) {
-        this.setMenusByRole(user); // fallback to legacy static menus
+        //this.setMenusByRole(user); // fallback to legacy static menus
         return;
       }
 
@@ -86,18 +86,12 @@ export const useStore = defineStore("applicationStore", {
         return entry;
       };
 
-      const header = {
-        header: "TEMGES",
-        hiddenOnCollapse: true,
-      };
-
       // Exclude technical header_main if backend included it as a MenuNode
       const roots = userMenu.items
-        .filter((r) => r.key !== "header_main")
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map(transform);
 
-      this.menus = [header, ...roots];
+      this.menus = [...roots];
 
       // Apply default screen highlighting if current still Home
       if (userMenu.defaultScreen) {

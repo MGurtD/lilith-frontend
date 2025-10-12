@@ -57,7 +57,7 @@ const logoutOperator = () => {
 
   <Login v-else />
 
-  <Toast position="top-center" />
+  <Toast position="bottom-right" />
   <ConfirmDialog />
   <ProgressSpinner v-if="apiStore.isWaiting" class="spinner" />
 </template>
@@ -67,7 +67,6 @@ const logoutOperator = () => {
 
 .app__view {
   position: fixed;
-  color: var(--bluegray-200);
   top: var(--top-panel-height);
   left: var(--side-bar-width);
   padding: 1rem;
