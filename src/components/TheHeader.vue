@@ -30,7 +30,7 @@
       <Avatar
         :label="store.user.username.substring(0, 1).toUpperCase()"
         class="title-bar__user__avatar"
-        size="large"
+        size="normal"
         shape="circle"
         @click="showOverlayPanel"
       />
@@ -108,8 +108,8 @@ const goBack = () => router.back();
   height: var(--top-panel-height);
   display: grid;
   grid-template-columns: 0.7fr 0.3fr;
-  padding-top: 0.5rem;
-  padding-bottom: 1rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.5rem;
   width: calc(100vw - var(--side-bar-width));
   transition: all 0.3s ease-in-out;
 }
@@ -126,11 +126,11 @@ const goBack = () => router.back();
 }
 
 .title-bar__page__text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .title-bar__back {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-right: 1rem;
   cursor: pointer;
 }
@@ -140,7 +140,8 @@ const goBack = () => router.back();
 }
 
 .title-bar__user {
-  margin-right: 2vw;
+  padding-top: 0.2rem;
+  margin-right: 1.5vw;
   font-size: 1rem;
   text-align: right;
 }
