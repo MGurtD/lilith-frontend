@@ -228,6 +228,11 @@ export const applicationMenus = [
         title: "Tiquets de producció",
         href: "/productionpart",
       },
+      {
+        icon: PrimeIcons.CALENDAR_TIMES,
+        title: "Histórics",
+        href: "/workcentershift",
+      },
     ],
   },
   {
