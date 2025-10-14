@@ -50,6 +50,14 @@ const submit = () => {
 </script>
 <template>
   <div class="form-profile">
+    <div class="flex justify-content-end mr-3">
+      <Button
+        :label="t('profiles.form.save')"
+        icon="pi pi-save"
+        :loading="submitting"
+        @click="submit"
+      />
+    </div>
     <div class="formgrid grid">
       <div class="field col-12 md:col-4">
         <label class="block mb-2">{{ t("profiles.form.name") }}</label>
@@ -60,22 +68,19 @@ const submit = () => {
         />
         <small class="p-error" v-if="errors.name">{{ errors.name[0] }}</small>
       </div>
-      <div class="field col-12 md:col-8">
+      <div class="field col-12 md:col-4">
         <label class="block mb-2">{{ t("profiles.form.description") }}</label>
         <InputText v-model="form.description" class="w-full" />
       </div>
       <div class="field col-12 md:col-4">
         <label class="block mb-2">{{ t("profiles.system") }}</label>
-        <InputSwitch v-model="form.isSystem" disabled />
+        <Checkbox
+          v-model="form.isSystem"
+          :disabled="props.readonlySystem"
+          :binary="true"
+          class="mt-1"
+        />
       </div>
-    </div>
-    <div class="flex gap-2 mt-3">
-      <Button
-        :label="t('profiles.form.save')"
-        icon="pi pi-save"
-        :loading="submitting"
-        @click="submit"
-      />
     </div>
   </div>
 </template>

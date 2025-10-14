@@ -1,232 +1,276 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { getMenuItemsHierarchy } from "../api/services/menuitem.service";
+import { useMenusStore } from "../store/menus";
+import { useProfilesStore } from "../store/profiles";
 import type { MenuItemNode } from "../types/menuitem";
 
-interface AssignmentModel {
-  menuItemIds: string[];
-  defaultMenuItemId?: string | null;
-}
-const props = defineProps<{
-  modelValue: AssignmentModel | null;
-  disabled?: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", value: AssignmentModel): void;
-}>();
+const props = defineProps<{ profileId: string }>();
+
 const { t } = useI18n();
+const menusStore = useMenusStore();
+const profilesStore = useProfilesStore();
 
-const hierarchy = ref<MenuItemNode[]>([]);
-const loading = ref(false);
-const search = ref("");
+const emit = defineEmits<{
+  (e: "menu-selection-change", ids: string[]): void;
+  (e: "save"): void;
+}>();
 
-interface FlatRow {
+interface RowItem {
   id: string;
+  key: string;
   title: string;
   route?: string | null;
-  depth: number;
-  parentId?: string | null;
-  childrenIds: string[];
+  sortOrder: number;
+  icon?: string | null;
+  level: number;
+  parentId: string | null;
+  hasChildren: boolean;
 }
-const flatRows = ref<FlatRow[]>([]);
-// Reactive selection map id -> boolean
-const selectionMap = ref<Record<string, boolean>>({});
 
-const load = async () => {
-  loading.value = true;
-  try {
-    hierarchy.value = await getMenuItemsHierarchy();
-    const rows: FlatRow[] = [];
-    const walk = (nodes: MenuItemNode[], depth: number) => {
-      nodes
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .forEach((n) => {
-          const childrenIds: string[] = [];
-          if (n.children?.length) {
-            const collect = (c: MenuItemNode) => {
-              childrenIds.push(c.id);
-              c.children?.forEach(collect);
-            };
-            n.children.forEach(collect);
-          }
-          rows.push({
-            id: n.id,
-            title: n.title,
-            route: n.route,
-            depth,
-            parentId: n.parentId || null,
-            childrenIds,
-          });
-          if (n.children?.length) walk(n.children, depth + 1);
-        });
-    };
-    walk(hierarchy.value, 0);
-    flatRows.value = rows;
-    if (props.modelValue?.menuItemIds) {
-      const map: Record<string, boolean> = {};
-      props.modelValue.menuItemIds.forEach((id) => (map[id] = true));
-      selectionMap.value = map;
+const parentMap = ref<Map<string, string | null>>(new Map());
+const childrenMap = ref<Map<string, string[]>>(new Map());
+const rows = ref<RowItem[]>([]);
+
+const buildIndexes = (nodes: MenuItemNode[]) => {
+  parentMap.value = new Map();
+  childrenMap.value = new Map();
+  const visit = (node: MenuItemNode, parentId: string | null) => {
+    parentMap.value.set(node.id, parentId);
+    if (!childrenMap.value.has(parentId || "__root__")) {
+      childrenMap.value.set(parentId || "__root__", []);
     }
-  } finally {
-    loading.value = false;
+    childrenMap.value.get(parentId || "__root__")!.push(node.id);
+    if (node.children?.length) {
+      childrenMap.value.set(
+        node.id,
+        node.children.map((c) => c.id)
+      );
+      node.children.forEach((c) => visit(c, node.id));
+    } else {
+      childrenMap.value.set(node.id, []);
+    }
+  };
+  nodes.forEach((n) => visit(n, null));
+};
+
+const buildRows = (nodes: MenuItemNode[]) => {
+  const result: RowItem[] = [];
+  const walk = (node: MenuItemNode, parentId: string | null, level: number) => {
+    result.push({
+      id: node.id,
+      key: node.key,
+      title: node.title,
+      route: node.route ?? null,
+      sortOrder: node.sortOrder,
+      icon: node.icon ?? null,
+      level,
+      parentId,
+      hasChildren: !!node.children?.length,
+    });
+    node.children?.forEach((c) => walk(c, node.id, level + 1));
+  };
+  nodes.forEach((n) => walk(n, null, 0));
+  rows.value = result;
+};
+
+// Selection using DataTable pattern
+const selectionRows = ref<RowItem[]>([]);
+const selectionIds = ref<Set<string>>(new Set());
+
+const syncSelectionRows = () => {
+  selectionRows.value = rows.value.filter((r) => selectionIds.value.has(r.id));
+};
+
+const seedSelectionFromStore = () => {
+  const ids = new Set<string>(profilesStore.menuAssignment?.menuItemIds ?? []);
+  // ensure ancestors visible as selected
+  const withAncestors = new Set<string>(ids);
+  for (const id of ids) {
+    let p = parentMap.value.get(id) ?? null;
+    while (p) {
+      withAncestors.add(p);
+      p = parentMap.value.get(p) ?? null;
+    }
+  }
+  selectionIds.value = withAncestors;
+  syncSelectionRows();
+};
+
+const getDescendants = (id: string): string[] => {
+  const res: string[] = [];
+  const stack: string[] = [...(childrenMap.value.get(id) ?? [])];
+  while (stack.length) {
+    const cid = stack.pop()!;
+    res.push(cid);
+    const kids = childrenMap.value.get(cid) ?? [];
+    if (kids.length) stack.push(...kids);
+  }
+  return res;
+};
+
+const getAncestors = (id: string): string[] => {
+  const res: string[] = [];
+  let p = parentMap.value.get(id) ?? null;
+  while (p) {
+    res.push(p);
+    p = parentMap.value.get(p) ?? null;
+  }
+  return res;
+};
+
+const addWithDependencies = (id: string) => {
+  selectionIds.value.add(id);
+  getDescendants(id).forEach((d) => selectionIds.value.add(d));
+  getAncestors(id).forEach((a) => selectionIds.value.add(a));
+};
+
+const removeWithDependencies = (id: string) => {
+  selectionIds.value.delete(id);
+  getDescendants(id).forEach((d) => selectionIds.value.delete(d));
+  // remove ancestors that have no selected descendants
+  for (const a of getAncestors(id)) {
+    const anyBelow = getDescendants(a).some((d) => selectionIds.value.has(d));
+    if (!anyBelow) selectionIds.value.delete(a);
   }
 };
-onMounted(load);
+
+const onRowSelect = (e: any) => {
+  const row: RowItem = e.data;
+  addWithDependencies(row.id);
+  syncSelectionRows();
+  emit("menu-selection-change", Array.from(selectionIds.value));
+};
+
+const onRowUnselect = (e: any) => {
+  const row: RowItem = e.data;
+  removeWithDependencies(row.id);
+  syncSelectionRows();
+  emit("menu-selection-change", Array.from(selectionIds.value));
+};
+
+const onSelectAll = () => {
+  selectionIds.value = new Set(rows.value.map((r) => r.id));
+  syncSelectionRows();
+  emit("menu-selection-change", Array.from(selectionIds.value));
+};
+
+const onUnselectAll = () => {
+  selectionIds.value.clear();
+  syncSelectionRows();
+  emit("menu-selection-change", Array.from(selectionIds.value));
+};
+
+const loading = computed(
+  () =>
+    menusStore.treeLoading ||
+    profilesStore.menuLoading ||
+    menusStore.loading ||
+    profilesStore.saving
+);
+
+const saveSelection = () => {
+  emit("save");
+};
+
+onMounted(async () => {
+  await menusStore.fetchHierarchy(true);
+  await profilesStore.fetchMenuAssignment(props.profileId);
+  buildIndexes(menusStore.tree);
+  buildRows(menusStore.tree);
+  seedSelectionFromStore();
+  emit("menu-selection-change", Array.from(selectionIds.value));
+});
 
 watch(
-  () => props.modelValue?.menuItemIds,
+  () => menusStore.tree,
   (v) => {
-    if (v) {
-      const map: Record<string, boolean> = {};
-      v.forEach((id) => (map[id] = true));
-      selectionMap.value = map;
+    buildIndexes(v);
+    buildRows(v);
+    syncSelectionRows();
+  }
+);
+
+watch(
+  () => props.profileId,
+  async (newId) => {
+    if (newId) {
+      await profilesStore.fetchMenuAssignment(newId);
+      seedSelectionFromStore();
     }
   }
 );
 
-const visibleRows = computed(() => {
-  if (!search.value) return flatRows.value;
-  const term = search.value.toLowerCase();
-  const matchIds = new Set<string>();
-  const parentMap = new Map<string, string | null>();
-  flatRows.value.forEach((r) => parentMap.set(r.id, r.parentId || null));
-  flatRows.value.forEach((r) => {
-    if (
-      r.title.toLowerCase().includes(term) ||
-      (r.route || "").toLowerCase().includes(term)
-    ) {
-      let cur: string | null | undefined = r.id;
-      while (cur) {
-        matchIds.add(cur);
-        cur = parentMap.get(cur) || null;
-      }
-    }
-  });
-  return flatRows.value.filter((r) => matchIds.has(r.id));
-});
-
-const isSelected = (id: string) => !!selectionMap.value[id];
-const select = (id: string, value: boolean) => {
-  const row = flatRows.value.find((r) => r.id === id);
-  if (!row) return;
-  const allAffected = [id, ...row.childrenIds];
-  allAffected.forEach((a) =>
-    value ? (selectionMap.value[a] = true) : delete selectionMap.value[a]
-  );
-  if (!value) {
-    const parentChain = new Map(
-      flatRows.value.map(
-        (r) => [r.id, r.parentId || null] as [string, string | null]
-      )
-    );
-    let parent = row.parentId || null;
-    while (parent) {
-      const siblingsSelected = flatRows.value
-        .filter((r) => r.parentId === parent)
-        .some((s) => selectionMap.value[s.id]);
-      if (!siblingsSelected) delete selectionMap.value[parent];
-      parent = parentChain.get(parent) || null;
-    }
-  } else {
-    let parent = row.parentId || null;
-    const parentChain = new Map(
-      flatRows.value.map(
-        (r) => [r.id, r.parentId || null] as [string, string | null]
-      )
-    );
-    while (parent) {
-      selectionMap.value[parent] = true;
-      parent = parentChain.get(parent) || null;
-    }
-  }
-  emit("update:modelValue", {
-    menuItemIds: Object.keys(selectionMap.value),
-    defaultMenuItemId: props.modelValue?.defaultMenuItemId ?? null,
-  });
-};
-const toggleRow = (row: FlatRow) => select(row.id, !isSelected(row.id));
-const bulkSelect = () => {
-  const map: Record<string, boolean> = {};
-  flatRows.value.forEach((r) => (map[r.id] = true));
-  selectionMap.value = map;
-  emit("update:modelValue", {
-    menuItemIds: Object.keys(selectionMap.value),
-    defaultMenuItemId: props.modelValue?.defaultMenuItemId ?? null,
-  });
-};
-const bulkDeselect = () => {
-  selectionMap.value = {};
-  emit("update:modelValue", { menuItemIds: [], defaultMenuItemId: null });
-};
+watch(
+  () => profilesStore.menuAssignment,
+  () => seedSelectionFromStore(),
+  { deep: true }
+);
 </script>
 
 <template>
-  <div class="profile-menu-assignment">
-    <div class="flex align-items-center justify-content-between mb-2">
-      <span class="font-bold">{{ t("profiles.menuAssignment.title") }}</span>
-      <div class="flex gap-2">
-        <Button
-          size="small"
-          :label="t('profiles.menuAssignment.bulkSelect')"
-          @click="bulkSelect"
-          :disabled="disabled || loading"
-        />
-        <Button
-          size="small"
-          :label="t('profiles.menuAssignment.bulkDeselect')"
-          severity="secondary"
-          @click="bulkDeselect"
-          :disabled="disabled || loading"
-        />
-      </div>
-    </div>
-    <span class="p-input-icon-left w-full mb-2">
-      <i class="pi pi-search" />
-      <InputText
-        v-model="search"
-        class="w-full"
-        :placeholder="t('profiles.menuAssignment.searchPlaceholder')"
+  <div class="card">
+    <DataTable
+      :value="rows"
+      v-model:selection="selectionRows"
+      :loading="loading"
+      dataKey="id"
+      selectionMode="multiple"
+      @row-select="onRowSelect"
+      @row-unselect="onRowUnselect"
+      @select-all-change="
+        ($event) => ($event.checked ? onSelectAll() : onUnselectAll())
+      "
+      scrollable
+    >
+      <template #header>
+        <div class="flex justify-content-between align-items-center w-full">
+          <span class="text-xl font-bold">{{
+            t("profiles.menuAssignment.title") || "Assignació de menús"
+          }}</span>
+          <div class="flex gap-2">
+            <Button
+              icon="pi pi-check"
+              :label="t('common.save') || 'Desar'"
+              @click="saveSelection"
+            />
+          </div>
+        </div>
+      </template>
+
+      <Column selectionMode="multiple" headerStyle="width: 3rem" />
+
+      <Column :header="t('menuItems.title') || 'Títol'">
+        <template #body="slotProps">
+          <div class="flex align-items-center">
+            <span :style="{ marginLeft: slotProps.data.level * 16 + 'px' }">{{
+              slotProps.data.title
+            }}</span>
+          </div>
+        </template>
+      </Column>
+      <Column
+        field="key"
+        :header="t('menuItems.key') || 'Clau'"
+        style="width: 20%"
       />
-    </span>
-    <div v-if="loading" class="py-4 flex justify-content-center">
-      <ProgressSpinner style="width: 40px; height: 40px" strokeWidth="4" />
-    </div>
-    <div v-else>
-      <DataTable
-        :value="visibleRows"
-        dataKey="id"
-        scrollable
-        scrollHeight="400px"
-        tableStyle="min-width:40rem"
-      >
-        <Column :header="t('menuItems.title')">
-          <template #body="{ data }">
-            <div class="flex align-items-center">
-              <Checkbox
-                :binary="true"
-                :modelValue="isSelected(data.id)"
-                @change="toggleRow(data)"
-                class="mr-2"
-              />
-              <span :style="{ marginLeft: data.depth * 1.25 + 'rem' }">{{
-                data.title
-              }}</span>
-            </div>
-          </template>
-        </Column>
-        <Column
-          field="route"
-          :header="t('menuItems.route')"
-          style="width: 30%"
-        />
-      </DataTable>
-    </div>
+      <Column
+        field="route"
+        :header="t('menuItems.route') || 'Ruta'"
+        style="width: 25%"
+      />
+      <Column
+        field="sortOrder"
+        :header="t('menuItems.order') || 'Ordre'"
+        style="width: 8%"
+      />
+    </DataTable>
   </div>
 </template>
 
 <style scoped>
-.profile-menu-assignment :deep(.p-datatable) {
-  font-size: 0.9rem;
+.p-datatable .p-datatable-tbody > tr > td {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
 }
 </style>

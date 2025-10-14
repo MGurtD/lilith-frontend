@@ -8,6 +8,7 @@ import { useI18n } from "vue-i18n";
 import FormProfile from "../components/forms/FormProfile.vue";
 import ProfileMenuAssignment from "../components/ProfileMenuAssignment.vue";
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -17,6 +18,7 @@ const isNew = id === "new";
 const store = useStore();
 const profiles = useProfilesStore();
 const toast = useToast();
+const confirm = useConfirm();
 
 const formModel = ref<any>({});
 const menuModel = ref<{
@@ -100,10 +102,44 @@ const saveProfile = async () => {
     toast.add({ severity: "error", summary: t("profiles.error"), life: 3000 });
   }
 };
+
+const onMenuSelectionChange = (ids: string[]) => {
+  if (!menuModel.value) return;
+  menuModel.value.menuItemIds = ids;
+  // also update store working selection so other parts remain in sync
+  profiles.setMenuSelection(ids);
+};
+
+const onSaveMenus = () => {
+  confirm.require({
+    message:
+      (t("profiles.confirmAssignMenus") as string) ||
+      "Confirmes desar la selecció de menús?",
+    header: (t("common.confirm") as string) || "Confirmació",
+    icon: "pi pi-exclamation-triangle",
+    accept: async () => {
+      if (menuModel.value) {
+        profiles.setMenuSelection(menuModel.value.menuItemIds);
+      }
+      const ok = await profiles.saveMenuAssignment();
+      toast.add({
+        severity: ok ? "success" : "error",
+        summary: ok
+          ? (t("common.saved") as string) || "Desat correctament"
+          : (t("common.error") as string) || "Error en el procés",
+        life: ok ? 2500 : 4000,
+      });
+
+      store.user?.profileId &&
+        store.user.profileId === profiles.current?.id &&
+        store.loadUserMenus(store.user);
+    },
+  });
+};
 </script>
 <template>
   <div class="grid">
-    <div class="col-12 lg:col-4">
+    <div class="col-12">
       <div class="card h-full">
         <FormProfile
           v-model="formModel"
@@ -113,9 +149,13 @@ const saveProfile = async () => {
         />
       </div>
     </div>
-    <div class="col-12 lg:col-8">
+    <div class="col-12">
       <div class="card h-full">
-        <ProfileMenuAssignment v-model="menuModel" />
+        <ProfileMenuAssignment
+          :profileId="id"
+          @menu-selection-change="onMenuSelectionChange"
+          @save="onSaveMenus"
+        />
       </div>
     </div>
   </div>
