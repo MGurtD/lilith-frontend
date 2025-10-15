@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  watch,
+  nextTick,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useMenusStore } from "../store/menus";
 import { useProfilesStore } from "../store/profiles";
@@ -173,6 +180,21 @@ const saveSelection = () => {
   emit("save");
 };
 
+// Dynamic height handling
+const rootEl = ref<HTMLElement | null>(null);
+const tableHeight = ref<string>("400px");
+const HEADER_OFFSET = 16; // extra padding/margin space inside card
+
+const computeHeight = () => {
+  if (!rootEl.value) return;
+  const rect = rootEl.value.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const available = vh - rect.top - HEADER_OFFSET; // space until bottom
+  // Reserve a little space for card padding and potential shadows
+  const finalPx = Math.max(200, available - 8);
+  tableHeight.value = finalPx + "px";
+};
+
 onMounted(async () => {
   await menusStore.fetchHierarchy(true);
   await profilesStore.fetchMenuAssignment(props.profileId);
@@ -180,6 +202,13 @@ onMounted(async () => {
   buildRows(menusStore.tree);
   seedSelectionFromStore();
   emit("menu-selection-change", Array.from(selectionIds.value));
+  await nextTick();
+  computeHeight();
+  window.addEventListener("resize", computeHeight);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", computeHeight);
 });
 
 watch(
@@ -209,8 +238,10 @@ watch(
 </script>
 
 <template>
-  <div class="card">
+  <div class="card profile-menu-assignment" ref="rootEl">
     <DataTable
+      scrollable
+      :scrollHeight="tableHeight"
       :value="rows"
       v-model:selection="selectionRows"
       :loading="loading"
@@ -221,7 +252,6 @@ watch(
       @select-all-change="
         ($event) => ($event.checked ? onSelectAll() : onUnselectAll())
       "
-      scrollable
     >
       <template #header>
         <div class="flex justify-content-between align-items-center w-full">
@@ -230,8 +260,9 @@ watch(
           }}</span>
           <div class="flex gap-2">
             <Button
-              icon="pi pi-check"
-              :label="t('common.save') || 'Desar'"
+              size="small"
+              icon="pi pi-link"
+              :label="t('common.assign') || 'Assignar'"
               @click="saveSelection"
             />
           </div>
@@ -272,5 +303,12 @@ watch(
 .p-datatable .p-datatable-tbody > tr > td {
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
+}
+.profile-menu-assignment {
+  display: flex;
+  flex-direction: column;
+}
+.profile-menu-assignment :deep(.p-datatable-wrapper) {
+  flex: 1 1 auto;
 }
 </style>

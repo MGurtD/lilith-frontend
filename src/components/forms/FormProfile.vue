@@ -52,7 +52,8 @@ const submit = () => {
   <div class="form-profile">
     <div class="flex justify-content-end mr-3">
       <Button
-        :label="t('profiles.form.save')"
+        size="small"
+        :label="t('common.save')"
         icon="pi pi-save"
         :loading="submitting"
         @click="submit"

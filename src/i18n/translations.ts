@@ -17,6 +17,10 @@ const messages = {
       total: "Total",
       close: "Tancar",
       exportCsv: "Exporta CSV",
+      confirm: "Confirmar",
+      save: "Guardar",
+      saved: "Guardat correctament",
+      assign: "Assignar",
     },
     analytics: {
       cashflow: {
@@ -90,6 +94,7 @@ const messages = {
       error: "Error",
       newTitle: "Nou Perfil",
       editTitle: "Editar Perfil",
+      confirmAssignMenus: "Confirmes desar la selecció de menús?",
       form: {
         name: "Nom",
         description: "Descripció",
@@ -340,6 +345,10 @@ const messages = {
       total: "Total",
       close: "Cerrar",
       exportCsv: "Exportar CSV",
+      confirm: "Confirmar",
+      save: "Guardar",
+      saved: "Guardado correctamente",
+      assign: "Asignar",
     },
     analytics: {
       cashflow: {
@@ -445,6 +454,7 @@ const messages = {
           error: "Error",
           newTitle: "Nuevo Perfil",
           editTitle: "Editar Perfil",
+          confirmAssignMenus: "¿Confirmas guardar la selección de menús?",
           form: {
             name: "Nombre",
             description: "Descripción",
@@ -583,6 +593,10 @@ const messages = {
       total: "Total",
       close: "Close",
       exportCsv: "Export CSV",
+      confirm: "Confirm",
+      save: "Save",
+      saved: "Saved successfully",
+      assign: "Assign",
     },
     analytics: {
       cashflow: {
@@ -747,6 +761,7 @@ const messages = {
       registerTitle: "User registration",
       register: "Register",
       registerSubtitle: "Fill the form to create an account",
+      confirmAssignMenus: "Confirm saving menu selection?",
     },
   },
 };

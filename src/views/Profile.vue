@@ -150,7 +150,7 @@ const onSaveMenus = () => {
       </div>
     </div>
     <div class="col-12">
-      <div class="card h-full">
+      <div class="card">
         <ProfileMenuAssignment
           :profileId="id"
           @menu-selection-change="onMenuSelectionChange"
