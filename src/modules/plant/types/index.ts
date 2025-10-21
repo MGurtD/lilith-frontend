@@ -21,6 +21,17 @@ export interface WorkcenterRt {
   statusColor: string;
   statusStartTime: string; // ISO 8601 datetime string
   operators: Operator[];
+
+  currentTime?: string; // ISO 8601 datetime string
+  counterOk?: number;
+  counterKo?: number;
+  phaseCode?: string;
+  phaseDescription?: string;
+  phaseStartTime?: string; // ISO 8601 datetime string
+  phaseEndTime?: string; // ISO 8601 datetime string
+  workOrderCode?: string;
+  referenceCode?: string;
+  referenceDescription?: string;
 }
 
 export interface Operator {

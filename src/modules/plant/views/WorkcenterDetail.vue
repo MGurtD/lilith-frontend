@@ -1,23 +1,5 @@
 <template>
   <div class="workcenter-detail">
-    <!-- Header -->
-    <header v-if="workcenter" class="workcenter-header">
-      <div class="header-content">
-        <div class="header-info">
-          <p class="workcenter-name">
-            {{ workcenter.workcenterName }} -
-            {{ workcenter.workcenterDescription }}
-          </p>
-        </div>
-        <div class="header-status">
-          <Tag
-            :value="workcenter.statusName"
-            :severity="getStatusSeverity(workcenter.statusName)"
-          />
-        </div>
-      </div>
-    </header>
-
     <!-- Main content -->
     <main class="workcenter-main" v-if="workcenter">
       <div class="content-layout">
@@ -134,7 +116,7 @@ onMounted(async () => {
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
     backButtonVisible: true,
-    title: workcenter.value.workcenterName,
+    title: `${workcenter.value.workcenterName} - ${workcenter.value.workcenterDescription}`,
   });
 });
 
@@ -227,49 +209,14 @@ const handleOther = () => {
 .workcenter-detail {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--top-panel-height) - 1rem);
   overflow: hidden;
-}
-
-.workcenter-header {
-  background: var(--surface-0);
-  border-bottom: 1px solid var(--surface-border);
-  padding: 1rem 1.5rem;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-info {
-  flex: 1;
-}
-
-.workcenter-name {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-color);
-}
-
-.workcenter-description {
-  margin: 0.25rem 0 0 0;
-  font-size: 0.95rem;
-  color: var(--text-color-secondary);
-}
-
-.header-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .workcenter-main {
   flex: 1;
   overflow: hidden;
-  padding: 1rem;
+  padding-bottom: 1rem;
 }
 
 .content-layout {

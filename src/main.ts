@@ -41,6 +41,7 @@ import BooleanColumn from "./components/tables/BooleanColumn.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
 import TreeTable from "primevue/treetable";
+import Tag from "primevue/tag";
 import catalan from "./i18n/primevue/catalan";
 
 app.use(PrimeVue, {
@@ -74,6 +75,7 @@ app
   .component("BaseInput", BaseInput)
   .component("BooleanColumn", BooleanColumn)
   .component("ColorPicker", ColorPicker)
-  .component("TreeTable", TreeTable);
+  .component("TreeTable", TreeTable)
+  .component("Tag", Tag);
 
 app.mount("#app");

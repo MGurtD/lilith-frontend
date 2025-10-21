@@ -59,18 +59,21 @@
         <div class="info-item" v-if="workcenter.phaseStartTime">
           <label>Inici fase:</label>
           <span class="info-value">{{
-            formatDateTime(workcenter.phaseStartTime.toString())
+            formatDateTime(workcenter.phaseStartTime)
           }}</span>
         </div>
         <div class="info-item" v-if="workcenter.phaseEndTime">
           <label>Fi fase:</label>
           <span class="info-value">{{
-            formatDateTime(workcenter.phaseEndTime.toString())
+            formatDateTime(workcenter.phaseEndTime)
           }}</span>
         </div>
         <div class="info-item">
           <label>Durada:</label>
-          <span class="info-value">{{ calculateDuration() }}</span>
+          <span class="info-value" v-if="workcenter.phaseStartTime">{{
+            calculateDuration(workcenter.phaseStartTime)
+          }}</span>
+          <span class="info-value" v-else>--:--:--</span>
         </div>
       </div>
     </Panel>
@@ -85,13 +88,13 @@
         <div class="info-item">
           <label>Inici:</label>
           <span class="info-value">{{
-            formatTime(workcenter.shiftStartTime)
+            formatTime(workcenter.shiftDetailStartTime)
           }}</span>
         </div>
         <div class="info-item">
           <label>Fi:</label>
           <span class="info-value">{{
-            formatTime(workcenter.shiftEndTime)
+            formatTime(workcenter.shiftDetailEndTime)
           }}</span>
         </div>
       </div>
@@ -113,7 +116,7 @@
             <span class="operator-type">{{ operator.operatorTypeName }}</span>
           </div>
           <div class="operator-time">
-            <small>{{ formatTime(operator.startTime) }}</small>
+            <small>TODO !</small>
           </div>
         </div>
       </div>
@@ -131,7 +134,7 @@
           class="status-tag"
         />
         <div class="status-details">
-          <p>{{ workcenter.statusDescription }}</p>
+          <p>{{ workcenter.statusName }}</p>
           <small v-if="workcenter.statusStartTime">
             Desde: {{ formatDateTime(workcenter.statusStartTime.toString()) }}
           </small>
@@ -144,32 +147,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { WorkcenterRt } from "../../types";
-import { formatDateTime } from "../../../../utils/functions";
+import {
+  formatDateTime,
+  formatTime,
+  calculateDuration,
+} from "../../../../utils/functions";
 
 interface Props {
   workcenter: WorkcenterRt;
 }
 
 const props = defineProps<Props>();
-
-const formatTime = (date: Date | string): string => {
-  if (!date) return "--:--";
-  const d = new Date(date);
-  return d.toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
-};
-
-const calculateDuration = (): string => {
-  if (!props.workcenter.phaseStartTime) return "--";
-
-  const start = new Date(props.workcenter.phaseStartTime);
-  const now = new Date();
-  const diff = now.getTime() - start.getTime();
-
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-  return `${hours}h ${minutes}m`;
-};
 
 const getStatusSeverity = ():
   | "success"
