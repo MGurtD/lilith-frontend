@@ -18,9 +18,11 @@
         >
           <div class="datatable-filter">
             <div class="filter-field">
+              <label>Desde:</label>
               <Calendar v-model="filter.startDate" showIcon />
             </div>
             <div class="filter-field">
+              <label>Fins a:</label>
               <Calendar v-model="filter.endDate" showIcon />
             </div>
             <div class="filter-field">
@@ -52,11 +54,19 @@
         </div>
       </template>
       <Column expander style="width: 5rem" />
-      <Column field="groupKey" header="Clau" sortable></Column>
-      <Column field="totalCost" header="Cost"></Column>
-      <Column field="totalHours" header="Hores"></Column>
+      <Column field="groupKey" header="Clau" sortable> </Column>
       <Column field="totalQuantityOk" header="Quantitat OK"></Column>
       <Column field="totalQuantityKo" header="Quantitat KO"></Column>
+      <Column field="totalCost" header="Cost">
+        <template #body="slotProps">
+          {{ formatCurrency(slotProps.data.totalCost) }}
+        </template>
+      </Column>
+      <Column field="totalHours" header="Hores">
+        <template #body="slotProps">
+          {{ slotProps.data.totalHours.toFixed(2) }}
+        </template>
+      </Column>
       <template #expansion="slotProps">
         <div class="p-3">
           <DataTable
@@ -73,12 +83,28 @@
               sortable
             />
             <Column field="machineStatusName" header="Estat de màquina" />
-            <Column field="startTime" header="Inici" sortable />
-            <Column field="endTime" header="Fi" sortable />
+            <Column field="startTime" header="Inici" sortable>
+              <template #body="slotProps">
+                {{ formatDateTimeUTC(slotProps.data.startTime) }}
+              </template>
+            </Column>
+            <Column field="endTime" header="Fi" sortable>
+              <template #body="slotProps">
+                {{ formatDateTimeUTC(slotProps.data.endTime) }}
+              </template>
+            </Column>
             <Column field="quantityOk" header="Quantitat OK" />
             <Column field="quantityKo" header="Quantitat KO" />
-            <Column field="totalCost" header="Cost"></Column>
-            <Column field="totalHours" header="Hores"></Column>
+            <Column field="totalCost" header="Cost">
+              <template #body="slotProps">
+                {{ formatCurrency(slotProps.data.totalCost) }}
+              </template>
+            </Column>
+            <Column field="totalHours" header="Hores">
+              <template #body="slotProps">
+                {{ slotProps.data.totalHours.toFixed(2) }}
+              </template>
+            </Column>
           </DataTable>
         </div>
       </template>
@@ -90,6 +116,7 @@ import { ref, onMounted } from "vue";
 import { useWorkcenterShiftStore } from "../store/workcentershift";
 import type { WorkcenterShiftGroup, WorkcenterShiftRequest } from "../types";
 import { PrimeIcons } from "primevue/api";
+import { formatCurrency, formatDateTimeUTC } from "../../../utils/functions";
 
 const workcenterShifts = ref<WorkcenterShiftGroup[]>([]);
 const workcenterShiftStore = useWorkcenterShiftStore();
