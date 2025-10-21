@@ -19,11 +19,37 @@
           <div class="datatable-filter">
             <div class="filter-field">
               <label>Desde:</label>
-              <Calendar v-model="filter.startDate" showIcon />
+              <Calendar
+                :modelValue="
+                  filter.startDate ? new Date(filter.startDate) : null
+                "
+                @update:modelValue="
+                  (val: Date | Date[] | (Date | null)[] | null | undefined) => {
+                    if (val instanceof Date) {
+                      filter.startDate = val.toISOString();
+                    } else {
+                      filter.startDate = '';
+                    }
+                  }
+                "
+                showIcon
+              />
             </div>
             <div class="filter-field">
               <label>Fins a:</label>
-              <Calendar v-model="filter.endDate" showIcon />
+              <Calendar
+                :modelValue="filter.endDate ? new Date(filter.endDate) : null"
+                @update:modelValue="
+                  (val: Date | Date[] | (Date | null)[] | null | undefined) => {
+                    if (val instanceof Date) {
+                      filter.endDate = val.toISOString();
+                    } else {
+                      filter.endDate = '';
+                    }
+                  }
+                "
+                showIcon
+              />
             </div>
             <div class="filter-field">
               <label>Agrupació</label>
