@@ -105,21 +105,24 @@ export const usePlantStore = defineStore("plantStore", {
       localStorage.removeItem(localStorageOperatorKey);
     },
 
-    async clockInOperator(operatorId: string) {
-      if (!this.workcenter) return;
+    async clockInOperator() {
+      console.log(this.operator, this.workcenter);
+      if (!this.workcenter || !this.operator) return;
 
       const response = await ActionsService.client.clockInOperator({
-        operatorId,
+        operatorId: this.operator.id,
         workcenterId: this.workcenter.id,
       });
+      console.log("Clock-in response:", response);
     },
-    async clockOutOperator(operatorId: string) {
-      if (!this.workcenter) return;
+    async clockOutOperator() {
+      if (!this.workcenter || !this.operator) return;
 
       const response = await ActionsService.client.clockOutOperator({
-        operatorId,
+        operatorId: this.operator.id,
         workcenterId: this.workcenter.id,
       });
+      console.log("Clock-out response:", response);
     },
   },
 });

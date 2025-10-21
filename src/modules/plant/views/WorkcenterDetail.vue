@@ -11,20 +11,6 @@
         <!-- Right panel - Tabs -->
         <section class="tabs-panel">
           <TabView v-model:activeIndex="activeTab">
-            <!-- Production Tab -->
-            <TabPanel>
-              <template #header>
-                <div class="flex align-items-center gap-2">
-                  <i :class="PrimeIcons.COG"></i>
-                  <span class="font-bold">Producció</span>
-                </div>
-              </template>
-              <WorkcenterProduction
-                v-if="activeTab === 0"
-                :workcenter="workcenter"
-              />
-            </TabPanel>
-
             <!-- Documentation Tab -->
             <TabPanel>
               <template #header>
@@ -35,6 +21,17 @@
               </template>
               <WorkcenterDocumentation :workcenter="workcenter" />
             </TabPanel>
+
+            <!-- Production Tab -->
+            <TabPanel>
+              <template #header>
+                <div class="flex align-items-center gap-2">
+                  <i :class="PrimeIcons.COG"></i>
+                  <span class="font-bold">Producció</span>
+                </div>
+              </template>
+              <WorkcenterProduction :workcenter="workcenter" />
+            </TabPanel>
           </TabView>
         </section>
       </div>
@@ -44,32 +41,18 @@
     <footer class="touch-panel">
       <div class="touch-buttons">
         <Button
-          :icon="PrimeIcons.LIST"
-          label="Planning"
+          :icon="PrimeIcons.SIGN_IN"
+          label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
-          @click="handlePlanning"
+          @click="handleOperatorClockIn"
         />
         <Button
-          :icon="PrimeIcons.COG"
-          label="Preparació"
+          :icon="PrimeIcons.SIGN_OUT"
+          label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
-          @click="handlePreparation"
-        />
-        <Button
-          :icon="PrimeIcons.TIMES"
-          label="Cerrar màquina"
-          severity="danger"
-          class="touch-button"
-          @click="handleCloseMachine"
-        />
-        <Button
-          :icon="PrimeIcons.ELLIPSIS_H"
-          label="Otras"
-          severity="secondary"
-          class="touch-button"
-          @click="handleOther"
+          @click="handleOperatorClockOut"
         />
       </div>
     </footer>
@@ -168,40 +151,12 @@ const getStatusSeverity = (
   return "secondary";
 };
 
-const handlePlanning = () => {
-  toast.add({
-    severity: "info",
-    summary: "Planning",
-    detail: "Funcionalitat en desenvolupament",
-    life: 3000,
-  });
+const handleOperatorClockIn = async () => {
+  await plantStore.clockInOperator();
 };
 
-const handlePreparation = () => {
-  toast.add({
-    severity: "info",
-    summary: "Preparació",
-    detail: "Funcionalitat en desenvolupament",
-    life: 3000,
-  });
-};
-
-const handleCloseMachine = () => {
-  toast.add({
-    severity: "warn",
-    summary: "Cerrar màquina",
-    detail: "Funcionalitat en desenvolupament",
-    life: 3000,
-  });
-};
-
-const handleOther = () => {
-  toast.add({
-    severity: "info",
-    summary: "Altres opcions",
-    detail: "Funcionalitat en desenvolupament",
-    life: 3000,
-  });
+const handleOperatorClockOut = async () => {
+  await plantStore.clockOutOperator();
 };
 </script>
 

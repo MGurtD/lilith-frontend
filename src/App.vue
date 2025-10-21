@@ -14,7 +14,7 @@ import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
 
 const store = useStore();
-const shopfloorStore = usePlantStore();
+const plantStore = usePlantStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
@@ -39,7 +39,7 @@ const logout = () => {
 };
 
 const logoutOperator = () => {
-  shopfloorStore.removeOperator();
+  plantStore.removeOperator();
   router.push({ path: "/plant" });
 };
 </script>

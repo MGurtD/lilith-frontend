@@ -42,6 +42,7 @@ import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
 import TreeTable from "primevue/treetable";
 import Tag from "primevue/tag";
+import Panel from "primevue/panel";
 import catalan from "./i18n/primevue/catalan";
 
 app.use(PrimeVue, {
@@ -76,6 +77,7 @@ app
   .component("BooleanColumn", BooleanColumn)
   .component("ColorPicker", ColorPicker)
   .component("TreeTable", TreeTable)
-  .component("Tag", Tag);
+  .component("Tag", Tag)
+  .component("Panel", Panel);
 
 app.mount("#app");
