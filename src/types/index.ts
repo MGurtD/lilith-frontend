@@ -42,19 +42,6 @@ export interface UserFilter {
   filter: string;
 }
 
-export interface File {
-  entity: string;
-  entityId: string;
-  type: number;
-  size: number;
-  originalName: string;
-  path: string;
-  id: string;
-  createdOn: string;
-  updatedOn: string;
-  disabled: boolean;
-}
-
 export interface Language {
   id: string;
   code: string;
@@ -69,4 +56,16 @@ export interface Profile {
   name: string;
   description?: string;
   isSystem?: boolean;
+}
+export interface File {
+  entity: string;
+  entityId: string;
+  type: number;
+  size: number;
+  originalName: string;
+  path: string;
+  id: string;
+  createdOn: string;
+  updatedOn: string;
+  disabled: boolean;
 }

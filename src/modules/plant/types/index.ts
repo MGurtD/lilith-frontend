@@ -1,45 +1,37 @@
-export interface Workcenter {
+import { Workcenter } from "../../production/types";
+
+export interface WorkcenterRt {
+  workcenter: Workcenter;
   workcenterId: string;
   workcenterName: string;
   workcenterDescription: string;
   areaId: string;
-  areaName: string;
   areaDescription: string;
-  currentDay: Date;
-  currentTime: string; // Note: TypeScript doesn't have a TimeSpan equivalent, using string
-  shiftId?: string; // Optional property
+  shiftId: string;
   shiftName: string;
   shiftDetailId: string;
-  shiftStartTime: Date;
-  shiftEndTime: Date;
-  workcenterDataId: number;
+  shiftDetailStartTime: string; // Time format: "HH:mm:ss"
+  shiftDetailEndTime: string; // Time format: "HH:mm:ss"
+  shiftDetailsIsProductiveTime: boolean;
+  statusId: string;
   statusName: string;
-  statusDescription: string;
+  statusOperatorsAllowed: boolean;
+  statusClosed: boolean;
+  statusStopped: boolean;
   statusColor: string;
-  statusStartTime?: Date; // Optional property
-  statusEndTime?: Date; // Optional property
-  workOrderCode: string;
-  referenceCode: string;
-  referenceDescription: string;
-  phaseCode: string;
-  phaseDescription: string;
-  phaseStartTime?: Date; // Optional property
-  phaseEndTime?: Date; // Optional property
-  counterOk: number;
-  counterKo: number;
-  workOrderPhases: WorkOrderPhase[];
+  statusStartTime: string; // ISO 8601 datetime string
   operators: Operator[];
 }
 
 export interface Operator {
-  workcenterId: string;
   operatorId: string;
   operatorCode: string;
   operatorName: string;
+  operatorSurname: string;
+  operatorTypeId: string;
   operatorTypeName: string;
   operatorTypeDescription: string;
-  startTime: Date;
-  endTime: Date;
+  operatorTypeCost: number;
 }
 
 export interface WorkOrderPhase {

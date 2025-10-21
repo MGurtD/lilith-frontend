@@ -118,6 +118,9 @@ export const usePlantModelStore = defineStore({
     async fetchWorkcenters() {
       this.workcenters = await workcenterService.getAll();
     },
+    async fetchWorkcentersVisibleInPlant() {
+      this.workcenters = await workcenterService.getVisibleInPlant();
+    },
     async fetchWorkcenter(id: string) {
       this.workcenter = await workcenterService.getById(id);
     },
@@ -210,6 +213,9 @@ export const usePlantModelStore = defineStore({
     },
     async fetchAreas() {
       this.areas = await areaService.getAll();
+    },
+    async fetchAreasVisibleInPlant() {
+      this.areas = await areaService.getVisibleInPlant();
     },
     async fetchArea(id: string) {
       this.area = await areaService.getById(id);

@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useApiStore } from "../store/backend";
 import { useStore } from "../store";
+import { WebSocketClient } from "./websocket-client";
 
-const baseUrl = import.meta.env.VITE_SERVER_BASE_URL as string;
+const baseUrl = import.meta.env.VITE_ACTIONS_BASE_URL as string;
 
 const serverClient = axios.create({
   baseURL: baseUrl,
@@ -84,6 +85,56 @@ export function logException(error: any) {
     console.log("Error", error.message);
   }
   console.log(error);
+}
+
+// Minimal WebSocket adapter (initial simple version)
+export const WS_ENDPOINTS = {
+  GENERAL: "/ws/general",
+  WORKCENTER: (id: string) => `/ws/workcenter/${id}`,
+} as const;
+
+let socketClient: WebSocketClient | null = null;
+let socketMessageHandlers = new Set<(data: any) => void>();
+
+export function connectWebSocket(
+  endpoint: string = WS_ENDPOINTS.GENERAL,
+  options: { debug?: boolean } = {}
+) {
+  if (socketClient && socketClient.isOpen()) {
+    if (options.debug) console.log("[WS] Already connected");
+    return;
+  }
+  const wsUrl = baseUrl.replace(/^http/, "ws");
+  socketClient = new WebSocketClient(`${wsUrl}${endpoint}`, {
+    debug: options.debug,
+  });
+
+  socketClient.onOpen(() => {
+    if (options.debug) console.log("[WS] Open, requesting initial data");
+    socketClient?.send({ action: "get-workcenters" });
+  });
+  socketClient.onMessage((data) => {
+    socketMessageHandlers.forEach((h) => h(data));
+  });
+  socketClient.onError((e) => {
+    console.error("[WS] Error", e);
+  });
+  socketClient.onClose(() => {
+    if (options.debug) console.log("[WS] Closed");
+  });
+  socketClient.connect();
+}
+
+export function disconnectWebSocket() {
+  if (!socketClient) return;
+  socketClient.disconnect();
+  socketClient = null;
+  socketMessageHandlers.clear();
+}
+
+export function handleMessages(handler: (data: any) => void) {
+  socketMessageHandlers.add(handler);
+  return () => socketMessageHandlers.delete(handler);
 }
 
 export default serverClient;

@@ -80,11 +80,11 @@ import Avatar from "primevue/avatar";
 import OverlayPanel from "primevue/overlaypanel";
 import { PrimeIcons } from "primevue/api";
 import { useRouter } from "vue-router";
-import { useShoopfloorStore } from "../modules/shoopfloor/store";
+import { usePlantStore } from "../modules/plant/store";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 
 const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
-const shopfloorStore = useShoopfloorStore();
+const shopfloorStore = usePlantStore();
 
 const store = useStore();
 const op = ref();
@@ -121,12 +121,12 @@ const goBack = () => router.back();
 
 .title-bar__page {
   margin-left: 1vw;
-  margin-top: 0.4rem;
+  margin-top: 0.6rem;
   text-align: left;
 }
 
 .title-bar__page__text {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .title-bar__back {

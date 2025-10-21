@@ -304,6 +304,16 @@ const messages = {
       },
     },
     home: {},
+    shopfloor: {
+      clockin: {
+        title: "Accés Operari",
+        placeholder: "Introdueix el codi",
+        buttonLabel: "Entrar",
+        errorTitle: "Operari/a inexistent",
+        errorDetail: "Introdueix un codi d'operari/a vàlid",
+        instructions: "Escaneja el codi o introdueix-lo manualment",
+      },
+    },
     login: {
       welcome: "Benvingut a Temges",
       subtitle: "Inicia sessió per continuar",
@@ -528,6 +538,16 @@ const messages = {
       },
     },
     home: {},
+    shopfloor: {
+      clockin: {
+        title: "Acceso Operario",
+        placeholder: "Introduce el código de operario/a",
+        buttonLabel: "Entrar",
+        errorTitle: "Operario/a inexistente",
+        errorDetail: "Introduce un código de operario/a válido",
+        instructions: "Escanea el código o introdúcelo manualmente",
+      },
+    },
     login: {
       loginTitle: "Benvingut a Temges",
       username: "Nom d'usuari",
@@ -740,6 +760,16 @@ const messages = {
       },
     },
     home: {},
+    shopfloor: {
+      clockin: {
+        title: "Operator Access",
+        placeholder: "Enter your operator code",
+        buttonLabel: "Enter",
+        errorTitle: "Operator not found",
+        errorDetail: "Please enter a valid operator code",
+        instructions: "Scan the code or enter it manually",
+      },
+    },
     login: {
       welcome: "Welcome to Temges",
       subtitle: "Sign in to continue",

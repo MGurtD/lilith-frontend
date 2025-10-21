@@ -7,14 +7,14 @@ import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
 import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useShoopfloorStore } from "./modules/shoopfloor/store";
+import { usePlantStore } from "./modules/plant/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
 import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
 
 const store = useStore();
-const shopfloorStore = useShoopfloorStore();
+const shopfloorStore = usePlantStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
@@ -40,7 +40,7 @@ const logout = () => {
 
 const logoutOperator = () => {
   shopfloorStore.removeOperator();
-  router.push({ path: "/shopfloor" });
+  router.push({ path: "/plant" });
 };
 </script>
 

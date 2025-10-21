@@ -33,6 +33,7 @@ export interface Area {
   siteId: string;
   isVisibleInPlant: boolean;
   disabled: boolean;
+  workcenters?: Array<Workcenter>;
 }
 
 export interface WorkcenterType {

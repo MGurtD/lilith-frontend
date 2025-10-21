@@ -4,7 +4,7 @@ import PurchaseRoutes from "./modules/purchase/routes";
 import SalesRoutes from "./modules/sales/routes";
 import ProductionRoutes from "./modules/production/routes";
 import WarehouseRoutes from "./modules/warehouse/routes";
-import ShoopfloorRoutes from "./modules/shoopfloor/routes";
+import ShoopfloorRoutes from "./modules/plant/routes";
 import AnalyticsRoutes from "./modules/analytics/routes";
 import VerifactuRoutes from "./modules/verifactu/routes";
 

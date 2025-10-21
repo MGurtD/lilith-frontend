@@ -1,38 +1,36 @@
 <template>
-  <OperatorClockIn v-if="!shopfloorStore.operator" @submit="onSubmit" />
-  <WorkcenterSelector v-else />
+  <OperatorClockIn v-if="!plantStore.operator" @submit="onSubmit" />
+  <SitePlantLayout v-else />
 </template>
 
 <script setup lang="ts">
 import OperatorClockIn from "../components/OperatorClockIn.vue";
-import WorkcenterSelector from "../components/WorkcenterSelector.vue";
+import SitePlantLayout from "../components/SiteAreas.vue";
 import { onMounted } from "vue";
 import { useStore } from "../../../store";
 import { PrimeIcons } from "primevue/api";
-import { useShoopfloorStore } from "../store";
+import { usePlantStore } from "../store";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { Operator } from "../../production/types";
 
 const store = useStore();
-const shopfloorStore = useShoopfloorStore();
 const plantModelStore = usePlantModelStore();
+const plantStore = usePlantStore();
 
 onMounted(async () => {
   await plantModelStore.fetchOperators();
+  await plantStore.fetchAreasWithWorkcenters();
+
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    title: "Operativa de planta",
+    title: `Àreas de ${plantStore.site?.name}`,
   });
 
-  await shopfloorStore.getOperator();
-  if (shopfloorStore.operator) {
-    plantModelStore.fetchActiveModel();
-  }
+  await plantStore.getOperator();
 });
 
 const onSubmit = async (operator: Operator) => {
-  shopfloorStore.setOperator(operator);
-  plantModelStore.fetchActiveModel();
+  plantStore.setOperator(operator);
 };
 </script>
 

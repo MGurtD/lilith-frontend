@@ -14,12 +14,12 @@
           class="brand-logo"
           draggable="false"
         />
-        <span class="brand-name" :title="companyName">{{ companyName }}</span>
-      </div>
-    </template>
-    <template #footer>
-      <div class="sidebar-footer" :class="{ collapsed: store.menuCollapsed }">
-        <small>v{{ appVersion }}</small>
+        <span
+          v-if="!store.menuCollapsed"
+          class="brand-name"
+          :title="companyName"
+          >{{ companyName }}</span
+        >
       </div>
     </template>
   </sidebar-menu>
@@ -78,8 +78,7 @@ function t(text: string) {
 }
 
 .brand-logo {
-  width: 34px;
-  height: 34px;
+  height: 40px;
   object-fit: contain;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
   transition: transform 0.25s ease;

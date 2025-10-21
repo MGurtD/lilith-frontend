@@ -1,13 +1,13 @@
 import { RouteRecordRaw } from "vue-router";
 
-const MainShopfloor = () => import("./views/Main.vue");
+const MainPlant = () => import("./views/Main.vue");
 const WorkcenterDetail = () => import("./views/WorkcenterDetail.vue");
 
 export default [
   {
-    path: "/shopfloor",
-    name: "MainShoopfloor",
-    component: MainShopfloor,
+    path: "/plant",
+    name: "MainPlant",
+    component: MainPlant,
   },
   {
     path: "/workcenter-detail/:id",
