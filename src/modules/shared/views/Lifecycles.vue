@@ -8,7 +8,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Cicles de vida</span>
+        <span class="text-900 font-bold">Cicles de vida</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded

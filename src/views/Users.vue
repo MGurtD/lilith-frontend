@@ -10,7 +10,7 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <span class="text-xl text-900 font-bold">Usuaris</span>
+          <span class="text-900 font-bold">Usuaris</span>
         </div>
       </template>
       <Column
@@ -31,6 +31,11 @@
         sortable
         style="width: 20%"
       ></Column>
+      <Column header="Perfil" sortable style="width: 15%">
+        <template #body="slotProps">
+          {{ getProfileName(slotProps.data.profileId, slotProps.data.profile) }}
+        </template>
+      </Column>
       <Column header="Desactivat" sortable style="width: 20%">
         <template #body="slotProps">
           <BooleanColumn :value="slotProps.data.disabled" :showColor="false" />
@@ -48,15 +53,35 @@ import { PrimeIcons } from "primevue/api";
 import BooleanColumn from "../components/tables/BooleanColumn.vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
-import { User } from "../types";
+import { User, Profile } from "../types";
+import { AppProfileService } from "../api/services/profile.service";
 
 const service = new UserService();
 const users = ref(undefined as User[] | undefined);
+const profiles = ref<Profile[] | undefined>();
+const profileMap = ref<Record<string, string>>({});
 const store = useStore();
 const router = useRouter();
 
 const fetchUsers = async () => {
   users.value = await service.GetAll();
+};
+
+const fetchProfiles = async () => {
+  profiles.value = await AppProfileService.GetAll();
+  if (profiles.value) {
+    profileMap.value = profiles.value.reduce(
+      (acc, p) => ({ ...acc, [p.id]: p.name }),
+      {} as Record<string, string>
+    );
+  }
+};
+
+const getProfileName = (profileId?: string, profileObj?: Profile) => {
+  if (profileObj?.name) return profileObj.name;
+  if (profileId && profileMap.value[profileId])
+    return profileMap.value[profileId];
+  return "";
 };
 
 const openUser = (row: DataTableRowClickEvent) => {
@@ -69,6 +94,6 @@ onMounted(async () => {
     title: "Gestió d'usuaris",
   });
 
-  await fetchUsers();
+  await Promise.all([fetchUsers(), fetchProfiles()]);
 });
 </script>

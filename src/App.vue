@@ -7,14 +7,14 @@ import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
 import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useShoopfloorStore } from "./modules/shoopfloor/store";
+import { usePlantStore } from "./modules/plant/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
 import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
 
 const store = useStore();
-const shopfloorStore = useShoopfloorStore();
+const plantStore = usePlantStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
@@ -39,8 +39,8 @@ const logout = () => {
 };
 
 const logoutOperator = () => {
-  shopfloorStore.removeOperator();
-  router.push({ path: "/shopfloor" });
+  plantStore.removeOperator();
+  router.push({ path: "/plant" });
 };
 </script>
 
@@ -57,17 +57,17 @@ const logoutOperator = () => {
 
   <Login v-else />
 
-  <Toast position="top-center" />
+  <Toast position="bottom-right" />
   <ConfirmDialog />
   <ProgressSpinner v-if="apiStore.isWaiting" class="spinner" />
 </template>
 
 <style lang="scss">
-@import "./assets/styles.scss";
+// Replaced deprecated @import with @use. Using 'as *' to preserve existing global class availability.
+@use "./assets/styles.scss" as *;
 
 .app__view {
   position: fixed;
-  color: var(--bluegray-200);
   top: var(--top-panel-height);
   left: var(--side-bar-width);
   padding: 1rem;

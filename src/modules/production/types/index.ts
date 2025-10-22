@@ -31,7 +31,9 @@ export interface Area {
   name: string;
   description: string;
   siteId: string;
+  isVisibleInPlant: boolean;
   disabled: boolean;
+  workcenters?: Array<Workcenter>;
 }
 
 export interface WorkcenterType {

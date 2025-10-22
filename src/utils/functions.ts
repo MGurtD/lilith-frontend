@@ -42,6 +42,12 @@ export const createDateFromNow = (
   return date;
 };
 
+export const formatTime = (date: Date | string): string => {
+  if (!date) return "--:--";
+  const d = new Date(date);
+  return d.toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
+};
+
 export const formatDate = (date: string | Date) => {
   const formatter = new Intl.DateTimeFormat("es-ES", {
     year: "numeric",
@@ -104,6 +110,19 @@ export const convertDateTimeToJSON = (dateTime: any): any => {
 
 export const formatDateForQueryParameter = (date: Date): string => {
   return convertDateTimeToJSON(date).split("T")[0];
+};
+
+export const calculateDuration = (startTime: string | null): string => {
+  if (!startTime) return "--";
+
+  const start = new Date(startTime);
+  const now = new Date();
+  const diff = now.getTime() - start.getTime();
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  return `${hours}h ${minutes}m`;
 };
 
 export const createBlobAndDownloadFile = (name: string, data: any) => {

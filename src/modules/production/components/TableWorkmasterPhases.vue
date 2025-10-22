@@ -13,7 +13,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Fases de la ruta</span>
+        <span class="text-900 font-bold">Fases de la ruta</span>
         <Button :icon="PrimeIcons.PLUS" rounded raised @click="onAddClick" />
       </div>
     </template>
