@@ -6,6 +6,7 @@ import {
   Operator,
   OperatorType,
   WorkcenterCost,
+  WorkcenterShiftGroup,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import {
@@ -25,6 +26,7 @@ import { ProductionPartService } from "./productionpart.service";
 import ShiftService from "./shift.service";
 import PlanningService from "./planning.service";
 import ProductionCostDashboardService from "./productioncostdashboard.service";
+import { WorkcenterShiftService } from "./workcentershift.service";
 import { AreaService } from "./area.service";
 import { WorkcenterService } from "./workcenter.service";
 
@@ -70,4 +72,5 @@ export default {
   ProductionCostDashboardService: new ProductionCostDashboardService(
     "/productioncost"
   ),
+  WorkcenterShift: new WorkcenterShiftService("/WorkcenterShift"),
 };
