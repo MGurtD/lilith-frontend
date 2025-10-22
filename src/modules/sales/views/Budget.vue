@@ -15,7 +15,10 @@
         v-if="budget && budget.details"
         :budget="budget"
         :details="budget.details"
-        @edit="(det: BudgetDetail) => openBudgetDetailDialog(FormActionMode.EDIT, det)"
+        @edit="
+          (det: BudgetDetail) =>
+            openBudgetDetailDialog(FormActionMode.EDIT, det)
+        "
         @delete="deleteSalesOrderDetails"
       >
         <template #header>
@@ -36,6 +39,32 @@
           </div>
         </template>
       </TableBudgetDetails>
+    </TabPanel>
+    <TabPanel header="Notes">
+      <section v-if="budget" class="mt-2">
+        <div>
+          <label class="block text-900 mb-2">Notes Internes</label>
+          <textarea
+            label="Notes Internes"
+            class="w-full p-inputtext p-component"
+            rows="3"
+            cols="30"
+            placeholder="Notes internes"
+            v-model="budget.userNotes"
+          ></textarea>
+        </div>
+      </section>
+      <section v-if="budget" class="mt-2">
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Notes automàtiques"
+            id="notes"
+            v-model="budget.notes"
+            disabled
+          />
+        </div>
+      </section>
     </TabPanel>
   </TabView>
 
@@ -66,6 +95,7 @@ import { PrimeIcons } from "primevue/api";
 import { storeToRefs } from "pinia";
 import { Budget, BudgetDetail, SalesOrderDetail } from "../types";
 import { useStore } from "../../../store";
+import { BaseInputType } from "../../../types/component";
 import {
   createBlobAndDownloadFile,
   getNewUuid,
