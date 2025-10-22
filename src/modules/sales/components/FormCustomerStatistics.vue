@@ -43,7 +43,9 @@
           <div class="card-title">Total Facturat (s/ impostos)</div>
         </template>
         <template #content>
-          <div class="total-count-accepted">{{ totalInvoicedAmount }} €</div>
+          <div class="total-count-accepted">
+            {{ totalInvoicedAmount.toFixed(2) }} €
+          </div>
         </template>
       </Card>
     </div>
