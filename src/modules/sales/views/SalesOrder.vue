@@ -22,7 +22,10 @@
         :salesOrderDetails="salesOrder.salesOrderDetails"
         :secondaryLifecycle="lifeCycleStore.secondaryLifecycle"
         :workorders="workOrderStore.workorders"
-        @edit="(det: SalesOrderDetail) => openOrderDetailDialog(FormActionMode.EDIT, det)"
+        @edit="
+          (det: SalesOrderDetail) =>
+            openOrderDetailDialog(FormActionMode.EDIT, det)
+        "
         @delete="deleteOrderDetail"
         @createWorkOrder="createWorkOrder"
         @openWorkOrder="openWorkOrder"
@@ -239,6 +242,7 @@ const openOrderDetailDialog = (
       isInvoiced: false,
       workMasterId: null,
       workOrderId: null,
+      userNotes: "",
     } as SalesOrderDetail;
   }
 
