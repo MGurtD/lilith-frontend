@@ -75,17 +75,6 @@
           />
         </div>
       </section>
-      <section v-if="budget.notes && budget.notes.length > 0" class="mt-2">
-        <div>
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            label="Notes"
-            id="notes"
-            v-model="budget.notes"
-            disabled
-          />
-        </div>
-      </section>
     </form>
   </div>
 </template>
