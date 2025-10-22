@@ -64,6 +64,7 @@ export interface Budget {
   acceptanceDate: any;
   statusId: string;
   notes: string;
+  userNotes: string;
   details: Array<BudgetDetail> | undefined;
 }
 
@@ -87,6 +88,7 @@ export interface BudgetDetail {
   unitPrice: number;
   totalCost: number;
   amount: number;
+  userNotes: string;
 }
 
 export interface SalesOrderHeader {
@@ -148,6 +150,7 @@ export interface SalesOrderDetail {
   amount: number;
   isDelivered: boolean;
   isInvoiced: boolean;
+  userNotes: string;
 }
 
 export interface CreateInvoiceDetailsFromOrderDetailsRequest {
