@@ -1,8 +1,9 @@
 <template>
   <sidebar-menu
-    :menu="store.menus"
-    :collapsed="store.menuCollapsed"
+    :menu="store.sidebar.menus"
+    :collapsed="store.sidebar.collapsed"
     :showOneChild="true"
+    :hideToggle="store.sidebar.hideToggle"
     @update:collapsed="toggleCollapse"
   >
     <template #header>
@@ -15,7 +16,7 @@
           draggable="false"
         />
         <span
-          v-if="!store.menuCollapsed"
+          v-if="!store.sidebar.collapsed"
           class="brand-name"
           :title="companyName"
           >{{ companyName }}</span
@@ -35,12 +36,12 @@ import { branding, getCompanyName } from "../config/branding";
 const store = useStore();
 
 // Derive dynamic company name depending on collapsed state
-const companyName = computed(() => getCompanyName(store.menuCollapsed));
+const companyName = computed(() => getCompanyName(store.sidebar.collapsed));
 // Use Vite env var VITE_APP_VERSION if defined (add to build script) otherwise fallback
 const appVersion = (import.meta as any).env?.VITE_APP_VERSION || "1.0.0";
 
 function toggleCollapse() {
-  store.menuCollapsed = !store.menuCollapsed;
+  store.sidebar.collapsed = !store.sidebar.collapsed;
 }
 
 function t(text: string) {

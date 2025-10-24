@@ -3,6 +3,7 @@ import {
   NavigationGuardNext,
   RouteLocationNormalized,
 } from "vue-router";
+import { useStore } from "../../store";
 import { usePlantStore } from "./store";
 
 const MainPlant = () => import("./views/Main.vue");
@@ -16,12 +17,17 @@ const checkOperatorAuth = async (
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
+  const store = useStore();
   const plantStore = usePlantStore();
 
   // Intentar recuperar operador de localStorage si no está en memoria
   if (!plantStore.operator) {
     await plantStore.getOperator();
   }
+
+  // Configurar sidebar según estado del operador
+  store.sidebar.collapsed = plantStore.operator ? true : false;
+  store.sidebar.hideToggle = plantStore.operator ? true : false;
 
   // Si existe operador y estamos en clockin, redirigir a areas
   if (plantStore.operator && to.name === "OperatorClockIn") {

@@ -20,6 +20,12 @@ export interface MenuItem {
   child?: Array<MenuItem>;
 }
 
+export interface SidebarConfig {
+  collapsed: boolean;
+  hideToggle: boolean;
+  menus: Array<any>;
+}
+
 export interface ChartOptions {
   labels: string[];
   datasets?: ChartDataSet[];

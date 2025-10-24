@@ -48,7 +48,7 @@ const logoutOperator = () => {
   <div v-if="store.authorization">
     <Header @logout-click="logout" @logout-operator-click="logoutOperator" />
     <SideBar />
-    <main class="app__view" :class="{ collapsed: store.menuCollapsed }">
+    <main class="app__view" :class="{ collapsed: store.sidebar.collapsed }">
       <ScrollPanel style="height: calc(100vh - 5rem)">
         <RouterView />
       </ScrollPanel>

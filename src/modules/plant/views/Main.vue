@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useStore } from "../../../store";
 import { PrimeIcons } from "primevue/api";
 import { usePlantStore } from "../store";

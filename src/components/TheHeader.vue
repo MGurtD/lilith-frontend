@@ -1,5 +1,5 @@
 <template>
-  <div class="title-bar" :class="{ collapsed: store.menuCollapsed }">
+  <div class="title-bar" :class="{ collapsed: store.sidebar.collapsed }">
     <div class="title-bar__page">
       <i
         v-if="store.currentMenuItem.backButtonVisible"
