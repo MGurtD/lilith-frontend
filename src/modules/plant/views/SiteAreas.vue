@@ -35,10 +35,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { usePlantStore } from "../store";
 import { WorkcenterViewState } from "../types";
-import WorkcenterCard from "./WorkcenterCard.vue";
+import WorkcenterCard from "../components/WorkcenterCard.vue";
+import { PrimeIcons } from "primevue/api";
+import Button from "primevue/button";
 
+const router = useRouter();
 const plantStore = usePlantStore();
 const visibleAreas = ref<Set<string>>(new Set());
 
@@ -50,6 +54,11 @@ onMounted(() => {
     }
   });
 });
+
+const logout = async () => {
+  plantStore.removeOperator();
+  router.push({ name: "OperatorClockIn" });
+};
 
 const toggleArea = (areaId: string) => {
   if (visibleAreas.value.has(areaId)) {

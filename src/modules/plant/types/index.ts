@@ -52,6 +52,7 @@ export interface OperatorSnapshot {
   operatorTypeName: string;
   operatorTypeDescription: string;
   operatorTypeCost: number;
+  operatorStartTime: string;
 }
 
 export interface WorkOrderPhase {

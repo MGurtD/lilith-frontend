@@ -18,7 +18,6 @@ export const usePlantStore = defineStore("plantStore", {
       workcenter: undefined as Workcenter | undefined,
       // Datos en tiempo real (WebSocket)
       areasWorkcentersRt: [] as WorkcenterRealtime[],
-      workcenterRt: undefined as WorkcenterRealtime | undefined,
       productionInstructionsDocuments: [] as File[],
     };
   },
@@ -42,7 +41,9 @@ export const usePlantStore = defineStore("plantStore", {
       if (!this.workcenter) return undefined;
       return {
         config: this.workcenter,
-        realtime: this.workcenterRt,
+        realtime: this.areasWorkcentersRt.find(
+          (rt) => rt.workcenterId === this.workcenter?.id
+        ),
       };
     },
   },
@@ -75,29 +76,6 @@ export const usePlantStore = defineStore("plantStore", {
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
-        // Inicializa snapshot en tiempo real con valores por defecto
-        this.workcenterRt = {
-          workcenterId: this.workcenter.id,
-          workcenterName: this.workcenter.name,
-          workcenterDescription: this.workcenter.description,
-          areaId: this.workcenter.areaId,
-          areaDescription: "",
-          shiftId: this.workcenter.shiftId,
-          shiftName: "",
-          shiftDetailId: "",
-          shiftDetailStartTime: "",
-          shiftDetailEndTime: "",
-          shiftDetailsIsProductiveTime: false,
-          statusId: "",
-          statusName: "",
-          statusOperatorsAllowed: false,
-          statusClosed: false,
-          statusStopped: false,
-          statusColor: "",
-          statusStartTime: "",
-          operators: [],
-        };
-
         this.fetchWorkInstructionDocuments();
       }
     },
@@ -112,6 +90,23 @@ export const usePlantStore = defineStore("plantStore", {
       if (files) {
         this.productionInstructionsDocuments = files;
       }
+    },
+
+    async clockInOperator() {
+      if (!this.workcenter || !this.operator) return;
+
+      const response = await ActionsService.client.clockInOperator({
+        operatorId: this.operator.id,
+        workcenterId: this.workcenter.id,
+      });
+    },
+    async clockOutOperator() {
+      if (!this.workcenter || !this.operator) return;
+
+      const response = await ActionsService.client.clockOutOperator({
+        operatorId: this.operator.id,
+        workcenterId: this.workcenter.id,
+      });
     },
 
     async getOperator(): Promise<Operator | undefined> {
@@ -131,26 +126,6 @@ export const usePlantStore = defineStore("plantStore", {
     removeOperator() {
       this.operator = undefined;
       localStorage.removeItem(localStorageOperatorKey);
-    },
-
-    async clockInOperator() {
-      console.log(this.operator, this.workcenter);
-      if (!this.workcenter || !this.operator) return;
-
-      const response = await ActionsService.client.clockInOperator({
-        operatorId: this.operator.id,
-        workcenterId: this.workcenter.id,
-      });
-      console.log("Clock-in response:", response);
-    },
-    async clockOutOperator() {
-      if (!this.workcenter || !this.operator) return;
-
-      const response = await ActionsService.client.clockOutOperator({
-        operatorId: this.operator.id,
-        workcenterId: this.workcenter.id,
-      });
-      console.log("Clock-out response:", response);
     },
   },
 });

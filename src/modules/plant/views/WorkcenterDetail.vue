@@ -78,7 +78,7 @@ const plantStore = usePlantStore();
 const id = route.params.id as string;
 const activeTab = ref(0);
 
-const workcenter = computed(() => plantStore.workcenterRt);
+const workcenter = computed(() => plantStore.workcenterView);
 
 let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -99,7 +99,7 @@ onMounted(async () => {
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
     backButtonVisible: true,
-    title: `${workcenter.value.workcenterName} - ${workcenter.value.workcenterDescription}`,
+    title: `${workcenter.value.config.name} - ${workcenter.value.config.description}`,
   });
 });
 

@@ -6,28 +6,42 @@
       :toggleable="false"
       class="panel-section"
     >
-      <div v-if="workcenter.workOrderCode" class="info-grid">
+      <div v-if="workcenter.realtime?.workOrderCode" class="info-grid">
         <div class="info-item">
           <label>OF:</label>
           <span class="info-value font-bold">{{
-            workcenter.workOrderCode
+            workcenter.realtime.workOrderCode
           }}</span>
         </div>
         <div class="info-item">
           <label>Referència:</label>
-          <span class="info-value">{{ workcenter.referenceCode }}</span>
+          <span class="info-value">{{
+            workcenter.realtime.referenceCode
+          }}</span>
         </div>
         <div class="info-item full-width">
           <span class="info-description">{{
-            workcenter.referenceDescription
+            workcenter.realtime.referenceDescription
           }}</span>
         </div>
         <div class="info-item">
           <label>Fase:</label>
           <span class="info-value"
-            >{{ workcenter.phaseCode }} -
-            {{ workcenter.phaseDescription }}</span
+            >{{ workcenter.realtime.phaseCode }} -
+            {{ workcenter.realtime.phaseDescription }}</span
           >
+        </div>
+        <div class="info-item">
+          <label>Unitats OK:</label>
+          <span class="info-value counter-ok">{{
+            workcenter.realtime.counterOk
+          }}</span>
+        </div>
+        <div class="info-item">
+          <label>Unitats KO:</label>
+          <span class="info-value counter-ko">{{
+            workcenter.realtime.counterKo
+          }}</span>
         </div>
       </div>
       <div v-else class="no-data">
@@ -35,43 +49,25 @@
       </div>
     </Panel>
 
-    <!-- Production Counters -->
-    <Panel header="Producció" :toggleable="false" class="panel-section">
-      <div class="counters-grid">
-        <div class="counter-card ok">
-          <div class="counter-label">Unitats OK</div>
-          <div class="counter-value">{{ workcenter.counterOk }}</div>
-        </div>
-        <div class="counter-card ko">
-          <div class="counter-label">Unitats KO</div>
-          <div class="counter-value">{{ workcenter.counterKo }}</div>
-        </div>
-      </div>
-    </Panel>
-
     <!-- Time Information -->
     <Panel header="Temps" :toggleable="false" class="panel-section">
       <div class="info-grid">
-        <div class="info-item">
-          <label>Hora actual:</label>
-          <span class="info-value font-bold">{{ workcenter.currentTime }}</span>
-        </div>
-        <div class="info-item" v-if="workcenter.phaseStartTime">
+        <div class="info-item" v-if="workcenter.realtime?.phaseStartTime">
           <label>Inici fase:</label>
           <span class="info-value">{{
-            formatDateTime(workcenter.phaseStartTime)
+            formatDateTime(workcenter.realtime.phaseStartTime)
           }}</span>
         </div>
-        <div class="info-item" v-if="workcenter.phaseEndTime">
+        <div class="info-item" v-if="workcenter.realtime?.phaseEndTime">
           <label>Fi fase:</label>
           <span class="info-value">{{
-            formatDateTime(workcenter.phaseEndTime)
+            formatDateTime(workcenter.realtime.phaseEndTime)
           }}</span>
         </div>
         <div class="info-item">
           <label>Durada:</label>
-          <span class="info-value" v-if="workcenter.phaseStartTime">{{
-            calculateDuration(workcenter.phaseStartTime)
+          <span class="info-value" v-if="workcenter.realtime?.phaseStartTime">{{
+            calculateDuration(workcenter.realtime.phaseStartTime)
           }}</span>
           <span class="info-value" v-else>--:--:--</span>
         </div>
@@ -82,19 +78,19 @@
     <Panel header="Torn" :toggleable="false" class="panel-section">
       <div class="info-grid">
         <div class="info-item">
-          <label>Torn actual:</label>
-          <span class="info-value font-bold">{{ workcenter.shiftName }}</span>
-        </div>
-        <div class="info-item">
           <label>Inici:</label>
           <span class="info-value">{{
-            formatTime(workcenter.shiftDetailStartTime)
+            workcenter.realtime?.shiftDetailStartTime
+              ? workcenter.realtime.shiftDetailStartTime
+              : "--:--"
           }}</span>
         </div>
         <div class="info-item">
           <label>Fi:</label>
           <span class="info-value">{{
-            formatTime(workcenter.shiftDetailEndTime)
+            workcenter.realtime?.shiftDetailEndTime
+              ? workcenter.realtime.shiftDetailEndTime
+              : "--:--"
           }}</span>
         </div>
       </div>
@@ -103,11 +99,14 @@
     <!-- Current Operators -->
     <Panel header="Operaris" :toggleable="false" class="panel-section">
       <div
-        v-if="workcenter.operators && workcenter.operators.length > 0"
+        v-if="
+          workcenter.realtime?.operators &&
+          workcenter.realtime.operators.length > 0
+        "
         class="operators-list"
       >
         <div
-          v-for="operator in workcenter.operators"
+          v-for="operator in workcenter.realtime.operators"
           :key="operator.operatorId"
           class="operator-item"
         >
@@ -116,7 +115,7 @@
             <span class="operator-type">{{ operator.operatorTypeName }}</span>
           </div>
           <div class="operator-time">
-            <small>TODO !</small>
+            <small>{{ formatDateTime(operator.operatorStartTime) }}</small>
           </div>
         </div>
       </div>
@@ -124,66 +123,23 @@
         <p>No hi ha operaris fitxats</p>
       </div>
     </Panel>
-
-    <!-- Current Status -->
-    <Panel header="Estat actual" :toggleable="false" class="panel-section">
-      <div class="status-info">
-        <Tag
-          :value="workcenter.statusName"
-          :severity="getStatusSeverity()"
-          class="status-tag"
-        />
-        <div class="status-details">
-          <p>{{ workcenter.statusName }}</p>
-          <small v-if="workcenter.statusStartTime">
-            Desde: {{ formatDateTime(workcenter.statusStartTime.toString()) }}
-          </small>
-        </div>
-      </div>
-    </Panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { WorkcenterRt } from "../../types";
-import {
-  formatDateTime,
-  formatTime,
-  calculateDuration,
-} from "../../../../utils/functions";
+import { onMounted, onUnmounted } from "vue";
+import { WorkcenterViewState } from "../../types";
+import { formatDateTime, calculateDuration } from "../../../../utils/functions";
 
 interface Props {
-  workcenter: WorkcenterRt;
+  workcenter: WorkcenterViewState;
 }
 
 const props = defineProps<Props>();
 
-const getStatusSeverity = ():
-  | "success"
-  | "info"
-  | "warning"
-  | "danger"
-  | "secondary"
-  | "contrast"
-  | undefined => {
-  const statusName = props.workcenter.statusName?.toLowerCase() || "";
+onMounted(() => {});
 
-  if (statusName.includes("producció") || statusName.includes("activa")) {
-    return "success";
-  } else if (statusName.includes("parada") || statusName.includes("aturada")) {
-    return "danger";
-  } else if (
-    statusName.includes("preparació") ||
-    statusName.includes("setup")
-  ) {
-    return "warning";
-  } else if (statusName.includes("manteniment")) {
-    return "info";
-  }
-
-  return "secondary";
-};
+onUnmounted(() => {});
 </script>
 
 <style scoped>
@@ -242,55 +198,16 @@ const getStatusSeverity = ():
   font-style: italic;
 }
 
-.counters-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.counter-card {
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  text-align: center;
-  border: 2px solid;
-}
-
-.counter-card.ok {
-  background: var(--green-50);
-  border-color: var(--green-500);
-}
-
-.counter-card.ko {
-  background: var(--red-50);
-  border-color: var(--red-500);
-}
-
-.counter-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-}
-
-.counter-card.ok .counter-label {
-  color: var(--green-700);
-}
-
-.counter-card.ko .counter-label {
-  color: var(--red-700);
-}
-
-.counter-value {
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.counter-card.ok .counter-value {
+.counter-ok {
   color: var(--green-600);
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-.counter-card.ko .counter-value {
+.counter-ko {
   color: var(--red-600);
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
 .operators-list {
@@ -326,33 +243,6 @@ const getStatusSeverity = ():
 }
 
 .operator-time {
-  color: var(--text-color-secondary);
-  font-size: 0.85rem;
-}
-
-.status-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.status-tag {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-}
-
-.status-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.status-details p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.status-details small {
   color: var(--text-color-secondary);
   font-size: 0.85rem;
 }
