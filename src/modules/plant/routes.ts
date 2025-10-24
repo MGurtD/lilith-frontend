@@ -10,7 +10,7 @@ export default [
     component: MainPlant,
   },
   {
-    path: "/workcenter-detail/:id",
+    path: "/plant/workcenter/:id",
     name: "WorkcenterDetail",
     component: WorkcenterDetail,
     props: true,

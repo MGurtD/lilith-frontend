@@ -71,7 +71,7 @@ function t(text: string) {
   font-size: 1.4rem;
   letter-spacing: 0.5px;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
   font-family: "Segoe UI", system-ui, sans-serif;
   text-transform: uppercase;
   white-space: nowrap;

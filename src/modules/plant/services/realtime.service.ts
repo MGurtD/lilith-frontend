@@ -9,12 +9,12 @@ import { GenericResponse } from "../../../types";
 
 class ActionsService {
   async clockInOperator(request: OperatorClockInOutRequest) {
-    const endpoint = `/operator/clockin`;
+    const endpoint = `/api/operator/clockin`;
     const response = await serverClient.post(endpoint, request);
     return response.data as GenericResponse<boolean | undefined>;
   }
   async clockOutOperator(request: OperatorClockInOutRequest) {
-    const endpoint = `/operator/clockout`;
+    const endpoint = `/api/operator/clockout`;
     const response = await serverClient.post(endpoint, request);
     return response.data as GenericResponse<boolean | undefined>;
   }

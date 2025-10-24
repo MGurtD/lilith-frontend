@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Area, Operator, Site, Workcenter } from "../../production/types";
-import { WorkcenterRt } from "../types";
+import { WorkcenterRealtime, WorkcenterViewState } from "../types";
 import ProductionServices from "../../production/services";
 import ActionsService from "../services/realtime.service";
 import { FileService } from "../../../api/services/file.service";
@@ -14,13 +14,37 @@ export const usePlantStore = defineStore("plantStore", {
       operator: undefined as Operator | undefined,
       site: undefined as Site | undefined,
       areas: [] as Area[],
+      // Datos maestros de configuración (API REST)
       workcenter: undefined as Workcenter | undefined,
-      workcenterRt: undefined as WorkcenterRt | undefined,
-      workcenterImageBlob: undefined as Blob | undefined,
+      // Datos en tiempo real (WebSocket)
+      areasWorkcentersRt: [] as WorkcenterRealtime[],
+      workcenterRt: undefined as WorkcenterRealtime | undefined,
       productionInstructionsDocuments: [] as File[],
-      // Realtime array of workcenters received from WebSocket snapshot
-      areasWorkcentersRt: [] as WorkcenterRt[],
     };
+  },
+  getters: {
+    // Vista combinada de áreas con workcenters (config + realtime)
+    areasWorkcentersView(): WorkcenterViewState[] {
+      return this.areas.flatMap((area) =>
+        (area.workcenters || []).map((wc) => {
+          const realtime = this.areasWorkcentersRt.find(
+            (rt) => rt.workcenterId === wc.id
+          );
+          return {
+            config: wc,
+            realtime,
+          } as WorkcenterViewState;
+        })
+      );
+    },
+    // Vista combinada del workcenter actual
+    workcenterView(): WorkcenterViewState | undefined {
+      if (!this.workcenter) return undefined;
+      return {
+        config: this.workcenter,
+        realtime: this.workcenterRt,
+      };
+    },
   },
   actions: {
     async fetchAreasWithWorkcenters() {
@@ -30,25 +54,29 @@ export const usePlantStore = defineStore("plantStore", {
       }
       this.areas = (await ProductionServices.Areas.getVisibleInPlant()) || [];
 
-      // Simple realtime socket connection: listen for snapshot and populate areasWorkcentersRt
+      // Conexión WebSocket para snapshots en tiempo real
       ActionsService.client.connect();
-      ActionsService.client.onMessage((data: any) => {
-        if (data && data.Workcenters && typeof data.Workcenters === "object") {
-          // Convert dictionary to array; cast minimally to WorkcenterRt
-          this.areasWorkcentersRt = Object.values(
-            data.Workcenters
-          ) as WorkcenterRt[];
+      ActionsService.client.onMessage((workcenters: any) => {
+        console.log("Received workcenters snapshot:", workcenters);
+        if (workcenters && typeof workcenters === "object") {
+          this.areasWorkcentersRt = Object.values(workcenters).map(
+            (wc: any) =>
+              ({
+                ...wc,
+                operators: Array.isArray(wc.operators) ? wc.operators : [],
+              }) as WorkcenterRealtime
+          );
+        } else {
+          this.areasWorkcentersRt = [];
         }
       });
-
-      // implement socket and handle messages
     },
     async fetchWorkcenter(workcenterId: string) {
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
+        // Inicializa snapshot en tiempo real con valores por defecto
         this.workcenterRt = {
-          workcenter: this.workcenter,
           workcenterId: this.workcenter.id,
           workcenterName: this.workcenter.name,
           workcenterDescription: this.workcenter.description,

@@ -11,26 +11,47 @@
         store.currentMenuItem.title
       }}</span>
     </div>
-    <div v-if="shopfloorStore.operator" class="title-bar__user">
-      <div class="title-bar__operator">
-        <p class="header-text">
-          {{ shopfloorStore.operator.name }}
-          {{ shopfloorStore.operator.surname }}
-        </p>
-        <Button
-          :icon="PrimeIcons.SIGN_OUT"
-          size="small"
-          severity="secondary"
-          label="Sortir"
-          @click="logoutOperator"
-        />
-      </div>
+    <div v-if="plantStore.operator" class="title-bar__user">
+      <Avatar
+        :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+        class="title-bar__user__avatar"
+        size="large"
+        shape="circle"
+        @click="showOverlayPanel"
+      />
+      <OverlayPanel ref="op">
+        <div class="user-menu">
+          <div class="user-menu__header">
+            <Avatar
+              :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+              class="user-menu__avatar"
+              size="large"
+              shape="circle"
+            />
+            <div class="user-menu__name">
+              {{ plantStore.operator.name }} {{ plantStore.operator.surname }}
+            </div>
+            <div class="user-menu__username">Operari</div>
+          </div>
+
+          <div class="divider" />
+
+          <div class="user-menu__actions">
+            <Button
+              :icon="PrimeIcons.SIGN_OUT"
+              label="Sortir"
+              class="w-full p-button-lg"
+              @click="logoutOperator"
+            />
+          </div>
+        </div>
+      </OverlayPanel>
     </div>
     <div class="title-bar__user" v-else-if="store.user">
       <Avatar
         :label="store.user.username.substring(0, 1).toUpperCase()"
         class="title-bar__user__avatar"
-        size="normal"
+        size="large"
         shape="circle"
         @click="showOverlayPanel"
       />
@@ -84,7 +105,7 @@ import { usePlantStore } from "../modules/plant/store";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 
 const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
-const shopfloorStore = usePlantStore();
+const plantStore = usePlantStore();
 
 const store = useStore();
 const op = ref();
