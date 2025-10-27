@@ -45,6 +45,7 @@
           label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
+          :disabled="disableClockIn"
           @click="handleOperatorClockIn"
         />
         <Button
@@ -52,6 +53,7 @@
           label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
+          :disabled="disableClockOut"
           @click="handleOperatorClockOut"
         />
       </div>
@@ -85,6 +87,25 @@ const activeTab = ref(0);
 
 const workcenter = computed(() => plantStore.workcenterView);
 
+// Computed para determinar si el operario está fichado
+const isOperatorClockedIn = computed(() => {
+  if (!workcenter.value?.realtime?.operators || !plantStore.operator) {
+    return false;
+  }
+  return workcenter.value.realtime.operators.some(
+    (op) => op.operatorId === plantStore.operator!.id
+  );
+});
+
+// Deshabilitar botones según estado
+const disableClockIn = computed(() => {
+  return !workcenter.value?.realtime || isOperatorClockedIn.value;
+});
+
+const disableClockOut = computed(() => {
+  return !workcenter.value?.realtime || !isOperatorClockedIn.value;
+});
+
 onMounted(async () => {
   // 1. Carregar dades del workcenter
   await plantStore.fetchWorkcenter(id);
@@ -102,7 +123,7 @@ onMounted(async () => {
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
     backButtonVisible: true,
-    title: `${workcenter.value.config.name} - ${workcenter.value.config.description}`,
+    title: workcenter.value.config.description,
   });
 
   // 3. Connectar WebSocket específic del workcenter
@@ -146,7 +167,6 @@ const handleOperatorClockOut = async () => {
   background: var(--surface-0);
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
-  overflow-y: auto;
 }
 
 .tabs-panel {

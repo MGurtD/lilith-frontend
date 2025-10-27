@@ -21,6 +21,8 @@ export const usePlantStore = defineStore("plantStore", {
       areas: [] as Area[],
       // Datos maestros de configuración (API REST)
       workcenter: undefined as Workcenter | undefined,
+      workcenterPictureBlob: undefined as Blob | undefined,
+      workcenterPictureUrl: undefined as string | undefined,
       // Datos en tiempo real (WebSocket)
       areasWorkcentersRt: [] as WorkcenterRealtime[],
       workcenterRt: undefined as WorkcenterRealtime | undefined,
@@ -122,12 +124,58 @@ export const usePlantStore = defineStore("plantStore", {
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
+        this.fetchWorkcenterPicture();
         this.fetchWorkInstructionDocuments();
       }
     },
 
+    async fetchWorkcenterPicture() {
+      if (!this.workcenter) return;
+
+      try {
+        const fileService = new FileService();
+        const files = await fileService.GetEntityFiles(
+          "WorkcenterPicture",
+          this.workcenter.id
+        );
+
+        if (files && files.length > 0) {
+          this.workcenterPicture = files[0];
+
+          // Descarga el archivo como Blob
+          const response = await fileService.Download(files[0]);
+          this.workcenterPictureBlob = new Blob([response], {
+            type: "image/jpeg",
+          });
+
+          // Crea ObjectURL para usar en <img src="">
+          if (this.workcenterPictureUrl) {
+            URL.revokeObjectURL(this.workcenterPictureUrl); // Limpia URL anterior
+          }
+          this.workcenterPictureUrl = URL.createObjectURL(
+            this.workcenterPictureBlob
+          );
+        } else {
+          this.clearWorkcenterPicture();
+        }
+      } catch (error) {
+        console.error("Error loading workcenter picture:", error);
+        this.clearWorkcenterPicture();
+      }
+    },
+
+    clearWorkcenterPicture() {
+      if (this.workcenterPictureUrl) {
+        URL.revokeObjectURL(this.workcenterPictureUrl);
+      }
+      this.workcenterPicture = undefined;
+      this.workcenterPictureBlob = undefined;
+      this.workcenterPictureUrl = undefined;
+    },
+
     async fetchWorkInstructionDocuments() {
       if (!this.workcenter) return;
+
       const fileService = new FileService();
       const files = await fileService.GetEntityFiles(
         "referenceMaps",

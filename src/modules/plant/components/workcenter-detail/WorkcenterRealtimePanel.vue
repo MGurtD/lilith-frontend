@@ -1,5 +1,21 @@
 <template>
   <div class="realtime-panel-content">
+    <!-- Workcenter Picture Section -->
+    <Panel
+      v-if="plantStore.workcenterPictureUrl"
+      header="Imatge del centre de treball"
+      :toggleable="true"
+      class="panel-section"
+    >
+      <div class="picture-container">
+        <img
+          :src="plantStore.workcenterPictureUrl"
+          alt="Imatge del centre de treball"
+          class="workcenter-picture"
+        />
+      </div>
+    </Panel>
+
     <!-- Current Work Order Section -->
     <Panel
       header="Ordre de fabricació actual"
@@ -49,53 +65,6 @@
       </div>
     </Panel>
 
-    <!-- Time Information -->
-    <Panel header="Temps" :toggleable="false" class="panel-section">
-      <div class="info-grid">
-        <div class="info-item" v-if="workcenter.realtime?.phaseStartTime">
-          <label>Inici fase:</label>
-          <span class="info-value">{{
-            formatDateTime(workcenter.realtime.phaseStartTime)
-          }}</span>
-        </div>
-        <div class="info-item" v-if="workcenter.realtime?.phaseEndTime">
-          <label>Fi fase:</label>
-          <span class="info-value">{{
-            formatDateTime(workcenter.realtime.phaseEndTime)
-          }}</span>
-        </div>
-        <div class="info-item">
-          <label>Durada:</label>
-          <span class="info-value" v-if="workcenter.realtime?.phaseStartTime">{{
-            calculateDuration(workcenter.realtime.phaseStartTime)
-          }}</span>
-          <span class="info-value" v-else>--:--:--</span>
-        </div>
-      </div>
-    </Panel>
-
-    <!-- Shift Information -->
-    <Panel header="Torn" :toggleable="false" class="panel-section">
-      <div class="info-grid">
-        <div class="info-item">
-          <label>Inici:</label>
-          <span class="info-value">{{
-            workcenter.realtime?.shiftDetailStartTime
-              ? workcenter.realtime.shiftDetailStartTime
-              : "--:--"
-          }}</span>
-        </div>
-        <div class="info-item">
-          <label>Fi:</label>
-          <span class="info-value">{{
-            workcenter.realtime?.shiftDetailEndTime
-              ? workcenter.realtime.shiftDetailEndTime
-              : "--:--"
-          }}</span>
-        </div>
-      </div>
-    </Panel>
-
     <!-- Current Operators -->
     <Panel header="Operaris" :toggleable="false" class="panel-section">
       <div
@@ -105,19 +74,11 @@
         "
         class="operators-list"
       >
-        <div
+        <OperatorDetail
           v-for="operator in workcenter.realtime.operators"
           :key="operator.operatorId"
-          class="operator-item"
-        >
-          <div class="operator-info">
-            <span class="operator-name">{{ operator.operatorName }}</span>
-            <span class="operator-type">{{ operator.operatorTypeName }}</span>
-          </div>
-          <div class="operator-time">
-            <small>{{ formatDateTime(operator.operatorStartTime) }}</small>
-          </div>
-        </div>
+          :operator="operator"
+        />
       </div>
       <div v-else class="no-data">
         <p>No hi ha operaris fitxats</p>
@@ -128,18 +89,24 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
+import { PrimeIcons } from "primevue/api";
 import { WorkcenterViewState } from "../../types";
-import { formatDateTime, calculateDuration } from "../../../../utils/functions";
+import OperatorDetail from "./OperatorDetail.vue";
+import { usePlantStore } from "../../store";
 
 interface Props {
   workcenter: WorkcenterViewState;
 }
 
 const props = defineProps<Props>();
+const plantStore = usePlantStore();
 
 onMounted(() => {});
 
-onUnmounted(() => {});
+onUnmounted(() => {
+  // Limpia el ObjectURL cuando el componente se desmonta
+  plantStore.clearWorkcenterPicture();
+});
 </script>
 
 <style scoped>
@@ -163,6 +130,23 @@ onUnmounted(() => {});
 
 .panel-section :deep(.p-panel-content) {
   padding: 1rem;
+}
+
+.picture-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.workcenter-picture {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .info-grid {
@@ -216,41 +200,20 @@ onUnmounted(() => {});
   gap: 0.75rem;
 }
 
-.operator-item {
-  padding: 0.75rem;
-  background: var(--surface-50);
-  border-radius: var(--border-radius);
-  border-left: 3px solid var(--primary-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.operator-info {
+.no-data {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-}
-
-.operator-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.operator-type {
-  font-size: 0.85rem;
-  color: var(--text-color-secondary);
-}
-
-.operator-time {
-  color: var(--text-color-secondary);
-  font-size: 0.85rem;
-}
-
-.no-data {
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   text-align: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
   color: var(--text-color-secondary);
+  min-height: 200px;
+}
+
+.no-data i {
+  margin-bottom: 0.5rem;
 }
 
 .no-data p {
