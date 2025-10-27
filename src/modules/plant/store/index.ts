@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { Area, Operator, Site, Workcenter } from "../../production/types";
+import {
+  Area,
+  Operator,
+  Site,
+  Workcenter,
+  WorkOrder,
+} from "../../production/types";
 import {
   WorkcenterRealtime,
   WorkcenterViewState,
@@ -26,6 +32,8 @@ export const usePlantStore = defineStore("plantStore", {
       // Datos en tiempo real (WebSocket)
       areasWorkcentersRt: [] as WorkcenterRealtime[],
       workcenterRt: undefined as WorkcenterRealtime | undefined,
+      // WorkOrder seleccionada manualmente (temporal hasta WebSocket)
+      selectedWorkOrder: undefined as WorkOrder | undefined,
       // Documentos de instrucciones de producción
       productionInstructionsDocuments: [] as File[],
       // Estado de conexión WebSocket
@@ -125,7 +133,6 @@ export const usePlantStore = defineStore("plantStore", {
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
         this.fetchWorkcenterPicture();
-        this.fetchWorkInstructionDocuments();
       }
     },
 
@@ -140,8 +147,6 @@ export const usePlantStore = defineStore("plantStore", {
         );
 
         if (files && files.length > 0) {
-          this.workcenterPicture = files[0];
-
           // Descarga el archivo como Blob
           const response = await fileService.Download(files[0]);
           this.workcenterPictureBlob = new Blob([response], {
@@ -168,18 +173,16 @@ export const usePlantStore = defineStore("plantStore", {
       if (this.workcenterPictureUrl) {
         URL.revokeObjectURL(this.workcenterPictureUrl);
       }
-      this.workcenterPicture = undefined;
-      this.workcenterPictureBlob = undefined;
       this.workcenterPictureUrl = undefined;
     },
 
-    async fetchWorkInstructionDocuments() {
+    async fetchWorkInstructionDocuments(referenceId: string) {
       if (!this.workcenter) return;
 
       const fileService = new FileService();
       const files = await fileService.GetEntityFiles(
         "referenceMaps",
-        "8002a9b4-55e9-464f-b03e-8d4b74544dd2"
+        referenceId
       );
       if (files) {
         this.productionInstructionsDocuments = files;
@@ -220,6 +223,13 @@ export const usePlantStore = defineStore("plantStore", {
     removeOperator() {
       this.operator = undefined;
       localStorage.removeItem(localStorageOperatorKey);
+    },
+
+    setSelectedWorkOrder(workOrder: WorkOrder) {
+      this.selectedWorkOrder = workOrder;
+    },
+    clearSelectedWorkOrder() {
+      this.selectedWorkOrder = undefined;
     },
   },
 });
