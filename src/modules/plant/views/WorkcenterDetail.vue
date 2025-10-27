@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
@@ -69,22 +69,25 @@ import { usePlantStore } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+import {
+  useWebSocketConnection,
+  WS_ENDPOINTS,
+} from "../composables/useWebSocketConnection";
 
 const route = useRoute();
 const toast = useToast();
 const appStore = useStore();
 const plantStore = usePlantStore();
+const { connect } = useWebSocketConnection();
 
 const id = route.params.id as string;
 const activeTab = ref(0);
 
 const workcenter = computed(() => plantStore.workcenterView);
 
-let pollingInterval: ReturnType<typeof setInterval> | null = null;
-
 onMounted(async () => {
-  // Fetch workcenter data
-  await fetchWorkcenterData(id);
+  // 1. Carregar dades del workcenter
+  await plantStore.fetchWorkcenter(id);
 
   if (!workcenter.value) {
     toast.add({
@@ -95,61 +98,19 @@ onMounted(async () => {
     return;
   }
 
-  // Set header menu
+  // 2. Configurar header
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
     backButtonVisible: true,
     title: `${workcenter.value.config.name} - ${workcenter.value.config.description}`,
   });
+
+  // 3. Connectar WebSocket específic del workcenter
+  plantStore.connectToWorkcenter(id);
+  connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
 });
 
-onUnmounted(() => {
-  stopPolling();
-});
-
-const fetchWorkcenterData = async (id: string) => {
-  // TODO: Replace with actual API call
-  // This should fetch the workcenter data from the API
-  await plantStore.fetchWorkcenter(id);
-};
-
-const stopPolling = () => {
-  if (pollingInterval) {
-    clearInterval(pollingInterval);
-    pollingInterval = null;
-  }
-};
-
-const getStatusSeverity = (
-  statusName: string
-):
-  | "success"
-  | "info"
-  | "warning"
-  | "danger"
-  | "secondary"
-  | "contrast"
-  | undefined => {
-  const lowerStatus = statusName?.toLowerCase() || "";
-
-  if (lowerStatus.includes("producció") || lowerStatus.includes("activa")) {
-    return "success";
-  } else if (
-    lowerStatus.includes("parada") ||
-    lowerStatus.includes("aturada")
-  ) {
-    return "danger";
-  } else if (
-    lowerStatus.includes("preparació") ||
-    lowerStatus.includes("setup")
-  ) {
-    return "warning";
-  } else if (lowerStatus.includes("manteniment")) {
-    return "info";
-  }
-
-  return "secondary";
-};
+// onUnmounted gestionat automàticament pel composable
 
 const handleOperatorClockIn = async () => {
   await plantStore.clockInOperator();

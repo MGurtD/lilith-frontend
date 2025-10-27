@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import Password from "primevue/password";
@@ -54,13 +54,28 @@ import { usePlantModelStore } from "../../production/store/plantmodel";
 import { usePlantStore } from "../store";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import { useStore } from "../../../store";
 
+const store = useStore();
 const router = useRouter();
 const plantModelStore = usePlantModelStore();
 const plantStore = usePlantStore();
 const toast = useToast();
 const { t } = useI18n();
 const operatorCode = ref("");
+
+onMounted(async () => {
+  // Pre-cargar operadores
+  await plantModelStore.fetchOperators();
+
+  // El guard se encargará de la navegación
+  await plantStore.getOperator();
+
+  store.setMenuItem({
+    icon: PrimeIcons.BUILDING,
+    title: "Fitxatge Operador",
+  });
+});
 
 const onSubmit = async () => {
   if (!operatorCode.value.trim()) return;

@@ -63,6 +63,7 @@ export const useStore = defineStore("applicationStore", {
     },
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
+      document.title = `Temges - ${menu.title}`;
     },
     setMenusByRole(user: User) {
       // legacy fallback

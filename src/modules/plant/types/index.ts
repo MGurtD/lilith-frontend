@@ -91,3 +91,23 @@ export interface WorkOrderPhaseResponse {
   description: string;
   workOrderId: string;
 }
+
+// WebSocket message wrapper
+export interface WebSocketMessage<T = any> {
+  type: string;
+  payload: T;
+}
+
+// Payload type for general workcenter snapshots
+export type WorkcentersSnapshotPayload = Record<string, WorkcenterRealtime>;
+
+// Realtime handler interfaces
+export interface RealtimeHandler {
+  cleanup: () => void;
+  onUpdate: (callback: (data: WorkcenterRealtime[]) => void) => void;
+}
+
+export interface WorkcenterRealtimeHandler {
+  cleanup: () => void;
+  onUpdate: (callback: (data: WorkcenterRealtime) => void) => void;
+}

@@ -35,30 +35,45 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { usePlantStore } from "../store";
 import { WorkcenterViewState } from "../types";
 import WorkcenterCard from "../components/WorkcenterCard.vue";
+import { useStore } from "../../../store";
 import { PrimeIcons } from "primevue/api";
-import Button from "primevue/button";
+import {
+  useWebSocketConnection,
+  WS_ENDPOINTS,
+} from "../composables/useWebSocketConnection";
 
-const router = useRouter();
+const store = useStore();
 const plantStore = usePlantStore();
 const visibleAreas = ref<Set<string>>(new Set());
+const { connect } = useWebSocketConnection();
 
 // Show all areas by default
-onMounted(() => {
+onMounted(async () => {
+  // 1. Carregar dades mestres d'àrees i workcenters
+  await plantStore.fetchAreasWithWorkcenters();
+
+  // 2. Configurar header
+  store.setMenuItem({
+    icon: PrimeIcons.BUILDING,
+    title: `Àrees de ${plantStore.site?.name || "Planta"}`,
+  });
+
+  // 3. Mostrar totes les àrees amb workcenters
   plantStore.areas.forEach((area) => {
     if (area.workcenters && area.workcenters.length > 0) {
       visibleAreas.value.add(area.id);
     }
   });
+
+  // 4. Connectar WebSocket general i configurar handlers al store
+  plantStore.connectToGeneral();
+  connect(WS_ENDPOINTS.GENERAL, { debug: true });
 });
 
-const logout = async () => {
-  plantStore.removeOperator();
-  router.push({ name: "OperatorClockIn" });
-};
+// onUnmounted gestionat automàticament pel composable
 
 const toggleArea = (areaId: string) => {
   if (visibleAreas.value.has(areaId)) {

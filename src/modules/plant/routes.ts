@@ -31,10 +31,10 @@ const checkOperatorAuth = async (
 
   // Si existe operador y estamos en clockin, redirigir a areas
   if (plantStore.operator && to.name === "OperatorClockIn") {
-    next({ name: "PlantAreas" });
+    next({ name: "SiteAreas" });
   }
   // Si NO existe operador y estamos en areas, redirigir a clockin
-  else if (!plantStore.operator && to.name === "PlantAreas") {
+  else if (!plantStore.operator && to.name === "SiteAreas") {
     next({ name: "OperatorClockIn" });
   }
   // Permitir acceso
@@ -58,16 +58,17 @@ export default [
       },
       {
         path: "areas",
-        name: "PlantAreas",
+        name: "SiteAreas",
         component: SiteAreas,
         beforeEnter: checkOperatorAuth,
       },
+      {
+        path: "/plant/workcenter/:id",
+        name: "WorkcenterDetail",
+        component: WorkcenterDetail,
+        beforeEnter: checkOperatorAuth,
+        props: true,
+      },
     ],
-  },
-  {
-    path: "/plant/workcenter/:id",
-    name: "WorkcenterDetail",
-    component: WorkcenterDetail,
-    props: true,
   },
 ] as Array<RouteRecordRaw>;
