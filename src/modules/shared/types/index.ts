@@ -1,3 +1,5 @@
+import { Customer } from "../../sales/types";
+
 export interface PaymentMethod {
   id: string;
   name: string;
@@ -86,6 +88,7 @@ export interface Reference {
   price: number;
   disabled: boolean;
   customerId: string | null;
+  customer: Customer | null;
   areaId: string | null;
   categoryName: string;
   referenceTypeId: string | null;

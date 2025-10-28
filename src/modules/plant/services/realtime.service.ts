@@ -77,7 +77,7 @@ class ActionsService {
       });
 
       // Processar missatges de workcenter (ambdós tipus)
-      if (messageType === "Workcenter" || messageType === "workcenter_update") {
+      if (messageType === "Workcenter") {
         if (payload && typeof payload === "object") {
           const data = {
             ...payload,

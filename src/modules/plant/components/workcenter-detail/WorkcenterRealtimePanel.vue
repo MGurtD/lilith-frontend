@@ -22,11 +22,29 @@
       :toggleable="false"
       class="panel-section"
     >
+      <template #icons>
+        <Button
+          v-if="currentWorkOrderData"
+          :icon="PrimeIcons.PENCIL"
+          @click="openWorkOrderSelector"
+          text
+          rounded
+          size="small"
+          severity="secondary"
+          v-tooltip.left="'Canviar ordre de fabricació'"
+        />
+      </template>
       <div v-if="currentWorkOrderData" class="info-grid">
         <div class="info-item">
           <label>OF:</label>
           <span class="info-value font-bold">{{
             currentWorkOrderData.workOrderCode
+          }}</span>
+        </div>
+        <div v-if="currentWorkOrderData.customer" class="info-item">
+          <label>Client:</label>
+          <span class="info-value font-bold">{{
+            currentWorkOrderData.customer
           }}</span>
         </div>
         <div class="info-item">
@@ -35,13 +53,13 @@
             referenceStore.getFullName(currentWorkOrderData.reference!)
           }}</span>
         </div>
-        <div v-if="currentWorkOrderData.phaseCode" class="info-item">
+        <!-- <div v-if="currentWorkOrderData.phaseCode" class="info-item">
           <label>Fase:</label>
           <span class="info-value"
             >{{ currentWorkOrderData.phaseCode }} -
             {{ currentWorkOrderData.phaseDescription }}</span
           >
-        </div>
+        </div> -->
         <div
           v-if="currentWorkOrderData.counterOk !== undefined"
           class="info-item"
@@ -101,6 +119,7 @@
     >
       <WorkcenterWorkOrderSelector
         :workcenterId="workcenter.config.id"
+        :excludeWorkOrderId="plantStore.selectedWorkOrder?.id"
         @workorder-selected="onWorkOrderSelected"
       />
     </Dialog>
@@ -138,6 +157,7 @@ const currentWorkOrderData = computed(() => {
     return {
       workOrderCode: wo.code,
       reference: wo.reference,
+      customer: wo.reference?.customer?.comercialName,
       phaseCode: firstPhase?.code,
       phaseDescription: firstPhase?.description,
       counterOk: undefined, // No disponible en WorkOrder manual

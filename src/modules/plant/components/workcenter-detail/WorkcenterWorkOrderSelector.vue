@@ -16,6 +16,13 @@
           <span class="font-bold">{{ slotProps.data.code }}</span>
         </template>
       </Column>
+      <Column header="Client">
+        <template #body="slotProps">
+          <span class="font-bold">{{
+            slotProps.data.reference.customer.comercialName
+          }}</span>
+        </template>
+      </Column>
       <Column header="Referència" :sortable="true">
         <template #body="slotProps">
           <div class="reference-column">
@@ -25,12 +32,7 @@
           </div>
         </template>
       </Column>
-      <Column
-        field="plannedDate"
-        header="Data planificada"
-        :sortable="true"
-        style="min-width: 140px"
-      >
+      <Column field="plannedDate" header="Data planificada" :sortable="true">
         <template #body="slotProps">
           {{ formatDate(slotProps.data.plannedDate) }}
         </template>
@@ -38,7 +40,6 @@
       <Column
         field="plannedQuantity"
         header="Quantitat"
-        :sortable="true"
         style="min-width: 100px; text-align: right"
       >
         <template #body="slotProps">
@@ -66,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { WorkOrder } from "../../../production/types";
 import { WorkOrderService } from "../../../production/services/workorder.service";
@@ -76,6 +77,7 @@ import { useReferenceStore } from "../../../shared/store/reference";
 
 interface Props {
   workcenterId: string;
+  excludeWorkOrderId?: string;
 }
 
 const referenceStore = useReferenceStore();
@@ -88,8 +90,16 @@ const emit = defineEmits<{
 const toast = useToast();
 const workOrderService = new WorkOrderService("WorkOrder");
 
-const workOrders = ref<WorkOrder[]>([]);
+const allWorkOrders = ref<WorkOrder[]>([]);
 const loading = ref(false);
+
+// Computed para filtrar la orden de fabricación actual si existe
+const workOrders = computed(() => {
+  if (!props.excludeWorkOrderId) {
+    return allWorkOrders.value;
+  }
+  return allWorkOrders.value.filter((wo) => wo.id !== props.excludeWorkOrderId);
+});
 
 const onRowSelect = (event: any) => {
   emit("workorder-selected", event.data);
@@ -102,9 +112,9 @@ const loadWorkOrders = async () => {
       props.workcenterId
     );
     if (result) {
-      workOrders.value = result;
+      allWorkOrders.value = result;
     } else {
-      workOrders.value = [];
+      allWorkOrders.value = [];
     }
   } catch (error) {
     console.error("Error loading work orders:", error);
@@ -114,7 +124,7 @@ const loadWorkOrders = async () => {
       detail: "Error al carregar les ordres de fabricació",
       life: 4000,
     });
-    workOrders.value = [];
+    allWorkOrders.value = [];
   } finally {
     loading.value = false;
   }
