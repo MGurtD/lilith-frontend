@@ -134,11 +134,37 @@ onMounted(async () => {
 // onUnmounted gestionat automàticament pel composable
 
 const handleOperatorClockIn = async () => {
-  await plantStore.clockInOperator();
+  const result = await plantStore.clockInOperator();
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Entrada registrada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al registrar l'entrada",
+      life: 4000,
+    });
+  }
 };
 
 const handleOperatorClockOut = async () => {
-  await plantStore.clockOutOperator();
+  const result = await plantStore.clockOutOperator();
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Sortida registrada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al registrar la sortida",
+      life: 4000,
+    });
+  }
 };
 </script>
 
@@ -161,12 +187,15 @@ const handleOperatorClockOut = async () => {
   grid-template-columns: 350px 1fr;
   gap: 1rem;
   height: 100%;
+  overflow: hidden;
 }
 
 .realtime-panel {
   background: var(--surface-0);
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 .tabs-panel {
@@ -176,6 +205,7 @@ const handleOperatorClockOut = async () => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  max-height: 100%;
 }
 
 .tabs-panel :deep(.p-tabview) {

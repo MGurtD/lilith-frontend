@@ -189,18 +189,18 @@ export const usePlantStore = defineStore("plantStore", {
       }
     },
 
-    async clockInOperator() {
-      if (!this.workcenter || !this.operator) return;
+    async clockInOperator(): Promise<boolean> {
+      if (!this.workcenter || !this.operator) return false;
 
-      const response = await ActionsService.client.clockInOperator({
+      return await ActionsService.client.clockInOperator({
         operatorId: this.operator.id,
         workcenterId: this.workcenter.id,
       });
     },
-    async clockOutOperator() {
-      if (!this.workcenter || !this.operator) return;
+    async clockOutOperator(): Promise<boolean> {
+      if (!this.workcenter || !this.operator) return false;
 
-      const response = await ActionsService.client.clockOutOperator({
+      return await ActionsService.client.clockOutOperator({
         operatorId: this.operator.id,
         workcenterId: this.workcenter.id,
       });
