@@ -45,6 +45,8 @@ export interface DialogOptions {
   closable: boolean;
   position: string;
   modal: boolean;
+  isPdf?: boolean;
+  selectedFile?: any;
 }
 
 export enum FileType {
