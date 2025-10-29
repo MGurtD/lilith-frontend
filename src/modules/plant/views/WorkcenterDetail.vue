@@ -214,11 +214,6 @@ const handleOperatorClockOut = async () => {
   flex-direction: column;
 }
 
-.tabs-panel :deep(.p-tabview-panels) {
-  flex: 1;
-  overflow-y: auto;
-}
-
 .touch-panel {
   background: var(--surface-50);
   border-top: 1px solid var(--surface-border);

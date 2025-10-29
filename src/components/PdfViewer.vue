@@ -358,18 +358,19 @@ onMounted(() => {
 
 /* PDF Content */
 .pdf-viewer-content {
-  padding: 24px 16px;
+  padding: 16px;
 }
 
 /* Make PDF responsive - critical for proper display */
 :deep(.vue-pdf-embed) {
   margin: 0 auto;
   display: block;
-  max-width: 60vw;
 }
 
 .pdf-content-wrapper.fullscreen :deep(.vue-pdf-embed) {
-  max-width: 60vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 :deep(.vue-pdf-embed__page) {
@@ -378,9 +379,7 @@ onMounted(() => {
 }
 
 :deep(.vue-pdf-embed__page canvas) {
-  width: 100% !important;
-  height: auto !important;
-  display: block;
+  margin: 0 auto;
 }
 
 /* Loading State */
