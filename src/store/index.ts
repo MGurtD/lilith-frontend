@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { AuthenticationResponse, Role, User } from "../types";
-import { MenuItem } from "../types/component";
+import { MenuItem, SidebarConfig } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
@@ -21,8 +21,11 @@ export const useStore = defineStore("applicationStore", {
       authorization: undefined as AuthenticationResponse | undefined,
       user: undefined as User | undefined,
       isWaiting: false,
-      menus: ref([] as Array<any>),
-      menuCollapsed: false,
+      sidebar: {
+        collapsed: false,
+        hideToggle: false,
+        menus: [],
+      } as SidebarConfig,
       currentMenuItem: {
         title: "Home",
         icon: PrimeIcons.HOME,
@@ -60,10 +63,11 @@ export const useStore = defineStore("applicationStore", {
     },
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
+      document.title = `Temges - ${menu.title}`;
     },
     setMenusByRole(user: User) {
       // legacy fallback
-      this.menus = getMenusByRole(user);
+      this.sidebar.menus = getMenusByRole(user);
     },
     async loadUserMenus(user: User) {
       const userMenu: UserMenuResponse | undefined =
@@ -91,7 +95,7 @@ export const useStore = defineStore("applicationStore", {
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map(transform);
 
-      this.menus = [...roots];
+      this.sidebar.menus = [...roots];
 
       // Apply default screen highlighting if current still Home
       if (userMenu.defaultScreen) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="title-bar" :class="{ collapsed: store.menuCollapsed }">
+  <div class="title-bar" :class="{ collapsed: store.sidebar.collapsed }">
     <div class="title-bar__page">
       <i
         v-if="store.currentMenuItem.backButtonVisible"
@@ -11,42 +11,71 @@
         store.currentMenuItem.title
       }}</span>
     </div>
-    <div v-if="shopfloorStore.operator" class="title-bar__user">
-      <div class="title-bar__operator">
-        <p class="header-text">
-          {{ shopfloorStore.operator.name }}
-          {{ shopfloorStore.operator.surname }}
-        </p>
-        <Button
-          :icon="PrimeIcons.SIGN_OUT"
-          size="small"
-          severity="secondary"
-          label="Sortir"
-          @click="logoutOperator"
+    <div v-if="plantStore.operator" class="title-bar__user">
+      <div class="avatar-container" @click="showOverlayPanel">
+        <Avatar
+          :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+          class="title-bar__user__avatar title-bar__user__avatar--operator"
+          size="large"
+          shape="circle"
         />
       </div>
+      <OverlayPanel ref="op">
+        <div class="user-menu">
+          <div class="user-menu__header">
+            <Avatar
+              :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+              class="user-menu__avatar user-menu__avatar--operator"
+              size="large"
+              shape="circle"
+            />
+            <div class="user-menu__name">
+              {{ plantStore.operator.name }} {{ plantStore.operator.surname }}
+            </div>
+            <div class="user-menu__username">
+              <i :class="PrimeIcons.USER" class="mr-1"></i>
+              Operari
+            </div>
+          </div>
+
+          <div class="divider" />
+
+          <div class="user-menu__actions">
+            <Button
+              :icon="PrimeIcons.SIGN_OUT"
+              label="Sortir"
+              class="w-full p-button-lg"
+              @click="logoutOperator"
+            />
+          </div>
+        </div>
+      </OverlayPanel>
     </div>
     <div class="title-bar__user" v-else-if="store.user">
-      <Avatar
-        :label="store.user.username.substring(0, 1).toUpperCase()"
-        class="title-bar__user__avatar"
-        size="normal"
-        shape="circle"
-        @click="showOverlayPanel"
-      />
+      <div class="avatar-container" @click="showOverlayPanel">
+        <Avatar
+          :label="store.user.username.substring(0, 1).toUpperCase()"
+          class="title-bar__user__avatar title-bar__user__avatar--admin"
+          size="large"
+          shape="circle"
+        />
+      </div>
       <OverlayPanel ref="op">
         <div class="user-menu">
           <div class="user-menu__header">
             <Avatar
               :label="store.user.username.substring(0, 1).toUpperCase()"
-              class="user-menu__avatar"
+              class="user-menu__avatar user-menu__avatar--admin"
               size="large"
               shape="circle"
             />
             <div class="user-menu__name">
               {{ store.user.firstName }} {{ store.user.lastName }}
             </div>
-            <div class="user-menu__username">@{{ store.user.username }}</div>
+            <div class="user-menu__username">
+              <i :class="PrimeIcons.SHIELD" class="mr-1"></i>
+              @{{ store.user.username }}
+            </div>
           </div>
 
           <div class="divider" />
@@ -77,6 +106,7 @@
 import { ref } from "vue";
 import { useStore } from "../store";
 import Avatar from "primevue/avatar";
+import Badge from "primevue/badge";
 import OverlayPanel from "primevue/overlaypanel";
 import { PrimeIcons } from "primevue/api";
 import { useRouter } from "vue-router";
@@ -84,7 +114,7 @@ import { usePlantStore } from "../modules/plant/store";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 
 const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
-const shopfloorStore = usePlantStore();
+const plantStore = usePlantStore();
 
 const store = useStore();
 const op = ref();
@@ -146,14 +176,48 @@ const goBack = () => router.back();
   text-align: right;
 }
 
-.title-bar__user__avatar {
-  background-color: var(--blue-100);
-  color: black;
+/* Avatar mejorado con badge */
+.avatar-container {
+  position: relative;
+  display: inline-block;
   cursor: pointer;
 }
 
-.title-bar__user__overlaypanel__text {
-  text-align: center;
+.title-bar__user__avatar {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.title-bar__user__avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Gradientes por rol */
+.title-bar__user__avatar--operator {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: white;
+}
+
+.title-bar__user__avatar--admin {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  color: #1e3a8a;
+}
+
+.avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* New user overlay menu styles */
@@ -172,6 +236,18 @@ const goBack = () => router.back();
 
 .user-menu__avatar {
   grid-row: span 2;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-menu__avatar--operator {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: white;
+}
+
+.user-menu__avatar--admin {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  color: #1e3a8a;
 }
 
 .user-menu__name {
@@ -182,6 +258,8 @@ const goBack = () => router.back();
 .user-menu__username {
   font-size: 0.85rem;
   color: var(--surface-500, #6b7280);
+  display: flex;
+  align-items: center;
 }
 
 .divider {

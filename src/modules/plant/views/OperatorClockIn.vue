@@ -46,24 +46,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import Password from "primevue/password";
 import { usePlantModelStore } from "../../production/store/plantmodel";
+import { usePlantStore } from "../store";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
-import { Operator } from "../../production/types";
+import { useStore } from "../../../store";
 
+const store = useStore();
+const router = useRouter();
 const plantModelStore = usePlantModelStore();
+const plantStore = usePlantStore();
 const toast = useToast();
 const { t } = useI18n();
 const operatorCode = ref("");
 
-const emit = defineEmits<{
-  (e: "submit", operator: Operator): void;
-}>();
+onMounted(async () => {
+  // Pre-cargar operadores
+  await plantModelStore.fetchOperators();
 
-const onSubmit = () => {
+  // El guard se encargará de la navegación
+  await plantStore.getOperator();
+
+  store.setMenuItem({
+    icon: PrimeIcons.BUILDING,
+    title: "Fitxatge Operador",
+  });
+});
+
+const onSubmit = async () => {
   if (!operatorCode.value.trim()) return;
 
   const operator = plantModelStore.operators?.find(
@@ -71,7 +85,11 @@ const onSubmit = () => {
   );
 
   if (operator) {
-    emit("submit", operator);
+    // Guardar operador en el store
+    await plantStore.setOperator(operator);
+
+    // Navegar a la vista de áreas
+    router.push({ name: "PlantAreas" });
   } else {
     toast.add({
       severity: "error",

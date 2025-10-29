@@ -39,13 +39,17 @@
         </div>
         <div
           :class="
-            file.type === FileType.IMAGE
+            file.type === FileType.IMAGE ||
+            file.originalName.toLowerCase().endsWith('.pdf')
               ? 'file-viewer-item-actions-image'
               : 'file-viewer-item-actions-file'
           "
         >
           <div
-            v-if="file.type === FileType.IMAGE"
+            v-if="
+              file.type === FileType.IMAGE ||
+              file.originalName.toLowerCase().endsWith('.pdf')
+            "
             class="file-viewer-item-action file-viewer-item-action-show"
             @click="showFile(file)"
           >
@@ -73,8 +77,10 @@
     :header="dialogOptions.title"
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
+    :style="{ width: dialogOptions.isPdf ? '90vw' : 'auto' }"
   >
-    <div id="img-container"></div>
+    <div v-if="!dialogOptions.isPdf" id="img-container"></div>
+    <PdfViewer v-else :file="dialogOptions.selectedFile" />
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -87,6 +93,7 @@ import { useToast } from "primevue/usetoast";
 import { loadImage, createBlobAndDownloadFile } from "../utils/functions";
 import { useConfirm } from "primevue/useconfirm";
 import { DialogOptions, FileType } from "../types/component";
+import PdfViewer from "./PdfViewer.vue";
 
 const props = defineProps<{
   title: string;
@@ -105,10 +112,12 @@ const loading = ref(false);
 // Instancia para controlar el diálogo
 const dialogOptions = reactive({
   visible: false,
-  title: "Detalle de la imagen",
+  title: "Detalle del document",
   closable: true,
   position: "center",
   modal: true,
+  isPdf: false,
+  selectedFile: null as File | null,
 } as DialogOptions);
 
 const fetchData = async () => {
@@ -177,13 +186,27 @@ const uploadFile = async () => {
 };
 
 const showFile = async (file: File) => {
+  const isPdf = file.originalName.toLowerCase().endsWith(".pdf");
+
+  dialogOptions.isPdf = isPdf;
+  dialogOptions.selectedFile = file;
+  dialogOptions.title = isPdf ? "Visualitzador de PDF" : "Detalle de la imatge";
   dialogOptions.visible = true;
 
-  const response = await service.Download(file);
-  const blob = new Blob([response], { type: "image/jpeg" });
-  const imageElement = await loadImage(blob);
+  // Si es una imatge, carregar-la al contenidor
+  if (!isPdf) {
+    const response = await service.Download(file);
+    const blob = new Blob([response], { type: "image/jpeg" });
+    const imageElement = await loadImage(blob);
 
-  document.getElementById("img-container")?.appendChild(imageElement);
+    // Netegem el contenidor abans d'afegir la nova imatge
+    const container = document.getElementById("img-container");
+    if (container) {
+      container.innerHTML = "";
+      container.appendChild(imageElement);
+    }
+  }
+  // Si es un PDF, el component PdfViewer s'encarregarà de carregar-lo
 };
 
 const downloadFile = async (file: File) => {
@@ -418,5 +441,11 @@ const deleteFile = async (file: File) => {
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* PDF Viewer in dialog */
+:deep(.pdf-viewer-container) {
+  height: 80vh;
+  max-height: 80vh;
 }
 </style>

@@ -13,27 +13,18 @@
         </div>
         <div>
           <label class="block text-900 mb-2">Client</label>
-          <div style="display: flex; align-items: center; gap: 0.5rem">
-            <Dropdown
-              v-model="salesOrder.customerId"
-              editable
-              :options="customerStore.customers"
-              optionValue="id"
-              optionLabel="comercialName"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.customerId,
-              }"
-              @update:modelValue="updateCustomer()"
-            />
-            <router-link
-              v-if="salesOrder.customerId"
-              :to="`/customers/${salesOrder.customerId}`"
-              style="color: inherit"
-            >
-              <i class="pi pi-search"></i>
-            </router-link>
-          </div>
+          <Dropdown
+            v-model="salesOrder.customerId"
+            editable
+            :options="customerStore.customers"
+            optionValue="id"
+            optionLabel="comercialName"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.customerId,
+            }"
+            @update:modelValue="updateCustomer()"
+          />
         </div>
         <div>
           <BaseInput

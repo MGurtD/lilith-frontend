@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { WorkcenterRt } from "../../types";
+import { WorkcenterViewState } from "../../types";
 
 interface Props {
-  workcenter: WorkcenterRt;
+  workcenter: WorkcenterViewState;
 }
 
 const props = defineProps<Props>();

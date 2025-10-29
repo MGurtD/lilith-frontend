@@ -36,6 +36,15 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       return response.data as Array<WorkOrder>;
     }
   }
+  async GetByWorkcenterIdInProduction(
+    workcenterId: string
+  ): Promise<Array<WorkOrder> | undefined> {
+    const endpoint = `${this.resource}/Workcenter/${workcenterId}/Production`;
+    const response = await this.apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<WorkOrder>;
+    }
+  }
   async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
     const response = await this.apiClient.post(
       `${this.resource}/CreateFromWorkMaster`,
