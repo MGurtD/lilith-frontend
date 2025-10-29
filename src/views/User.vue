@@ -1,6 +1,7 @@
 <template>
   <FormUser
     :roles="roles"
+    :profiles="profiles"
     :user="user"
     @change-password="changePassword"
     @submit="submitForm"
@@ -16,7 +17,8 @@ import { Role, UserLogin } from "../api/services/authentications.service";
 import { AuthenticationService } from "../api/services/authentications.service";
 import { UserService } from "../api/services/user.service";
 import { RoleService } from "../api/services/role.service";
-import { User } from "../types";
+import { User, Profile } from "../types";
+import { AppProfileService } from "../api/services/profile.service";
 import FormUser from "../components/forms/FormUser.vue";
 
 const router = useRouter();
@@ -24,6 +26,7 @@ const route = useRoute();
 const store = useStore();
 const user = ref(undefined as undefined | User);
 const roles = ref<Role[]>();
+const profiles = ref<Profile[]>();
 
 const roleService = new RoleService();
 const service = new UserService();
@@ -31,6 +34,7 @@ const service = new UserService();
 const loadView = async () => {
   user.value = await service.GetById(route.params.id as string);
   roles.value = await roleService.GetAll();
+  profiles.value = await AppProfileService.GetAll();
 
   if (user.value) {
     store.setMenuItem({
@@ -48,7 +52,7 @@ onMounted(async () => {
 const toast = useToast();
 const submitForm = async () => {
   const data = user.value as User;
-  let message = "Usuari actualizat correctament";
+  const message = "Usuari actualizat correctament";
 
   const updated = await service.Update(data);
   if (updated) {

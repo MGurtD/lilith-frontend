@@ -201,19 +201,18 @@
           </div>
         </section>
         <section class="mt-2">
-        <div>
-          <label class="block text-900 mb-2">Notes Internes</label>
-          <textarea
-            label="Notes Internes"
-            class="w-full p-inputtext p-component"
-            rows="3"
-            cols="30"
-            placeholder="Notes internes"
-            v-model="detail.userNotes"
-          ></textarea>
-        </div>
-      </section>
-
+          <div>
+            <label class="block text-900 mb-2">Notes Internes</label>
+            <textarea
+              label="Notes Internes"
+              class="w-full p-inputtext p-component"
+              rows="3"
+              cols="30"
+              placeholder="Notes internes"
+              v-model="detail.userNotes"
+            ></textarea>
+          </div>
+        </section>
         <Button
           :disabled="readonly"
           :label="textActionButton"

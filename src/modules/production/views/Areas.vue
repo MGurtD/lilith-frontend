@@ -10,7 +10,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Area</span>
+        <span class="text-900 font-bold">Area</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded
@@ -21,6 +21,11 @@
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
     <Column field="description" header="Descripció" style="width: 50%"></Column>
+    <Column header="Visible planta" style="width: 10%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.isVisibleInPlant" />
+      </template>
+    </Column>
     <Column header="Desactivada" style="width: 10%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />

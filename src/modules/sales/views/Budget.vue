@@ -15,7 +15,10 @@
         v-if="budget && budget.details"
         :budget="budget"
         :details="budget.details"
-        @edit="(det: BudgetDetail) => openBudgetDetailDialog(FormActionMode.EDIT, det)"
+        @edit="
+          (det: BudgetDetail) =>
+            openBudgetDetailDialog(FormActionMode.EDIT, det)
+        "
         @delete="deleteSalesOrderDetails"
       >
         <template #header>

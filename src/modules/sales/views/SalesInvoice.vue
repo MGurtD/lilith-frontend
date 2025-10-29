@@ -25,7 +25,7 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <span class="text-xl text-900 font-bold">Detall de la factura</span>
+          <span class="text-900 font-bold">Detall de la factura</span>
           <div>
             <Button
               :size="'small'"
@@ -56,8 +56,8 @@
         currentDialogType === dialogType.Rectificative
           ? '20vw'
           : currentDialogType === dialogType.Free
-          ? '50vw'
-          : '60vw',
+            ? '50vw'
+            : '60vw',
     }"
     :maximizable="currentDialogType === dialogType.FromDeliveryNote"
   >

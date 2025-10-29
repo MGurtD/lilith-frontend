@@ -31,7 +31,9 @@ export interface Area {
   name: string;
   description: string;
   siteId: string;
+  isVisibleInPlant: boolean;
   disabled: boolean;
+  workcenters?: Array<Workcenter>;
 }
 
 export interface WorkcenterType {
@@ -323,4 +325,49 @@ export interface ProductionCostDashboardGrouped {
   totalWorkcenterTime: number;
   totalPartWorkcenterCost: number;
   totalCost: number;
+}
+
+export interface WorkcenterShiftGroup {
+  groupKey: string;
+  groupId: string | null;
+  details: WorkDetail[];
+  totalHours: number;
+  totalCost: number;
+  totalQuantityOk: number;
+  totalQuantityKo: number;
+  detailCount: number;
+}
+
+export interface WorkDetail {
+  id: string;
+  workcenterShiftId: string;
+  startTime: string;
+  endTime: string | null;
+  current: boolean;
+  machineStatusId: string;
+  machineStatusName: string;
+  workcenterId: string;
+  workcenterName: string;
+  workcenterCost: number;
+  operatorId: string | null;
+  operatorName: string | null;
+  operatorCost: number;
+  concurrentOperatorWorkcenters: number;
+  workOrderPhaseId: string | null;
+  workOrderPhaseName: string | null;
+  workOrderCode: string | null;
+  concurrentWorkorderPhases: number;
+  quantityOk: number;
+  quantityKo: number;
+  totalHours: number;
+  totalCost: number;
+}
+
+export interface WorkcenterShiftRequest {
+  startDate: string;
+  endDate: string;
+  workcenterId?: string;
+  operatorId?: string;
+  workorderPhaseId?: string;
+  groupBy?: string;
 }

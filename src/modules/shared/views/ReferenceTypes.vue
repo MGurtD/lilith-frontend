@@ -13,7 +13,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Tipus de matèries primes</span>
+        <span class="text-900 font-bold">Tipus de matèries primes</span>
         <Button
           :icon="PrimeIcons.PLUS"
           rounded

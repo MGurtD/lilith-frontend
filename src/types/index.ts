@@ -30,6 +30,8 @@ export interface User {
   preferredLanguage: string;
   roleId: string;
   role?: Role;
+  profileId?: string | null;
+  profile?: Profile;
 }
 
 export interface UserFilter {
@@ -40,6 +42,21 @@ export interface UserFilter {
   filter: string;
 }
 
+export interface Language {
+  id: string;
+  code: string;
+  name: string;
+  icon?: string;
+  isDefault: boolean;
+  sortOrder?: number;
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  description?: string;
+  isSystem?: boolean;
+}
 export interface File {
   entity: string;
   entityId: string;
@@ -51,13 +68,4 @@ export interface File {
   createdOn: string;
   updatedOn: string;
   disabled: boolean;
-}
-
-export interface Language {
-  id: string;
-  code: string;
-  name: string;
-  icon?: string;
-  isDefault: boolean;
-  sortOrder?: number;
 }

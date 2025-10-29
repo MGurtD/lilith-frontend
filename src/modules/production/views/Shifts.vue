@@ -11,7 +11,7 @@
             <div
               class="flex flex-wrap align-items-center justify-content-between gap-2"
             >
-              <span class="text-xl text-900 font-bold">Torns</span>
+              <span class="text-900 font-bold">Torns</span>
               <Button
                 :icon="PrimeIcons.PLUS"
                 rounded
@@ -37,7 +37,7 @@
             <div
               class="flex flex-wrap align-items-center justify-content-between gap-2"
             >
-              <span class="text-xl text-900 font-bold">Horaris</span>
+              <span class="text-900 font-bold">Horaris</span>
               <Button
                 :icon="PrimeIcons.PLUS"
                 rounded

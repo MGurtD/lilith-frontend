@@ -14,7 +14,7 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-xl text-900 font-bold">Seleccionar fases</span>
+        <span class="text-900 font-bold">Seleccionar fases</span>
         <div class="datatable-filter-3">
           <div class="filter-field">
             <ExerciseDatePicker

@@ -28,7 +28,7 @@
             <div
               class="flex flex-wrap align-items-center justify-content-between gap-2"
             >
-              <span class="text-xl text-900 font-bold">Hores</span>
+              <span class="text-900 font-bold">Hores</span>
               <Button
                 :icon="PrimeIcons.PLUS"
                 rounded
