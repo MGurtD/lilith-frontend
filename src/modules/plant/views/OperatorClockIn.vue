@@ -13,8 +13,10 @@
 
       <!-- Input Section -->
       <div class="clockin__form">
-        <div class="clockin__input-wrapper">
-          <i :class="PrimeIcons.USER" class="clockin__input-icon"></i>
+        <InputGroup class="clockin__input-group">
+          <InputGroupAddon>
+            <i :class="PrimeIcons.USER"></i>
+          </InputGroupAddon>
           <Password
             v-model="operatorCode"
             :placeholder="$t('shopfloor.clockin.placeholder')"
@@ -22,8 +24,9 @@
             autofocus
             @keyup.enter="onSubmit"
             :feedback="false"
+            inputClass="clockin__password-field"
           />
-        </div>
+        </InputGroup>
 
         <Button
           :label="$t('shopfloor.clockin.buttonLabel')"
@@ -50,6 +53,8 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import Password from "primevue/password";
+import InputGroup from "primevue/inputgroup";
+import InputGroupAddon from "primevue/inputgroupaddon";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { usePlantStore } from "../store";
 import { useToast } from "primevue/usetoast";
@@ -165,36 +170,59 @@ const onSubmit = async () => {
   gap: 1.5rem;
 }
 
-.clockin__input-wrapper {
-  position: relative;
+.clockin__input-group {
+  width: 100%;
 }
 
-.clockin__input-icon {
-  position: absolute;
-  left: 1.25rem;
-  top: 50%;
-  transform: translateY(-50%);
+.clockin__input-group :deep(.p-inputgroup-addon) {
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  padding: 0 1rem;
+  min-width: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clockin__input-group :deep(.p-inputgroup-addon i) {
   color: #a0aec0;
   font-size: 1.5rem;
-  z-index: 1;
 }
 
 .clockin__input {
+  flex: 1;
+}
+
+.clockin__input :deep(.p-password) {
   width: 100%;
-  padding: 1.25rem 1.25rem 1.25rem 4rem !important;
-  font-size: 1.25rem !important;
+}
+
+.clockin__input :deep(.p-password-input),
+.clockin__password-field {
+  width: 100%;
+  padding: 1.25rem 1.25rem !important;
+  font-size: 1.125rem !important;
   text-align: left !important;
   border: 2px solid #e2e8f0 !important;
-  border-radius: 12px !important;
+  border-left: none !important;
+  border-radius: 0 12px 12px 0 !important;
   transition: all 0.3s ease !important;
   background: #f7fafc !important;
 }
 
-.clockin__input:focus {
+.clockin__input :deep(.p-password-input:focus),
+.clockin__password-field:focus {
   border-color: #667eea !important;
   background: white !important;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  box-shadow: none !important;
   outline: none !important;
+}
+
+.clockin__input-group:focus-within :deep(.p-inputgroup-addon) {
+  border-color: #667eea;
+  background: white;
 }
 
 .clockin__button {
@@ -258,8 +286,17 @@ const onSubmit = async () => {
     font-size: 1.125rem;
   }
 
-  .clockin__input {
+  .clockin__input :deep(.p-password-input),
+  .clockin__password-field {
     font-size: 1.5rem !important;
+  }
+
+  .clockin__input-group :deep(.p-inputgroup-addon) {
+    min-width: 4rem;
+  }
+
+  .clockin__input-group :deep(.p-inputgroup-addon i) {
+    font-size: 1.75rem;
   }
 
   .clockin__button {
@@ -285,9 +322,13 @@ const onSubmit = async () => {
 
 /* Touch-friendly adjustments */
 @media (hover: none) and (pointer: coarse) {
-  .clockin__input,
-  .clockin__button {
-    padding: 1.5rem !important;
+  .clockin__input :deep(.p-password-input),
+  .clockin__password-field {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .clockin__input-group :deep(.p-inputgroup-addon) {
+    padding: 1.5rem 1rem;
   }
 
   .clockin__button {

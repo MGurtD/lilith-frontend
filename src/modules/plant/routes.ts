@@ -26,7 +26,7 @@ const checkOperatorAuth = async (
   }
 
   // Configurar sidebar según estado del operador
-  store.sidebar.collapsed = plantStore.operator ? true : false;
+  store.sidebar.collapsed = true;
   store.sidebar.hideToggle = plantStore.operator ? true : false;
 
   // Si existe operador y estamos en clockin, redirigir a areas
