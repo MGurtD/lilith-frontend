@@ -85,24 +85,11 @@ const onSubmit = async () => {
   );
 
   if (operator) {
-    try {
-      // Guardar operador en el store
-      await plantStore.setOperator(operator);
+    // Guardar operador en el store
+    await plantStore.setOperator(operator);
 
-      // Pequeña pausa para asegurar que el store se actualiza
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Navegar a la vista de áreas usando path completo
-      await router.push("/plant/areas");
-    } catch (error) {
-      console.error("Error during navigation:", error);
-      toast.add({
-        severity: "error",
-        summary: "Error de navegació",
-        detail: "No s'ha pogut navegar a la vista d'àrees",
-        life: 4000,
-      });
-    }
+    // Navegar a la vista de áreas
+    router.push({ name: "SiteAreas" });
   } else {
     toast.add({
       severity: "error",
