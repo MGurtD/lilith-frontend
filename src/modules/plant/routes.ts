@@ -25,21 +25,25 @@ const checkOperatorAuth = async (
   }
 
   // Configurar sidebar según estado del operador
-  store.sidebar.collapsed = plantStore.operator ? true : false;
-  store.sidebar.hideToggle = plantStore.operator ? true : false;
+  store.sidebar.collapsed = !!plantStore.operator;
+  store.sidebar.hideToggle = !!plantStore.operator;
 
-  // Si existe operador y estamos en clockin, redirigir a areas
-  if (plantStore.operator && to.path === "/plant/clockin") {
-    next("/plant/areas");
+  const hasOperator = !!plantStore.operator;
+  const isClockInPage = to.path === "/plant/clockin";
+  const isProtectedPage =
+    to.path === "/plant/areas" || to.path.startsWith("/plant/workcenter");
+
+  // Redirigir solo si es necesario para evitar loops
+  if (hasOperator && isClockInPage) {
+    // Usuario autenticado intenta acceder a login -> redirigir a áreas
+    return next("/plant/areas");
+  } else if (!hasOperator && isProtectedPage) {
+    // Usuario NO autenticado intenta acceder a páginas protegidas -> redirigir a login
+    return next("/plant/clockin");
   }
-  // Si NO existe operador y estamos en areas, redirigir a clockin
-  else if (!plantStore.operator && to.path === "/plant/areas") {
-    next("/plant/clockin");
-  }
-  // Permitir acceso
-  else {
-    next();
-  }
+
+  // Permitir acceso en todos los demás casos
+  next();
 };
 
 export default [
