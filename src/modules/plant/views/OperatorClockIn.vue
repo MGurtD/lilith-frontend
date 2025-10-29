@@ -88,8 +88,8 @@ const onSubmit = async () => {
     // Guardar operador en el store
     await plantStore.setOperator(operator);
 
-    // Navegar a la vista de áreas
-    router.push({ name: "PlantAreas" });
+    // Navegar a la vista de áreas usando path completo (más confiable en producción)
+    await router.push("/plant/areas");
   } else {
     toast.add({
       severity: "error",
