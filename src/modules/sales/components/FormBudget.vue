@@ -45,26 +45,17 @@
         </div>
         <div>
           <label class="block text-900 mb-2">Client</label>
-          <div style="display: flex; align-items: center; gap: 0.5rem">
-            <Dropdown
-              v-model="budget.customerId"
-              editable
-              :options="customerStore.customers"
-              optionValue="id"
-              optionLabel="comercialName"
-              class="w-full"
-              :class="{
-                'p-invalid': validation.errors.customerId,
-              }"
-            />
-            <router-link
-              v-if="budget.customerId"
-              :to="`/customers/${budget.customerId}`"
-              style="color: inherit"
-            >
-              <i class="pi pi-search"></i>
-            </router-link>
-          </div>
+          <Dropdown
+            v-model="budget.customerId"
+            editable
+            :options="customerStore.customers"
+            optionValue="id"
+            optionLabel="comercialName"
+            class="w-full"
+            :class="{
+              'p-invalid': validation.errors.customerId,
+            }"
+          />
         </div>
         <div>
           <BaseInput
@@ -72,6 +63,17 @@
             label="Dies entrega"
             id="deliveryDays"
             v-model="budget.deliveryDays"
+          />
+        </div>
+      </section>
+      <section v-if="budget.notes && budget.notes.length > 0" class="mt-2">
+        <div>
+          <BaseInput
+            :type="BaseInputType.TEXT"
+            label="Notes"
+            id="notes"
+            v-model="budget.notes"
+            disabled
           />
         </div>
       </section>
