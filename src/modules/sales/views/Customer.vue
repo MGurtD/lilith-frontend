@@ -29,6 +29,16 @@
         @delete="removeAddress"
       />
     </TabPanel>
+    <TabPanel v-if="formMode === FormActionMode.EDIT">
+      <template #header>
+        <i :class="PrimeIcons.CHART_PIE" class="mr-2"></i>
+        <span>Estadístiques</span>
+      </template>
+      <FormCustomerStatistics
+        :budgets="budgets ?? []"
+        :salesInvoices="invoices ?? []"
+      />
+    </TabPanel>
   </TabView>
 </template>
 <script setup lang="ts">
@@ -44,19 +54,45 @@ import { FormActionMode } from "../../../types/component";
 import FormCustomer from "../components/FormCustomer.vue";
 import CustomerAddresses from "../components/TableCustomerAddresses.vue";
 import CustomerContacts from "../components/TableCustomerContacts.vue";
+import FormCustomerStatistics from "../components/FormCustomerStatistic.vue";
 import { useSharedDataStore } from "../../shared/store/masterData";
+import { useBudgetStore } from "../store/budget";
+import { formatDateForQueryParameter } from "../../../utils/functions";
+import { useSalesInvoiceStore } from "../store/invoice";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();
 const store = useStore();
 const sharedData = useSharedDataStore();
 const customerStore = useCustomersStore();
+const budgetStore = useBudgetStore();
+const salesInvoiceStore = useSalesInvoiceStore();
 const { customer } = storeToRefs(customerStore);
+const { budgets } = storeToRefs(budgetStore);
+const { invoices } = storeToRefs(salesInvoiceStore);
 
 const loadView = async () => {
   await customerStore.fetchCustomer(route.params.id as string);
   customerStore.fetchCustomerTypes();
   sharedData.fetchMasterData();
+
+  const now = new Date();
+  const starttime = new Date(now.getFullYear(), 0, 1); // 1 gener 00:00
+  const endtime = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999); // 31 desembre 23:59:59.999
+  if (route.params.id) {
+    await budgetStore.GetFiltered(
+      formatDateForQueryParameter(starttime),
+      formatDateForQueryParameter(endtime),
+      route.params.id as string
+    );
+
+    await salesInvoiceStore.GetFiltered(
+      formatDateForQueryParameter(starttime),
+      formatDateForQueryParameter(endtime),
+      "",
+      route.params.id as string
+    );
+  }
 
   // Comprovar existencia del proveïdor
   let pageTitle = "";
