@@ -44,6 +44,9 @@ import TreeTable from "primevue/treetable";
 import Tag from "primevue/tag";
 import Panel from "primevue/panel";
 import catalan from "./i18n/primevue/catalan";
+import Badge from "primevue/badge";
+import InputGroupAddon from "primevue/inputgroupaddon";
+import InputGroup from "primevue/inputgroup";
 
 app.use(PrimeVue, {
   locale: catalan,
@@ -78,6 +81,9 @@ app
   .component("ColorPicker", ColorPicker)
   .component("TreeTable", TreeTable)
   .component("Tag", Tag)
-  .component("Panel", Panel);
+  .component("Badge", Badge)
+  .component("Panel", Panel)
+  .component("InputGroup", InputGroup)
+  .component("InputGroupAddon", InputGroupAddon);
 
 app.mount("#app");

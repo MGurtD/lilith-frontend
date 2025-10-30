@@ -3,7 +3,7 @@ import { useApiStore } from "../store/backend";
 import { useStore } from "../store";
 import { WebSocketClient } from "./websocket-client";
 
-const baseUrl = import.meta.env.VITE_ACTIONS_BASE_URL as string;
+const baseUrl = import.meta.env.VITE_API_ACTIONS_URL as string;
 
 const serverClient = axios.create({
   baseURL: baseUrl,
@@ -94,7 +94,9 @@ export const WS_ENDPOINTS = {
 } as const;
 
 let socketClient: WebSocketClient | null = null;
-let socketMessageHandlers = new Set<(data: any) => void>();
+let socketMessageHandlers = new Set<
+  (data: any, messageType?: string) => void
+>();
 
 export function connectWebSocket(
   endpoint: string = WS_ENDPOINTS.GENERAL,
@@ -111,10 +113,25 @@ export function connectWebSocket(
 
   socketClient.onOpen(() => {
     if (options.debug) console.log("[WS] Open, requesting initial data");
-    socketClient?.send({ action: "get-workcenters" });
   });
   socketClient.onMessage((data) => {
-    socketMessageHandlers.forEach((h) => h(data));
+    // Parse the wrapper message to extract type and payload
+    let messageType: string | undefined;
+    let payload: any = data;
+
+    if (
+      data &&
+      typeof data === "object" &&
+      "type" in data &&
+      "payload" in data
+    ) {
+      messageType = data.type;
+      payload = data.payload;
+      if (options.debug)
+        console.log(`[WS] Received message type: ${messageType}`);
+    }
+
+    socketMessageHandlers.forEach((h) => h(messageType, payload));
   });
   socketClient.onError((e) => {
     console.error("[WS] Error", e);
@@ -132,7 +149,9 @@ export function disconnectWebSocket() {
   socketMessageHandlers.clear();
 }
 
-export function handleMessages(handler: (data: any) => void) {
+export function handleMessages(
+  handler: (messageType: string, data: any) => void
+) {
   socketMessageHandlers.add(handler);
   return () => socketMessageHandlers.delete(handler);
 }

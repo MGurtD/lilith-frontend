@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "VITE_API_APP_NAME=${{ vars.VITE_API_APP_NAME }}"
           echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}"
-          echo "VITE_API_SERVER_URL=${{ vars.VITE_API_SERVER_URL }}"
+          echo "VITE_API_ACTIONS_URL=${{ vars.VITE_API_ACTIONS_URL }}"
           echo "VITE_REPORTS_BASE_URL=${{ vars.VITE_REPORTS_BASE_URL }}"
           echo "VITE_API_REQUEST_TIMEOUT=${{ vars.VITE_API_REQUEST_TIMEOUT }}"
           echo "VITE_API_FILE_REQUEST_TIMEOUT=${{ vars.VITE_API_FILE_REQUEST_TIMEOUT }}"
@@ -42,7 +42,7 @@ jobs:
         env:
           VITE_API_APP_NAME: ${{ vars.VITE_API_APP_NAME }}
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-          VITE_API_SERVER_URL: ${{ vars.VITE_API_SERVER_URL }}
+          VITE_API_ACTIONS_URL: ${{ vars.VITE_API_ACTIONS_URL }}
           VITE_REPORTS_BASE_URL: ${{ vars.VITE_REPORTS_BASE_URL }}
           VITE_API_REQUEST_TIMEOUT: ${{ vars.VITE_API_REQUEST_TIMEOUT }}
           VITE_API_FILE_REQUEST_TIMEOUT: ${{ vars.VITE_API_FILE_REQUEST_TIMEOUT }}
