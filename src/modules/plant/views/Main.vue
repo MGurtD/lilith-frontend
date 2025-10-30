@@ -23,7 +23,7 @@ onMounted(async () => {
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    title: `Àreas de ${plantStore.site?.name}`,
+    title: `Àreas  de ${plantStore.site?.name}`,
   });
 
   await plantStore.getOperator();
