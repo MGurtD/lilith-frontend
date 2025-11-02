@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { AuthenticationResponse, Role, User } from "../types";
-import { MenuItem } from "../types/component";
+import { MenuItem, SidebarConfig } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
@@ -21,8 +21,11 @@ export const useStore = defineStore("applicationStore", {
       authorization: undefined as AuthenticationResponse | undefined,
       user: undefined as User | undefined,
       isWaiting: false,
-      menus: ref([] as Array<any>),
-      menuCollapsed: false,
+      sidebar: {
+        collapsed: false,
+        hideToggle: false,
+        menus: [],
+      } as SidebarConfig,
       currentMenuItem: {
         title: "Home",
         icon: PrimeIcons.HOME,
@@ -60,12 +63,59 @@ export const useStore = defineStore("applicationStore", {
     },
     setMenuItem(menu: MenuItem) {
       this.currentMenuItem = menu;
+      document.title = `Temges - ${menu.title}`;
     },
     setMenusByRole(user: User) {
       // legacy fallback
-      this.menus = getMenusByRole(user);
+      this.sidebar.menus = getMenusByRole(user);
     },
     async loadUserMenus(user: User) {
+      const userMenu: UserMenuResponse | undefined =
+        await AppProfileService.GetUserMenu(user.id);
+      if (!userMenu || !userMenu.items) {
+        //this.setMenusByRole(user); // fallback to legacy static menus
+        return;
+      }
+
+      const transform = (node: MenuNode): any => {
+        const hasChildren = node.children && node.children.length > 0;
+        const entry: any = {
+          icon: node.icon || undefined,
+          title: node.title,
+          href: node.route ? node.route : "",
+        };
+        if (hasChildren) {
+          entry.child = node.children!.map(transform);
+        }
+        return entry;
+      };
+
+      // Exclude technical header_main if backend included it as a MenuNode
+      const roots = userMenu.items
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map(transform);
+
+      this.sidebar.menus = [...roots];
+
+      // Apply default screen highlighting if current still Home
+      if (userMenu.defaultScreen) {
+        const stack: MenuNode[] = [...userMenu.items];
+        while (stack.length) {
+          const n = stack.pop()!;
+          if (n.key === userMenu.defaultScreen && n.route) {
+            if (this.currentMenuItem?.title === "Home") {
+              this.currentMenuItem = {
+                title: n.title,
+                icon: n.icon || undefined,
+              } as any;
+            }
+            break;
+          }
+          if (n.children && n.children.length) stack.push(...n.children);
+        }
+      }
+    },
+    /*async loadUserMenus(user: User) {
       const userMenu: UserMenuResponse | undefined =
         await AppProfileService.GetUserMenu(user.id);
       if (!userMenu || !userMenu.items) {
@@ -110,7 +160,7 @@ export const useStore = defineStore("applicationStore", {
           if (n.children && n.children.length) stack.push(...n.children);
         }
       }
-    },
+    },*/
 
     // Language helpers
     async initLanguage() {

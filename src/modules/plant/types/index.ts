@@ -1,7 +1,17 @@
+<<<<<<< HEAD
+import { Workcenter as WorkcenterMaster } from "../../production/types";
+
+// Re-export del modelo maestro para claridad
+export type WorkcenterConfig = WorkcenterMaster;
+
+// Snapshot de datos en tiempo real desde WebSocket
+export interface WorkcenterRealtime {
+=======
 import { Workcenter } from "../../production/types";
 
 export interface WorkcenterRt {
   workcenter: Workcenter;
+>>>>>>> origin/main
   workcenterId: string;
   workcenterName: string;
   workcenterDescription: string;
@@ -20,7 +30,11 @@ export interface WorkcenterRt {
   statusStopped: boolean;
   statusColor: string;
   statusStartTime: string; // ISO 8601 datetime string
+<<<<<<< HEAD
+  operators: OperatorSnapshot[];
+=======
   operators: Operator[];
+>>>>>>> origin/main
 
   currentTime?: string; // ISO 8601 datetime string
   counterOk?: number;
@@ -34,7 +48,17 @@ export interface WorkcenterRt {
   referenceDescription?: string;
 }
 
+<<<<<<< HEAD
+// Estado combinado para la vista (maestro + realtime)
+export interface WorkcenterViewState {
+  config: WorkcenterConfig;
+  realtime?: WorkcenterRealtime;
+}
+
+export interface OperatorSnapshot {
+=======
 export interface Operator {
+>>>>>>> origin/main
   operatorId: string;
   operatorCode: string;
   operatorName: string;
@@ -43,6 +67,10 @@ export interface Operator {
   operatorTypeName: string;
   operatorTypeDescription: string;
   operatorTypeCost: number;
+<<<<<<< HEAD
+  operatorStartTime: string;
+=======
+>>>>>>> origin/main
 }
 
 export interface WorkOrderPhase {
@@ -81,3 +109,26 @@ export interface WorkOrderPhaseResponse {
   description: string;
   workOrderId: string;
 }
+<<<<<<< HEAD
+
+// WebSocket message wrapper
+export interface WebSocketMessage<T = any> {
+  type: string;
+  payload: T;
+}
+
+// Payload type for general workcenter snapshots
+export type WorkcentersSnapshotPayload = Record<string, WorkcenterRealtime>;
+
+// Realtime handler interfaces
+export interface RealtimeHandler {
+  cleanup: () => void;
+  onUpdate: (callback: (data: WorkcenterRealtime[]) => void) => void;
+}
+
+export interface WorkcenterRealtimeHandler {
+  cleanup: () => void;
+  onUpdate: (callback: (data: WorkcenterRealtime) => void) => void;
+}
+=======
+>>>>>>> origin/main

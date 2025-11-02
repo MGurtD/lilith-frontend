@@ -1,4 +1,11 @@
 <template>
+<<<<<<< HEAD
+  <RouterView />
+</template>
+
+<script setup lang="ts">
+import { RouterView } from "vue-router";
+=======
   <OperatorClockIn v-if="!plantStore.operator" @submit="onSubmit" />
   <SitePlantLayout v-else />
 </template>
@@ -32,6 +39,7 @@ onMounted(async () => {
 const onSubmit = async (operator: Operator) => {
   plantStore.setOperator(operator);
 };
+>>>>>>> origin/main
 </script>
 
 <style scoped></style>

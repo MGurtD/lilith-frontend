@@ -4,60 +4,11 @@
     <Toolbar class="pdf-toolbar">
       <template #start>
         <div class="toolbar-controls">
-          <!-- Zoom Controls -->
-          <Button
-            :icon="PrimeIcons.SEARCH_MINUS"
-            size="small"
-            outlined
-            :disabled="loading || scale <= 0.5"
-            @click="zoomOut"
-            v-tooltip.bottom="'Reduir zoom'"
-            class="mr-2"
-          />
-          <span class="zoom-level">{{ Math.round(scale * 100) }}%</span>
-          <Button
-            :icon="PrimeIcons.SEARCH_PLUS"
-            size="small"
-            outlined
-            :disabled="loading || scale >= 3.0"
-            @click="zoomIn"
-            v-tooltip.bottom="'Ampliar zoom'"
-            class="ml-2 mr-2"
-          />
-          <Button
-            icon="pi pi-refresh"
-            size="small"
-            outlined
-            :disabled="loading"
-            @click="resetZoom"
-            v-tooltip.bottom="'Restablir zoom'"
-            class="mr-3"
-          />
-
-          <!-- Page Navigation -->
-          <template v-if="totalPages > 1">
-            <Divider layout="vertical" class="mx-2" />
-            <Button
-              :icon="PrimeIcons.CHEVRON_LEFT"
-              size="small"
-              outlined
-              :disabled="loading || currentPage <= 1"
-              @click="previousPage"
-              v-tooltip.bottom="'Pàgina anterior'"
-              class="mr-2"
-            />
+          <!-- Page Count Info -->
+          <template v-if="totalPages > 0">
             <span class="page-indicator">
-              Pàgina {{ currentPage }} de {{ totalPages }}
+              {{ totalPages }} {{ totalPages === 1 ? "pàgina" : "pàgines" }}
             </span>
-            <Button
-              :icon="PrimeIcons.CHEVRON_RIGHT"
-              size="small"
-              outlined
-              :disabled="loading || currentPage >= totalPages"
-              @click="nextPage"
-              v-tooltip.bottom="'Pàgina següent'"
-              class="ml-2"
-            />
           </template>
         </div>
       </template>
@@ -100,6 +51,18 @@
       class="pdf-content-wrapper"
       :class="{ fullscreen: isFullscreen }"
     >
+      <!-- Fullscreen Exit Button -->
+      <Button
+        v-if="isFullscreen"
+        :icon="PrimeIcons.TIMES"
+        rounded
+        severity="secondary"
+        class="fullscreen-exit-button"
+        @click="toggleFullscreen"
+        v-tooltip.left="'Sortir de pantalla completa (ESC)'"
+        aria-label="Sortir de pantalla completa"
+      />
+
       <!-- Loading State -->
       <div v-if="loading" class="pdf-loading-state">
         <ProgressSpinner
@@ -128,10 +91,7 @@
       <!-- PDF Viewer -->
       <div v-else-if="pdfSource" class="pdf-viewer-content">
         <VuePdfEmbed
-          ref="pdfRef"
           :source="pdfSource"
-          :scale="scale"
-          :page="currentPage"
           @rendered="onRendered"
           @loading-failed="onLoadingFailed"
           @loaded="onLoaded"
@@ -162,7 +122,6 @@ import type { File } from "../types";
 // PrimeVue components
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
-import Divider from "primevue/divider";
 import ProgressSpinner from "primevue/progressspinner";
 
 interface Props {
@@ -177,46 +136,13 @@ const fileService = new FileService();
 
 // Refs
 const containerRef = ref<HTMLElement | null>(null);
-const pdfRef = ref<any>(null);
 
 // State
 const pdfSource = ref<string | ArrayBuffer | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const scale = ref(1.0);
-const currentPage = ref(1);
 const totalPages = ref(0);
 const isFullscreen = ref(false);
-
-// Zoom controls
-const zoomIn = () => {
-  if (scale.value < 3.0) {
-    scale.value = Math.min(scale.value + 0.25, 3.0);
-  }
-};
-
-const zoomOut = () => {
-  if (scale.value > 0.5) {
-    scale.value = Math.max(scale.value - 0.25, 0.5);
-  }
-};
-
-const resetZoom = () => {
-  scale.value = 1.0;
-};
-
-// Page navigation
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
 
 // Fullscreen
 const toggleFullscreen = async () => {
@@ -268,10 +194,6 @@ const loadPdf = async () => {
     // Convert blob to ArrayBuffer for vue-pdf-embed
     const arrayBuffer = await blob.arrayBuffer();
     pdfSource.value = arrayBuffer;
-
-    // Reset view state
-    currentPage.value = 1;
-    scale.value = 1.0;
   } catch (err: any) {
     console.error("Error loading PDF:", err);
     error.value = err?.message || "Error en carregar el document PDF";
@@ -316,8 +238,8 @@ const onRendered = () => {
   loading.value = false;
 };
 
-const onLoaded = (pdf: any) => {
-  totalPages.value = pdf.numPages;
+const onLoaded = ({ numPages }: { numPages: number }) => {
+  totalPages.value = numPages;
 };
 
 const onLoadingFailed = (err: any) => {
@@ -341,7 +263,6 @@ watch(
     } else {
       pdfSource.value = null;
       error.value = null;
-      currentPage.value = 1;
       totalPages.value = 0;
     }
   },
@@ -393,21 +314,20 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-.zoom-level,
 .page-indicator {
   font-size: 0.875rem;
   font-weight: 600;
   color: #475569;
   padding: 0 0.5rem;
-  min-width: 50px;
-  text-align: center;
-}
-
-.page-indicator {
-  min-width: 120px;
 }
 
 /* Content Wrapper */
+.pdf-content-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: #f8fafc;
+  position: relative;
+}
 
 .pdf-content-wrapper.fullscreen {
   position: fixed;
@@ -417,10 +337,61 @@ onMounted(() => {
   bottom: 0;
   z-index: 9999;
   border-radius: 0;
-  padding: 2rem;
+  background: #f8fafc;
+}
+
+/* Fullscreen Exit Button */
+.fullscreen-exit-button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.fullscreen-exit-button:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 
 /* PDF Content */
+.pdf-viewer-content {
+  padding: 16px;
+}
+
+/* Make PDF responsive - critical for proper display */
+:deep(.vue-pdf-embed) {
+  margin: 0 auto;
+  display: block;
+}
+
+.pdf-content-wrapper.fullscreen :deep(.vue-pdf-embed) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:deep(.vue-pdf-embed__page) {
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px 4px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.vue-pdf-embed__page canvas) {
+  margin: 0 auto;
+}
+
+/* Loading State */
+.pdf-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 3rem;
+  height: 100%;
+}
 
 .loading-text {
   font-size: 1rem;
@@ -477,19 +448,13 @@ onMounted(() => {
     gap: 0.25rem;
   }
 
-  .zoom-level,
   .page-indicator {
     font-size: 0.75rem;
     padding: 0 0.25rem;
-    min-width: 40px;
   }
 
-  .page-indicator {
-    min-width: 100px;
-  }
-
-  .pdf-content-wrapper {
-    padding: 0.5rem;
+  .pdf-viewer-content {
+    padding: 12px 8px;
   }
 }
 

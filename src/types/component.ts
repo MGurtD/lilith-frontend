@@ -20,6 +20,12 @@ export interface MenuItem {
   child?: Array<MenuItem>;
 }
 
+export interface SidebarConfig {
+  collapsed: boolean;
+  hideToggle: boolean;
+  menus: Array<any>;
+}
+
 export interface ChartOptions {
   labels: string[];
   datasets?: ChartDataSet[];
@@ -39,6 +45,8 @@ export interface DialogOptions {
   closable: boolean;
   position: string;
   modal: boolean;
+  isPdf?: boolean;
+  selectedFile?: any;
 }
 
 export enum FileType {

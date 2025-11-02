@@ -45,6 +45,10 @@
           label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
+<<<<<<< HEAD
+          :disabled="disableClockIn"
+=======
+>>>>>>> origin/main
           @click="handleOperatorClockIn"
         />
         <Button
@@ -52,6 +56,10 @@
           label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
+<<<<<<< HEAD
+          :disabled="disableClockOut"
+=======
+>>>>>>> origin/main
           @click="handleOperatorClockOut"
         />
       </div>
@@ -60,7 +68,11 @@
 </template>
 
 <script setup lang="ts">
+<<<<<<< HEAD
+import { ref, computed, onMounted } from "vue";
+=======
 import { ref, computed, onMounted, onUnmounted } from "vue";
+>>>>>>> origin/main
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
@@ -69,15 +81,52 @@ import { usePlantStore } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+<<<<<<< HEAD
+import {
+  useWebSocketConnection,
+  WS_ENDPOINTS,
+} from "../composables/useWebSocketConnection";
+=======
+>>>>>>> origin/main
 
 const route = useRoute();
 const toast = useToast();
 const appStore = useStore();
 const plantStore = usePlantStore();
+<<<<<<< HEAD
+const { connect } = useWebSocketConnection();
+=======
+>>>>>>> origin/main
 
 const id = route.params.id as string;
 const activeTab = ref(0);
 
+<<<<<<< HEAD
+const workcenter = computed(() => plantStore.workcenterView);
+
+// Computed para determinar si el operario está fichado
+const isOperatorClockedIn = computed(() => {
+  if (!workcenter.value?.realtime?.operators || !plantStore.operator) {
+    return false;
+  }
+  return workcenter.value.realtime.operators.some(
+    (op) => op.operatorId === plantStore.operator!.id
+  );
+});
+
+// Deshabilitar botones según estado
+const disableClockIn = computed(() => {
+  return !workcenter.value?.realtime || isOperatorClockedIn.value;
+});
+
+const disableClockOut = computed(() => {
+  return !workcenter.value?.realtime || !isOperatorClockedIn.value;
+});
+
+onMounted(async () => {
+  // 1. Carregar dades del workcenter
+  await plantStore.fetchWorkcenter(id);
+=======
 const workcenter = computed(() => plantStore.workcenterRt);
 
 let pollingInterval: ReturnType<typeof setInterval> | null = null;
@@ -85,6 +134,7 @@ let pollingInterval: ReturnType<typeof setInterval> | null = null;
 onMounted(async () => {
   // Fetch workcenter data
   await fetchWorkcenterData(id);
+>>>>>>> origin/main
 
   if (!workcenter.value) {
     toast.add({
@@ -95,6 +145,54 @@ onMounted(async () => {
     return;
   }
 
+<<<<<<< HEAD
+  // 2. Configurar header
+  appStore.setMenuItem({
+    icon: PrimeIcons.COG,
+    backButtonVisible: true,
+    title: workcenter.value.config.description,
+  });
+
+  // 3. Connectar WebSocket específic del workcenter
+  plantStore.connectToWorkcenter(id);
+  connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
+});
+
+// onUnmounted gestionat automàticament pel composable
+
+const handleOperatorClockIn = async () => {
+  const result = await plantStore.clockInOperator();
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Entrada registrada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al registrar l'entrada",
+      life: 4000,
+    });
+  }
+};
+
+const handleOperatorClockOut = async () => {
+  const result = await plantStore.clockOutOperator();
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Sortida registrada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al registrar la sortida",
+      life: 4000,
+    });
+  }
+=======
   // Set header menu
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
@@ -157,6 +255,7 @@ const handleOperatorClockIn = async () => {
 
 const handleOperatorClockOut = async () => {
   await plantStore.clockOutOperator();
+>>>>>>> origin/main
 };
 </script>
 
@@ -179,6 +278,10 @@ const handleOperatorClockOut = async () => {
   grid-template-columns: 350px 1fr;
   gap: 1rem;
   height: 100%;
+<<<<<<< HEAD
+  overflow: hidden;
+=======
+>>>>>>> origin/main
 }
 
 .realtime-panel {
@@ -186,6 +289,10 @@ const handleOperatorClockOut = async () => {
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
   overflow-y: auto;
+<<<<<<< HEAD
+  max-height: 100%;
+=======
+>>>>>>> origin/main
 }
 
 .tabs-panel {
@@ -195,6 +302,10 @@ const handleOperatorClockOut = async () => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
+  max-height: 100%;
+=======
+>>>>>>> origin/main
 }
 
 .tabs-panel :deep(.p-tabview) {
@@ -203,11 +314,14 @@ const handleOperatorClockOut = async () => {
   flex-direction: column;
 }
 
+<<<<<<< HEAD
+=======
 .tabs-panel :deep(.p-tabview-panels) {
   flex: 1;
   overflow-y: auto;
 }
 
+>>>>>>> origin/main
 .touch-panel {
   background: var(--surface-50);
   border-top: 1px solid var(--surface-border);

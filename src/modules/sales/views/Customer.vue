@@ -54,12 +54,11 @@ import { FormActionMode } from "../../../types/component";
 import FormCustomer from "../components/FormCustomer.vue";
 import CustomerAddresses from "../components/TableCustomerAddresses.vue";
 import CustomerContacts from "../components/TableCustomerContacts.vue";
-import FormCustomerStatistics from "../components/FormCustomerStatistics.vue";
+import FormCustomerStatistics from "../components/FormCustomerStatistic.vue";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { useBudgetStore } from "../store/budget";
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import { useSalesInvoiceStore } from "../store/invoice";
-import InvoiceSeries from "../../purchase/views/InvoiceSeries.vue";
 
 const formMode = ref(FormActionMode.EDIT);
 const route = useRoute();

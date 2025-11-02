@@ -237,7 +237,6 @@ const openOrderDetailDialog = (
       lastCost: 0,
       workMasterCost: 0,
       description: "",
-      estimatedDeliveryDate: new Date(),
       isDelivered: false,
       isInvoiced: false,
       workMasterId: null,
