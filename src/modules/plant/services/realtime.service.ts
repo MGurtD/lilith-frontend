@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import {
   OperatorClockInOutRequest,
   RealtimeHandler,
   WorkcenterRealtimeHandler,
   WorkcenterRealtime,
 } from "../types";
+=======
+import { OperatorClockInOutRequest } from "../types";
+>>>>>>> origin/main
 import serverClient, {
   connectWebSocket,
   disconnectWebSocket,
@@ -14,6 +18,7 @@ import { GenericResponse } from "../../../types";
 
 class ActionsService {
   async clockInOperator(request: OperatorClockInOutRequest) {
+<<<<<<< HEAD
     const endpoint = `/api/operator/clockin`;
     const response = await serverClient.post(endpoint, request);
     return response.status === 200;
@@ -26,12 +31,27 @@ class ActionsService {
 
   connect(endpoint: string = WS_ENDPOINTS.GENERAL) {
     connectWebSocket(endpoint);
+=======
+    const endpoint = `/operator/clockin`;
+    const response = await serverClient.post(endpoint, request);
+    return response.data as GenericResponse<boolean | undefined>;
+  }
+  async clockOutOperator(request: OperatorClockInOutRequest) {
+    const endpoint = `/operator/clockout`;
+    const response = await serverClient.post(endpoint, request);
+    return response.data as GenericResponse<boolean | undefined>;
+  }
+
+  connect() {
+    connectWebSocket();
+>>>>>>> origin/main
   }
 
   disconnect() {
     disconnectWebSocket();
   }
 
+<<<<<<< HEAD
   /**
    * Connecta al WebSocket general i retorna handler amb callback per actualitzacions
    */
@@ -95,6 +115,10 @@ class ActionsService {
       cleanup,
       onUpdate: (callback) => callbacks.push(callback),
     };
+=======
+  onMessage(handler: (data: any) => void) {
+    handleMessages(handler);
+>>>>>>> origin/main
   }
 }
 

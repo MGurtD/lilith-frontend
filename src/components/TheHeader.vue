@@ -140,6 +140,8 @@ const goBack = () => router.back();
   grid-template-columns: 0.7fr 0.3fr;
   padding-top: 0.3rem;
   padding-bottom: 0.5rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.5rem;
   width: calc(100vw - var(--side-bar-width));
   transition: all 0.3s ease-in-out;
 }
@@ -152,6 +154,7 @@ const goBack = () => router.back();
 .title-bar__page {
   margin-left: 1vw;
   margin-top: 0.6rem;
+  margin-top: 0.6rem;
   text-align: left;
 }
 
@@ -160,6 +163,7 @@ const goBack = () => router.back();
 }
 
 .title-bar__back {
+  font-size: 1.3rem;
   font-size: 1.3rem;
   margin-right: 1rem;
   cursor: pointer;
@@ -170,6 +174,8 @@ const goBack = () => router.back();
 }
 
 .title-bar__user {
+  padding-top: 0.2rem;
+  margin-right: 1.5vw;
   padding-top: 0.2rem;
   margin-right: 1.5vw;
   font-size: 1rem;

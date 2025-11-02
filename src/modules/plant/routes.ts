@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   RouteRecordRaw,
   NavigationGuardNext,
@@ -43,11 +44,19 @@ const checkOperatorAuth = async (
   }
 };
 
+=======
+import { RouteRecordRaw } from "vue-router";
+
+const MainPlant = () => import("./views/Main.vue");
+const WorkcenterDetail = () => import("./views/WorkcenterDetail.vue");
+
+>>>>>>> origin/main
 export default [
   {
     path: "/plant",
     name: "MainPlant",
     component: MainPlant,
+<<<<<<< HEAD
     redirect: { name: "OperatorClockIn" },
     children: [
       {
@@ -70,5 +79,13 @@ export default [
         props: true,
       },
     ],
+=======
+  },
+  {
+    path: "/workcenter-detail/:id",
+    name: "WorkcenterDetail",
+    component: WorkcenterDetail,
+    props: true,
+>>>>>>> origin/main
   },
 ] as Array<RouteRecordRaw>;

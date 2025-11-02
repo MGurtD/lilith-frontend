@@ -81,9 +81,13 @@ app
   .component("ColorPicker", ColorPicker)
   .component("TreeTable", TreeTable)
   .component("Tag", Tag)
+<<<<<<< HEAD
   .component("Badge", Badge)
   .component("Panel", Panel)
   .component("InputGroup", InputGroup)
   .component("InputGroupAddon", InputGroupAddon);
+=======
+  .component("Panel", Panel);
+>>>>>>> origin/main
 
 app.mount("#app");

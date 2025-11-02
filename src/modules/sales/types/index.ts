@@ -64,8 +64,8 @@ export interface Budget {
   acceptanceDate: any;
   statusId: string;
   notes: string;
-  userNotes: string;
   details: Array<BudgetDetail> | undefined;
+  userNotes: string;
 }
 
 export interface BudgetDetail {
