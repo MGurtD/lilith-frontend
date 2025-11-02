@@ -45,10 +45,7 @@
           label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
-<<<<<<< HEAD
           :disabled="disableClockIn"
-=======
->>>>>>> origin/main
           @click="handleOperatorClockIn"
         />
         <Button
@@ -56,10 +53,7 @@
           label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
-<<<<<<< HEAD
           :disabled="disableClockOut"
-=======
->>>>>>> origin/main
           @click="handleOperatorClockOut"
         />
       </div>
@@ -68,11 +62,7 @@
 </template>
 
 <script setup lang="ts">
-<<<<<<< HEAD
 import { ref, computed, onMounted } from "vue";
-=======
-import { ref, computed, onMounted, onUnmounted } from "vue";
->>>>>>> origin/main
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
@@ -81,27 +71,20 @@ import { usePlantStore } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
-<<<<<<< HEAD
 import {
   useWebSocketConnection,
   WS_ENDPOINTS,
 } from "../composables/useWebSocketConnection";
-=======
->>>>>>> origin/main
 
 const route = useRoute();
 const toast = useToast();
 const appStore = useStore();
 const plantStore = usePlantStore();
-<<<<<<< HEAD
 const { connect } = useWebSocketConnection();
-=======
->>>>>>> origin/main
 
 const id = route.params.id as string;
 const activeTab = ref(0);
 
-<<<<<<< HEAD
 const workcenter = computed(() => plantStore.workcenterView);
 
 // Computed para determinar si el operario está fichado
@@ -126,15 +109,6 @@ const disableClockOut = computed(() => {
 onMounted(async () => {
   // 1. Carregar dades del workcenter
   await plantStore.fetchWorkcenter(id);
-=======
-const workcenter = computed(() => plantStore.workcenterRt);
-
-let pollingInterval: ReturnType<typeof setInterval> | null = null;
-
-onMounted(async () => {
-  // Fetch workcenter data
-  await fetchWorkcenterData(id);
->>>>>>> origin/main
 
   if (!workcenter.value) {
     toast.add({
@@ -145,7 +119,6 @@ onMounted(async () => {
     return;
   }
 
-<<<<<<< HEAD
   // 2. Configurar header
   appStore.setMenuItem({
     icon: PrimeIcons.COG,
@@ -192,70 +165,6 @@ const handleOperatorClockOut = async () => {
       life: 4000,
     });
   }
-=======
-  // Set header menu
-  appStore.setMenuItem({
-    icon: PrimeIcons.COG,
-    backButtonVisible: true,
-    title: `${workcenter.value.workcenterName} - ${workcenter.value.workcenterDescription}`,
-  });
-});
-
-onUnmounted(() => {
-  stopPolling();
-});
-
-const fetchWorkcenterData = async (id: string) => {
-  // TODO: Replace with actual API call
-  // This should fetch the workcenter data from the API
-  await plantStore.fetchWorkcenter(id);
-};
-
-const stopPolling = () => {
-  if (pollingInterval) {
-    clearInterval(pollingInterval);
-    pollingInterval = null;
-  }
-};
-
-const getStatusSeverity = (
-  statusName: string
-):
-  | "success"
-  | "info"
-  | "warning"
-  | "danger"
-  | "secondary"
-  | "contrast"
-  | undefined => {
-  const lowerStatus = statusName?.toLowerCase() || "";
-
-  if (lowerStatus.includes("producció") || lowerStatus.includes("activa")) {
-    return "success";
-  } else if (
-    lowerStatus.includes("parada") ||
-    lowerStatus.includes("aturada")
-  ) {
-    return "danger";
-  } else if (
-    lowerStatus.includes("preparació") ||
-    lowerStatus.includes("setup")
-  ) {
-    return "warning";
-  } else if (lowerStatus.includes("manteniment")) {
-    return "info";
-  }
-
-  return "secondary";
-};
-
-const handleOperatorClockIn = async () => {
-  await plantStore.clockInOperator();
-};
-
-const handleOperatorClockOut = async () => {
-  await plantStore.clockOutOperator();
->>>>>>> origin/main
 };
 </script>
 
@@ -278,10 +187,7 @@ const handleOperatorClockOut = async () => {
   grid-template-columns: 350px 1fr;
   gap: 1rem;
   height: 100%;
-<<<<<<< HEAD
   overflow: hidden;
-=======
->>>>>>> origin/main
 }
 
 .realtime-panel {
@@ -289,10 +195,7 @@ const handleOperatorClockOut = async () => {
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
   overflow-y: auto;
-<<<<<<< HEAD
   max-height: 100%;
-=======
->>>>>>> origin/main
 }
 
 .tabs-panel {
@@ -302,10 +205,7 @@ const handleOperatorClockOut = async () => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   max-height: 100%;
-=======
->>>>>>> origin/main
 }
 
 .tabs-panel :deep(.p-tabview) {
@@ -314,14 +214,6 @@ const handleOperatorClockOut = async () => {
   flex-direction: column;
 }
 
-<<<<<<< HEAD
-=======
-.tabs-panel :deep(.p-tabview-panels) {
-  flex: 1;
-  overflow-y: auto;
-}
-
->>>>>>> origin/main
 .touch-panel {
   background: var(--surface-50);
   border-top: 1px solid var(--surface-border);
