@@ -3,11 +3,7 @@ import { useApiStore } from "../store/backend";
 import { useStore } from "../store";
 import { WebSocketClient } from "./websocket-client";
 
-<<<<<<< HEAD
-const baseUrl = import.meta.env.VITE_API_ACTIONS_URL as string;
-=======
 const baseUrl = import.meta.env.VITE_ACTIONS_BASE_URL as string;
->>>>>>> origin/main
 
 const serverClient = axios.create({
   baseURL: baseUrl,
@@ -98,13 +94,9 @@ export const WS_ENDPOINTS = {
 } as const;
 
 let socketClient: WebSocketClient | null = null;
-<<<<<<< HEAD
 let socketMessageHandlers = new Set<
   (data: any, messageType?: string) => void
 >();
-=======
-let socketMessageHandlers = new Set<(data: any) => void>();
->>>>>>> origin/main
 
 export function connectWebSocket(
   endpoint: string = WS_ENDPOINTS.GENERAL,
@@ -121,7 +113,6 @@ export function connectWebSocket(
 
   socketClient.onOpen(() => {
     if (options.debug) console.log("[WS] Open, requesting initial data");
-<<<<<<< HEAD
   });
   socketClient.onMessage((data) => {
     // Parse the wrapper message to extract type and payload
@@ -141,12 +132,6 @@ export function connectWebSocket(
     }
 
     socketMessageHandlers.forEach((h) => h(messageType, payload));
-=======
-    socketClient?.send({ action: "get-workcenters" });
-  });
-  socketClient.onMessage((data) => {
-    socketMessageHandlers.forEach((h) => h(data));
->>>>>>> origin/main
   });
   socketClient.onError((e) => {
     console.error("[WS] Error", e);
@@ -164,13 +149,9 @@ export function disconnectWebSocket() {
   socketMessageHandlers.clear();
 }
 
-<<<<<<< HEAD
 export function handleMessages(
   handler: (messageType: string, data: any) => void
 ) {
-=======
-export function handleMessages(handler: (data: any) => void) {
->>>>>>> origin/main
   socketMessageHandlers.add(handler);
   return () => socketMessageHandlers.delete(handler);
 }

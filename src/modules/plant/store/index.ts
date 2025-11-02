@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-<<<<<<< HEAD
 import {
   Area,
   Operator,
@@ -13,10 +12,6 @@ import {
   RealtimeHandler,
   WorkcenterRealtimeHandler,
 } from "../types";
-=======
-import { Area, Operator, Site, Workcenter } from "../../production/types";
-import { WorkcenterRt } from "../types";
->>>>>>> origin/main
 import ProductionServices from "../../production/services";
 import ActionsService from "../services/realtime.service";
 import { FileService } from "../../../api/services/file.service";
@@ -30,7 +25,6 @@ export const usePlantStore = defineStore("plantStore", {
       operator: undefined as Operator | undefined,
       site: undefined as Site | undefined,
       areas: [] as Area[],
-<<<<<<< HEAD
       // Datos maestros de configuración (API REST)
       workcenter: undefined as Workcenter | undefined,
       workcenterPictureBlob: undefined as Blob | undefined,
@@ -78,24 +72,12 @@ export const usePlantStore = defineStore("plantStore", {
      * Carrega les dades d'àrees i workcenters des de l'API
      * NO gestiona connexió WebSocket (això es fa des de la vista)
      */
-=======
-      workcenter: undefined as Workcenter | undefined,
-      workcenterRt: undefined as WorkcenterRt | undefined,
-      workcenterImageBlob: undefined as Blob | undefined,
-      productionInstructionsDocuments: [] as File[],
-      // Realtime array of workcenters received from WebSocket snapshot
-      areasWorkcentersRt: [] as WorkcenterRt[],
-    };
-  },
-  actions: {
->>>>>>> origin/main
     async fetchAreasWithWorkcenters() {
       const sites = await ProductionServices.Site.getActive();
       if (sites && sites.length > 0) {
         this.site = sites[0];
       }
       this.areas = (await ProductionServices.Areas.getVisibleInPlant()) || [];
-<<<<<<< HEAD
     },
 
     /**
@@ -146,27 +128,10 @@ export const usePlantStore = defineStore("plantStore", {
       this.workcenterRt = undefined;
     },
 
-=======
-
-      // Simple realtime socket connection: listen for snapshot and populate areasWorkcentersRt
-      ActionsService.client.connect();
-      ActionsService.client.onMessage((data: any) => {
-        if (data && data.Workcenters && typeof data.Workcenters === "object") {
-          // Convert dictionary to array; cast minimally to WorkcenterRt
-          this.areasWorkcentersRt = Object.values(
-            data.Workcenters
-          ) as WorkcenterRt[];
-        }
-      });
-
-      // implement socket and handle messages
-    },
->>>>>>> origin/main
     async fetchWorkcenter(workcenterId: string) {
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
-<<<<<<< HEAD
         this.fetchWorkcenterPicture();
       }
     },
@@ -218,48 +183,12 @@ export const usePlantStore = defineStore("plantStore", {
       const files = await fileService.GetEntityFiles(
         "referenceMaps",
         referenceId
-=======
-        this.workcenterRt = {
-          workcenter: this.workcenter,
-          workcenterId: this.workcenter.id,
-          workcenterName: this.workcenter.name,
-          workcenterDescription: this.workcenter.description,
-          areaId: this.workcenter.areaId,
-          areaDescription: "",
-          shiftId: this.workcenter.shiftId,
-          shiftName: "",
-          shiftDetailId: "",
-          shiftDetailStartTime: "",
-          shiftDetailEndTime: "",
-          shiftDetailsIsProductiveTime: false,
-          statusId: "",
-          statusName: "",
-          statusOperatorsAllowed: false,
-          statusClosed: false,
-          statusStopped: false,
-          statusColor: "",
-          statusStartTime: "",
-          operators: [],
-        };
-
-        this.fetchWorkInstructionDocuments();
-      }
-    },
-
-    async fetchWorkInstructionDocuments() {
-      if (!this.workcenter) return;
-      const fileService = new FileService();
-      const files = await fileService.GetEntityFiles(
-        "referenceMaps",
-        "8002a9b4-55e9-464f-b03e-8d4b74544dd2"
->>>>>>> origin/main
       );
       if (files) {
         this.productionInstructionsDocuments = files;
       }
     },
 
-<<<<<<< HEAD
     async clockInOperator(): Promise<boolean> {
       if (!this.workcenter || !this.operator) return false;
 
@@ -277,8 +206,6 @@ export const usePlantStore = defineStore("plantStore", {
       });
     },
 
-=======
->>>>>>> origin/main
     async getOperator(): Promise<Operator | undefined> {
       if (this.operator !== undefined) {
         return this.operator;
@@ -298,32 +225,11 @@ export const usePlantStore = defineStore("plantStore", {
       localStorage.removeItem(localStorageOperatorKey);
     },
 
-<<<<<<< HEAD
     setSelectedWorkOrder(workOrder: WorkOrder) {
       this.selectedWorkOrder = workOrder;
     },
     clearSelectedWorkOrder() {
       this.selectedWorkOrder = undefined;
-=======
-    async clockInOperator() {
-      console.log(this.operator, this.workcenter);
-      if (!this.workcenter || !this.operator) return;
-
-      const response = await ActionsService.client.clockInOperator({
-        operatorId: this.operator.id,
-        workcenterId: this.workcenter.id,
-      });
-      console.log("Clock-in response:", response);
-    },
-    async clockOutOperator() {
-      if (!this.workcenter || !this.operator) return;
-
-      const response = await ActionsService.client.clockOutOperator({
-        operatorId: this.operator.id,
-        workcenterId: this.workcenter.id,
-      });
-      console.log("Clock-out response:", response);
->>>>>>> origin/main
     },
   },
 });
