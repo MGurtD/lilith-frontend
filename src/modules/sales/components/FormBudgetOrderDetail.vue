@@ -213,7 +213,6 @@
             ></textarea>
           </div>
         </section>
-
         <Button
           :disabled="readonly"
           :label="textActionButton"

@@ -3,7 +3,7 @@ import { useApiStore } from "../store/backend";
 import { useStore } from "../store";
 import { WebSocketClient } from "./websocket-client";
 
-const baseUrl = import.meta.env.VITE_API_ACTIONS_URL as string;
+const baseUrl = import.meta.env.VITE_ACTIONS_BASE_URL as string;
 
 const serverClient = axios.create({
   baseURL: baseUrl,
