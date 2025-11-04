@@ -49,12 +49,10 @@ router.beforeEach((to, from, next) => {
   const isPWAiOS = (window.navigator as any).standalone === true;
   const isPWA = isPWAStandalone || isPWAiOS;
 
-  // Detectar si es la primera navegación a la raíz
-  const isInitialNavigation = to.path === "/" && from.name === undefined;
-
-  // Redirigir solo si es PWA instalada Y es la primera navegación
-  if (isPWA && isInitialNavigation) {
-    console.log("[PWA Router] 🚀 Redirigiendo a /plant");
+  // Si es PWA y el destino es la raíz (/), redirigir a /plant
+  // Esto cubre tanto la carga inicial como después del login
+  if (isPWA && to.path === "/") {
+    console.log("[PWA Router] 🚀 Redirigiendo de / a /plant");
     next({ path: "/plant" });
   } else {
     next();
