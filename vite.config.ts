@@ -13,7 +13,7 @@ export default defineConfig({
       includeAssets: ["favicon.ico", "logo.png", "icons/*.png"],
 
       manifest: {
-        name: "Temges - ERP Manufacturing",
+        name: "Temges App",
         short_name: "Temges",
         description: "Sistema ERP para gestión de manufactura",
         theme_color: "#3f51b5", // Color azul del logo
