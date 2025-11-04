@@ -40,4 +40,25 @@ const router = createRouter({
   ],
 });
 
+// PWA: Redirigir a /plant cuando la app está instalada como PWA
+router.beforeEach((to, from, next) => {
+  // Detectar si es PWA instalada (múltiples métodos para compatibilidad)
+  const isPWAStandalone = window.matchMedia(
+    "(display-mode: standalone)"
+  ).matches;
+  const isPWAiOS = (window.navigator as any).standalone === true;
+  const isPWA = isPWAStandalone || isPWAiOS;
+
+  // Detectar si es la primera navegación a la raíz
+  const isInitialNavigation = to.path === "/" && from.name === undefined;
+
+  // Redirigir solo si es PWA instalada Y es la primera navegación
+  if (isPWA && isInitialNavigation) {
+    console.log("[PWA Router] 🚀 Redirigiendo a /plant");
+    next({ path: "/plant" });
+  } else {
+    next();
+  }
+});
+
 export default router;
