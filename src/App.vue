@@ -5,6 +5,7 @@ import { useSpanishGeography } from "./store/geography";
 import Header from "./components/TheHeader.vue";
 import SideBar from "./components/TheSidebar.vue";
 import Login from "./views/Login.vue";
+import PwaUpdatePrompt from "./components/PwaUpdatePrompt.vue";
 import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { usePlantStore } from "./modules/plant/store";
@@ -56,6 +57,9 @@ const logoutOperator = () => {
   </div>
 
   <Login v-else />
+
+  <!-- PWA Update Handler -->
+  <PwaUpdatePrompt />
 
   <Toast position="bottom-right" />
   <ConfirmDialog />
