@@ -61,14 +61,7 @@ onMounted(async () => {
     title: `Àrees de ${plantStore.site?.name || "Planta"}`,
   });
 
-  // 3. Mostrar totes les àrees amb workcenters
-  plantStore.areas.forEach((area) => {
-    if (area.workcenters && area.workcenters.length > 0) {
-      visibleAreas.value.add(area.id);
-    }
-  });
-
-  // 4. Connectar WebSocket general i configurar handlers al store
+  // 3. Connectar WebSocket general i configurar handlers al store
   plantStore.connectToGeneral();
   connect(WS_ENDPOINTS.GENERAL, { debug: true });
 });

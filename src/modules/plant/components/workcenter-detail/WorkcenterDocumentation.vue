@@ -8,14 +8,22 @@
           v-model:selection="selectedDocument"
           selectionMode="single"
           @row-select="onDocumentSelect"
+          scrollable
+          scrollHeight="flex"
         >
           <template #empty>
             <div class="no-data">
               No hi ha instruccions de treball disponibles
             </div>
           </template>
-          <Column field="originalName" header="Nom" style="width: 80%"></Column>
-          <Column field="type" header="Tipus" style="width: 20%">
+          <Column field="originalName" header="Nom">
+            <template #body="slotProps">
+              <div class="text-overflow-ellipsis">
+                {{ slotProps.data.originalName }}
+              </div>
+            </template>
+          </Column>
+          <Column field="type" header="Tipus" style="width: 60px">
             <template #body="slotProps">
               <Tag :value="getFileType(slotProps.data)" severity="info" />
             </template>
@@ -69,16 +77,19 @@ onMounted(() => {});
 
 .master-detail-layout {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 1.5rem;
   height: calc(100vh - 250px);
   min-height: 600px;
+  overflow: hidden; /* Prevent grid items from overflowing */
 }
 
 .documents-panel {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* Allow flex/grid item to shrink below content size */
+  max-width: 300px; /* Enforce maximum width */
 }
 
 .documents-panel :deep(.p-panel-content) {
@@ -88,8 +99,11 @@ onMounted(() => {});
 
 .viewer-panel {
   min-height: 0;
+  min-width: 0; /* Allow grid item to shrink */
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Prevent overflow */
+  width: 100%; /* Fill available space */
 }
 
 .no-data {
@@ -98,12 +112,23 @@ onMounted(() => {});
   color: var(--text-color-secondary);
 }
 
-/* Responsive layout */
-@media (max-width: 1200px) {
-  .master-detail-layout {
-    grid-template-columns: 380px 1fr;
-  }
+/* DataTable adjustments */
+.documents-panel :deep(.p-datatable) {
+  width: 100%;
 }
+
+.documents-panel :deep(.p-datatable-wrapper) {
+  overflow-x: hidden;
+}
+
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Responsive layout */
 
 @media (max-width: 992px) {
   .master-detail-layout {
@@ -112,8 +137,8 @@ onMounted(() => {});
     height: auto;
   }
 
-  .documents-panel :deep(.p-panel-content) {
-    max-height: 400px;
+  .documents-panel {
+    display: none;
   }
 
   .viewer-panel {

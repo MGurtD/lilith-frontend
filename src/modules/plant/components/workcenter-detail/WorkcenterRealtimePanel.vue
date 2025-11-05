@@ -18,7 +18,7 @@
 
     <!-- Current Work Order Section -->
     <Panel
-      header="Ordre de fabricació actual"
+      header="Ordre de fabricació"
       :toggleable="false"
       class="panel-section"
     >
@@ -81,9 +81,10 @@
       </div>
       <div v-else class="no-data">
         <Button
-          label="Seleccionar ordre de fabricació"
-          :icon="PrimeIcons.PLUS"
+          label="Buscar"
+          :icon="PrimeIcons.SEARCH"
           @click="openWorkOrderSelector"
+          size="small"
           severity="secondary"
           outlined
         />
@@ -232,14 +233,14 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 200px;
+  min-height: 120px;
   border-radius: 8px;
   overflow: hidden;
 }
 
 .workcenter-picture {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 200px;
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
