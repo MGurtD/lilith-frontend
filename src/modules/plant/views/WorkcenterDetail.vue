@@ -186,7 +186,7 @@ const handleOperatorClockOut = async () => {
   display: grid;
   grid-template-columns: 350px 1fr;
   gap: 1rem;
-  height: 90%;
+  height: 100%;
 }
 
 .realtime-panel {
@@ -194,7 +194,7 @@ const handleOperatorClockOut = async () => {
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
   overflow-y: auto;
-  max-height: 100%;
+  height: 100%;
 }
 
 .tabs-panel {
@@ -203,13 +203,20 @@ const handleOperatorClockOut = async () => {
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
-  max-height: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .tabs-panel :deep(.p-tabview) {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.tabs-panel :deep(.p-tabview-panels) {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .touch-panel {
