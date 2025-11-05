@@ -186,8 +186,7 @@ const handleOperatorClockOut = async () => {
   display: grid;
   grid-template-columns: 350px 1fr;
   gap: 1rem;
-  height: 100%;
-  overflow: hidden;
+  height: 90%;
 }
 
 .realtime-panel {
@@ -202,7 +201,6 @@ const handleOperatorClockOut = async () => {
   background: var(--surface-0);
   border: 1px solid var(--surface-border);
   border-radius: var(--border-radius);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   max-height: 100%;
