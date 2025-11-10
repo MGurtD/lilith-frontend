@@ -19,7 +19,7 @@ export default defineConfig({
         theme_color: "#3f51b5", // Color azul del logo
         background_color: "#ffffff",
         display: "standalone",
-        orientation: "landscape-primary",
+        orientation: "natural",
         scope: "/",
         start_url: "/",
         icons: [
