@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { usePlantStore } from "../store";
 import { WorkcenterViewState } from "../types";
 import WorkcenterCard from "../components/WorkcenterCard.vue";
@@ -45,28 +45,59 @@ import {
   WS_ENDPOINTS,
 } from "../composables/useWebSocketConnection";
 
+const STORAGE_KEY = "temges.plant-visible-areas";
+
 const store = useStore();
 const plantStore = usePlantStore();
 const visibleAreas = ref<Set<string>>(new Set());
 const { connect } = useWebSocketConnection();
 
-// Show all areas by default
+// Carregar àrees desplegades del localStorage
+const loadVisibleAreas = (): void => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as string[];
+      visibleAreas.value = new Set(parsed);
+    }
+  } catch (error) {
+    console.warn("Error carregant àrees desplegades:", error);
+    visibleAreas.value = new Set();
+  }
+};
+
+// Guardar àrees desplegades al localStorage
+const saveVisibleAreas = (): void => {
+  try {
+    const areaIds = Array.from(visibleAreas.value);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(areaIds));
+  } catch (error) {
+    console.warn("Error guardant àrees desplegades:", error);
+  }
+};
+
 onMounted(async () => {
-  // 1. Carregar dades mestres d'àrees i workcenters
+  // 1. Carregar estat de les àrees desplegades
+  loadVisibleAreas();
+
+  // 2. Carregar dades mestres d'àrees i workcenters
   await plantStore.fetchAreasWithWorkcenters();
 
-  // 2. Configurar header
+  // 3. Configurar header
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     title: `Àrees de ${plantStore.site?.name || "Planta"}`,
   });
 
-  // 3. Connectar WebSocket general i configurar handlers al store
+  // 4. Connectar WebSocket general i configurar handlers al store
   plantStore.connectToGeneral();
   connect(WS_ENDPOINTS.GENERAL, { debug: true });
 });
 
-// onUnmounted gestionat automàticament pel composable
+onUnmounted(() => {
+  // Guardar estat de les àrees desplegades abans de sortir
+  saveVisibleAreas();
+});
 
 const toggleArea = (areaId: string) => {
   if (visibleAreas.value.has(areaId)) {
