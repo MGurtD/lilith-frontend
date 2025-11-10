@@ -87,6 +87,37 @@
         aria-label="Sortir de pantalla completa"
       />
 
+      <!-- Fullscreen Zoom Controls -->
+      <div v-if="isFullscreen" class="fullscreen-zoom-controls">
+        <Button
+          :icon="PrimeIcons.MINUS"
+          rounded
+          severity="secondary"
+          :disabled="zoomScale <= MIN_SCALE"
+          @click="zoomOut"
+          v-tooltip.left="'Allunyar (Ctrl + -)'"
+          aria-label="Allunyar"
+        />
+        <span class="fullscreen-zoom-indicator">{{ displayScale }}%</span>
+        <Button
+          :icon="PrimeIcons.PLUS"
+          rounded
+          severity="secondary"
+          :disabled="zoomScale >= MAX_SCALE"
+          @click="zoomIn"
+          v-tooltip.left="'Apropar (Ctrl + +)'"
+          aria-label="Apropar"
+        />
+        <Button
+          :icon="PrimeIcons.REFRESH"
+          rounded
+          severity="secondary"
+          @click="resetZoom"
+          v-tooltip.left="'Restablir zoom (Ctrl + 0)'"
+          aria-label="Restablir zoom"
+        />
+      </div>
+
       <!-- Loading State -->
       <div v-if="loading" class="pdf-loading-state">
         <ProgressSpinner
@@ -476,6 +507,32 @@ onUnmounted(() => {
 .fullscreen-exit-button:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
+}
+
+/* Fullscreen Zoom Controls */
+.fullscreen-zoom-controls {
+  position: fixed;
+  bottom: 2rem;
+  right: 1rem;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.75rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fullscreen-zoom-indicator {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  min-width: 48px;
+  text-align: center;
+  padding: 0.25rem 0;
 }
 
 /* PDF Content */
