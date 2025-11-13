@@ -7,7 +7,7 @@
     @update:collapsed="toggleCollapse"
   >
     <template #header>
-      <div class="brand">
+      <div class="brand" @click="() => router.push({ path: '/' })">
         <img
           v-if="branding.logoPath"
           :src="branding.logoPath"
@@ -32,13 +32,13 @@ import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import { useStore } from "../store";
 import { branding, getCompanyName } from "../config/branding";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const store = useStore();
 
 // Derive dynamic company name depending on collapsed state
 const companyName = computed(() => getCompanyName(store.sidebar.collapsed));
-// Use Vite env var VITE_APP_VERSION if defined (add to build script) otherwise fallback
-const appVersion = (import.meta as any).env?.VITE_APP_VERSION || "1.0.0";
 
 function toggleCollapse() {
   store.sidebar.collapsed = !store.sidebar.collapsed;
