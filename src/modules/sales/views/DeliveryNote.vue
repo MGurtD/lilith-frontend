@@ -94,12 +94,12 @@ const { deliveryNote } = storeToRefs(deliveryNoteStore);
 
 const items = [
   {
-    label: "Descarregar amb Preus",
+    label: "Descarregar",
     icon: PrimeIcons.FILE_WORD,
     command: () => printInvoice(true),
   },
   {
-    label: "Descarregar sense Preus",
+    label: "Descarregar sense preu",
     icon: PrimeIcons.FILE_WORD,
     command: () => printInvoice(false),
   },
