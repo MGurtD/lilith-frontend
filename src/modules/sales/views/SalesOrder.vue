@@ -134,9 +134,14 @@ const { salesOrder } = storeToRefs(salesOrderStore);
 
 const items = [
   {
-    label: "Descarregar",
+    label: "Descarregar amb Preus",
     icon: PrimeIcons.FILE_WORD,
-    command: () => printInvoice(),
+    command: () => printInvoice(true),
+  },
+  {
+    label: "Descarregar sense Preus",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(false),
   },
 ];
 
@@ -337,9 +342,10 @@ const openWorkOrder = (workorderid: string) => {
   router.push({ path: `/workorder/${workorderid}` });
 };
 
-const printInvoice = async () => {
+const printInvoice = async (showPrices: boolean) => {
   const orderReport = await services.SalesOrder.GetReportDataById(
-    salesOrder.value!.id
+    salesOrder.value!.id,
+    showPrices
   );
 
   if (orderReport) {

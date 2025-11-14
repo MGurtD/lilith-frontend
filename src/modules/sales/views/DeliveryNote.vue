@@ -94,9 +94,14 @@ const { deliveryNote } = storeToRefs(deliveryNoteStore);
 
 const items = [
   {
-    label: "Descarregar",
+    label: "Descarregar amb Preus",
     icon: PrimeIcons.FILE_WORD,
-    command: () => printInvoice(),
+    command: () => printInvoice(true),
+  },
+  {
+    label: "Descarregar sense Preus",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(false),
   },
 ];
 
@@ -222,9 +227,10 @@ const deleteSalesOrder = async (order: SalesOrderHeader) => {
   await salesOrderStore.GetByDeliveryNote(deliveryNote.value!.id);
 };
 
-const printInvoice = async () => {
+const printInvoice = async (showPrices: boolean) => {
   const deliveryNoteReport = await Services.DeliveryNote.GetReportDataById(
-    deliveryNote.value!.id
+    deliveryNote.value!.id,
+    showPrices
   );
 
   if (deliveryNoteReport) {
