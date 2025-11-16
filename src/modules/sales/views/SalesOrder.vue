@@ -136,7 +136,12 @@ const items = [
   {
     label: "Descarregar",
     icon: PrimeIcons.FILE_WORD,
-    command: () => printInvoice(),
+    command: () => printInvoice(true),
+  },
+  {
+    label: "Descarregar sense preu",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printInvoice(false),
   },
 ];
 
@@ -337,9 +342,10 @@ const openWorkOrder = (workorderid: string) => {
   router.push({ path: `/workorder/${workorderid}` });
 };
 
-const printInvoice = async () => {
+const printInvoice = async (showPrices: boolean) => {
   const orderReport = await services.SalesOrder.GetReportDataById(
-    salesOrder.value!.id
+    salesOrder.value!.id,
+    showPrices
   );
 
   if (orderReport) {

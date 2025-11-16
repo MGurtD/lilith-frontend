@@ -61,8 +61,8 @@ export class SalesOrderHeaderService extends BaseService<SalesOrderHeader> {
     }
   }
 
-  async GetReportDataById(id: string) {
-    const endpoint = `${this.resource}/Report/${id}`;
+  async GetReportDataById(id: string, showPrices: boolean) {
+    const endpoint = `${this.resource}/Report/${id}?showPrices=${showPrices}`;
     const response = await apiClient.get(endpoint);
     if (response.status === 200) {
       return response.data as SalesOrderReport;
