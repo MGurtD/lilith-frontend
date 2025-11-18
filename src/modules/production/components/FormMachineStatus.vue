@@ -35,19 +35,18 @@
         ></ColorPicker>
       </div>
       <div>
-        <BaseInput
-          class="mb-2"
-          label="Icona"
-          id="icon"
+        <label class="block text-900 mb-2">Icona</label>
+        <IconPicker
           v-model="machineStatus.icon"
-        ></BaseInput>
+          placeholder="Selecciona una icona"
+        />
       </div>
     </section>
     <section class="five-columns">
       <div>
         <label class="block text-900 mb-2">Aturada</label>
         <Checkbox
-          v-model="machineStatus.stoped"
+          v-model="machineStatus.stopped"
           class="w-full"
           :binary="true"
         />
@@ -91,6 +90,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
+import IconPicker from "../../../components/IconPicker.vue";
 import { MachineStatus } from "../types";
 import * as Yup from "yup";
 import {

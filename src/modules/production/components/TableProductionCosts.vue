@@ -29,7 +29,6 @@
   </DataTable>
 </template>
 <script setup lang="ts">
-import { formatDate } from "../../../utils/functions";
 import { ProductionCostDashboardGrouped } from "../types";
 const props = defineProps<{
   costs: Array<ProductionCostDashboardGrouped>;
