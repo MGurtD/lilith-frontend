@@ -60,11 +60,23 @@ export interface MachineStatus {
   name: string;
   description: string;
   color: string;
-  stoped: boolean;
+  stopped: boolean;
   operatorsAllowed: boolean;
   closed: boolean;
   preferred: boolean;
   icon: string;
+  disabled: boolean;
+  reasons?: Array<MachineStatusReason>;
+}
+
+export interface MachineStatusReason {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  machineStatusId: string;
   disabled: boolean;
 }
 

@@ -73,7 +73,7 @@ onBeforeUnmount(() => {
       <InputText
         v-model="search"
         class="w-full"
-        :placeholder="placeholder || t('menuItems.searchIcon')"
+        :placeholder="internal || placeholder || t('menuItems.searchIcon')"
         @focus="onFocusInput"
         @keydown.escape="open = false"
       />

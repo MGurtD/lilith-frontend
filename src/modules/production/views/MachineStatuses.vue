@@ -23,7 +23,7 @@
     <Column field="description" header="Descripció" style="width: 40%"></Column>
     <Column header="Aturada" style="width: 2%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.stoped" />
+        <BooleanColumn :value="slotProps.data.stopped" />
       </template>
     </Column>
     <Column header="Operaris" style="width: 2%">
