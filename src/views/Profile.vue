@@ -34,41 +34,28 @@ const refreshHeader = () => {
   });
 };
 
+const initMenuModel = () => {
+  const ma = profiles.menuAssignment;
+  menuModel.value = ma
+    ? {
+        menuItemIds: [...ma.menuItemIds],
+        defaultMenuItemId: ma.defaultMenuItemId ?? null,
+      }
+    : { menuItemIds: [], defaultMenuItemId: null };
+};
+
 onMounted(async () => {
   refreshHeader();
   if (isNew) {
     profiles.setNew();
     formModel.value = { ...profiles.current };
-    const ma = profiles.menuAssignment;
-    menuModel.value = ma
-      ? {
-          menuItemIds: [...ma.menuItemIds],
-          defaultMenuItemId: ma.defaultMenuItemId ?? null,
-        }
-      : { menuItemIds: [], defaultMenuItemId: null };
+    initMenuModel();
   } else {
     await profiles.fetchOne(id);
     formModel.value = { ...profiles.current };
-    const ma = profiles.menuAssignment;
-    menuModel.value = ma
-      ? {
-          menuItemIds: [...ma.menuItemIds],
-          defaultMenuItemId: ma.defaultMenuItemId ?? null,
-        }
-      : { menuItemIds: [], defaultMenuItemId: null };
+    initMenuModel();
   }
 });
-
-watch(
-  () => profiles.menuAssignment,
-  (v) => {
-    if (v)
-      menuModel.value = {
-        menuItemIds: [...v.menuItemIds],
-        defaultMenuItemId: v.defaultMenuItemId ?? null,
-      };
-  }
-);
 
 const saveProfile = async () => {
   let ok = false;
@@ -130,9 +117,12 @@ const onSaveMenus = () => {
         life: ok ? 2500 : 4000,
       });
 
-      store.user?.profileId &&
-        store.user.profileId === profiles.current?.id &&
-        store.loadUserMenus(store.user);
+      if (
+        store.user?.profileId &&
+        store.user.profileId === profiles.current?.id
+      ) {
+        await store.loadUserMenus(store.user);
+      }
     },
   });
 };
