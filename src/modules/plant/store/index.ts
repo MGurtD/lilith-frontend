@@ -206,6 +206,18 @@ export const usePlantStore = defineStore("plantStore", {
       });
     },
 
+    async changeMachineStatus(
+      statusId: string,
+      statusReasonId?: string
+    ): Promise<boolean> {
+      if (!this.workcenter) return false;
+      return await ActionsService.client.changeMachineStatus({
+        workcenterId: this.workcenter.id,
+        statusId,
+        statusReasonId,
+      });
+    },
+
     async getOperator(): Promise<Operator | undefined> {
       if (this.operator !== undefined) {
         return this.operator;

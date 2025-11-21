@@ -41,20 +41,27 @@
     <footer class="touch-panel">
       <div class="touch-buttons">
         <Button
+          v-if="!isOperatorClockedIn"
           :icon="PrimeIcons.SIGN_IN"
           label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
-          :disabled="disableClockIn"
           @click="handleOperatorClockIn"
         />
         <Button
+          v-if="isOperatorClockedIn"
           :icon="PrimeIcons.SIGN_OUT"
           label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
-          :disabled="disableClockOut"
           @click="handleOperatorClockOut"
+        />
+        <Button
+          :icon="PrimeIcons.REFRESH"
+          label="Canviar estat"
+          severity="secondary"
+          class="touch-button"
+          @click="handleMachineStatusChange"
         />
       </div>
     </footer>
@@ -95,15 +102,6 @@ const isOperatorClockedIn = computed(() => {
   return workcenter.value.realtime.operators.some(
     (op) => op.operatorId === plantStore.operator!.id
   );
-});
-
-// Deshabilitar botones según estado
-const disableClockIn = computed(() => {
-  return !workcenter.value?.realtime || isOperatorClockedIn.value;
-});
-
-const disableClockOut = computed(() => {
-  return !workcenter.value?.realtime || !isOperatorClockedIn.value;
 });
 
 onMounted(async () => {
@@ -162,6 +160,23 @@ const handleOperatorClockOut = async () => {
     toast.add({
       severity: "error",
       summary: "Error al registrar la sortida",
+      life: 4000,
+    });
+  }
+};
+
+const handleMachineStatusChange = async () => {
+  const result = await plantStore.changeMachineStatus("", "");
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Estat de la màquina canviat correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al canviar l'estat de la màquina",
       life: 4000,
     });
   }
