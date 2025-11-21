@@ -4,8 +4,7 @@ import { OperatorTypeService } from "../services";
 
 const operatorTypeService = new OperatorTypeService("/operatortype");
 
-export const useOperatorTypeStore = defineStore({
-  id: "operatortype",
+export const useOperatorTypeStore = defineStore("operatortype", {
   state: () => ({
     operatorTypes: undefined as Array<OperatorType> | undefined,
   }),

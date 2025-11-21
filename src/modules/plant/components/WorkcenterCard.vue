@@ -1,15 +1,15 @@
 <template>
   <div class="workcenter-card" @click="handleClick">
-    <div class="workcenter-card__status" :class="statusClass"></div>
+    <div class="workcenter-card__status" :style="borderTopStyle"></div>
 
     <div class="workcenter-card__header">
       <div class="workcenter-card__title">
-        <i :class="PrimeIcons.COG" class="workcenter-card__icon"></i>
+        <i :class="statusIcon" class="workcenter-card__icon"></i>
         <h3>{{ workcenter.config.description }}</h3>
       </div>
-      <!-- <span class="workcenter-card__badge" :class="badgeClass">
-        {{ workcenter.realtime?.statusName || "Sense dades" }}
-      </span> -->
+      <span class="workcenter-card__badge" :style="badgeStyle">
+        {{ currentMachineStatus?.name || "Sense dades" }}
+      </span>
     </div>
 
     <div class="workcenter-card__content">
@@ -60,6 +60,12 @@
 import { PrimeIcons } from "primevue/api";
 import { computed } from "vue";
 import { WorkcenterViewState, WorkcenterRealtime } from "../types";
+import {
+  getBorderTopStyle,
+  normalizeColor,
+  isColorLight,
+} from "../../../utils/functions";
+import { usePlantStore } from "../store";
 
 interface Props {
   workcenter: WorkcenterViewState;
@@ -70,6 +76,30 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: "click", workcenterId: string): void;
 }>();
+
+const plantStore = usePlantStore();
+
+// Obtener el machine status desde el store
+const currentMachineStatus = computed(() => {
+  const statusId = props.workcenter.realtime?.statusId;
+  if (!statusId) return undefined;
+  return plantStore.getMachineStatusById(statusId);
+});
+
+// Estilo del borde superior basado en el color del status desde el store
+const borderTopStyle = computed(() => {
+  const statusColor = currentMachineStatus.value?.color;
+  return getBorderTopStyle(statusColor, "f59e0b"); // Yellow-500 as default
+});
+
+// Icono del header basado en el status desde el store
+const statusIcon = computed((): string => {
+  const machineStatus = currentMachineStatus.value;
+  if (!machineStatus || !machineStatus.icon) {
+    return PrimeIcons.CIRCLE;
+  }
+  return machineStatus.icon;
+});
 
 // Formatear referencia con código y descripción
 const formattedReference = computed((): string => {
@@ -99,26 +129,24 @@ const formattedTime = computed((): string => {
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 });
 
-// Determinar clase de estado según snapshot
-const statusClass = computed((): string => {
-  const snapshot = props.workcenter.realtime;
-  if (!snapshot) return "workcenter-card__status--idle";
+// Estilo dinámico del badge basado en el color del status
+const badgeStyle = computed(() => {
+  const statusColor = currentMachineStatus.value?.color;
+  if (!statusColor) {
+    // Default: yellow (idle)
+    return {
+      backgroundColor: "var(--yellow-100)",
+      color: "var(--yellow-800)",
+    };
+  }
 
-  if (snapshot.statusStopped) return "workcenter-card__status--stopped";
-  if (snapshot.statusClosed) return "workcenter-card__status--idle";
+  const normalizedColor = normalizeColor(statusColor);
+  const isLight = isColorLight(normalizedColor);
 
-  return "workcenter-card__status--active";
-});
-
-// Determinar clase de badge según snapshot
-const badgeClass = computed((): string => {
-  const snapshot = props.workcenter.realtime;
-  if (!snapshot) return "workcenter-card__badge--idle";
-
-  if (snapshot.statusStopped) return "workcenter-card__badge--stopped";
-  if (snapshot.statusClosed) return "workcenter-card__badge--idle";
-
-  return "workcenter-card__badge--running";
+  return {
+    backgroundColor: normalizedColor,
+    color: isLight ? "#000000" : "#ffffff",
+  };
 });
 
 const handleClick = () => {
@@ -148,18 +176,7 @@ const handleClick = () => {
 .workcenter-card__status {
   height: 6px;
   width: 100%;
-}
-
-.workcenter-card__status--active {
-  background: linear-gradient(90deg, var(--green-500), var(--green-600));
-}
-
-.workcenter-card__status--stopped {
-  background: linear-gradient(90deg, var(--red-500), var(--red-600));
-}
-
-.workcenter-card__status--idle {
-  background: linear-gradient(90deg, var(--yellow-500), var(--yellow-600));
+  /* Background is set dynamically via :style binding */
 }
 
 /* Card Header */
@@ -167,8 +184,9 @@ const handleClick = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 1.5rem 1rem;
+  padding: 1rem;
   border-bottom: 1px solid var(--surface-border);
+  gap: 0.2rem;
 }
 
 .workcenter-card__title {
@@ -190,27 +208,14 @@ const handleClick = () => {
 }
 
 .workcenter-card__badge {
-  padding: 0.4rem 0.9rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.workcenter-card__badge--running {
-  background: var(--green-100);
-  color: var(--green-700);
-}
-
-.workcenter-card__badge--stopped {
-  background: var(--red-100);
-  color: var(--red-700);
-}
-
-.workcenter-card__badge--idle {
-  background: var(--yellow-100);
-  color: var(--yellow-700);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  /* Background and color set dynamically via :style binding */
 }
 
 /* Card Content */

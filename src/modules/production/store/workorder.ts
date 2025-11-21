@@ -9,8 +9,7 @@ import {
 } from "../types";
 import Services from "../services";
 
-export const useWorkOrderStore = defineStore({
-  id: "workorder",
+export const useWorkOrderStore = defineStore("workorder", {
   state: () => ({
     workorder: undefined as WorkOrder | undefined,
     workorders: undefined as Array<WorkOrder> | undefined,
@@ -86,9 +85,8 @@ export const useWorkOrderStore = defineStore({
       this.workorder = await Services.WorkOrder.getById(id);
     },
     async fetchBySalesOrder(salesOrderId: string) {
-      this.workorders = await Services.WorkOrder.GetBySalesOrderId(
-        salesOrderId
-      );
+      this.workorders =
+        await Services.WorkOrder.GetBySalesOrderId(salesOrderId);
     },
     async create(model: CreateWorkOrderDto) {
       const result = await Services.WorkOrder.Create(model);

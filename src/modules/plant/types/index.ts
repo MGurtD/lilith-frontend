@@ -73,6 +73,12 @@ export interface OperatorClockInOutRequest {
   operatorId: string;
 }
 
+export interface ChangeMachineStatusRequest {
+  workcenterId: string;
+  statusId: string;
+  statusReasonId?: string;
+}
+
 export interface OperatorResponse {
   id: string;
   code: string;

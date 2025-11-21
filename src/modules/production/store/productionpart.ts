@@ -2,8 +2,7 @@ import { defineStore } from "pinia";
 import { ProductionPart } from "../types";
 import Services from "../services";
 
-export const useProductionPartStore = defineStore({
-  id: "productionParts",
+export const useProductionPartStore = defineStore("productionParts", {
   state: () => ({
     productionPart: undefined as ProductionPart | undefined,
     productionParts: undefined as Array<ProductionPart> | undefined,
@@ -28,9 +27,8 @@ export const useProductionPartStore = defineStore({
       this.productionParts = await Services.ProductionPart.getAll();
     },
     async fetchByWorkOrderId(workOrderId: string) {
-      this.productionParts = await Services.ProductionPart.GetByWorkOrderId(
-        workOrderId
-      );
+      this.productionParts =
+        await Services.ProductionPart.GetByWorkOrderId(workOrderId);
     },
     async fetchOne(id: string) {
       this.productionPart = await Services.ProductionPart.getById(id);

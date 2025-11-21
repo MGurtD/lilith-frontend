@@ -36,7 +36,22 @@ export class EnterpriseService extends BaseService<Enterprise> {}
 export class SiteService extends BaseService<Site> {}
 export class WorkcenterTypeService extends BaseService<WorkcenterType> {}
 export class WorkcenterCostService extends BaseService<WorkcenterCost> {}
-export class MachineStatusService extends BaseService<MachineStatus> {}
+
+export class MachineStatusService extends BaseService<MachineStatus> {
+  async getAllWithReasons(): Promise<Array<MachineStatus> | undefined> {
+    try {
+      const response = await this.apiClient.get(
+        `${this.resource}?includeReasons=true`
+      );
+      if (response.status === 200) {
+        return response.data as Array<MachineStatus>;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
 export class MachineStatusReasonService extends BaseService<MachineStatusReason> {}
 export class OperatorService extends BaseService<Operator> {}
 export class OperatorTypeService extends BaseService<OperatorType> {}

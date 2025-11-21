@@ -41,23 +41,37 @@
     <footer class="touch-panel">
       <div class="touch-buttons">
         <Button
+          v-if="!isOperatorClockedIn"
           :icon="PrimeIcons.SIGN_IN"
           label="Fitxar entrada"
           severity="secondary"
           class="touch-button"
-          :disabled="disableClockIn"
           @click="handleOperatorClockIn"
         />
         <Button
+          v-if="isOperatorClockedIn"
           :icon="PrimeIcons.SIGN_OUT"
           label="Fitxar sortida"
           severity="secondary"
           class="touch-button"
-          :disabled="disableClockOut"
           @click="handleOperatorClockOut"
+        />
+        <Button
+          :icon="PrimeIcons.REFRESH"
+          label="Canviar estat"
+          severity="secondary"
+          class="touch-button"
+          @click="handleMachineStatusChange"
         />
       </div>
     </footer>
+
+    <!-- Machine Status Selector Dialog -->
+    <MachineStatusSelector
+      v-model:visible="statusSelectorVisible"
+      :statuses="plantStore.machineStatuses"
+      @status-changed="onStatusChanged"
+    />
   </div>
 </template>
 
@@ -71,10 +85,12 @@ import { usePlantStore } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+import MachineStatusSelector from "../components/MachineStatusSelector.vue";
 import {
   useWebSocketConnection,
   WS_ENDPOINTS,
 } from "../composables/useWebSocketConnection";
+import { ChangeMachineStatusRequest } from "../types";
 
 const route = useRoute();
 const toast = useToast();
@@ -84,6 +100,7 @@ const { connect } = useWebSocketConnection();
 
 const id = route.params.id as string;
 const activeTab = ref(0);
+const statusSelectorVisible = ref(false);
 
 const workcenter = computed(() => plantStore.workcenterView);
 
@@ -95,15 +112,6 @@ const isOperatorClockedIn = computed(() => {
   return workcenter.value.realtime.operators.some(
     (op) => op.operatorId === plantStore.operator!.id
   );
-});
-
-// Deshabilitar botones según estado
-const disableClockIn = computed(() => {
-  return !workcenter.value?.realtime || isOperatorClockedIn.value;
-});
-
-const disableClockOut = computed(() => {
-  return !workcenter.value?.realtime || !isOperatorClockedIn.value;
 });
 
 onMounted(async () => {
@@ -126,7 +134,10 @@ onMounted(async () => {
     title: workcenter.value.config.description,
   });
 
-  // 3. Connectar WebSocket específic del workcenter
+  // 3. Carregar estats de màquina
+  await plantStore.fetchMachineStatuses();
+
+  // 4. Connectar WebSocket específic del workcenter
   plantStore.connectToWorkcenter(id);
   connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
 });
@@ -162,6 +173,31 @@ const handleOperatorClockOut = async () => {
     toast.add({
       severity: "error",
       summary: "Error al registrar la sortida",
+      life: 4000,
+    });
+  }
+};
+
+const handleMachineStatusChange = async () => {
+  statusSelectorVisible.value = true;
+};
+
+const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
+  const result = await plantStore.changeMachineStatus(
+    request.statusId,
+    request.statusReasonId
+  );
+
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Estat canviat correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al canviar l'estat",
       life: 4000,
     });
   }

@@ -5,6 +5,7 @@ import {
   Site,
   Workcenter,
   WorkOrder,
+  MachineStatus,
 } from "../../production/types";
 import {
   WorkcenterRealtime,
@@ -29,6 +30,7 @@ export const usePlantStore = defineStore("plantStore", {
       workcenter: undefined as Workcenter | undefined,
       workcenterPictureBlob: undefined as Blob | undefined,
       workcenterPictureUrl: undefined as string | undefined,
+      machineStatuses: [] as MachineStatus[],
       // Datos en tiempo real (WebSocket)
       areasWorkcentersRt: [] as WorkcenterRealtime[],
       workcenterRt: undefined as WorkcenterRealtime | undefined,
@@ -66,6 +68,12 @@ export const usePlantStore = defineStore("plantStore", {
         realtime: this.workcenterRt,
       };
     },
+    // Obtener machine status por ID
+    getMachineStatusById: (state) => {
+      return (id: string): MachineStatus | undefined => {
+        return state.machineStatuses.find((status) => status.id === id);
+      };
+    },
   },
   actions: {
     /**
@@ -78,6 +86,17 @@ export const usePlantStore = defineStore("plantStore", {
         this.site = sites[0];
       }
       this.areas = (await ProductionServices.Areas.getVisibleInPlant()) || [];
+    },
+
+    /**
+     * Carrega els estats de màquina amb els seus motius
+     */
+    async fetchMachineStatuses() {
+      const statuses =
+        await ProductionServices.MachineStatus.getAllWithReasons();
+      if (statuses) {
+        this.machineStatuses = statuses;
+      }
     },
 
     /**
@@ -203,6 +222,18 @@ export const usePlantStore = defineStore("plantStore", {
       return await ActionsService.client.clockOutOperator({
         operatorId: this.operator.id,
         workcenterId: this.workcenter.id,
+      });
+    },
+
+    async changeMachineStatus(
+      statusId: string,
+      statusReasonId?: string
+    ): Promise<boolean> {
+      if (!this.workcenter) return false;
+      return await ActionsService.client.changeMachineStatus({
+        workcenterId: this.workcenter.id,
+        statusId,
+        statusReasonId,
       });
     },
 

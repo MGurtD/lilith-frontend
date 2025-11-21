@@ -14,7 +14,7 @@
       optionLabel="comercialName"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #option="slotProps">
@@ -26,6 +26,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useSuppliersStore } from "../store/suppliers";
 
 const props = defineProps<{
@@ -38,4 +39,8 @@ const emit = defineEmits<{
 }>();
 
 const supplierStore = useSuppliersStore();
+
+onMounted(async () => {
+  await supplierStore.fetchSuppliers();
+});
 </script>

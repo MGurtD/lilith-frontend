@@ -33,20 +33,12 @@
       </Column>
       <Column field="color" header="Color" sortable>
         <template #body="slotProps">
-          <div
-            :style="{
-              backgroundColor: slotProps.data.color?.startsWith('#')
-                ? slotProps.data.color
-                : `#${slotProps.data.color || '000000'}`,
-              width: '30px',
-              height: '20px',
-            }"
-          ></div>
+          <ColorColumn :value="slotProps.data.color" />
         </template>
       </Column>
       <Column field="icon" header="Icona" sortable>
         <template #body="slotProps">
-          <i :class="slotProps.data.icon" v-if="slotProps.data.icon"></i>
+          <IconColumn :value="slotProps.data.icon" />
         </template>
       </Column>
       <Column>
@@ -73,6 +65,8 @@
 import { ref } from "vue";
 import { MachineStatusReason } from "../types";
 import { getNewUuid } from "../../../utils/functions";
+import ColorColumn from "../../../components/tables/ColorColumn.vue";
+import IconColumn from "../../../components/tables/IconColumn.vue";
 
 const props = defineProps<{
   reasons: Array<MachineStatusReason>;
