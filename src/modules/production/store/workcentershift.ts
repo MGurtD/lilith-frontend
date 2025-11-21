@@ -2,8 +2,7 @@ import { defineStore } from "pinia";
 import { WorkcenterShiftGroup, WorkcenterShiftRequest } from "../types";
 import services from "../services";
 
-export const useWorkcenterShiftStore = defineStore({
-  id: "workcentershift",
+export const useWorkcenterShiftStore = defineStore("workcentershift", {
   state: () => ({
     workcenterShifts: undefined as Array<WorkcenterShiftGroup> | undefined,
     workcenterShift: undefined as WorkcenterShiftGroup | undefined,

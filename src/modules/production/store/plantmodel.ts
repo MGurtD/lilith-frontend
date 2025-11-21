@@ -37,8 +37,7 @@ const machineStatusReasonService = new MachineStatusReasonService(
   "/machinestatus/reason"
 );
 
-export const usePlantModelStore = defineStore({
-  id: "plantmodel",
+export const usePlantModelStore = defineStore("plantmodel", {
   state: () => ({
     workcenter: undefined as Workcenter | undefined,
     workcenters: undefined as Array<Workcenter> | undefined,

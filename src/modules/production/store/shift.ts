@@ -3,8 +3,7 @@ import { Shift, ShiftDetail } from "../types";
 import Services from "../services";
 import { ref } from "vue";
 
-export const useShiftStore = defineStore({
-  id: "shift",
+export const useShiftStore = defineStore("shift", {
   state: () => ({
     shift: ref(undefined as Shift | undefined),
     shifts: ref(undefined as Array<Shift> | undefined),
