@@ -150,8 +150,11 @@ onMounted(async () => {
   loadVisibleAreas();
   loadFilterPreference();
 
-  // 2. Carregar dades mestres d'àrees i workcenters
-  await plantStore.fetchAreasWithWorkcenters();
+  // 2. Carregar dades mestres d'àrees, workcenters i estats de màquina
+  await Promise.all([
+    plantStore.fetchAreasWithWorkcenters(),
+    plantStore.fetchMachineStatuses(),
+  ]);
 
   // 3. Configurar header
   store.setMenuItem({

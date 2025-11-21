@@ -65,6 +65,13 @@
         />
       </div>
     </footer>
+
+    <!-- Machine Status Selector Dialog -->
+    <MachineStatusSelector
+      v-model:visible="statusSelectorVisible"
+      :statuses="plantStore.machineStatuses"
+      @status-changed="onStatusChanged"
+    />
   </div>
 </template>
 
@@ -78,10 +85,12 @@ import { usePlantStore } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+import MachineStatusSelector from "../components/MachineStatusSelector.vue";
 import {
   useWebSocketConnection,
   WS_ENDPOINTS,
 } from "../composables/useWebSocketConnection";
+import { ChangeMachineStatusRequest } from "../types";
 
 const route = useRoute();
 const toast = useToast();
@@ -91,6 +100,7 @@ const { connect } = useWebSocketConnection();
 
 const id = route.params.id as string;
 const activeTab = ref(0);
+const statusSelectorVisible = ref(false);
 
 const workcenter = computed(() => plantStore.workcenterView);
 
@@ -124,7 +134,10 @@ onMounted(async () => {
     title: workcenter.value.config.description,
   });
 
-  // 3. Connectar WebSocket específic del workcenter
+  // 3. Carregar estats de màquina
+  await plantStore.fetchMachineStatuses();
+
+  // 4. Connectar WebSocket específic del workcenter
   plantStore.connectToWorkcenter(id);
   connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
 });
@@ -166,17 +179,25 @@ const handleOperatorClockOut = async () => {
 };
 
 const handleMachineStatusChange = async () => {
-  const result = await plantStore.changeMachineStatus("", "");
+  statusSelectorVisible.value = true;
+};
+
+const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
+  const result = await plantStore.changeMachineStatus(
+    request.statusId,
+    request.statusReasonId
+  );
+
   if (result) {
     toast.add({
       severity: "success",
-      summary: "Estat de la màquina canviat correctament",
+      summary: "Estat canviat correctament",
       life: 4000,
     });
   } else {
     toast.add({
       severity: "error",
-      summary: "Error al canviar l'estat de la màquina",
+      summary: "Error al canviar l'estat",
       life: 4000,
     });
   }

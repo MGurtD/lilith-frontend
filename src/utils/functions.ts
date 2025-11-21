@@ -184,3 +184,93 @@ export function loadImage(blob: Blob): Promise<HTMLImageElement> {
     img.src = url;
   });
 }
+
+/**
+ * Normalizes a color string by ensuring it has the # prefix
+ * @param color - Color string with or without # prefix
+ * @param defaultColor - Default color to use if color is undefined (default: '6c757d')
+ * @returns Normalized color string with # prefix
+ */
+export const normalizeColor = (
+  color: string | undefined,
+  defaultColor: string = "6c757d"
+): string => {
+  const baseColor = color || defaultColor;
+  return baseColor.startsWith("#") ? baseColor : `#${baseColor}`;
+};
+
+/**
+ * Determines if a color is light or dark based on luminance
+ * @param color - Color string (with or without # prefix)
+ * @returns true if the color is light, false if dark
+ */
+export const isColorLight = (color: string): boolean => {
+  const hex = color.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.7;
+};
+
+/**
+ * Adjusts the brightness of a color
+ * @param color - Color string (with # prefix)
+ * @param percent - Percentage to adjust (-100 to 100)
+ * @returns Adjusted color string with # prefix
+ */
+export const adjustBrightness = (color: string, percent: number): string => {
+  const num = parseInt(color.replace("#", ""), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = ((num >> 8) & 0x00ff) + amt;
+  const B = (num & 0x0000ff) + amt;
+  return (
+    "#" +
+    (
+      0x1000000 +
+      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+      (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+      (B < 255 ? (B < 1 ? 0 : B) : 255)
+    )
+      .toString(16)
+      .slice(1)
+  );
+};
+
+/**
+ * Generates dynamic styles for status cards with gradient and text color
+ * @param color - Status color (with or without # prefix)
+ * @returns Object with CSS custom properties for status styling
+ */
+export const getStatusCardStyle = (color: string | undefined) => {
+  const baseColor = normalizeColor(color);
+  const isLightColor = isColorLight(baseColor);
+
+  return {
+    "--status-color": baseColor,
+    "--status-gradient": isLightColor
+      ? `linear-gradient(135deg, ${baseColor}, ${adjustBrightness(baseColor, -10)})`
+      : `linear-gradient(135deg, ${baseColor}, ${adjustBrightness(baseColor, -15)})`,
+    "--status-text-color": isLightColor ? "#000000" : "#ffffff",
+  };
+};
+
+/**
+ * Generates border top style with gradient for workcenter cards
+ * @param color - Status color (with or without # prefix)
+ * @param defaultColor - Default color if color is undefined
+ * @returns Object with borderTop CSS property
+ */
+export const getBorderTopStyle = (
+  color: string | undefined,
+  defaultColor: string = "6c757d"
+) => {
+  const baseColor = normalizeColor(color, defaultColor);
+  const darkerColor = adjustBrightness(baseColor, -10);
+
+  return {
+    background: `linear-gradient(90deg, ${baseColor}, ${darkerColor})`,
+  };
+};
