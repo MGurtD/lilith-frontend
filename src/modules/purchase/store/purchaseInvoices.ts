@@ -42,9 +42,8 @@ export const usePurchaseInvoiceStore = defineStore({
       } as PurchaseInvoice;
     },
     async Create(purchaseInvoice: PurchaseInvoice) {
-      const created = await PurchaseService.PurchaseInvoice.create(
-        purchaseInvoice
-      );
+      const created =
+        await PurchaseService.PurchaseInvoice.create(purchaseInvoice);
       return created;
     },
     async GetById(id: string) {
@@ -55,10 +54,17 @@ export const usePurchaseInvoiceStore = defineStore({
       endDate: string,
       statusId?: string,
       excludeStatusId?: string,
-      supplierId?: string,
-      exerciseId?: string
+      supplierId?: string
     ) {
-      if (statusId) {
+      if (excludeStatusId && supplierId) {
+        this.purchaseInvoices =
+          await PurchaseService.PurchaseInvoice.GetBetweenDatesAndExcludeStatusAndSupplier(
+            startDate,
+            endDate,
+            excludeStatusId,
+            supplierId
+          );
+      } else if (statusId) {
         this.purchaseInvoices =
           await PurchaseService.PurchaseInvoice.GetBetweenDatesAndStatus(
             startDate,
@@ -100,43 +106,38 @@ export const usePurchaseInvoiceStore = defineStore({
     },
 
     async GetDueDates(purchaseInvoice: PurchaseInvoice) {
-      const result = await PurchaseService.PurchaseInvoice.GetDueDates(
-        purchaseInvoice
-      );
+      const result =
+        await PurchaseService.PurchaseInvoice.GetDueDates(purchaseInvoice);
       if (result) return result;
     },
 
     async UpdateInvoicesStatus(
       invoiceImport: PurchaseInvoiceUpdateStatues
     ): Promise<boolean> {
-      const updated = await PurchaseService.PurchaseInvoice.UpdateStatuses(
-        invoiceImport
-      );
+      const updated =
+        await PurchaseService.PurchaseInvoice.UpdateStatuses(invoiceImport);
       return updated;
     },
 
     async CreateInvoiceImport(
       invoiceImport: PurchaseInvoiceImport
     ): Promise<boolean> {
-      const created = await PurchaseService.PurchaseInvoice.CreateImport(
-        invoiceImport
-      );
+      const created =
+        await PurchaseService.PurchaseInvoice.CreateImport(invoiceImport);
       return created;
     },
     async UpdateInvoiceImport(
       invoiceImport: PurchaseInvoiceImport
     ): Promise<boolean> {
-      const created = await PurchaseService.PurchaseInvoice.UpdateImport(
-        invoiceImport
-      );
+      const created =
+        await PurchaseService.PurchaseInvoice.UpdateImport(invoiceImport);
       return created;
     },
     async DeleteInvoiceImport(
       invoiceImport: PurchaseInvoiceImport
     ): Promise<boolean> {
-      const created = await PurchaseService.PurchaseInvoice.DeleteImport(
-        invoiceImport
-      );
+      const created =
+        await PurchaseService.PurchaseInvoice.DeleteImport(invoiceImport);
       return created;
     },
 

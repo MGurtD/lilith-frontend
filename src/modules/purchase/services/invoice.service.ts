@@ -58,6 +58,19 @@ export class PurchaseInvoiceService extends BaseService<PurchaseInvoice> {
     }
   }
 
+  async GetBetweenDatesAndExcludeStatusAndSupplier(
+    startTime: string,
+    endTime: string,
+    excludeStatusId: string,
+    supplierId: string
+  ): Promise<Array<PurchaseInvoice> | undefined> {
+    const endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}&excludeStatusId=${excludeStatusId}&supplierId=${supplierId}`;
+    const response = await apiClient.get(endpoint);
+    if (response.status === 200) {
+      return response.data as Array<PurchaseInvoice>;
+    }
+  }
+
   async GetDueDates(
     purchaseInvoice: PurchaseInvoice
   ): Promise<Array<PurchaseInvoiceDueDate> | undefined> {
