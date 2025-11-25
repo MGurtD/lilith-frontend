@@ -15,14 +15,14 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { OperatorSnapshot } from "../../types";
+import { OperatorRealtime } from "../../types";
 import {
   formatDateTime,
   calculateTimeDifference,
 } from "../../../../utils/functions";
 
 interface Props {
-  operator: OperatorSnapshot;
+  operator: OperatorRealtime;
 }
 
 const props = defineProps<Props>();

@@ -14,7 +14,7 @@ import {
   WorkcenterRealtimeHandler,
 } from "../types";
 import ProductionServices from "../../production/services";
-import ActionsService from "../services/realtime.service";
+import ActionsService from "../services/actions.service";
 import { FileService } from "../../../api/services/file.service";
 import { File } from "../../../types";
 

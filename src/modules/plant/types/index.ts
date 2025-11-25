@@ -17,24 +17,14 @@ export interface WorkcenterRealtime {
   shiftDetailEndTime: string; // Time format: "HH:mm:ss"
   shiftDetailsIsProductiveTime: boolean;
   statusId: string;
+  statusReasonId?: string;
   statusName: string;
   statusOperatorsAllowed: boolean;
   statusClosed: boolean;
   statusStopped: boolean;
   statusColor: string;
   statusStartTime: string; // ISO 8601 datetime string
-  operators: OperatorSnapshot[];
-
-  currentTime?: string; // ISO 8601 datetime string
-  counterOk?: number;
-  counterKo?: number;
-  phaseCode?: string;
-  phaseDescription?: string;
-  phaseStartTime?: string; // ISO 8601 datetime string
-  phaseEndTime?: string; // ISO 8601 datetime string
-  workOrderCode?: string;
-  referenceCode?: string;
-  referenceDescription?: string;
+  operators: OperatorRealtime[];
 }
 
 // Estado combinado para la vista (maestro + realtime)
@@ -43,7 +33,7 @@ export interface WorkcenterViewState {
   realtime?: WorkcenterRealtime;
 }
 
-export interface OperatorSnapshot {
+export interface OperatorRealtime {
   operatorId: string;
   operatorCode: string;
   operatorName: string;

@@ -117,7 +117,10 @@ export const calculateDuration = (startTime: string | null): string => {
 
   const start = new Date(startTime);
   const now = new Date();
-  const diff = now.getTime() - start.getTime();
+  let diff = now.getTime() - start.getTime();
+
+  // Avoid negative duration if server time is slightly ahead
+  if (diff < 0) diff = 0;
 
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));

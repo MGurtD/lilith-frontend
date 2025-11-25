@@ -16,6 +16,15 @@
       </div>
     </Panel>
 
+    <!-- Machine Status Section -->
+    <Panel header="Estat actual" :toggleable="false" class="panel-section">
+      <MachineStatusDetail
+        :status="currentStatus"
+        :reason="currentReason"
+        :startTime="workcenter.realtime?.statusStartTime"
+      />
+    </Panel>
+
     <!-- Current Work Order Section -->
     <Panel
       header="Ordre de fabricació"
@@ -133,6 +142,7 @@ import { PrimeIcons } from "primevue/api";
 import { WorkcenterViewState } from "../../types";
 import { WorkOrder } from "../../../production/types";
 import OperatorDetail from "./OperatorDetail.vue";
+import MachineStatusDetail from "../MachineStatusDetail.vue";
 import WorkcenterWorkOrderSelector from "./WorkcenterWorkOrderSelector.vue";
 import { usePlantStore } from "../../store";
 import { useReferenceStore } from "../../../shared/store/reference";
@@ -146,6 +156,21 @@ const plantStore = usePlantStore();
 const referenceStore = useReferenceStore();
 
 const workOrderSelectorVisible = ref(false);
+
+const currentStatus = computed(() => {
+  if (!props.workcenter.realtime?.statusId) return undefined;
+  return plantStore.machineStatuses.find(
+    (s) => s.id === props.workcenter.realtime?.statusId
+  );
+});
+
+const currentReason = computed(() => {
+  if (!props.workcenter.realtime?.statusReasonId || !currentStatus.value)
+    return undefined;
+  return currentStatus.value.reasons?.find(
+    (r) => r.id === props.workcenter.realtime?.statusReasonId
+  );
+});
 
 // Computed para decidir qué datos mostrar (prioridad: selectedWorkOrder > realtime)
 const currentWorkOrderData = computed(() => {
@@ -163,20 +188,6 @@ const currentWorkOrderData = computed(() => {
       phaseDescription: firstPhase?.description,
       counterOk: undefined, // No disponible en WorkOrder manual
       counterKo: undefined, // No disponible en WorkOrder manual
-    };
-  }
-
-  // Si no, usar datos del WebSocket
-  if (props.workcenter.realtime?.workOrderCode) {
-    return {
-      workOrderCode: props.workcenter.realtime.workOrderCode,
-      referenceCode: props.workcenter.realtime.referenceCode || "",
-      referenceDescription:
-        props.workcenter.realtime.referenceDescription || "",
-      phaseCode: props.workcenter.realtime.phaseCode,
-      phaseDescription: props.workcenter.realtime.phaseDescription,
-      counterOk: props.workcenter.realtime.counterOk,
-      counterKo: props.workcenter.realtime.counterKo,
     };
   }
 
