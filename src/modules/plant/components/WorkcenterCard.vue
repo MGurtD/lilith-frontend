@@ -65,7 +65,7 @@ import {
   normalizeColor,
   isColorLight,
 } from "../../../utils/functions";
-import { usePlantStore } from "../store";
+import { usePlantDataStore } from "../store";
 
 interface Props {
   workcenter: WorkcenterViewState;
@@ -77,13 +77,13 @@ const emit = defineEmits<{
   (e: "click", workcenterId: string): void;
 }>();
 
-const plantStore = usePlantStore();
+const dataStore = usePlantDataStore();
 
 // Obtener el machine status desde el store
 const currentMachineStatus = computed(() => {
   const statusId = props.workcenter.realtime?.statusId;
   if (!statusId) return undefined;
-  return plantStore.getMachineStatusById(statusId);
+  return dataStore.getMachineStatusById(statusId);
 });
 
 // Estilo del borde superior basado en el color del status desde el store

@@ -4,7 +4,7 @@
       <!-- Master: Document List -->
       <div class="documents-panel">
         <DataTable
-          :value="plantStore.productionInstructionsDocuments"
+          :value="workcenterStore.productionInstructionsDocuments"
           v-model:selection="selectedDocument"
           selectionMode="single"
           @row-select="onDocumentSelect"
@@ -43,10 +43,10 @@
 import { ref, onMounted } from "vue";
 import { File } from "../../../../types";
 import PdfViewer from "../../../../components/PdfViewer.vue";
-import { usePlantStore } from "../../store";
+import { usePlantWorkcenterStore } from "../../store";
 
 // Services
-const plantStore = usePlantStore();
+const workcenterStore = usePlantWorkcenterStore();
 
 // State
 const selectedDocument = ref<File | null>(null);

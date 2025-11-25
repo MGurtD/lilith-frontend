@@ -1,19 +1,29 @@
 <template>
   <div class="realtime-panel-content">
-    <!-- Workcenter Picture Section -->
+    <!-- Workcenter Picture Section 
     <Panel
-      v-if="plantStore.workcenterPictureUrl"
+      v-if="workcenterStore.workcenterPictureUrl"
       header="Imatge del centre de treball"
       :toggleable="true"
       class="panel-section"
     >
       <div class="picture-container">
         <img
-          :src="plantStore.workcenterPictureUrl"
+          :src="workcenterStore.workcenterPictureUrl"
           alt="Imatge del centre de treball"
           class="workcenter-picture"
         />
       </div>
+    </Panel>
+    -->
+
+    <!-- Machine Status Section -->
+    <Panel header="Estat actual" :toggleable="false" class="panel-section">
+      <MachineStatusDetail
+        :status="currentStatus"
+        :reason="currentReason"
+        :startTime="workcenter.realtime?.statusStartTime"
+      />
     </Panel>
 
     <!-- Current Work Order Section -->
@@ -120,7 +130,7 @@
     >
       <WorkcenterWorkOrderSelector
         :workcenterId="workcenter.config.id"
-        :excludeWorkOrderId="plantStore.selectedWorkOrder?.id"
+        :excludeWorkOrderId="workcenterStore.selectedWorkOrder?.id"
         @workorder-selected="onWorkOrderSelected"
       />
     </Dialog>
@@ -133,8 +143,9 @@ import { PrimeIcons } from "primevue/api";
 import { WorkcenterViewState } from "../../types";
 import { WorkOrder } from "../../../production/types";
 import OperatorDetail from "./OperatorDetail.vue";
+import MachineStatusDetail from "../MachineStatusDetail.vue";
 import WorkcenterWorkOrderSelector from "./WorkcenterWorkOrderSelector.vue";
-import { usePlantStore } from "../../store";
+import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
 import { useReferenceStore } from "../../../shared/store/reference";
 
 interface Props {
@@ -142,16 +153,32 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const plantStore = usePlantStore();
+const workcenterStore = usePlantWorkcenterStore();
+const dataStore = usePlantDataStore();
 const referenceStore = useReferenceStore();
 
 const workOrderSelectorVisible = ref(false);
 
+const currentStatus = computed(() => {
+  if (!props.workcenter.realtime?.statusId) return undefined;
+  return dataStore.machineStatuses.find(
+    (s) => s.id === props.workcenter.realtime?.statusId
+  );
+});
+
+const currentReason = computed(() => {
+  if (!props.workcenter.realtime?.statusReasonId || !currentStatus.value)
+    return undefined;
+  return currentStatus.value.reasons?.find(
+    (r) => r.id === props.workcenter.realtime?.statusReasonId
+  );
+});
+
 // Computed para decidir qué datos mostrar (prioridad: selectedWorkOrder > realtime)
 const currentWorkOrderData = computed(() => {
   // Si hay una WorkOrder seleccionada manualmente, usar esa
-  if (plantStore.selectedWorkOrder) {
-    const wo = plantStore.selectedWorkOrder;
+  if (workcenterStore.selectedWorkOrder) {
+    const wo = workcenterStore.selectedWorkOrder;
     // Obtener la primera fase si existe
     const firstPhase = wo.phases && wo.phases.length > 0 ? wo.phases[0] : null;
 
@@ -166,20 +193,6 @@ const currentWorkOrderData = computed(() => {
     };
   }
 
-  // Si no, usar datos del WebSocket
-  if (props.workcenter.realtime?.workOrderCode) {
-    return {
-      workOrderCode: props.workcenter.realtime.workOrderCode,
-      referenceCode: props.workcenter.realtime.referenceCode || "",
-      referenceDescription:
-        props.workcenter.realtime.referenceDescription || "",
-      phaseCode: props.workcenter.realtime.phaseCode,
-      phaseDescription: props.workcenter.realtime.phaseDescription,
-      counterOk: props.workcenter.realtime.counterOk,
-      counterKo: props.workcenter.realtime.counterKo,
-    };
-  }
-
   return null;
 });
 
@@ -188,20 +201,20 @@ const openWorkOrderSelector = () => {
 };
 
 const onWorkOrderSelected = (workOrder: WorkOrder) => {
-  plantStore.setSelectedWorkOrder(workOrder);
+  workcenterStore.setSelectedWorkOrder(workOrder);
   workOrderSelectorVisible.value = false;
 
   // Opcional: cargar documentos de instrucciones de producción
-  plantStore.fetchWorkInstructionDocuments(workOrder.reference?.id!);
+  workcenterStore.fetchWorkInstructionDocuments(workOrder.reference?.id!);
 };
 
 onMounted(() => {});
 
 onUnmounted(() => {
   // Limpia el ObjectURL cuando el componente se desmonta
-  plantStore.clearWorkcenterPicture();
+  workcenterStore.clearWorkcenterPicture();
   // Opcionalmente limpiar la WorkOrder seleccionada
-  // plantStore.clearSelectedWorkOrder();
+  // workcenterStore.clearSelectedWorkOrder();
 });
 </script>
 
