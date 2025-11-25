@@ -6,7 +6,7 @@ export class WorkcenterShiftService extends BaseService<WorkcenterShiftGroup> {
     request: WorkcenterShiftRequest
   ): Promise<Array<WorkcenterShiftGroup> | undefined> {
     const response = await this.apiClient.post(
-      `${this.resource}/Query`,
+      `${this.resource}/Historical`,
       request
     );
     return response.data as Array<WorkcenterShiftGroup>;

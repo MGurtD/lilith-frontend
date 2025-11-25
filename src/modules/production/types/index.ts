@@ -352,23 +352,14 @@ export interface WorkcenterShiftGroup {
 
 export interface WorkDetail {
   id: string;
-  workcenterShiftId: string;
+  key: string;
+  workcenter: string;
+  machineStatus: string;
   startTime: string;
   endTime: string | null;
   current: boolean;
-  machineStatusId: string;
-  machineStatusName: string;
-  workcenterId: string;
-  workcenterName: string;
-  workcenterCost: number;
-  operatorId: string | null;
-  operatorName: string | null;
   operatorCost: number;
-  concurrentOperatorWorkcenters: number;
-  workOrderPhaseId: string | null;
-  workOrderPhaseName: string | null;
-  workOrderCode: string | null;
-  concurrentWorkorderPhases: number;
+  workcenterCost: number;
   quantityOk: number;
   quantityKo: number;
   totalHours: number;
@@ -376,8 +367,8 @@ export interface WorkDetail {
 }
 
 export interface WorkcenterShiftRequest {
-  startDate: string;
-  endDate: string;
+  startTime: string;
+  endTime: string;
   workcenterId?: string;
   operatorId?: string;
   workorderPhaseId?: string;
