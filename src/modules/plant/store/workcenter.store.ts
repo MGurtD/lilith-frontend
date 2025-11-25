@@ -36,10 +36,12 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
   },
   actions: {
     async fetchWorkcenter(workcenterId: string) {
+      this.selectedWorkOrder = undefined;
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
       if (this.workcenter) {
         this.fetchWorkcenterPicture();
+        await this.restoreSelectedWorkOrder();
       }
     },
     async fetchWorkcenterPicture() {
@@ -84,6 +86,24 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       );
       if (files) {
         this.productionInstructionsDocuments = files;
+      }
+    },
+    async restoreSelectedWorkOrder() {
+      if (!this.workcenter) return;
+      const key = `plant_workcenter_${this.workcenter.id}_selected_wo`;
+      const storedId = localStorage.getItem(key);
+      if (storedId) {
+        try {
+          const wo = await ProductionServices.WorkOrder.getById(storedId);
+          if (wo) {
+            this.selectedWorkOrder = wo;
+          } else {
+            localStorage.removeItem(key);
+          }
+        } catch (error) {
+          console.error("Error restoring selected work order:", error);
+          localStorage.removeItem(key);
+        }
       }
     },
     connectToWorkcenter(workcenterId: string) {
@@ -132,9 +152,20 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
     },
     setSelectedWorkOrder(workOrder: WorkOrder) {
       this.selectedWorkOrder = workOrder;
+      if (this.workcenter) {
+        localStorage.setItem(
+          `plant_workcenter_${this.workcenter.id}_selected_wo`,
+          workOrder.id
+        );
+      }
     },
     clearSelectedWorkOrder() {
       this.selectedWorkOrder = undefined;
+      if (this.workcenter) {
+        localStorage.removeItem(
+          `plant_workcenter_${this.workcenter.id}_selected_wo`
+        );
+      }
     },
   },
 });
