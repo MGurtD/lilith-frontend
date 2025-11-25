@@ -1,6 +1,6 @@
 <template>
   <div class="realtime-panel-content">
-    <!-- Workcenter Picture Section -->
+    <!-- Workcenter Picture Section 
     <Panel
       v-if="workcenterStore.workcenterPictureUrl"
       header="Imatge del centre de treball"
@@ -15,6 +15,7 @@
         />
       </div>
     </Panel>
+    -->
 
     <!-- Machine Status Section -->
     <Panel header="Estat actual" :toggleable="false" class="panel-section">
