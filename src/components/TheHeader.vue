@@ -11,10 +11,12 @@
         store.currentMenuItem.title
       }}</span>
     </div>
-    <div v-if="plantStore.operator" class="title-bar__user">
+    <div v-if="plantOperatorStore.operator" class="title-bar__user">
       <div class="avatar-container" @click="showOverlayPanel">
         <Avatar
-          :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+          :label="
+            plantOperatorStore.operator.name.substring(0, 1).toUpperCase()
+          "
           class="title-bar__user__avatar title-bar__user__avatar--operator"
           size="large"
           shape="circle"
@@ -24,13 +26,16 @@
         <div class="user-menu">
           <div class="user-menu__header">
             <Avatar
-              :label="plantStore.operator.name.substring(0, 1).toUpperCase()"
+              :label="
+                plantOperatorStore.operator.name.substring(0, 1).toUpperCase()
+              "
               class="user-menu__avatar user-menu__avatar--operator"
               size="large"
               shape="circle"
             />
             <div class="user-menu__name">
-              {{ plantStore.operator.name }} {{ plantStore.operator.surname }}
+              {{ plantOperatorStore.operator.name }}
+              {{ plantOperatorStore.operator.surname }}
             </div>
             <div class="user-menu__username">
               <i :class="PrimeIcons.USER" class="mr-1"></i>
@@ -110,11 +115,11 @@ import Badge from "primevue/badge";
 import OverlayPanel from "primevue/overlaypanel";
 import { PrimeIcons } from "primevue/api";
 import { useRouter } from "vue-router";
-import { usePlantStore } from "../modules/plant/store";
+import { usePlantOperatorStore } from "../modules/plant/store";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 
 const emits = defineEmits(["logoutClick", "logoutOperatorClick"]);
-const plantStore = usePlantStore();
+const plantOperatorStore = usePlantOperatorStore();
 
 const store = useStore();
 const op = ref();

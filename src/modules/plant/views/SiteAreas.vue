@@ -74,7 +74,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { usePlantStore } from "../store";
+import {
+  usePlantDataStore,
+  usePlantRealtimeStore,
+  usePlantOperatorStore,
+} from "../store";
 import { WorkcenterViewState } from "../types";
 import WorkcenterCard from "../components/WorkcenterCard.vue";
 import { useStore } from "../../../store";
@@ -91,7 +95,9 @@ const STORAGE_KEY = "temges.plant-visible-areas";
 const FILTER_STORAGE_KEY = "temges.plant-filter-my-workcenters";
 
 const store = useStore();
-const plantStore = usePlantStore();
+const dataStore = usePlantDataStore();
+const realtimeStore = usePlantRealtimeStore();
+const operatorStore = usePlantOperatorStore();
 const visibleAreas = ref<Set<string>>(new Set());
 const showOnlyMyWorkcenters = ref(false);
 const { connect } = useWebSocketConnection();
@@ -152,18 +158,18 @@ onMounted(async () => {
 
   // 2. Carregar dades mestres d'àrees, workcenters i estats de màquina
   await Promise.all([
-    plantStore.fetchAreasWithWorkcenters(),
-    plantStore.fetchMachineStatuses(),
+    dataStore.fetchAreasWithWorkcenters(),
+    dataStore.fetchMachineStatuses(),
   ]);
 
   // 3. Configurar header
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    title: `Àrees de ${plantStore.site?.name || "Planta"}`,
+    title: `Àrees de ${dataStore.site?.name || "Planta"}`,
   });
 
   // 4. Connectar WebSocket general i configurar handlers al store
-  plantStore.connectToGeneral();
+  realtimeStore.connectToGeneral();
   connect(WS_ENDPOINTS.GENERAL, { debug: true });
 });
 
@@ -186,7 +192,7 @@ const isAreaVisible = (areaId: string): boolean => {
 };
 
 // ID del operario actual
-const currentOperatorId = computed(() => plantStore.operator?.id);
+const currentOperatorId = computed(() => operatorStore.operator?.id);
 
 // Toggle del filtro de mis workcenters
 const toggleMyWorkcenters = () => {
@@ -208,14 +214,14 @@ const isMyWorkcenter = (view: WorkcenterViewState): boolean => {
 const hasMyWorkcentersInArea = (areaId: string): boolean => {
   if (!currentOperatorId.value) return false;
 
-  return plantStore.areasWorkcentersView
+  return realtimeStore.areasWorkcentersView
     .filter((view) => view.config.areaId === areaId)
     .some((view) => isMyWorkcenter(view));
 };
 
 // Obtener workcenters filtrados de un área
 const getFilteredWorkcenters = (areaId: string): WorkcenterViewState[] => {
-  const workcenters = plantStore.areasWorkcentersView.filter(
+  const workcenters = realtimeStore.areasWorkcentersView.filter(
     (view) => view.config.areaId === areaId
   );
 
@@ -233,7 +239,7 @@ const getAreaWorkcenters = (areaId: string): WorkcenterViewState[] => {
 
 // Áreas filtradas (solo mostrar áreas que tienen workcenters visibles)
 const filteredAreas = computed(() => {
-  return plantStore.areas.filter((area) => {
+  return dataStore.areas.filter((area) => {
     const workcenters = getFilteredWorkcenters(area.id);
     return workcenters.length > 0;
   });
@@ -242,13 +248,14 @@ const filteredAreas = computed(() => {
 // Contador de mis workcenters
 const myWorkcentersCount = computed(() => {
   if (!currentOperatorId.value) return 0;
-  return plantStore.areasWorkcentersView.filter((view) => isMyWorkcenter(view))
-    .length;
+  return realtimeStore.areasWorkcentersView.filter((view) =>
+    isMyWorkcenter(view)
+  ).length;
 });
 
 // Total de workcenters
 const totalWorkcentersCount = computed(() => {
-  return plantStore.areasWorkcentersView.length;
+  return realtimeStore.areasWorkcentersView.length;
 });
 </script>
 

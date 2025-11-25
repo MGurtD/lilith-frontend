@@ -69,7 +69,7 @@
     <!-- Machine Status Selector Dialog -->
     <MachineStatusSelector
       v-model:visible="statusSelectorVisible"
-      :statuses="plantStore.machineStatuses"
+      :statuses="dataStore.machineStatuses"
       @status-changed="onStatusChanged"
     />
   </div>
@@ -81,7 +81,11 @@ import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
 import { useStore } from "../../../store";
-import { usePlantStore } from "../store";
+import {
+  usePlantWorkcenterStore,
+  usePlantOperatorStore,
+  usePlantDataStore,
+} from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
@@ -95,28 +99,30 @@ import { ChangeMachineStatusRequest } from "../types";
 const route = useRoute();
 const toast = useToast();
 const appStore = useStore();
-const plantStore = usePlantStore();
+const workcenterStore = usePlantWorkcenterStore();
+const operatorStore = usePlantOperatorStore();
+const dataStore = usePlantDataStore();
 const { connect } = useWebSocketConnection();
 
 const id = route.params.id as string;
 const activeTab = ref(0);
 const statusSelectorVisible = ref(false);
 
-const workcenter = computed(() => plantStore.workcenterView);
+const workcenter = computed(() => workcenterStore.workcenterView);
 
 // Computed para determinar si el operario está fichado
 const isOperatorClockedIn = computed(() => {
-  if (!workcenter.value?.realtime?.operators || !plantStore.operator) {
+  if (!workcenter.value?.realtime?.operators || !operatorStore.operator) {
     return false;
   }
   return workcenter.value.realtime.operators.some(
-    (op) => op.operatorId === plantStore.operator!.id
+    (op) => op.operatorId === operatorStore.operator!.id
   );
 });
 
 onMounted(async () => {
   // 1. Carregar dades del workcenter
-  await plantStore.fetchWorkcenter(id);
+  await workcenterStore.fetchWorkcenter(id);
 
   if (!workcenter.value) {
     toast.add({
@@ -135,17 +141,17 @@ onMounted(async () => {
   });
 
   // 3. Carregar estats de màquina
-  await plantStore.fetchMachineStatuses();
+  await dataStore.fetchMachineStatuses();
 
   // 4. Connectar WebSocket específic del workcenter
-  plantStore.connectToWorkcenter(id);
+  workcenterStore.connectToWorkcenter(id);
   connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
 });
 
 // onUnmounted gestionat automàticament pel composable
 
 const handleOperatorClockIn = async () => {
-  const result = await plantStore.clockInOperator();
+  const result = await workcenterStore.clockInOperator();
   if (result) {
     toast.add({
       severity: "success",
@@ -162,7 +168,7 @@ const handleOperatorClockIn = async () => {
 };
 
 const handleOperatorClockOut = async () => {
-  const result = await plantStore.clockOutOperator();
+  const result = await workcenterStore.clockOutOperator();
   if (result) {
     toast.add({
       severity: "success",
@@ -183,7 +189,7 @@ const handleMachineStatusChange = async () => {
 };
 
 const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
-  const result = await plantStore.changeMachineStatus(
+  const result = await workcenterStore.changeMachineStatus(
     request.statusId,
     request.statusReasonId
   );

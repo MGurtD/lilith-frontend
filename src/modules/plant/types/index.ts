@@ -25,6 +25,9 @@ export interface WorkcenterRealtime {
   statusColor: string;
   statusStartTime: string; // ISO 8601 datetime string
   operators: OperatorRealtime[];
+  workOrderCode?: string;
+  referenceCode?: string;
+  phaseDescription?: string;
 }
 
 // Estado combinado para la vista (maestro + realtime)

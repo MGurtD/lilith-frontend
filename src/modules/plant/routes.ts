@@ -4,7 +4,7 @@ import {
   RouteLocationNormalized,
 } from "vue-router";
 import { useStore } from "../../store";
-import { usePlantStore } from "./store";
+import { usePlantOperatorStore } from "./store";
 
 const MainPlant = () => import("./views/Main.vue");
 const OperatorClockIn = () => import("./views/OperatorClockIn.vue");
@@ -18,23 +18,23 @@ const checkOperatorAuth = async (
   next: NavigationGuardNext
 ) => {
   const store = useStore();
-  const plantStore = usePlantStore();
+  const plantOperatorStore = usePlantOperatorStore();
 
   // Intentar recuperar operador de localStorage si no está en memoria
-  if (!plantStore.operator) {
-    await plantStore.getOperator();
+  if (!plantOperatorStore.operator) {
+    await plantOperatorStore.getOperator();
   }
 
   // Configurar sidebar según estado del operador
   store.sidebar.collapsed = true;
-  store.sidebar.hideToggle = plantStore.operator ? true : false;
+  store.sidebar.hideToggle = plantOperatorStore.operator ? true : false;
 
   // Si existe operador y estamos en clockin, redirigir a areas
-  if (plantStore.operator && to.name === "OperatorClockIn") {
+  if (plantOperatorStore.operator && to.name === "OperatorClockIn") {
     next({ name: "SiteAreas" });
   }
   // Si NO existe operador y estamos en areas, redirigir a clockin
-  else if (!plantStore.operator && to.name === "SiteAreas") {
+  else if (!plantOperatorStore.operator && to.name === "SiteAreas") {
     next({ name: "OperatorClockIn" });
   }
   // Permitir acceso

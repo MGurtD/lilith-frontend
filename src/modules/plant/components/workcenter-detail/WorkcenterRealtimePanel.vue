@@ -2,14 +2,14 @@
   <div class="realtime-panel-content">
     <!-- Workcenter Picture Section -->
     <Panel
-      v-if="plantStore.workcenterPictureUrl"
+      v-if="workcenterStore.workcenterPictureUrl"
       header="Imatge del centre de treball"
       :toggleable="true"
       class="panel-section"
     >
       <div class="picture-container">
         <img
-          :src="plantStore.workcenterPictureUrl"
+          :src="workcenterStore.workcenterPictureUrl"
           alt="Imatge del centre de treball"
           class="workcenter-picture"
         />
@@ -129,7 +129,7 @@
     >
       <WorkcenterWorkOrderSelector
         :workcenterId="workcenter.config.id"
-        :excludeWorkOrderId="plantStore.selectedWorkOrder?.id"
+        :excludeWorkOrderId="workcenterStore.selectedWorkOrder?.id"
         @workorder-selected="onWorkOrderSelected"
       />
     </Dialog>
@@ -144,7 +144,7 @@ import { WorkOrder } from "../../../production/types";
 import OperatorDetail from "./OperatorDetail.vue";
 import MachineStatusDetail from "../MachineStatusDetail.vue";
 import WorkcenterWorkOrderSelector from "./WorkcenterWorkOrderSelector.vue";
-import { usePlantStore } from "../../store";
+import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
 import { useReferenceStore } from "../../../shared/store/reference";
 
 interface Props {
@@ -152,14 +152,15 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const plantStore = usePlantStore();
+const workcenterStore = usePlantWorkcenterStore();
+const dataStore = usePlantDataStore();
 const referenceStore = useReferenceStore();
 
 const workOrderSelectorVisible = ref(false);
 
 const currentStatus = computed(() => {
   if (!props.workcenter.realtime?.statusId) return undefined;
-  return plantStore.machineStatuses.find(
+  return dataStore.machineStatuses.find(
     (s) => s.id === props.workcenter.realtime?.statusId
   );
 });
@@ -175,8 +176,8 @@ const currentReason = computed(() => {
 // Computed para decidir qué datos mostrar (prioridad: selectedWorkOrder > realtime)
 const currentWorkOrderData = computed(() => {
   // Si hay una WorkOrder seleccionada manualmente, usar esa
-  if (plantStore.selectedWorkOrder) {
-    const wo = plantStore.selectedWorkOrder;
+  if (workcenterStore.selectedWorkOrder) {
+    const wo = workcenterStore.selectedWorkOrder;
     // Obtener la primera fase si existe
     const firstPhase = wo.phases && wo.phases.length > 0 ? wo.phases[0] : null;
 
@@ -199,20 +200,20 @@ const openWorkOrderSelector = () => {
 };
 
 const onWorkOrderSelected = (workOrder: WorkOrder) => {
-  plantStore.setSelectedWorkOrder(workOrder);
+  workcenterStore.setSelectedWorkOrder(workOrder);
   workOrderSelectorVisible.value = false;
 
   // Opcional: cargar documentos de instrucciones de producción
-  plantStore.fetchWorkInstructionDocuments(workOrder.reference?.id!);
+  workcenterStore.fetchWorkInstructionDocuments(workOrder.reference?.id!);
 };
 
 onMounted(() => {});
 
 onUnmounted(() => {
   // Limpia el ObjectURL cuando el componente se desmonta
-  plantStore.clearWorkcenterPicture();
+  workcenterStore.clearWorkcenterPicture();
   // Opcionalmente limpiar la WorkOrder seleccionada
-  // plantStore.clearSelectedWorkOrder();
+  // workcenterStore.clearSelectedWorkOrder();
 });
 </script>
 
