@@ -53,8 +53,9 @@
           </div>
           <div class="reason-item__content">
             <div class="reason-item__header">
-              <span class="reason-item__code">{{ reason.code }}</span>
-              <Tag :value="reason.name" :style="getReasonTagStyle(reason)" />
+              <span class="reason-item__text"
+                >{{ reason.code }} - {{ reason.name }}</span
+              >
             </div>
             <p v-if="reason.description" class="reason-item__description">
               {{ reason.description }}
@@ -387,7 +388,7 @@ watch(
 .reason-item {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
   padding: 1rem;
   background: var(--surface-0);
@@ -409,9 +410,11 @@ watch(
 }
 
 .reason-item__icon {
-  font-size: 1.75rem;
-  margin-top: 0.25rem;
   flex-shrink: 0;
+
+  i {
+    font-size: 1.5rem;
+  }
 }
 
 .reason-item__content {
@@ -428,9 +431,9 @@ watch(
   flex-wrap: wrap;
 }
 
-.reason-item__code {
-  font-weight: 700;
-  font-size: 1rem;
+.reason-item__text {
+  font-weight: 600;
+  font-size: 1.2rem;
   color: var(--text-color);
 }
 
