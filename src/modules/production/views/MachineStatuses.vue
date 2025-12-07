@@ -21,9 +21,19 @@
     </template>
     <Column field="name" header="Nom" style="width: 25%"></Column>
     <Column field="description" header="Descripció" style="width: 40%"></Column>
+    <Column header="Color" style="width: 5%">
+      <template #body="slotProps">
+        <ColorColumn :value="slotProps.data.color" />
+      </template>
+    </Column>
+    <Column header="Icona" style="width: 5%">
+      <template #body="slotProps">
+        <IconColumn :value="slotProps.data.icon" />
+      </template>
+    </Column>
     <Column header="Aturada" style="width: 2%">
       <template #body="slotProps">
-        <BooleanColumn :value="slotProps.data.stoped" />
+        <BooleanColumn :value="slotProps.data.stopped" />
       </template>
     </Column>
     <Column header="Operaris" style="width: 2%">
@@ -68,7 +78,8 @@ import { onMounted } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { MachineStatus } from "../types";
-import { MachineStatusService } from "../services";
+import ColorColumn from "../../../components/tables/ColorColumn.vue";
+import IconColumn from "../../../components/tables/IconColumn.vue";
 
 const router = useRouter();
 const store = useStore();

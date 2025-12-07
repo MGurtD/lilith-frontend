@@ -8,14 +8,14 @@ import Login from "./views/Login.vue";
 import PwaUpdatePrompt from "./components/PwaUpdatePrompt.vue";
 import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { usePlantStore } from "./modules/plant/store";
+import { usePlantOperatorStore } from "./modules/plant/store";
 import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
 import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
 
 const store = useStore();
-const plantStore = usePlantStore();
+const plantOperatorStore = usePlantOperatorStore();
 const apiStore = useApiStore();
 const spanishGeography = useSpanishGeography();
 const router = useRouter();
@@ -40,7 +40,7 @@ const logout = () => {
 };
 
 const logoutOperator = () => {
-  plantStore.removeOperator();
+  plantOperatorStore.removeOperator();
   router.push({ path: "/plant" });
 };
 </script>

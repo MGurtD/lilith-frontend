@@ -1,12 +1,10 @@
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
-import {
-  FindInvoicesRequest,
-  FindInvoicesResponse,
-  VerifactuInvoiceRequest,
-} from "../types";
+import { FindInvoicesResponse, VerifactuInvoiceRequest } from "../types";
 
 export class VerifactuService extends BaseService<any> {
+  private TIMEOUT_MS = 60000;
+
   async FindInvoices(
     month: number,
     year: number
@@ -67,7 +65,9 @@ export class VerifactuService extends BaseService<any> {
     invoiceId: string
   ): Promise<GenericResponse<any> | undefined> {
     const endpoint = `${this.resource}/${invoiceId}/SendToVerifactu`;
-    const response = await this.apiClient.post(endpoint);
+    const response = await this.apiClient.post(endpoint, null, {
+      timeout: this.TIMEOUT_MS,
+    });
 
     if (response.status === 200) {
       return response.data as GenericResponse<any>;
@@ -78,7 +78,9 @@ export class VerifactuService extends BaseService<any> {
     invoiceId: string
   ): Promise<GenericResponse<any> | undefined> {
     const endpoint = `${this.resource}/${invoiceId}/RemoveFromVerifactu`;
-    const response = await this.apiClient.post(endpoint);
+    const response = await this.apiClient.post(endpoint, null, {
+      timeout: this.TIMEOUT_MS,
+    });
 
     if (response.status === 200) {
       return response.data as GenericResponse<any>;

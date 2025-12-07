@@ -60,3 +60,16 @@ jobs:
           echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
           docker tag marcgurt/lilith-frontend:${{ github.sha }} marcgurt/lilith-frontend:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
           docker push marcgurt/lilith-frontend:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+
+      - name: Deploy to server via SSH
+        if: github.ref_name == 'dev'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd ~/lilith
+            docker pull marcgurt/lilith-frontend:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+            docker compose up -d --no-deps --force-recreate lilith-frontend

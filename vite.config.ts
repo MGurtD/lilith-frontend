@@ -19,7 +19,7 @@ export default defineConfig({
         theme_color: "#3f51b5", // Color azul del logo
         background_color: "#ffffff",
         display: "standalone",
-        orientation: "landscape",
+        orientation: "any",
         scope: "/",
         start_url: "/",
         icons: [
@@ -39,21 +39,12 @@ export default defineConfig({
       },
 
       workbox: {
-        // Estrategia de caché optimizada para ERP
+        // CRITICAL: Excluir todas las llamadas API del service worker
+        navigateFallback: null,
+        navigateFallbackDenylist: [/^\/api/],
+
         runtimeCaching: [
-          {
-            // API calls - Network First (priorizar servidor)
-            urlPattern: /^https:\/\/api\..*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60, // 1 hora
-              },
-              networkTimeoutSeconds: 10,
-            },
-          },
+          // Eliminada completamente la regla de API - que el navegador las maneje directamente
           {
             // Assets estáticos - Cache First
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
@@ -80,10 +71,7 @@ export default defineConfig({
           },
         ],
 
-        // Limpiar cachés antiguas
         cleanupOutdatedCaches: true,
-
-        // Tamaño máximo de precache (ajustado para app grande)
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
       },
 

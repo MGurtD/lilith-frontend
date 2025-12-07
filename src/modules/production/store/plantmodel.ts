@@ -8,6 +8,7 @@ import {
   OperatorService,
   OperatorTypeService,
   MachineStatusService,
+  MachineStatusReasonService,
   WorkcenterCostService,
 } from "../services";
 import {
@@ -20,6 +21,7 @@ import {
   Operator,
   OperatorType,
   MachineStatus,
+  MachineStatusReason,
 } from "../types";
 
 const workcenterService = new WorkcenterService("/workcenter");
@@ -31,9 +33,11 @@ const enterpriseService = new EnterpriseService("/enterprise");
 const operatorService = new OperatorService("/operator");
 const operatorTypeService = new OperatorTypeService("/operatortype");
 const machineStatusService = new MachineStatusService("/machinestatus");
+const machineStatusReasonService = new MachineStatusReasonService(
+  "/machinestatus/reason"
+);
 
-export const usePlantModelStore = defineStore({
-  id: "plantmodel",
+export const usePlantModelStore = defineStore("plantmodel", {
   state: () => ({
     workcenter: undefined as Workcenter | undefined,
     workcenters: undefined as Array<Workcenter> | undefined,
@@ -375,7 +379,7 @@ export const usePlantModelStore = defineStore({
         name: "",
         description: "",
         color: "",
-        stoped: false,
+        stopped: false,
         operatorsAllowed: true,
         closed: false,
         preferred: false,
@@ -402,6 +406,23 @@ export const usePlantModelStore = defineStore({
     async deleteMachineStatus(id: string) {
       const result = await machineStatusService.delete(id);
       if (result) await this.fetchMachineStatuses();
+      return result;
+    },
+    // Machine Status Reasons
+    async createReason(reason: MachineStatusReason) {
+      const result = await machineStatusReasonService.create(reason);
+      if (result) await this.fetchMachineStatus(reason.machineStatusId);
+      return result;
+    },
+    async updateReason(id: string, reason: MachineStatusReason) {
+      const result = await machineStatusReasonService.update(id, reason);
+      if (result) await this.fetchMachineStatus(reason.machineStatusId);
+      return result;
+    },
+    async deleteReason(id: string) {
+      const result = await machineStatusReasonService.delete(id);
+      if (result && this.machineStatus)
+        await this.fetchMachineStatus(this.machineStatus.id);
       return result;
     },
   },

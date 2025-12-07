@@ -13,9 +13,9 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <div class="datatable-filter">
+          <div class="datatable-filter-3">
             <div class="filter-field">
-              <label class="block text-900 mb-2">Període</label>
+              <label class="block text-900">Període</label>
               <Calendar
                 v-model="filter.dates"
                 :numberOfMonths="2"
@@ -24,7 +24,11 @@
               />
             </div>
             <div class="filter-field">
-              <label class="block text-900 mb-2 mr-3">Gestionades</label>
+              <label class="block text-900">Proveïdor</label>
+              <DropdownSupplier label="" v-model="filter.supplierId" />
+            </div>
+            <div class="filter-field">
+              <label class="block text-900">Gestionades</label>
               <div class="flex flex-wrap gap-3">
                 <div class="flex align-items-center">
                   <Checkbox
@@ -116,9 +120,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
 import { useToast } from "primevue/usetoast";
+import DropdownSupplier from "../components/DropdownSupplier.vue";
 import { useStore } from "../../../store";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
@@ -141,6 +146,7 @@ const purchaseInvoiceStore = usePurchaseInvoiceStore();
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
   showManaged: false,
+  supplierId: undefined as string | undefined,
 });
 const selectedInvoices = ref([] as Array<PurchaseInvoice>);
 const lifecycleName = "PurchaseInvoice";
@@ -208,7 +214,8 @@ const filterInvoices = async () => {
       startTime,
       endTime,
       undefined,
-      statusId
+      statusId,
+      filter.value.supplierId
     );
   } else {
     toast.add({

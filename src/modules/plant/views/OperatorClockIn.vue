@@ -56,7 +56,7 @@ import Password from "primevue/password";
 import InputGroup from "primevue/inputgroup";
 import InputGroupAddon from "primevue/inputgroupaddon";
 import { usePlantModelStore } from "../../production/store/plantmodel";
-import { usePlantStore } from "../store";
+import { usePlantOperatorStore } from "../store";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
 import { useStore } from "../../../store";
@@ -64,7 +64,7 @@ import { useStore } from "../../../store";
 const store = useStore();
 const router = useRouter();
 const plantModelStore = usePlantModelStore();
-const plantStore = usePlantStore();
+const plantOperatorStore = usePlantOperatorStore();
 const toast = useToast();
 const { t } = useI18n();
 const operatorCode = ref("");
@@ -74,7 +74,7 @@ onMounted(async () => {
   await plantModelStore.fetchOperators();
 
   // El guard se encargará de la navegación
-  await plantStore.getOperator();
+  await plantOperatorStore.getOperator();
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
@@ -91,7 +91,7 @@ const onSubmit = async () => {
 
   if (operator) {
     // Guardar operador en el store
-    await plantStore.setOperator(operator);
+    await plantOperatorStore.setOperator(operator);
 
     // Navegar a la vista de áreas
     router.push({ name: "SiteAreas" });

@@ -3,6 +3,7 @@ import {
   RealtimeHandler,
   WorkcenterRealtimeHandler,
   WorkcenterRealtime,
+  ChangeMachineStatusRequest,
 } from "../types";
 import serverClient, {
   connectWebSocket,
@@ -10,7 +11,6 @@ import serverClient, {
   handleMessages,
   WS_ENDPOINTS,
 } from "../../../api/actions.client";
-import { GenericResponse } from "../../../types";
 
 class ActionsService {
   async clockInOperator(request: OperatorClockInOutRequest) {
@@ -20,6 +20,11 @@ class ActionsService {
   }
   async clockOutOperator(request: OperatorClockInOutRequest) {
     const endpoint = `/api/operator/clockout`;
+    const response = await serverClient.post(endpoint, request);
+    return response.status === 200;
+  }
+  async changeMachineStatus(request: ChangeMachineStatusRequest) {
+    const endpoint = `/api/status/in`;
     const response = await serverClient.post(endpoint, request);
     return response.status === 200;
   }

@@ -10,8 +10,7 @@ import {
 import Services from "../services";
 import { GenericResponse } from "../../../types";
 
-export const useWorkMasterStore = defineStore({
-  id: "workmaster",
+export const useWorkMasterStore = defineStore("workmaster", {
   state: () => ({
     workmaster: undefined as WorkMaster | undefined,
     workmasters: undefined as Array<WorkMaster> | undefined,
@@ -62,9 +61,8 @@ export const useWorkMasterStore = defineStore({
       this.workmaster = await Services.WorkMaster.getById(id);
     },
     async fetchByReferenceId(referenceId: string) {
-      this.workmasters = await Services.WorkMaster.getByReferenceId(
-        referenceId
-      );
+      this.workmasters =
+        await Services.WorkMaster.getByReferenceId(referenceId);
     },
     async create(model: WorkMaster) {
       const result = await Services.WorkMaster.create(model);
@@ -140,9 +138,8 @@ export const useWorkMasterStore = defineStore({
 
     // Phase bill of materials
     async createPhaseBomItem(model: WorkMasterPhaseBillOfMaterials) {
-      const result = await Services.WorkMasterPhaseBillOfMaterials.create(
-        model
-      );
+      const result =
+        await Services.WorkMasterPhaseBillOfMaterials.create(model);
       if (result) await this.fetchPhaseById(model.workMasterPhaseId);
       return result;
     },

@@ -12,10 +12,13 @@ const emit = defineEmits<{
 }>();
 
 // Collect PrimeIcons keys (those starting with 'PI')
-const iconKeys = Object.keys(PrimeIcons)
-  .filter((k) => typeof (PrimeIcons as any)[k] === "string")
-  .map((k) => (PrimeIcons as any)[k])
-  .sort();
+const iconKeys = Array.from(
+  new Set(
+    Object.keys(PrimeIcons)
+      .filter((k) => typeof (PrimeIcons as any)[k] === "string")
+      .map((k) => (PrimeIcons as any)[k])
+  )
+).sort();
 
 const search = ref("");
 const internal = ref<string | null>(props.modelValue ?? null);
@@ -73,7 +76,7 @@ onBeforeUnmount(() => {
       <InputText
         v-model="search"
         class="w-full"
-        :placeholder="placeholder || t('menuItems.searchIcon')"
+        :placeholder="internal || placeholder || t('menuItems.searchIcon')"
         @focus="onFocusInput"
         @keydown.escape="open = false"
       />

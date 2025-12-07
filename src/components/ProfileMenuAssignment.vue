@@ -197,7 +197,7 @@ const computeHeight = () => {
 
 onMounted(async () => {
   await menusStore.fetchHierarchy(true);
-  await profilesStore.fetchMenuAssignment(props.profileId);
+  // No llamar a fetchMenuAssignment aquí - el padre ya lo cargó
   buildIndexes(menusStore.tree);
   buildRows(menusStore.tree);
   seedSelectionFromStore();

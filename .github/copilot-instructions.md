@@ -1,495 +1,671 @@
 # Copilot Project Instructions (Lilith Frontend)
 
-Goal: Provide GitHub Copilot with precise architectural & stylistic guidance so generated code aligns with existing patterns.
+Vue 3 SPA for Lilith ERP - manufacturing management platform with domain-driven modules, Pinia state, and PrimeVue UI.
 
----
+## Quick Start Reference
 
-## 0. Quick Essence
+**Stack**: Vue 3 (Composition API) + TypeScript + Vite + Pinia + PrimeVue + Axios  
+**Structure**: Domain modules in `src/modules/<domain>/` with `routes.ts`, `store/`, `services/`, `views/`, `components/`, `types/`  
+**State**: Pinia stores (`use<Entity>Store`) with CRUD actions calling service layer  
+**Services**: Extend `BaseService<T>` from `src/api/base.service.ts`, wrap Axios calls  
+**Validation**: Yup schemas + `FormValidation` class from `utils/form-validator.ts`  
+**Utilities**: `utils/functions.ts` - `getNewUuid()`, `convertDateTimeToJSON()`, `formatCurrency()`, `createBlobAndDownloadFile()`  
+**Language**: Catalan UI text throughout (some i18n structure exists but most strings are inline)  
+**Reports**: Fetch via service `GetReportDataById()` → download blob with `createBlobAndDownloadFile()`  
+**When uncertain**: Find analogous entity module and mirror patterns
 
-Vue 3 + TypeScript + Vite + Pinia + PrimeVue.
-Domain-modular layout under `src/modules/<domain>`.
-CRUD via service layer (Axios wrappers).
-State via Pinia stores named `use<Entity>Store`.
-Forms use `<script setup>`, Catalan messages, toast feedback, Yup-or-manual validation, utilities in `utils/functions.ts`.
-Date handling: always convert before sending (`convertDateTimeToJSON`).
-IDs: `getNewUuid()` for client-side creation.
-Reports: `ReportService.Download(...)` then `createBlobAndDownloadFile`.
-Maintain Catalan UI text.
-If uncertain: imitate closest analogous entity.
+## Dev Workflow
 
----
-
-## 1. Tech & Tooling
-
-- Vue 3 Composition API (`<script setup>` only).
-- TypeScript (explicit types for props, emits, store state preferred).
-- Pinia for state (`defineStore`).
-- Vue Router 4 (route modules per domain).
-- PrimeVue + PrimeFlex + PrimeIcons.
-- Validation: Yup + custom `FormValidation` helper OR manual error accumulation.
-- HTTP: Axios via `api/base.service.ts` and domain services.
-- Build: Vite → `dist` → served by Nginx (Dockerfile copies pre-built `dist`).
-- i18n structure exists; many literals inline Catalan—preserve.
-
----
-
-## 2. Directory Strategy
-
-```
-src/
-  api/            # generic API helpers & base service
-  components/     # base + shared components
-  modules/<domain>/
-    routes.ts
-    components/
-    services/
-    store/
-    types/
-    views/
-  store/          # global stores (auth, menus, filters, geography, backend)
-  utils/          # formatting, validation, dates, currency, file download
-  types/          # shared types
-  views/          # top-level simple/public pages
+```bash
+npm install              # Install dependencies
+npm run dev              # Start dev server (port 8100)
+npm run typecheck        # Type check without build
+npm run build            # Production build to dist/
+npm run build-development # Dev mode build to dist-test/
+npm run preview          # Preview production build
 ```
 
-Add new domain by replicating this module structure.
+**Environment**: Use `.env` files with `VITE_` prefix (e.g., `VITE_API_BASE_URL`, `VITE_REPORTS_BASE_URL`)  
+**Docker**: Expects pre-built `dist/` - run `npm run build` before `docker build`  
+**PWA**: Enabled via `vite-plugin-pwa` with auto-update strategy
 
----
+## Architecture Overview
 
-## 3. Service Layer Pattern
+### Module Structure (Domain-Driven)
 
-- Base service centralizes Axios calls.
-- Domain services encapsulate endpoint paths & special actions.
-- Keep URL fragments centralized; avoid literals in components.
-- Return `boolean` or `GenericResponse<T>` (with `result`, `errors`, `content`).
+Each business domain (sales, production, purchase, warehouse, etc.) lives in `src/modules/<domain>/`:
 
-Example:
+```
+modules/
+  <domain>/
+    routes.ts          # RouteRecordRaw[] exported, lazy-loaded views
+    components/        # Domain-specific components
+    services/          # API clients extending BaseService<T>
+    store/             # Pinia stores for domain entities
+    types/             # TypeScript interfaces for domain models
+    views/             # Page components (List + Detail patterns)
+```
 
-```ts
-export class MyEntityService extends BaseService<MyEntity> {
-  constructor() {
-    super("MyEntity");
-  }
-  async GetById(id: string) {
-    return this.get<MyEntity>(`/${id}`);
-  }
-  async Create(payload: MyEntityCreateRequest) {
-    return this.post("", payload);
-  }
-  async Update(id: string, payload: MyEntityUpdateRequest) {
-    return this.put(`/${id}`, payload);
-  }
-  async Delete(id: string) {
-    return this.delete(`/${id}`);
+**Route Registration**: `src/router.ts` imports and spreads all domain route arrays  
+**Naming**: Stores use `use<Entity>Store`, services `<Entity>Service extends BaseService<T>`  
+
+### Service Layer Pattern
+
+All HTTP communication through service classes:
+
+```typescript
+// Example: src/modules/production/services/workorder.service.ts
+export class WorkOrderService extends BaseService<WorkOrder> {
+  constructor() { super("workorder"); }
+  
+  async GetBetweenDatesAndStatus(start: string, end: string, statusId?: string) {
+    const response = await this.apiClient.get(
+      `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`
+    );
+    return response.data;
   }
 }
 ```
 
----
+**Base CRUD**: `getAll()`, `getById(id)`, `create(model)`, `update(id, model)`, `delete(id)` inherited  
+**Custom queries**: Add methods like `GetBetweenDates()`, `GetBySalesOrderId()`, etc.  
+**Returns**: Boolean for simple CRUD, typed data or `GenericResponse<T>` for complex operations  
 
-## 4. Pinia Store Conventions
+### Pinia Store Pattern
 
-```ts
-export const useMyEntityStore = defineStore("myEntity", {
-  state: () => ({ items: [] as MyEntity[], current: null as MyEntity | null, loading: false }),
+Stores manage state + orchestrate service calls + refresh strategies:
+
+```typescript
+export const useWorkOrderStore = defineStore({
+  id: "workorder",
+  state: () => ({
+    workorder: undefined as WorkOrder | undefined,
+    workorders: undefined as Array<WorkOrder> | undefined,
+  }),
   actions: {
-    async fetchAll() { ... },
-    async fetchOne(id: string) { ... },
-    async create(data: MyEntity) { ... },
-    async update(id: string, data: MyEntity) { ... },
-    async remove(id: string) { ... },
-    setNew(id?: string) { this.current = { id: id ?? getNewUuid(), ...defaults }; },
+    setNew(id: string) {
+      this.workorder = { id, /* ...defaults */ } as WorkOrder;
+    },
+    async fetchAll() {
+      this.workorders = await Services.WorkOrder.getAll();
+    },
+    async fetchOne(id: string) {
+      this.workorder = await Services.WorkOrder.getById(id);
+    },
+    async create(model: WorkOrder) {
+      const result = await Services.WorkOrder.create(model);
+      if (result) await this.fetchOne(model.id);
+      return result;
+    },
+    async update(id: string, model: WorkOrder) {
+      const result = await Services.WorkOrder.update(id, model);
+      if (result) await this.fetchAll(); // or fetchOne(id)
+      return result;
+    },
   },
 });
 ```
 
-Rules:
+**Key Conventions**:
+- Mutate state only in actions
+- After create/update/delete: re-fetch parent or list to sync UI
+- Nested entities (phases, details): separate actions that re-fetch parent
+- `setNew(id?)` action initializes blank entity with `getNewUuid()` or provided ID
 
-- Mutate state only inside actions.
-- After create/update/delete: refresh list or parent entity.
-- Separate actions for nested aggregates (phase details, BOM items) re-fetch parent.
+### Global State (`src/store/`)
 
----
+**Core stores**:
+- `useStore()` (index.ts): Auth, JWT, user, sidebar menus, language, exercise picker
+- `useUserFilterStore()`: Persisted user-specific filters (table states, etc.)
+- `useApiStore()` (backend.ts): Loading state, error messages
+- `useExerciseStore()`: Fiscal periods with date ranges
 
-## 5. Component & Form Patterns
+**Exercise Picker**: Many list views require `exercisePicker.dates` (Date[]) for filtering - validate before queries  
+**Authentication**: JWT stored in `authorization`, decoded for user ID, menus loaded dynamically via `AppProfileService.GetUserMenu()`  
+**Language**: Catalan default, stored in localStorage, headers set in Axios interceptors (`Accept-Language`)
 
-Flow:
+## Critical Integration Points
 
-1. Read route param.
-2. Fetch entity; if absent, set creation mode (`FormActionMode.CREATE`).
-3. Configure header/menu via global store.
-4. Use reactive clone for dialog edits.
-5. Submit: validate → normalize dates → store action → toast → optional navigation.
+### API Clients & Interceptors
 
-Dialog pattern:
+**Two Axios instances**:
+1. `apiClient` (api.client.ts): Main backend at `VITE_API_BASE_URL`
+2. `reportsClient` (reports.client.ts): Reports microservice at `VITE_REPORTS_BASE_URL`
 
-```ts
-const dialog = reactive({ visible: false, title: "Crear ..." });
-const openCreate = () => {
-  temp.value = { id: getNewUuid(), ...defaults };
-  dialog.title = "Crear ...";
-  dialog.visible = true;
-};
+Both have identical interceptor patterns:
+- **Request**: Set `Accept-Language` from `useStore().language.current`, add `?culture=X` override if set, toggle `useApiStore().isWaiting`
+- **Response**: Clear loading state, log errors, show toast on failures
+- **Status validation**: Accept <500 status codes (handle 4xx in business logic)
+
+```typescript
+// Language is automatically sent with every request
+const appStore = useStore();
+// Headers: { "Accept-Language": "ca" }
+// Query params may include: ?culture=ca
 ```
 
----
+### Reports Pattern
 
-## 6. Validation
+1. Service method fetches report data: `GetReportDataById(id: string)`
+2. Use `ReportService` from shared module to generate blob
+3. Download with utility: `createBlobAndDownloadFile(fileName, blob)`
 
-Yup + helper:
-
-```ts
-const schema = Yup.object({
-  name: Yup.string().required("Nom obligatori"),
-  amount: Yup.number().min(0, "Valor no vàlid"),
-});
-const validation = ref<FormValidationResult>({ isValid: true, errors: {} });
-const submit = async () => {
-  validation.value = await FormValidation(schema, model.value);
-  if (!validation.value.isValid) {
-    const msg = Object.values(validation.value.errors).flat().join("\n");
-    toast.add({ severity: "warn", summary: msg, life: 8000 });
+```typescript
+// Typical usage in views
+const downloadReport = async (id: string) => {
+  const data = await service.GetReportDataById(id);
+  if (!data) {
+    toast.add({ severity: "warn", summary: "No s'han trobat dades" });
     return;
   }
-  // proceed
+  const blob = await reportService.Download(data, REPORTS.ORDER, "comanda.pdf");
+  if (blob) createBlobAndDownloadFile("comanda.pdf", blob);
 };
 ```
 
-Use Catalan error messages.
+**Report types**: Defined in shared constants (budgets, orders, invoices, delivery notes)
 
----
+### PWA Behavior
 
-## 7. Utilities (Use Instead of Rewriting)
+Configured via `vite-plugin-pwa` with:
+- **Auto-update strategy**: Background service worker updates
+- **Runtime caching**: Network-first for API, cache-first for assets/CDN
+- **Redirect logic**: PWA standalone mode redirects `/` to `/plant` (shop floor module)
+- **Manifest**: Landscape orientation, custom icons in `public/icons/`
 
-`utils/functions.ts` likely includes:
+Check PWA mode: `window.matchMedia("(display-mode: standalone)").matches`
 
-- `getNewUuid()`
-- `convertDateTimeToJSON()`
-- `formatDateForQueryParameter()`
-- `createBlobAndDownloadFile()`
-- `formatCurrency()`
-- `extractTime()`
-  Extend utilities only if new function is reusable and generic.
+## Component & Form Patterns
 
----
+### Typical Detail View Flow
 
-## 8. Date & Time Rules
+1. Read route param (`route.params.id`)
+2. Fetch entity; if new ID or missing, initialize with `store.setNew(id)`
+3. Configure header via `appStore.setMenuItem({ icon, title, backButtonVisible: true })`
+4. On save: validate → normalize dates → call store action → toast result → optionally navigate
 
-- Normalize before API calls with `convertDateTimeToJSON`.
-- Clone date objects if applying multiple transformations.
-- Use `formatDateForQueryParameter` for filtering.
-- Avoid scattering `.toLocaleString`; prefer central helpers.
+```typescript
+// Example detail view pattern
+const route = useRoute();
+const store = useWorkOrderStore();
+const appStore = useStore();
 
----
-
-## 9. Reporting Pattern
-
-Steps:
-
-1. Fetch report data (`GetReportDataById`).
-2. `new ReportService().Download(data, REPORTS.<Kind>, fileName)`.
-3. If blob → `createBlobAndDownloadFile`; else toast warning.
-   Add new report: extend `REPORTS`, backend endpoint, consistent filename (Catalan components acceptable).
-
----
-
-## 10. Hierarchical Production Entities
-
-WorkMaster / WorkOrder → Phases → Details & BOM Items.
-Child CRUD must re-fetch parent phase. Use consistent property names (`workMasterPhaseId`, `workOrderPhaseId`). Provide defaults (numbers = 0) on creation to avoid `NaN`.
-
----
-
-## 11. Global Filters (Exercise Picker)
-
-Many list queries depend on `exercisePicker.dates`.
-Before fetching:
-
-```ts
-if (!exercisePicker.dates) {
-  toast.add({ severity: "warn", summary: "Selecciona exercici", life: 4000 });
-  return;
-}
+onMounted(async () => {
+  const id = route.params.id as string;
+  await store.fetchOne(id);
+  
+  if (!store.workorder) {
+    store.setNew(id);
+  }
+  
+  appStore.setMenuItem({
+    icon: PrimeIcons.BOOK,
+    title: store.workorder?.code || "Nova ordre",
+    backButtonVisible: true,
+  });
+});
 ```
 
-Call `setCurrentYear()` if needed to auto-populate.
+### Dialog CRUD Pattern
 
----
+For nested entities (phase details, BOM items):
 
-## 12. Authentication / Menus
+```typescript
+const dialog = reactive({ visible: false, title: "" });
+const temp = ref<PhaseDetail | undefined>();
+const formMode = ref<FormActionMode>(FormActionMode.CREATE);
 
-- Auth store keeps JWT, user, roles.
-- Menus filtered by role.
-- After loading entity, call `setMenuItem({ icon, backButtonVisible: true, title })`.
-  Keep auth-dependent logic in views, not deep components.
+const openCreate = () => {
+  temp.value = { 
+    id: getNewUuid(),
+    workOrderPhaseId: currentPhase.value!.id,
+    // ...defaults with numeric fields = 0 not undefined
+  };
+  formMode.value = FormActionMode.CREATE;
+  dialog.title = "Crear detall";
+  dialog.visible = true;
+};
 
----
+const openEdit = (item: PhaseDetail) => {
+  temp.value = { ...item }; // Clone to avoid direct mutation
+  formMode.value = FormActionMode.EDIT;
+  dialog.title = "Editar detall";
+  dialog.visible = true;
+};
 
-## 13. Lifecycle / Status Constraints
+const save = async () => {
+  // Validate if needed
+  const result = formMode.value === FormActionMode.CREATE
+    ? await store.createDetail(temp.value!)
+    : await store.updateDetail(temp.value!.id, temp.value!);
+  
+  if (result) {
+    dialog.visible = false;
+    toast.add({ severity: "success", summary: "Desat correctament" });
+  }
+};
+```
 
-- Fetch lifecycle config; compute guards (`canModify<Entity>` etc.).
-- Disable controls instead of removing them; provide tooltip or toast.
-- Guards are pure (no side-effects).
+**Key rules**:
+- Always clone objects when editing to prevent premature state mutation
+- Numeric defaults should be `0`, not `undefined` (avoids NaN in calculations)
+- Re-fetch parent entity after nested entity changes
 
----
+## Validation & Error Handling
 
-## 14. Toast Usage
+### Yup Validation Pattern
 
-- Severities: success / info / warn / error.
-- Life: 4–8s typical.
-- Catalan summaries: "Creat correctament", "Actualitzat correctament", "Error en el procés".
-- Show first backend error message when available.
+```typescript
+import * as Yup from "yup";
+import { FormValidation, FormValidationResult } from "@/utils/form-validator";
 
----
+const schema = Yup.object({
+  name: Yup.string().required("El nom és obligatori"),
+  quantity: Yup.number().min(1, "La quantitat ha de ser superior a 0").required(),
+  price: Yup.number().min(0, "El preu no pot ser negatiu"),
+});
 
-## 15. Error Handling & GenericResponse
+const validation = ref<FormValidationResult>({ result: false, errors: {} });
 
-`GenericResponse<T>`: `{ result: boolean; errors: string[]; content?: T | null; }`.
-Pattern:
+const submit = async () => {
+  const validator = new FormValidation(schema);
+  validation.value = validator.validate(model.value);
+  
+  if (!validation.value.result) {
+    const errorMessages = Object.values(validation.value.errors).flat().join("\n");
+    toast.add({ severity: "warn", summary: errorMessages, life: 8000 });
+    return;
+  }
+  
+  // Proceed with save
+  const success = await store.create(model.value);
+  if (success) {
+    toast.add({ severity: "success", summary: "Creat correctament" });
+  }
+};
+```
 
-```ts
-const resp = await service.Update(id, payload);
-if (!resp.result) {
-  toast.add({
-    severity: "error",
-    summary: resp.errors[0] || "Error desconegut",
+**Validation rules**:
+- All error messages in Catalan
+- Use `FormValidation` class from `utils/form-validator.ts`
+- Display errors with toast (severity: "warn")
+- Life: 4000-8000ms depending on message length
+
+### GenericResponse Pattern
+
+Backend returns `GenericResponse<T>` for complex operations:
+
+```typescript
+interface GenericResponse<T> {
+  result: boolean;
+  errors: string[];
+  content?: T;
+}
+
+// Handling in services/stores
+const response = await service.ComplexOperation(payload);
+if (!response.result) {
+  toast.add({ 
+    severity: "error", 
+    summary: response.errors[0] || "Error desconegut" 
   });
   return false;
 }
+// Use response.content if needed
 ```
 
-Always null-check `content` before use.
+## Utilities (Use Instead of Rewriting)
 
----
+`utils/functions.ts` provides essential helpers - always use these instead of reimplementing:
 
-## 16. Currency & Numeric Precision
+- **`getNewUuid()`**: Generate client-side UUIDs for new entities
+- **`convertDateTimeToJSON(date)`**: Normalize Date objects for API submission
+- **`formatDateForQueryParameter(date)`**: Format dates for URL query strings
+- **`createBlobAndDownloadFile(name, blob)`**: Download files from blob responses
+- **`formatCurrency(value)`**: Format numbers as currency (€)
+- **`formatDate(date)`, `formatDateTime(dateTime)`**: Display formatting
+- **`extractTime(isoString)`**: Extract time portion from ISO datetime
+- **`calculateDuration(startTime)`**: Calculate elapsed time from start
 
-- Keep raw numeric data unrounded.
-- Round at display (e.g., `_.round(value, 2)` or `formatCurrency`).
+**Extension rules**:
+- Add new utilities only if reusable across ≥2 modules
+- Keep functions pure and generic (no domain-specific logic)
+- Include JSDoc comments for new utilities
 
----
+## Date & Time Handling
 
-## 17. Naming & Style
+**Critical rules**:
+- Always normalize dates before API calls: `convertDateTimeToJSON(dateValue)`
+- Clone date objects if applying multiple transformations
+- Use `formatDateForQueryParameter()` for filtering queries
+- Avoid scattering `.toLocaleString()` - use central helpers
+- Default date format in UI: `dd/MM/yyyy` (Catalan convention)
 
-- Vue SFC filenames: PascalCase.
-- Utilities: camelCase filenames.
-- Stores: `use<Entity>Store` with id matching entity.
-- Functions: camelCase.
-- Avoid very large components (> ~200 lines) — extract subcomponents.
+```typescript
+// Before API submission
+const workorder = {
+  ...formData,
+  plannedDate: convertDateTimeToJSON(formData.plannedDate),
+  startTime: convertDateTimeToJSON(formData.startTime),
+};
+await store.create(workorder);
+```
+
+## Production Entities & Hierarchy
+
+**WorkMaster / WorkOrder → Phases → Details & BOM Items**
+
+The production module uses a hierarchical structure:
+- **WorkMaster/WorkOrder**: Top-level manufacturing definitions/instances
+- **Phases**: Steps in the manufacturing process
+- **Phase Details**: Specific operations within a phase
+- **BOM Items**: Bill of materials - components consumed in the phase
+
+**CRUD rules for nested entities**:
+- Child entity changes must re-fetch parent phase
+- Use consistent property naming: `workMasterPhaseId`, `workOrderPhaseId`
+- Provide proper defaults on creation (numeric fields = `0`, not `undefined`)
+- Avoid partial updates - re-fetch full hierarchy after changes
+
+```typescript
+// Creating a phase detail
+async createDetail(model: WorkOrderPhaseDetail) {
+  const result = await Services.WorkOrderPhaseDetail.create(model);
+  if (result) await this.fetchPhaseById(model.workOrderPhaseId); // Re-fetch parent
+  return result;
+}
+```
+
+## Exercise Picker & Date Filtering
+
+Many list views depend on `exercisePicker.dates` from global store for date range filtering.
+
+**Before fetching filtered data**:
+
+```typescript
+const appStore = useStore();
+if (!appStore.exercisePicker.dates) {
+  toast.add({ 
+    severity: "warn", 
+    summary: "Selecciona un exercici per continuar", 
+    life: 4000 
+  });
+  return;
+}
+
+// Safe to proceed
+await store.fetchFiltered(
+  formatDateForQueryParameter(appStore.exercisePicker.dates[0]),
+  formatDateForQueryParameter(appStore.exercisePicker.dates[1]),
+  statusId
+);
+```
+
+**Initialize exercise picker**:
+```typescript
+// Set current year automatically
+appStore.setCurrentYear();
+```
+
+## Authentication & Navigation
+
+**Authentication flow**:
+- JWT stored in `authorization` property of `useStore()`
+- Decoded with `jwt-decode` to extract user ID and locale
+- User object loaded via `UserService.GetById()`
+- Menus loaded dynamically via `AppProfileService.GetUserMenu()` (fallback to role-based menus)
+- Language preference from JWT `locale` field or localStorage
+
+**Setting page headers**:
+```typescript
+const appStore = useStore();
+appStore.setMenuItem({
+  icon: PrimeIcons.BOOK,
+  title: "Nova ordre de treball",
+  backButtonVisible: true
+});
+```
+
+**Menu structure**: Dynamic menu loaded per user profile, transformed from backend `MenuNode[]` hierarchy
+
+## Lifecycle & Status Management
+
+Entity lifecycle controls workflow states:
+- Each major entity type has named lifecycle (e.g., "WorkOrder", "SalesOrder", "Budget")
+- Status transitions managed by backend
+- Frontend uses lifecycle/status for guards and UI state
+
+**Status-based guards**:
+```typescript
+// Compute permission guards based on lifecycle state
+const canModifyWorkOrder = computed(() => {
+  return store.workorder?.statusId !== 'completed' && 
+         store.workorder?.statusId !== 'cancelled';
+});
+```
+
+**Disable controls instead of hiding them** - provide visual feedback via tooltip or disabled state
+
+## Toast Usage Conventions
+
+```typescript
+// Success
+toast.add({ severity: "success", summary: "Creat correctament", life: 4000 });
+
+// Warning (validation, missing data)
+toast.add({ severity: "warn", summary: "Selecciona un exercici", life: 6000 });
+
+// Error (API failures)
+toast.add({ severity: "error", summary: "Error en el procés", life: 8000 });
+
+// Info
+toast.add({ severity: "info", summary: "Processant...", life: 3000 });
+```
+
+**Rules**:
+- All messages in Catalan
+- Life: 3-8 seconds (longer for errors/validation)
+- Show first backend error message when available: `response.errors[0]`
+
+## Naming & Code Style
+
+**File naming**:
+- Vue SFC components: PascalCase (e.g., `WorkOrderDetail.vue`)
+- Utilities/services: camelCase files (e.g., `form-validator.ts`)
+- Stores: `use<Entity>Store` with id matching entity name
+
+**Component conventions**:
+- Use Composition API with `<script setup>`
+- Function names: camelCase
+- Avoid very large components (> ~200 lines) — extract subcomponents when possible
 - Type emitted events explicitly:
 
-```ts
-const emit = defineEmits<{ (e: "saved", entity: MyEntity): void }>();
+```typescript
+const emit = defineEmits<{ 
+  (e: "saved", entity: MyEntity): void;
+  (e: "cancelled"): void;
+}>();
 ```
 
----
+**TypeScript**:
+- Prefer explicit types over `var` for clarity
+- Use nullable reference types appropriately (`Type | undefined`)
+- Avoid `any` - use `unknown` if type truly unknown
 
-## 18. Route Modules
+## Route Module Pattern
 
-- Each domain `routes.ts` exports `RouteRecordRaw[]`.
-- Use lazy imports: `() => import('./views/MyView.vue')`.
-- Provide `name` & `path` consistent with naming scheme (`production-workorders`).
-- Use `props: true` when binding route params to props.
+Each domain's `routes.ts` exports `RouteRecordRaw[]`:
 
----
+```typescript
+import { RouteRecordRaw } from "vue-router";
 
-## 19. Reusable Patterns Library
+const Workorders = () => import("./views/Workorders.vue");
+const Workorder = () => import("./views/Workorder.vue");
 
-Header + Load:
+export default [
+  {
+    path: "/workorder",
+    name: "Workorders",
+    component: Workorders,
+  },
+  {
+    path: "/workorder/:id",
+    name: "workorder",
+    component: Workorder,
+    props: true, // Pass route params as props when useful
+  },
+] as Array<RouteRecordRaw>;
+```
 
-```ts
+**Conventions**:
+- Lazy imports for all views: `() => import('./views/MyView.vue')`
+- Consistent naming: lowercase path segments matching plural/singular entity names
+- Use `props: true` when binding route params to component props
+
+## Reusable Code Patterns
+
+### Complete Detail View Setup
+
+```typescript
+const route = useRoute();
+const store = useWorkOrderStore();
+const appStore = useStore();
+
 onMounted(async () => {
+  const id = route.params.id as string;
   await store.fetchOne(id);
-  const title = store.current
-    ? `Editar ${store.current.name}`
-    : "Alta nou registre";
+  
+  const title = store.workorder 
+    ? `Editar ${store.workorder.code}` 
+    : "Alta nova ordre";
+    
   appStore.setMenuItem({
     icon: PrimeIcons.BOOK,
     backButtonVisible: true,
     title,
   });
-  if (!store.current) store.setNew();
+  
+  if (!store.workorder) {
+    store.setNew(id);
+  }
 });
 ```
 
-Submit Handler:
+### Form Submit Handler
 
-```ts
+```typescript
 const submit = async () => {
   const entity = store.current!;
-  const ok =
-    formMode.value === FormActionMode.CREATE
-      ? await store.create(entity)
-      : await store.update(entity.id, entity);
-  if (ok) toast.add({ severity: "success", summary: "Desat correctament" });
+  
+  const ok = formMode.value === FormActionMode.CREATE
+    ? await store.create(entity)
+    : await store.update(entity.id, entity);
+    
+  if (ok) {
+    toast.add({ severity: "success", summary: "Desat correctament" });
+    // Optional: navigate away
+    // router.push({ name: "EntityList" });
+  }
 };
 ```
 
-Report Download:
+### Report Download
 
-```ts
-const download = async () => {
+```typescript
+const downloadReport = async (id: string) => {
   const data = await service.GetReportDataById(id);
   if (!data) {
-    toast.add({ severity: "warn", summary: "Sense dades" });
+    toast.add({ severity: "warn", summary: "Sense dades per generar el document" });
     return;
   }
+  
   const blob = await new ReportService().Download(
-    data,
-    REPORTS.ORDER,
-    fileName
+    data, 
+    REPORTS.ORDER, 
+    "comanda.pdf"
   );
+  
   if (!blob) {
-    toast.add({ severity: "warn", summary: "Error al generar" });
+    toast.add({ severity: "warn", summary: "Error al generar el document" });
     return;
   }
-  createBlobAndDownloadFile(fileName, blob);
+  
+  createBlobAndDownloadFile("comanda.pdf", blob);
 };
 ```
 
-Dialog CRUD (Nested Item):
+### Dialog CRUD for Nested Items
 
-```ts
+```typescript
+const dialog = reactive({ visible: false, title: "" });
+const temp = ref<PhaseDetail | undefined>();
+
 const openEdit = (row: PhaseDetail) => {
-  temp.value = { ...row };
-  dialog.value.visible = true;
+  temp.value = { ...row }; // Clone
+  dialog.visible = true;
   formMode.value = FormActionMode.EDIT;
+  dialog.title = "Editar detall";
 };
+
 const saveDetail = async () => {
-  const ok =
-    formMode.value === FormActionMode.CREATE
-      ? await phaseStore.createDetail(temp.value)
-      : await phaseStore.updateDetail(temp.value.id, temp.value);
+  const ok = formMode.value === FormActionMode.CREATE
+    ? await phaseStore.createDetail(temp.value!)
+    : await phaseStore.updateDetail(temp.value!.id, temp.value!);
+    
   if (ok) {
-    await phaseStore.fetchPhaseById(parentId);
-    dialog.value.visible = false;
+    await phaseStore.fetchPhaseById(parentId); // Re-fetch parent
+    dialog.visible = false;
     toast.add({ severity: "success", summary: "Desat" });
   }
 };
 ```
 
----
+## Development Guidelines
 
-## 20. Extending Utilities
+### Adding New Domain Module (Checklist)
 
-Add only if:
+1. Create folder `src/modules/<domain>/` with subfolders: `components/`, `services/`, `store/`, `types/`, `views/`, and `routes.ts`
+2. Define entity interfaces in `types/`
+3. Implement service class extending `BaseService<T>`
+4. Create Pinia store (state, CRUD actions, refresh strategy)
+5. Add routes in `routes.ts` with lazy-loaded views
+6. Build list & detail views using established patterns
+7. Use `getNewUuid()` for client IDs; convert dates with `convertDateTimeToJSON`
+8. Provide Catalan messages & toasts
+9. If reports needed, extend report constants & follow download pattern
+10. Import and spread routes in `src/router.ts`
 
-- Generic (not domain-specific).
-- Reused by ≥ 2 components.
-  Include concise JSDoc for new utilities.
+### Extension Rules for Utilities
 
----
+Add new utilities only if:
+- Generic (not domain-specific)
+- Reused by ≥2 components
+- Include concise JSDoc for new utilities
 
-## 21. Performance & Reactivity
-
-- Use `computed` for derived heavy arrays.
-- Debounce rapid search calls (wrap with lodash debounce if added).
-- Avoid redundant reactive copies of store arrays.
-- Use `storeToRefs` when destructuring store state.
-
----
-
-## 22. Testing (Future)
-
-If tests are introduced:
-
-- Use Vitest/Jest for utilities (pure functions first).
-- Component tests: form validation & event emission.
-- Store tests: mock service layer (module mock or dependency injection).
-- Prefer Catalan for test descriptions to match UI language (optional).
-
----
-
-## 23. Internationalization Roadmap
-
-If migrating literals into i18n:
-
-- Key format: `domain.section.label` (e.g., `sales.order.total`).
-- Catalan as base, add other locales gradually.
-- Avoid mixing raw strings & `$t` for same label in one component.
-
----
-
-## 24. New Feature Checklist
-
-[ ] Define types (`modules/<domain>/types`).
-[ ] Implement service (CRUD + special actions).
-[ ] Create Pinia store (state, actions, fetch strategy).
-[ ] Add route(s) (`modules/<domain>/routes.ts`).
-[ ] Build views (list + detail) with patterns.
-[ ] Implement forms/dialogs (validation, toasts, Catalan messages).
-[ ] Use utilities (UUID, date conversion, currency formatting).
-[ ] Add report integration (if applicable).
-[ ] Apply lifecycle/status guards (if relevant).
-[ ] Validate exercise/date dependency before queries.
-[ ] Update menus/navigation if needed.
-
----
-
-## 25. DO / AVOID (Condensed)
-
-DO:
-
-- Reuse helpers & naming conventions.
-- Keep logic in store actions.
-- Validate before API calls.
-- Keep UI copy Catalan.
-- Round numbers only at display layer.
-
-AVOID:
-
-- Hard-coded API URLs in components.
-- Duplicated validation logic.
-- Mixing languages.
-- Directly mutating store arrays outside actions.
-- Rewriting existing utility logic.
-
----
-
-## 26. Guardrails for Copilot
-
-If prompt suggests:
-
-- Options API → Switch to Composition API.
-- Direct Axios in component → Use/extend service layer.
-- English/Spanish labels → Convert to Catalan.
-- New date formatting duplicating helper → Reference existing utility.
-- Complex business calc inline in component → Move to store or utility.
-
----
-
-## 27. Safe Scaffolds
-
-Copilot may confidently generate: new store skeleton, service methods, form with Yup, report download handler, dialog-based nested CRUD, route module entry.
-
----
-
-## 28. Handling Uncertainty
-
-If entity shape unclear:
-
-- Inspect analogous domain code.
-- Mirror naming & property patterns.
-- Insert `// TODO: confirm backend contract` for assumptions.
-
----
-
-## 29. Quality Bar
+### Code Quality Standards
 
 Generated code should:
+- Type-check (no implicit `any`)
+- Avoid unused imports
+- Functions < ~40 lines (split if larger)
+- Use early returns for validation failures
+- Null/undefined guard nested access
 
-- Type-check (no implicit `any`).
-- Avoid unused imports.
-- Functions < ~40 lines (split if larger).
-- Use early returns for validation failures.
-- Null/undefined guard nested access.
+## Common Anti-Patterns to Avoid
 
----
+**DON'T**:
+- Hard-code API URLs in components (use service layer)
+- Duplicate validation logic across components
+- Mix languages in UI (maintain Catalan)
+- Mutate store arrays outside actions
+- Rewrite existing utility functions
+- Use `any` type (prefer explicit types or `unknown`)
+- Forget to re-fetch after nested entity changes
 
-## 30. Core Principle
-
-Consistency over novelty. Replicate proven patterns, keep Catalan UX language, leverage utilities, centralize side-effects in Pinia stores.
-
----
-
-End of instructions.
+**DO**:
+- Reuse helpers & naming conventions
+- Keep business logic in store actions
+- Validate before all API calls
+- Keep UI copy in Catalan
+- Round numbers only at display layer
+- Clone objects before editing in dialogs
