@@ -1,7 +1,15 @@
 <template>
   <header>
+    <SplitButton
+      label="Guardar"
+      @click="submitForm"
+      :model="items"
+      :size="'small'"
+      class="grid_add_row_button"
+    />
     <FormWorkorder
       v-if="workorder"
+      ref="workorderForm"
       :workorder="workorder"
       @submit="onWorkorderSubmit"
     ></FormWorkorder>
@@ -121,9 +129,12 @@ import {
   formatDate,
   formatCurrency,
   getNewUuid,
+  createBlobAndDownloadFile,
 } from "../../../utils/functions";
 import { useToast } from "primevue/usetoast";
 import { DialogOptions } from "../../../types/component";
+import Services from "../services";
+import { REPORTS, ReportService } from "../../../api/services/report.service";
 
 const route = useRoute();
 const router = useRouter();
@@ -136,6 +147,15 @@ const plantModelStore = usePlantModelStore();
 const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
+const workorderForm = ref();
+
+const items = [
+  {
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => printReport(),
+  },
+];
 
 const dialogOptions = reactive({
   visible: false,
@@ -179,6 +199,11 @@ const loadViewData = async () => {
   productionPartStore.fetchByWorkOrderId(id.value);
 
   await fetchWorkOrder();
+};
+
+const submitForm = async () => {
+  const form = workorderForm.value as any;
+  form.submitForm();
 };
 
 const onWorkorderSubmit = async (workorder: WorkOrder) => {
@@ -247,6 +272,33 @@ const deleteProductionPart = async (productionPart: ProductionPart) => {
   await productionPartStore.delete(productionPart.id);
   productionPartStore.fetchByWorkOrderId(id.value);
   fetchWorkOrder();
+};
+
+const printReport = async () => {
+  const workOrderReport = await Services.WorkOrder.GetReportDataById(
+    workorder.value!.id
+  );
+
+  if (workOrderReport) {
+    const fileName = `OrdreFabricacio_${workorder.value?.code}.docx`;
+
+    const reportService = new ReportService();
+    const report = await reportService.Download(
+      workOrderReport,
+      REPORTS.WorkOrder,
+      fileName
+    );
+
+    if (report) {
+      createBlobAndDownloadFile(fileName, report);
+    } else {
+      toast.add({
+        severity: "warn",
+        summary: "Error",
+        detail: "No s'ha pugut generar l'informe de l'ordre de fabricació",
+      });
+    }
+  }
 };
 </script>
 <style scoped>

@@ -1,14 +1,5 @@
 <template>
   <form v-if="workorder">
-    <div>
-      <Button
-        label="Guardar"
-        class="grid_add_row_button"
-        size="small"
-        @click="submitForm"
-      />
-      <br />
-    </div>
     <section class="four-columns">
       <div>
         <BaseInput label="Codi" v-model="workorder.code" disabled />

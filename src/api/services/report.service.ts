@@ -11,6 +11,7 @@ export enum REPORTS {
   DeliveryNote = "DeliveryNote",
   Invoice = "SalesInvoice",
   PurchaseOrder = "PurchaseOrder",
+  WorkOrder = "WorkOrder",
 }
 
 export class ReportService {
