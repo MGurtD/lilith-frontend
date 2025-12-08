@@ -1,5 +1,12 @@
 <template>
-  <form v-if="workorder">
+  <SplitButton
+    label="Guardar"
+    @click="handleSubmit"
+    :model="items"
+    :size="'small'"
+    class="grid_add_row_button"
+  />
+  <form v-if="workorder" class="pt-3">
     <section class="four-columns">
       <div>
         <BaseInput label="Codi" v-model="workorder.code" disabled />
@@ -94,6 +101,7 @@ import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
+import { PrimeIcons } from "primevue/api";
 
 const lifecycleStore = useLifecyclesStore();
 
@@ -104,9 +112,18 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "submit", workorder: WorkOrder): void;
   (e: "cancel"): void;
+  (e: "download"): void;
 }>();
 
 const toast = useToast();
+
+const items = [
+  {
+    label: "Descarregar",
+    icon: PrimeIcons.FILE_WORD,
+    command: () => emit("download"),
+  },
+];
 
 const schema = Yup.object().shape({
   plannedQuantity: Yup.number()
@@ -126,7 +143,7 @@ const validate = () => {
   validation.value = formValidation.validate(props.workorder);
 };
 
-const submitForm = async () => {
+const handleSubmit = async () => {
   validate();
   if (validation.value.result) {
     emit("submit", props.workorder);
@@ -143,4 +160,8 @@ const submitForm = async () => {
     });
   }
 };
+
+defineExpose({
+  submitForm: handleSubmit,
+});
 </script>

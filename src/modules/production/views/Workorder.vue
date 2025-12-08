@@ -1,17 +1,11 @@
 <template>
   <header>
-    <SplitButton
-      label="Guardar"
-      @click="submitForm"
-      :model="items"
-      :size="'small'"
-      class="grid_add_row_button"
-    />
     <FormWorkorder
       v-if="workorder"
       ref="workorderForm"
       :workorder="workorder"
       @submit="onWorkorderSubmit"
+      @download="printReport"
     ></FormWorkorder>
   </header>
   <main class="main">
@@ -149,14 +143,6 @@ const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
 const workorderForm = ref();
 
-const items = [
-  {
-    label: "Descarregar",
-    icon: PrimeIcons.FILE_WORD,
-    command: () => printReport(),
-  },
-];
-
 const dialogOptions = reactive({
   visible: false,
   title: "Crear tíquet de producció",
@@ -199,11 +185,6 @@ const loadViewData = async () => {
   productionPartStore.fetchByWorkOrderId(id.value);
 
   await fetchWorkOrder();
-};
-
-const submitForm = async () => {
-  const form = workorderForm.value as any;
-  form.submitForm();
 };
 
 const onWorkorderSubmit = async (workorder: WorkOrder) => {
