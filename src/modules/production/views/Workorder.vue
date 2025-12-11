@@ -261,7 +261,7 @@ const printReport = async () => {
   );
 
   if (workOrderReport) {
-    const fileName = `OrdreFabricacio_${workorder.value?.code}.docx`;
+    const fileName = `OrdreFabricacio_${workorder.value?.code}.xlsx`;
 
     const reportService = new ReportService();
     const report = await reportService.Download(
