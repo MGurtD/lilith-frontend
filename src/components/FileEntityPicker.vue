@@ -19,20 +19,7 @@
     <section v-if="!loading" class="file-viewer">
       <article class="file-viewer-item" v-for="file in files" :key="file.id">
         <div class="file-viewer-item-type">
-          <i
-            v-if="file.type === FileType.DOCUMENT"
-            :class="
-              file.originalName.endsWith('docx')
-                ? PrimeIcons.FILE_WORD
-                : PrimeIcons.FILE_PDF
-            "
-            style="font-size: 2.5rem"
-          />
-          <i
-            v-if="file.type === FileType.IMAGE"
-            :class="PrimeIcons.IMAGE"
-            style="font-size: 2.5rem"
-          />
+          <i :class="getFileIcon(file)" style="font-size: 2.5rem" />
           <p>
             {{ file.originalName.substring(0, 20) }}
           </p>
@@ -212,6 +199,25 @@ const showFile = async (file: File) => {
 const downloadFile = async (file: File) => {
   const response = await service.Download(file);
   createBlobAndDownloadFile(file.originalName, response);
+};
+
+const getFileIcon = (file: File): string => {
+  if (file.type === FileType.IMAGE) {
+    return PrimeIcons.IMAGE;
+  }
+
+  const fileName = file.originalName.toLowerCase();
+  if (fileName.endsWith(".pdf")) {
+    return PrimeIcons.FILE_PDF;
+  }
+  if (fileName.endsWith(".docx") || fileName.endsWith(".doc")) {
+    return PrimeIcons.FILE_WORD;
+  }
+  if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+    return PrimeIcons.FILE_EXCEL;
+  }
+
+  return PrimeIcons.FILE;
 };
 
 const deleteFile = async (file: File) => {
