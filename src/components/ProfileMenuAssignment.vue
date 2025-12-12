@@ -180,6 +180,20 @@ const saveSelection = () => {
   emit("save");
 };
 
+// Search filter
+const searchFilter = ref("");
+
+const filteredRows = computed<RowItem[]>(() => {
+  if (!searchFilter.value) return rows.value;
+
+  const searchLower = searchFilter.value.toLowerCase();
+  return rows.value.filter(
+    (row) =>
+      row.title.toLowerCase().includes(searchLower) ||
+      row.key.toLowerCase().includes(searchLower)
+  );
+});
+
 // Dynamic height handling
 const rootEl = ref<HTMLElement | null>(null);
 const tableHeight = ref<string>("400px");
@@ -242,7 +256,7 @@ watch(
     <DataTable
       scrollable
       :scrollHeight="tableHeight"
-      :value="rows"
+      :value="filteredRows"
       v-model:selection="selectionRows"
       :loading="loading"
       dataKey="id"
@@ -254,11 +268,22 @@ watch(
       "
     >
       <template #header>
-        <div class="flex justify-content-between align-items-center w-full">
-          <span class="text-xl font-bold">{{
-            t("profiles.menuAssignment.title") || "Assignació de menús"
-          }}</span>
-          <div class="flex gap-2">
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
+        >
+          <div class="datatable-filter-1">
+            <IconField iconPosition="left">
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText
+                v-model="searchFilter"
+                :placeholder="t('common.search')"
+                class="w-full"
+              />
+            </IconField>
+          </div>
+          <div class="datatable-buttons">
             <Button
               size="small"
               icon="pi pi-link"

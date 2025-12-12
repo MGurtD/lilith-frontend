@@ -45,6 +45,8 @@ import catalan from "./i18n/primevue/catalan";
 import Badge from "primevue/badge";
 import InputGroupAddon from "primevue/inputgroupaddon";
 import InputGroup from "primevue/inputgroup";
+import InputIcon from "primevue/inputicon";
+import IconField from "primevue/iconfield";
 
 app.use(PrimeVue, {
   locale: catalan,
@@ -82,6 +84,8 @@ app
   .component("Badge", Badge)
   .component("Panel", Panel)
   .component("InputGroup", InputGroup)
-  .component("InputGroupAddon", InputGroupAddon);
+  .component("InputGroupAddon", InputGroupAddon)
+  .component("InputIcon", InputIcon)
+  .component("IconField", IconField);
 
 app.mount("#app");
