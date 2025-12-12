@@ -24,15 +24,9 @@ export default abstract class BaseService<T> {
       return response.filter((e) => (e as any).disabled === false);
   }
   async getById(id: string): Promise<T | undefined> {
-    try {
-      const response = await apiClient.get(`${this.resource}/${id}`);
-      if (response.status === 200) {
-        return response.data as T;
-      }
-      return undefined;
-    } catch (err) {
-      logException(err);
-      return undefined;
+    const response = await apiClient.get(`${this.resource}/${id}`);
+    if (response.status === 200) {
+      return response.data as T;
     }
   }
   async create(model: T | CreatePurchaseDocumentRequest): Promise<boolean> {
