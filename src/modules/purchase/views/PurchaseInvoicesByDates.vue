@@ -259,8 +259,8 @@ const downloadInvoices = async (invoice: PurchaseInvoice) => {
   );
   if (files) {
     files.forEach(async (f) => {
-      const response = await SharedServices.File.Download(f);
-      createBlobAndDownloadFile(f.originalName, response);
+      const { blob, contentType } = await SharedServices.File.Download(f);
+      createBlobAndDownloadFile(f.originalName, blob, contentType);
     });
   }
 };

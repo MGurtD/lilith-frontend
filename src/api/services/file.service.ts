@@ -26,15 +26,23 @@ export class FileService {
     }
   }
 
-  public async Download(file: File): Promise<any> {
+  public async Download(
+    file: File
+  ): Promise<{ blob: Blob; contentType: string }> {
     let response = await this.apiClient.post(
       `${this.resource}/Download`,
       file,
       { responseType: "blob", timeout: fileRequestTimeout }
     );
     if (response.status === 200) {
-      return response.data;
+      const contentType =
+        response.headers["content-type"] || "application/octet-stream";
+      return {
+        blob: response.data,
+        contentType: contentType,
+      };
     }
+    throw new Error("Failed to download file");
   }
 
   public async DownloadReport(

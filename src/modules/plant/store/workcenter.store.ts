@@ -53,9 +53,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
           this.workcenter.id
         );
         if (files && files.length > 0) {
-          const response = await fileService.Download(files[0]);
-          this.workcenterPictureBlob = new Blob([response], {
-            type: "image/jpeg",
+          const { blob, contentType } = await fileService.Download(files[0]);
+          this.workcenterPictureBlob = new Blob([blob], {
+            type: contentType || "image/jpeg",
           });
           if (this.workcenterPictureUrl) {
             URL.revokeObjectURL(this.workcenterPictureUrl);

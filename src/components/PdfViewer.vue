@@ -315,7 +315,7 @@ const loadPdf = async () => {
   pdfSource.value = null;
 
   try {
-    const blob = await fileService.Download(props.file);
+    const { blob } = await fileService.Download(props.file);
 
     if (!blob) {
       throw new Error("No s'ha pogut descarregar el document");
@@ -344,9 +344,9 @@ const downloadFile = async () => {
   if (!props.file) return;
 
   try {
-    const blob = await fileService.Download(props.file);
+    const { blob, contentType } = await fileService.Download(props.file);
     if (blob) {
-      createBlobAndDownloadFile(props.file.originalName, blob);
+      createBlobAndDownloadFile(props.file.originalName, blob, contentType);
       toast.add({
         severity: "success",
         summary: "Descàrrega completada",
