@@ -209,22 +209,37 @@ const computeHeight = () => {
   tableHeight.value = finalPx + "px";
 };
 
-onMounted(async () => {
-  await menusStore.fetchHierarchy(true);
-  // No llamar a fetchMenuAssignment aquí - el padre ya lo cargó
-  buildIndexes(menusStore.tree);
-  buildRows(menusStore.tree);
-  seedSelectionFromStore();
-  // REMOVED: Don't emit during initialization - causes infinite loop with parent's onMenuSelectionChange
-  // Parent already has the data, no need to notify it back
-  await nextTick();
-  computeHeight();
-  window.addEventListener("resize", computeHeight);
+onMounted(() => {
+  // Load menu hierarchy in background - don't block rendering
+  // This prevents race conditions with parent's fetchMenuAssignment call
+  menusStore.fetchHierarchy(true).then(() => {
+    buildIndexes(menusStore.tree);
+    buildRows(menusStore.tree);
+    seedSelectionFromStore();
+  });
+
+  // Setup UI immediately without waiting for data
+  nextTick().then(() => {
+    computeHeight();
+    window.addEventListener("resize", computeHeight);
+  });
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", computeHeight);
 });
+
+// Watch for menu assignment data arriving from parent's async fetch
+// This seeds the selection once data is available
+// Only triggers when data actually arrives, not during save operations
+watch(
+  () => profilesStore.menuAssignment,
+  (newVal) => {
+    if (newVal && rows.value.length > 0) {
+      seedSelectionFromStore();
+    }
+  }
+);
 </script>
 
 <template>
