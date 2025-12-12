@@ -182,8 +182,8 @@ const showFile = async (file: File) => {
 
   // Si es una imatge, carregar-la al contenidor
   if (!isPdf) {
-    const response = await service.Download(file);
-    const blob = new Blob([response], { type: "image/jpeg" });
+    const { blob: downloadedBlob, contentType } = await service.Download(file);
+    const blob = new Blob([downloadedBlob], { type: contentType || "image/jpeg" });
     const imageElement = await loadImage(blob);
 
     // Netegem el contenidor abans d'afegir la nova imatge
@@ -197,8 +197,8 @@ const showFile = async (file: File) => {
 };
 
 const downloadFile = async (file: File) => {
-  const response = await service.Download(file);
-  createBlobAndDownloadFile(file.originalName, response);
+  const { blob, contentType } = await service.Download(file);
+  createBlobAndDownloadFile(file.originalName, blob, contentType);
 };
 
 const getFileIcon = (file: File): string => {
