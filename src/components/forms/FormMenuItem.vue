@@ -46,13 +46,15 @@ const parentFlat = computed<MenuItemFlat[]>(() => {
   return list.filter((i) => !form.value.id || i.id !== form.value.id);
 });
 
-// Watch for external model changes, but not on initial mount to avoid race conditions
+// REMOVED: Bidirectional watcher that was causing infinite loops
+// The parent passes initial data via props, child maintains its own state
+// Child only syncs back to parent on submit, not on every change
 watch(
   () => props.modelValue,
   (v) => {
     form.value = { ...v };
   },
-  { immediate: false }
+  { immediate: true }
 );
 
 const validate = () => {
@@ -63,6 +65,8 @@ const validate = () => {
 
 const submit = () => {
   if (!validate()) return;
+  // Sync final state to parent before submit
+  emit("update:modelValue", form.value);
   emit("submit");
 };
 
@@ -71,13 +75,6 @@ const loadHierarchy = async () => {
 };
 
 onMounted(loadHierarchy);
-
-// Simplified watcher - removed deep flag to prevent cascading updates
-// Only emit when form reference changes, not on every property mutation
-watch(
-  () => form.value,
-  (v) => emit("update:modelValue", v)
-);
 </script>
 <template>
   <div class="form-menu-item">

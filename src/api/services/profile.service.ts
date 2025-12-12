@@ -37,7 +37,11 @@ export class ProfileService extends BaseService<any> {
     try {
       const response = await this.apiClient.get(`${this.resource}/${id}`);
       if (response.status === 200) return response.data as ProfileDetail;
-    } catch {}
+      return undefined;
+    } catch (err) {
+      console.error("Get profile error:", err);
+      return undefined;
+    }
   }
 
   async Create(
@@ -46,7 +50,11 @@ export class ProfileService extends BaseService<any> {
     try {
       const response = await this.apiClient.post(this.resource, payload);
       if (response.status === 201) return response.data as ProfileDetail;
-    } catch {}
+      return undefined;
+    } catch (err) {
+      console.error("Create profile error:", err);
+      return undefined;
+    }
   }
 
   async Update(id: string, payload: UpdateProfileRequest): Promise<boolean> {
@@ -79,7 +87,11 @@ export class ProfileService extends BaseService<any> {
       );
       if (response.status === 200)
         return response.data as ProfileMenuAssignmentRequest;
-    } catch {}
+      return undefined;
+    } catch (err) {
+      console.error("GetMenuAssignment error:", err);
+      return undefined;
+    }
   }
 
   async UpdateMenuAssignment(
