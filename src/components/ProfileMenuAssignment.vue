@@ -215,7 +215,8 @@ onMounted(async () => {
   buildIndexes(menusStore.tree);
   buildRows(menusStore.tree);
   seedSelectionFromStore();
-  emit("menu-selection-change", Array.from(selectionIds.value));
+  // REMOVED: Don't emit during initialization - causes infinite loop with parent's onMenuSelectionChange
+  // Parent already has the data, no need to notify it back
   await nextTick();
   computeHeight();
   window.addEventListener("resize", computeHeight);
@@ -237,10 +238,12 @@ watch(
 // Removed redundant profileId watcher that was causing duplicate API calls
 // Parent component (Profile.vue) already loads menu assignment via fetchOne()
 
-// Simplified watcher - removed deep flag to prevent cascading updates
+// Watch for changes to menu assignment from parent, but not during initialization
+// immediate:false prevents firing on mount - onMounted already calls seedSelectionFromStore()
 watch(
   () => profilesStore.menuAssignment,
-  () => seedSelectionFromStore()
+  () => seedSelectionFromStore(),
+  { immediate: false }
 );
 </script>
 

@@ -99,8 +99,9 @@ const saveProfile = async () => {
 const onMenuSelectionChange = (ids: string[]) => {
   if (!menuModel.value) return;
   menuModel.value.menuItemIds = ids;
-  // also update store working selection so other parts remain in sync
-  profiles.setMenuSelection(ids);
+  // REMOVED: profiles.setMenuSelection(ids) - was causing infinite loop
+  // Store updates happen only when user explicitly saves via onSaveMenus
+  // This prevents child component watcher from re-triggering during user selection
 };
 
 const onSaveMenus = () => {
