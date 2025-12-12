@@ -225,26 +225,6 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", computeHeight);
 });
-
-watch(
-  () => menusStore.tree,
-  (v) => {
-    buildIndexes(v);
-    buildRows(v);
-    syncSelectionRows();
-  }
-);
-
-// Removed redundant profileId watcher that was causing duplicate API calls
-// Parent component (Profile.vue) already loads menu assignment via fetchOne()
-
-// Watch for changes to menu assignment from parent, but not during initialization
-// immediate:false prevents firing on mount - onMounted already calls seedSelectionFromStore()
-watch(
-  () => profilesStore.menuAssignment,
-  () => seedSelectionFromStore(),
-  { immediate: false }
-);
 </script>
 
 <template>
