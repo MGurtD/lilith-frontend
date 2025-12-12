@@ -79,7 +79,11 @@ export class ProfileService extends BaseService<any> {
       );
       if (response.status === 200)
         return response.data as ProfileMenuAssignmentRequest;
-    } catch {}
+      console.warn(`GetMenuAssignment returned status ${response.status}`);
+    } catch (err) {
+      console.error("GetMenuAssignment failed:", err);
+      throw err; // Re-throw so caller knows it failed
+    }
   }
 
   async UpdateMenuAssignment(

@@ -210,14 +210,19 @@ const computeHeight = () => {
 };
 
 onMounted(() => {
-  // Load menu hierarchy in background - don't block rendering
-  // This prevents race conditions with parent's fetchMenuAssignment call
-  menusStore.fetchHierarchy(true).then(() => {
-    buildIndexes(menusStore.tree);
-    buildRows(menusStore.tree);
-    seedSelectionFromStore();
-  });
-
+  // Load menu hierarchy with proper error handling
+  menusStore
+    .fetchHierarchy(true)
+    .then(() => {
+      buildIndexes(menusStore.tree);
+      buildRows(menusStore.tree);
+      seedSelectionFromStore();
+    })
+    .catch((err) => {
+      console.error("Failed to load menu hierarchy:", err);
+      // Initialize empty rows so UI doesn't break
+      rows.value = [];
+    });
   // Setup UI immediately without waiting for data
   nextTick().then(() => {
     computeHeight();

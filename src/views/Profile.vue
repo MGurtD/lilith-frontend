@@ -51,9 +51,14 @@ onMounted(async () => {
     isNew.value = true;
     profiles.setNew(id);
   } else {
-    // Load menu assignment in background - don't block UI initialization
-    // Child component will seed from store once this completes
-    profiles.fetchMenuAssignment(profiles.current.id);
+    // Load menu assignment and wait for completion
+    // initMenuModel needs this data to initialize properly
+    try {
+      await profiles.fetchMenuAssignment(profiles.current.id);
+    } catch (err) {
+      console.error("Failed to load menu assignment:", err);
+      // Continue anyway with empty assignment
+    }
   }
 
   formModel.value = { ...profiles.current };
