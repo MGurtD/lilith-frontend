@@ -50,6 +50,10 @@ onMounted(async () => {
   if (!profiles.current) {
     isNew.value = true;
     profiles.setNew(id);
+  } else {
+    // Explicitly load menu assignment after profile is loaded
+    // This prevents race conditions with child component watchers
+    await profiles.fetchMenuAssignment(profiles.current.id);
   }
 
   formModel.value = { ...profiles.current };

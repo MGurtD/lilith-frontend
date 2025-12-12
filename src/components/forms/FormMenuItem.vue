@@ -46,11 +46,13 @@ const parentFlat = computed<MenuItemFlat[]>(() => {
   return list.filter((i) => !form.value.id || i.id !== form.value.id);
 });
 
+// Watch for external model changes, but not on initial mount to avoid race conditions
 watch(
   () => props.modelValue,
   (v) => {
     form.value = { ...v };
-  }
+  },
+  { immediate: false }
 );
 
 const validate = () => {
@@ -70,10 +72,11 @@ const loadHierarchy = async () => {
 
 onMounted(loadHierarchy);
 
+// Simplified watcher - removed deep flag to prevent cascading updates
+// Only emit when form reference changes, not on every property mutation
 watch(
   () => form.value,
-  (v) => emit("update:modelValue", v),
-  { deep: true }
+  (v) => emit("update:modelValue", v)
 );
 </script>
 <template>
@@ -97,7 +100,7 @@ watch(
         <label class="block mb-2">{{ t("menuItems.form.sortOrder") }}</label>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          v-model="(form.sortOrder as any)"
+          v-model="form.sortOrder as any"
           :min="0"
         />
         <small class="p-error" v-if="errors.sortOrder">{{

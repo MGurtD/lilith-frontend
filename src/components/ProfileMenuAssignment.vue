@@ -234,20 +234,13 @@ watch(
   }
 );
 
-watch(
-  () => props.profileId,
-  async (newId) => {
-    if (newId) {
-      await profilesStore.fetchMenuAssignment(newId);
-      seedSelectionFromStore();
-    }
-  }
-);
+// Removed redundant profileId watcher that was causing duplicate API calls
+// Parent component (Profile.vue) already loads menu assignment via fetchOne()
 
+// Simplified watcher - removed deep flag to prevent cascading updates
 watch(
   () => profilesStore.menuAssignment,
-  () => seedSelectionFromStore(),
-  { deep: true }
+  () => seedSelectionFromStore()
 );
 </script>
 

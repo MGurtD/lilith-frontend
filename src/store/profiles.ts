@@ -40,9 +40,9 @@ export const useProfilesStore = defineStore("profiles", {
       this.loading = true;
       try {
         this.current = (await AppProfileService.Get(id)) ?? null;
-        if (this.current) {
-          await this.fetchMenuAssignment(this.current.id);
-        } else {
+        // Removed automatic fetchMenuAssignment call - caller must explicitly load menu data
+        // This follows single responsibility principle and prevents hidden nested API calls
+        if (!this.current) {
           this.menuAssignment = null;
         }
       } finally {
