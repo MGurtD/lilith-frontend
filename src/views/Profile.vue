@@ -14,11 +14,11 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id as string;
-const isNew = id === "new";
 const store = useStore();
 const profiles = useProfilesStore();
 const toast = useToast();
 const confirm = useConfirm();
+const isNew = ref(false);
 
 const formModel = ref<any>({});
 const menuModel = ref<{
@@ -29,7 +29,7 @@ const menuModel = ref<{
 const refreshHeader = () => {
   store.setMenuItem({
     icon: PrimeIcons.USER,
-    title: t(isNew ? "profiles.newTitle" : "profiles.editTitle"),
+    title: t(isNew.value ? "profiles.newTitle" : "profiles.editTitle"),
     backButtonVisible: true,
   });
 };
@@ -45,21 +45,21 @@ const initMenuModel = () => {
 };
 
 onMounted(async () => {
-  refreshHeader();
-  if (isNew) {
-    profiles.setNew();
-    formModel.value = { ...profiles.current };
-    initMenuModel();
-  } else {
-    await profiles.fetchOne(id);
-    formModel.value = { ...profiles.current };
-    initMenuModel();
+  await profiles.fetchOne(id);
+
+  if (!profiles.current) {
+    isNew.value = true;
+    profiles.setNew(id);
   }
+
+  formModel.value = { ...profiles.current };
+  initMenuModel();
+  refreshHeader();
 });
 
 const saveProfile = async () => {
   let ok = false;
-  if (isNew) {
+  if (isNew.value) {
     ok = await profiles.create({
       name: formModel.value.name || "",
       description: formModel.value.description,
@@ -80,11 +80,13 @@ const saveProfile = async () => {
     }
     toast.add({
       severity: "success",
-      summary: t(isNew ? "profiles.created" : "profiles.updated"),
+      summary: t(isNew.value ? "profiles.created" : "profiles.updated"),
       life: 2500,
     });
-    if (isNew && profiles.current)
-      router.replace({ path: `/profile/${profiles.current.id}` });
+    if (isNew.value) {
+      isNew.value = false;
+      router.replace({ path: `/profile/${profiles.current!.id}` });
+    }
   } else {
     toast.add({ severity: "error", summary: t("profiles.error"), life: 3000 });
   }

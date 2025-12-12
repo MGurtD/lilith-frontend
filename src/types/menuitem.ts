@@ -14,6 +14,7 @@ export interface MenuItemNode extends MenuItemFlat {
 }
 
 export interface CreateMenuItemRequest {
+  id: string;
   key: string;
   title: string;
   icon?: string | null;

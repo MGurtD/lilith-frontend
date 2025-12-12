@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import { v4 as uuidv4 } from "uuid";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -26,7 +27,7 @@ const load = async () => {
   }
 };
 
-const createNew = () => router.push({ path: "/profile/new" });
+const createNew = () => router.push({ path: `/profile/${uuidv4()}` });
 const open = (row: any) => router.push({ path: `/profile/${row.data.id}` });
 const remove = (row: any) => {
   if (row.data.isSystem) return; // guard

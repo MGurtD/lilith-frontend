@@ -49,9 +49,9 @@ export const useProfilesStore = defineStore("profiles", {
         this.loading = false;
       }
     },
-    setNew() {
+    setNew(id?: string) {
       this.current = {
-        id: "",
+        id: id || "",
         name: "",
         description: "",
         isSystem: false,

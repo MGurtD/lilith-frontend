@@ -18,22 +18,28 @@ const router = useRouter();
 const toast = useToast();
 const store = useStore();
 
-const isNew = route.params.id === "new";
+const id = route.params.id as string;
+const isNew = ref(false);
 const formData = ref<Partial<MenuItemFlat>>({ sortOrder: 0 });
 const submitting = ref(false);
 const { t } = useI18n();
 
 const load = async () => {
-  if (!isNew) {
-    formData.value = await getMenuItem(route.params.id as string);
+  try {
+    formData.value = await getMenuItem(id);
+  } catch (error) {
+    // If fetch fails, it's a new menu item
+    isNew.value = true;
+    formData.value = { id, sortOrder: 0 };
   }
 };
 
 const save = async () => {
   submitting.value = true;
   try {
-    if (isNew) {
+    if (isNew.value) {
       const created = await createMenuItem({
+        id,
         key: formData.value.key!,
         title: formData.value.title!,
         icon: formData.value.icon || undefined,
@@ -46,6 +52,7 @@ const save = async () => {
         summary: t("menuItems.created"),
         life: 3000,
       });
+      isNew.value = false;
       router.replace({ path: `/menuitem/${created.id}` });
     } else {
       await updateMenuItem(formData.value.id!, {
@@ -76,12 +83,12 @@ const save = async () => {
 };
 
 onMounted(async () => {
+  await load();
   store.setMenuItem({
     icon: PrimeIcons.SITEMAP,
-    title: isNew ? t("menuItems.newTitle") : t("menuItems.editTitle"),
+    title: isNew.value ? t("menuItems.newTitle") : t("menuItems.editTitle"),
     backButtonVisible: true,
   });
-  await load();
 });
 </script>
 <template>
