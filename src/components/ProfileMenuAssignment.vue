@@ -20,6 +20,7 @@ const profilesStore = useProfilesStore();
 
 const emit = defineEmits<{
   (e: "menu-selection-change", ids: string[]): void;
+  (e: "menu-assignment-loaded"): void;
   (e: "save"): void;
 }>();
 
@@ -209,42 +210,68 @@ const computeHeight = () => {
   tableHeight.value = finalPx + "px";
 };
 
-onMounted(() => {
-  // Load menu hierarchy with proper error handling
-  menusStore
-    .fetchHierarchy(true)
-    .then(() => {
-      buildIndexes(menusStore.tree);
-      buildRows(menusStore.tree);
-      seedSelectionFromStore();
-    })
-    .catch((err) => {
-      console.error("Failed to load menu hierarchy:", err);
-      // Initialize empty rows so UI doesn't break
-      rows.value = [];
-    });
-  // Setup UI immediately without waiting for data
-  nextTick().then(() => {
-    computeHeight();
-    window.addEventListener("resize", computeHeight);
-  });
+onMounted(async () => {
+  console.log(
+    "ProfileMenuAssignment: Starting data load for profile",
+    props.profileId
+  );
+
+  try {
+    // Step 1: Load menu hierarchy (await properly, no promise chains)
+    console.log("ProfileMenuAssignment: Loading menu hierarchy...");
+    await menusStore.fetchHierarchy(true);
+    console.log(
+      "ProfileMenuAssignment: Menu hierarchy loaded, tree length:",
+      menusStore.tree.length
+    );
+
+    // Step 2: Build UI structure from menu tree
+    buildIndexes(menusStore.tree);
+    buildRows(menusStore.tree);
+    console.log("ProfileMenuAssignment: Rows built:", rows.value.length);
+
+    // Step 3: Load menu assignment for this profile (independent of parent)
+    console.log(
+      "ProfileMenuAssignment: Loading menu assignment for profile..."
+    );
+    await profilesStore.fetchMenuAssignment(props.profileId);
+    console.log(
+      "ProfileMenuAssignment: Menu assignment loaded:",
+      profilesStore.menuAssignment
+    );
+
+    // Step 4: Seed selection from loaded data
+    seedSelectionFromStore();
+    console.log(
+      "ProfileMenuAssignment: Selection seeded, selected IDs:",
+      selectionIds.value.size
+    );
+
+    // Step 5: Notify parent that data is loaded and ready
+    emit("menu-assignment-loaded");
+    console.log("ProfileMenuAssignment: Emitted menu-assignment-loaded event");
+  } catch (err) {
+    console.error("ProfileMenuAssignment: Error during data load:", err);
+    // Initialize empty rows so UI doesn't break
+    rows.value = [];
+    // Still emit the event so parent can initialize with empty data
+    emit("menu-assignment-loaded");
+  }
+
+  // Setup UI dimensions (independent of data loading)
+  await nextTick();
+  computeHeight();
+  window.addEventListener("resize", computeHeight);
+
+  console.log("ProfileMenuAssignment: Initialization complete");
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", computeHeight);
 });
 
-// Watch for menu assignment data arriving from parent's async fetch
-// This seeds the selection once data is available
-// Only triggers when data actually arrives, not during save operations
-watch(
-  () => profilesStore.menuAssignment,
-  (newVal) => {
-    if (newVal && rows.value.length > 0) {
-      seedSelectionFromStore();
-    }
-  }
-);
+// NO WATCHERS - All data loading is handled in onMounted with proper async/await
+// This prevents reactivity-based deadlocks and makes the flow transparent
 </script>
 
 <template>

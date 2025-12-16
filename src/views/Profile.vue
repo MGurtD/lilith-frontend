@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
 import { useProfilesStore } from "../store/profiles";
@@ -19,6 +19,7 @@ const profiles = useProfilesStore();
 const toast = useToast();
 const confirm = useConfirm();
 const isNew = ref(false);
+const componentReady = ref(false);
 
 const formModel = ref<any>({});
 const menuModel = ref<{
@@ -44,27 +45,44 @@ const initMenuModel = () => {
     : { menuItemIds: [], defaultMenuItemId: null };
 };
 
-onMounted(async () => {
-  await profiles.fetchOne(id);
-
-  if (!profiles.current) {
-    isNew.value = true;
-    profiles.setNew(id);
-  } else {
-    // Load menu assignment and wait for completion
-    // initMenuModel needs this data to initialize properly
+onMounted(() => {
+  // Wrap entire initialization in setTimeout to completely break reactive chain
+  // This prevents "Maximum recursive updates" during component mount
+  setTimeout(async () => {
     try {
-      await profiles.fetchMenuAssignment(profiles.current.id);
-    } catch (err) {
-      console.error("Failed to load menu assignment:", err);
-      // Continue anyway with empty assignment
-    }
-  }
+      await profiles.fetchOne(id);
 
-  formModel.value = { ...profiles.current };
-  initMenuModel();
-  refreshHeader();
+      if (!profiles.current) {
+        isNew.value = true;
+        profiles.setNew(id);
+        // For new profiles, initialize with empty menu model immediately
+        initMenuModel();
+      }
+      // For existing profiles, initMenuModel will be called by onMenuAssignmentLoaded event
+
+      // Break reactive link by creating a plain object copy (parse/stringify removes all reactivity)
+      formModel.value = JSON.parse(JSON.stringify(profiles.current));
+
+      refreshHeader();
+
+      // Now it's safe to render child component
+      componentReady.value = true;
+      console.log("Profile.vue: Component ready, child can render");
+    } catch (err) {
+      console.error("Profile.vue: Error during initialization:", err);
+    }
+  }, 0);
 });
+
+// Called by ProfileMenuAssignment component when it finishes loading data
+// Use nextTick to break the reactive chain and prevent recursive updates
+const onMenuAssignmentLoaded = () => {
+  console.log("Profile.vue: Menu assignment loaded event received");
+  nextTick(() => {
+    initMenuModel();
+    console.log("Profile.vue: Menu model initialized");
+  });
+};
 
 const saveProfile = async () => {
   let ok = false;
@@ -151,11 +169,12 @@ const onSaveMenus = () => {
         />
       </div>
     </div>
-    <div class="col-12">
+    <div class="col-12" v-if="componentReady">
       <div class="card">
         <ProfileMenuAssignment
           :profileId="id"
           @menu-selection-change="onMenuSelectionChange"
+          @menu-assignment-loaded="onMenuAssignmentLoaded"
           @save="onSaveMenus"
         />
       </div>
