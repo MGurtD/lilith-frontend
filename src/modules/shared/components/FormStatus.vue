@@ -29,13 +29,63 @@
       </div>
     </section>
 
+    <section v-if="availableTags.length > 0" class="mt-4">
+      <div class="mb-4">
+        <label class="block text-900 mb-2">Etiquetes</label>
+        <MultiSelect
+          v-model="selectedTagIds"
+          :options="availableTags"
+          optionValue="id"
+          optionLabel="name"
+          placeholder="Selecciona etiquetes"
+          class="w-full"
+          display="chip"
+        >
+          <template #option="slotProps">
+            <div class="flex align-items-center">
+              <i
+                v-if="slotProps.option.icon"
+                :class="slotProps.option.icon"
+                class="mr-2"
+              ></i>
+              <Tag
+                v-if="slotProps.option.color"
+                :severity="slotProps.option.color as any"
+                class="mr-2"
+              >
+                {{ slotProps.option.name }}
+              </Tag>
+              <span v-else>{{ slotProps.option.name }}</span>
+            </div>
+          </template>
+        </MultiSelect>
+      </div>
+
+      <div
+        v-if="status.lifecycleTags && status.lifecycleTags.length > 0"
+        class="mb-4"
+      >
+        <label class="block text-900 mb-2">Etiquetes assignades</label>
+        <div class="flex gap-2 flex-wrap">
+          <Tag
+            v-for="tag in status.lifecycleTags"
+            :key="tag.id"
+            :severity="tag.color as any"
+          >
+            <i v-if="tag.icon" :class="tag.icon" class="mr-1"></i>
+            {{ tag.name }}
+          </Tag>
+        </div>
+      </div>
+    </section>
+
     <Button label="Confirmar" @click="submitForm" style="float: right" />
   </form>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { Status } from "../types";
+import { ref, onMounted } from "vue";
+import { Status, LifecycleTag } from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -43,6 +93,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
+import SharedServices from "../services";
 
 const toast = useToast();
 
@@ -51,8 +102,43 @@ const props = defineProps<{
   status: Status;
 }>();
 const emit = defineEmits<{
-  (e: "submit", status: Status): void;
+  (
+    e: "submit",
+    status: Status,
+    tagChanges: { assign: string[]; remove: string[] }
+  ): void;
 }>();
+
+const availableTags = ref<LifecycleTag[]>([]);
+const selectedTagIds = ref<string[]>([]);
+const initialTagIds = ref<string[]>([]);
+
+onMounted(async () => {
+  // Load tags associated with the status
+  const statusTags = await SharedServices.LifecycleTag.getByStatusId(
+    props.status.id
+  );
+  if (statusTags) {
+    props.status.lifecycleTags = statusTags;
+  }
+
+  // Load available tags from lifecycle
+  if (props.status.lifecycleId) {
+    const tags = await SharedServices.LifecycleTag.getByLifecycleId(
+      props.status.lifecycleId
+    );
+    if (tags) {
+      availableTags.value = tags;
+    }
+  }
+
+  // Initialize selected tags
+  console.log("Initializing selected tags:", props.status.lifecycleTags);
+  if (props.status.lifecycleTags) {
+    selectedTagIds.value = props.status.lifecycleTags.map((t) => t.id);
+    initialTagIds.value = [...selectedTagIds.value];
+  }
+});
 
 const schema = Yup.object().shape({
   name: Yup.string().required("El nom és obligatori"),
@@ -70,7 +156,18 @@ const validate = () => {
 const submitForm = async () => {
   validate();
   if (validation.value.result) {
-    emit("submit", props.status);
+    // Calculate tag changes
+    const tagsToAssign = selectedTagIds.value.filter(
+      (id) => !initialTagIds.value.includes(id)
+    );
+    const tagsToRemove = initialTagIds.value.filter(
+      (id) => !selectedTagIds.value.includes(id)
+    );
+
+    emit("submit", props.status, {
+      assign: tagsToAssign,
+      remove: tagsToRemove,
+    });
   } else {
     let errors = "";
     Object.entries(validation.value.errors).forEach((e) => {
@@ -78,7 +175,7 @@ const submitForm = async () => {
     });
     toast.add({
       severity: "warn",
-      summary: "Formulari inválid",
+      summary: "Formulari invàlid",
       detail: errors,
       life: 5000,
     });

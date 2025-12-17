@@ -47,6 +47,7 @@ import InputGroupAddon from "primevue/inputgroupaddon";
 import InputGroup from "primevue/inputgroup";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
+import MultiSelect from "primevue/multiselect";
 
 app.use(PrimeVue, {
   locale: catalan,
@@ -86,6 +87,7 @@ app
   .component("InputGroup", InputGroup)
   .component("InputGroupAddon", InputGroupAddon)
   .component("InputIcon", InputIcon)
-  .component("IconField", IconField);
+  .component("IconField", IconField)
+  .component("MultiSelect", MultiSelect);
 
 app.mount("#app");
