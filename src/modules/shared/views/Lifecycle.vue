@@ -5,7 +5,7 @@
       <FormLifecycle v-if="lifecycle" :lifecycle="lifecycle" />
     </section>
 
-    <TabView v-if="formMode === FormActionMode.EDIT && lifecycle" class="mt-4">
+    <TabView v-if="formMode === FormActionMode.EDIT && lifecycle">
       <TabPanel header="Estats i Transicions">
         <section class="section_status">
           <div class="section_status_list">
@@ -207,10 +207,10 @@ const onStatusSubmit = async (
   if (success) {
     // Apply tag changes
     for (const tagId of tagChanges.assign) {
-      await SharedServices.LifecycleTag.assignToStatus(status.id, tagId);
+      await lifecycleStore.assignTagToStatus(status.id, tagId);
     }
     for (const tagId of tagChanges.remove) {
-      await SharedServices.LifecycleTag.removeFromStatus(status.id, tagId);
+      await lifecycleStore.removeTagFromStatus(status.id, tagId);
     }
 
     dialogOptions.visible = false;
@@ -271,7 +271,7 @@ const openTag = (action: FormActionMode, tag: LifecycleTag) => {
 };
 
 const deleteTag = async (tag: LifecycleTag) => {
-  const result = await SharedServices.LifecycleTag.delete(tag.id);
+  const result = await lifecycleStore.deleteTag(tag.id);
   if (result) {
     toast.add({
       severity: "success",
@@ -285,12 +285,9 @@ const deleteTag = async (tag: LifecycleTag) => {
 const onTagSubmit = async (tag: LifecycleTag) => {
   let result;
   if (auxiliarFormAction.value === FormActionMode.CREATE) {
-    result = await SharedServices.LifecycleTag.createForLifecycle(
-      lifecycle.value!.id,
-      tag
-    );
+    result = await lifecycleStore.createTag(lifecycle.value!.id, tag);
   } else {
-    result = await SharedServices.LifecycleTag.update(tag.id, tag);
+    result = await lifecycleStore.updateTag(tag);
   }
 
   if (result) {

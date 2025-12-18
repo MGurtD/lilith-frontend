@@ -29,7 +29,7 @@
       </div>
     </section>
 
-    <section v-if="availableTags.length > 0" class="mt-4">
+    <section v-if="availableTags.length > 0">
       <div class="mb-4">
         <label class="block text-900 mb-2">Etiquetes</label>
         <MultiSelect
@@ -115,7 +115,7 @@ const initialTagIds = ref<string[]>([]);
 
 onMounted(async () => {
   // Load tags associated with the status
-  const statusTags = await SharedServices.LifecycleTag.getByStatusId(
+  const statusTags = await SharedServices.Lifecycle.getTagsByStatus(
     props.status.id
   );
   if (statusTags) {
@@ -124,7 +124,7 @@ onMounted(async () => {
 
   // Load available tags from lifecycle
   if (props.status.lifecycleId) {
-    const tags = await SharedServices.LifecycleTag.getByLifecycleId(
+    const tags = await SharedServices.Lifecycle.getTagsByLifecycle(
       props.status.lifecycleId
     );
     if (tags) {
