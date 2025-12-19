@@ -87,7 +87,7 @@ const workorderStore = useWorkOrderStore();
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
-    backButtonVisible: true,
+    backButtonVisible: false,
     title: "Priorització d'Ordres de Fabricació",
   });
 
