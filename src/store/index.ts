@@ -4,7 +4,6 @@ import { MenuItem, SidebarConfig } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../api/services/user.service";
 import { PrimeIcons } from "primevue/api";
-import { ref } from "vue";
 import { getMenusByRole } from "./raw.menus"; // fallback
 import { AppProfileService } from "../api/services/profile.service";
 import { UserMenuResponse, MenuNode } from "../types/profile";

@@ -48,12 +48,16 @@ import InputGroup from "primevue/inputgroup";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import MultiSelect from "primevue/multiselect";
+import { globalToast } from "@/utils/global-toast";
 
 app.use(PrimeVue, {
   locale: catalan,
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+
+// Initialize global toast service for axios interceptor
+globalToast.init(app);
 
 app.directive("tooltip", Tooltip);
 
