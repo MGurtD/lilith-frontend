@@ -55,6 +55,11 @@ export interface Workcenter {
   disabled: boolean;
 }
 
+export interface WorkOrderOrder {
+  id: string;
+  order: number;
+}
+
 export interface MachineStatus {
   id: string;
   name: string;
