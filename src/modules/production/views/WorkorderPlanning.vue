@@ -78,11 +78,19 @@ import { PrimeIcons } from "primevue/api";
 import { ref, computed } from "vue";
 import { formatDate } from "../../../utils/functions";
 import { WorkOrderOrder } from "../types";
+import { useStore } from "@/store";
 
+const store = useStore();
 const plantModelStore = usePlantModelStore();
 const workorderStore = useWorkOrderStore();
 
 onMounted(async () => {
+  store.setMenuItem({
+    icon: PrimeIcons.BUILDING,
+    backButtonVisible: true,
+    title: "Priorització d'Ordres de Fabricació",
+  });
+
   await plantModelStore.fetchWorkcenterTypes();
 });
 
