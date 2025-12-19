@@ -16,7 +16,7 @@ const apiClient = axios.create({
     // anything you want to add to the headers
   },
   validateStatus: function (status) {
-    return status < 500; // Resolve only if the status code is less than 500
+    return status >= 200 && status < 300;
   },
 });
 
