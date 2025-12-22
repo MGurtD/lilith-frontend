@@ -156,6 +156,9 @@ export const usePlantModelStore = defineStore("plantmodel", {
     async fetchWorkcenterTypes() {
       this.workcenterTypes = await workcenterTypeService.getAll();
     },
+    async fetchActiveWorkcenterTypes() {
+      this.workcenterTypes = await workcenterTypeService.getActive();
+    },
     async fetchWorkcenterType(id: string) {
       this.workcenterType = await workcenterTypeService.getById(id);
     },

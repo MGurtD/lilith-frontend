@@ -91,7 +91,7 @@ onMounted(async () => {
     title: "Priorització d'Ordres de Fabricació",
   });
 
-  await plantModelStore.fetchWorkcenterTypes();
+  await plantModelStore.fetchActiveWorkcenterTypes();
 });
 
 const workorders = computed(() => {
