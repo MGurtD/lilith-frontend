@@ -34,6 +34,7 @@ const Shifts = () => import("./views/Shifts.vue");
 const CostDashboard = () => import("./views/CostDashboard.vue");
 
 const WorkcenterShift = () => import("./views/WorkcenterShift.vue");
+const WorkorderPlanning = () => import("./views/WorkorderPlanning.vue");
 
 export default [
   {
@@ -175,5 +176,10 @@ export default [
     path: "/workcentershift",
     name: "workcentershift",
     component: WorkcenterShift,
+  },
+  {
+    path: "/workorderplanning",
+    name: "workorderplanning",
+    component: WorkorderPlanning,
   },
 ] as Array<RouteRecordRaw>;
