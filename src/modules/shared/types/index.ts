@@ -63,6 +63,14 @@ export interface StatusTransition {
   statusToId: string;
 }
 
+export interface AvailableStatusTransitionDto {
+  transitionName: string;
+  statusToId: string;
+  statusToName: string;
+  statusToColor?: string;
+  statusToDescription: string;
+}
+
 export interface LifecycleTag {
   id: string;
   name: string;
