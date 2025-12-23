@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { Lifecycle, Status, StatusTransition, LifecycleTag } from "../types";
+import {
+  Lifecycle,
+  Status,
+  StatusTransition,
+  LifecycleTag,
+  AvailableStatusTransitionDto,
+} from "../types";
 import Services from "../services";
 import { ref } from "vue";
 
@@ -9,6 +15,9 @@ export const useLifecyclesStore = defineStore({
     lifecycle: ref(undefined as Lifecycle | undefined),
     secondaryLifecycle: ref(undefined as Lifecycle | undefined),
     lifecycles: ref(undefined as Array<Lifecycle> | undefined),
+    availableTransitions: ref(
+      undefined as Array<AvailableStatusTransitionDto> | undefined
+    ),
   }),
   getters: {
     transitions: (state): Array<StatusTransition> => {
@@ -152,6 +161,12 @@ export const useLifecyclesStore = defineStore({
       );
       if (result) await this.fetchOne(this.lifecycle!.id);
       return result;
+    },
+
+    // Available Transitions
+    async fetchAvailableTransitions(statusId: string) {
+      this.availableTransitions =
+        await Services.Lifecycle.getAvailableTransitions(statusId);
     },
   },
 });

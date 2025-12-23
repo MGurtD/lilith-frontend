@@ -1,5 +1,11 @@
 import BaseService from "../../../api/base.service";
-import { Lifecycle, Status, StatusTransition, LifecycleTag } from "../types";
+import {
+  Lifecycle,
+  Status,
+  StatusTransition,
+  LifecycleTag,
+  AvailableStatusTransitionDto,
+} from "../types";
 
 export default class LifecycleService extends BaseService<Lifecycle> {
   async getByName(name: string): Promise<Lifecycle | undefined> {
@@ -49,6 +55,21 @@ export default class LifecycleService extends BaseService<Lifecycle> {
       `${this.resource}/StatusTransition/${id}`
     );
     return response.status === 200 || response.status === 201;
+  }
+
+  async getAvailableTransitions(
+    statusId: string
+  ): Promise<AvailableStatusTransitionDto[] | undefined> {
+    try {
+      const response = await this.apiClient.get(
+        `${this.resource}/Status/${statusId}/AvailableTransitions`
+      );
+      if (response.status === 200) {
+        return response.data as AvailableStatusTransitionDto[];
+      }
+    } catch (err) {
+      console.error("Error getting available transitions:", err);
+    }
   }
 
   // Tags

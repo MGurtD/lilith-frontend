@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
-import apiClient, { logException } from "../api.client";
-import { Language } from "../../types";
+import apiClient, { logException } from "@/api/api.client";
+import { Language } from "@/types";
 
 export class LanguageService {
   public apiClient: AxiosInstance;

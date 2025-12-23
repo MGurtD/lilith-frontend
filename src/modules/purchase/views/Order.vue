@@ -75,7 +75,7 @@ import { useOrderStore } from "../store/order";
 import { useSuppliersStore } from "../store/suppliers";
 import { useExerciseStore } from "../../shared/store/exercise";
 import Services from "../services";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 
 const router = useRouter();
 const route = useRoute();

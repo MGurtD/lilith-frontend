@@ -128,7 +128,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { DialogOptions } from "../../../types/component";
 import Services from "../services";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 
 const route = useRoute();
 const router = useRouter();
@@ -141,7 +141,6 @@ const plantModelStore = usePlantModelStore();
 const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
-const workorderForm = ref();
 
 const dialogOptions = reactive({
   visible: false,

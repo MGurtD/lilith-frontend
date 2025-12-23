@@ -171,7 +171,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
 import VuePdfEmbed from "vue-pdf-embed";
-import { FileService } from "../api/services/file.service";
+import { FileService } from "../services/file.service";
 import { createBlobAndDownloadFile } from "../utils/functions";
 import type { File } from "../types";
 

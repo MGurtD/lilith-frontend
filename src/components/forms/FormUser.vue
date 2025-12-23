@@ -141,7 +141,7 @@ import {
 } from "../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { BaseInputType } from "../../types/component";
-import { UserLogin } from "../../api/services/authentications.service";
+import { UserLogin } from "../../services/authentications.service";
 import { User, Role, Profile } from "../../types";
 import LanguageSwitcher from "../LanguageSwitcher.vue";
 

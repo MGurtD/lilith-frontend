@@ -72,7 +72,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
-import { FileService } from "../api/services/file.service";
+import { FileService } from "../services/file.service";
 import { File } from "../types";
 import Toolbar from "primevue/toolbar";
 import { PrimeIcons } from "primevue/api";

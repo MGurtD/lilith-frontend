@@ -106,7 +106,7 @@ import FormBudgetOrderDetail from "../components/FormBudgetOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 import services from "../services";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { useWorkMasterStore } from "../../production/store/workmaster";

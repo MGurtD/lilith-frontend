@@ -47,14 +47,14 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { UserService } from "../api/services/user.service";
+import { UserService } from "../services/user.service";
 import { useStore } from "../store";
 import { PrimeIcons } from "primevue/api";
 import BooleanColumn from "../components/tables/BooleanColumn.vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { User, Profile } from "../types";
-import { AppProfileService } from "../api/services/profile.service";
+import { AppProfileService } from "../services/profile.service";
 
 const service = new UserService();
 const users = ref(undefined as User[] | undefined);

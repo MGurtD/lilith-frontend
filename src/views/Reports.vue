@@ -5,7 +5,7 @@
 import { onMounted } from "vue";
 import FileEntityPicker from "../components/FileEntityPicker.vue";
 import { useStore } from "../store";
-import { REPORTS_ENTITY_ID } from "../api/services/report.service";
+import { REPORTS_ENTITY_ID } from "../services/report.service";
 
 const store = useStore();
 

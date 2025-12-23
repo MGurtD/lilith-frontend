@@ -21,7 +21,7 @@ import {
   UserLogin,
   AuthenticationService,
   UserRegister,
-} from "../api/services/authentications.service";
+} from "../services/authentications.service";
 import LoginForm from "../components/forms/LoginForm.vue";
 import RegisterForm from "../components/forms/RegisterForm.vue";
 import { useStore } from "../store";
