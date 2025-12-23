@@ -128,7 +128,7 @@ import { useStore } from "../../../store";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
-import SharedServices from "../../../api/services";
+import SharedServices from "../../../services";
 import {
   createBlobAndDownloadFile,
   formatCurrency,

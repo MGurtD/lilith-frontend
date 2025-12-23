@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
-import apiClient from "../api.client";
-import { UserFilter } from "../../types";
+import apiClient from "@/api/api.client";
+import { UserFilter } from "@/types";
 
 export class UserFilterService {
   public apiClient: AxiosInstance;

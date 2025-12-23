@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { AppProfileService } from "../api/services/profile.service";
+import { AppProfileService } from "../services/profile.service";
 import type { Profile } from "../types";
 import type {
   ProfileDetail,

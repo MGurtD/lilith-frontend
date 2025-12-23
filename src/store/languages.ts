@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Language } from "../types";
-import { LanguageService } from "../api/services/language.service";
+import { LanguageService } from "../services/language.service";
 
 export const useLanguageStore = defineStore({
   id: "languages",

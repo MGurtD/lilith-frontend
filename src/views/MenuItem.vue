@@ -7,7 +7,7 @@ import {
   getMenuItem,
   createMenuItem,
   updateMenuItem,
-} from "../api/services/menuitem.service";
+} from "../services/menuitem.service";
 import FormMenuItem from "../components/forms/FormMenuItem.vue";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";

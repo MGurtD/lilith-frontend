@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import apiClient, { logException } from "../api.client";
+import apiClient, { logException } from "@/api/api.client";
 
 export class AuthenticationService {
   public apiClient: AxiosInstance;

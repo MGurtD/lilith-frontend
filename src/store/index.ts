@@ -1,12 +1,11 @@
 import { defineStore } from "pinia";
-import { AuthenticationResponse, Role, User } from "../types";
+import { AuthenticationResponse, User } from "../types";
 import { MenuItem, SidebarConfig } from "../types/component";
 import jwtDecode from "jwt-decode";
-import { UserService } from "../api/services/user.service";
+import { UserService } from "../services/user.service";
 import { PrimeIcons } from "primevue/api";
-import { ref } from "vue";
 import { getMenusByRole } from "./raw.menus"; // fallback
-import { AppProfileService } from "../api/services/profile.service";
+import { AppProfileService } from "../services/profile.service";
 import { UserMenuResponse, MenuNode } from "../types/profile";
 import { Exercise } from "../modules/shared/types";
 import { useUserFilterStore } from "./userfilter";

@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { FormValidation } from "../../utils/form-validator";
 import IconPicker from "../IconPicker.vue";
 import type { MenuItemFlat, MenuItemNode } from "../../types/menuitem";
-import { getMenuItemsHierarchy } from "../../api/services/menuitem.service";
+import { getMenuItemsHierarchy } from "../../services/menuitem.service";
 import { BaseInputType } from "../../types/component";
 
 const props = defineProps<{

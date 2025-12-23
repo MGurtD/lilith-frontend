@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
-import { File } from "../../types";
-import apiClient from "../api.client";
-import { Parameter } from "../../modules/shared/types";
+import { File } from "@/types";
+import apiClient from "@/api/api.client";
+import { Parameter } from "@/modules/shared/types";
 
 const fileRequestTimeout =
   (import.meta.env.VITE_API_FILE_REQUEST_TIMEOUT as number) ?? 20000;

@@ -13,12 +13,12 @@ import { PrimeIcons } from "primevue/api";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
 import { useToast } from "primevue/usetoast";
-import { Role, UserLogin } from "../api/services/authentications.service";
-import { AuthenticationService } from "../api/services/authentications.service";
-import { UserService } from "../api/services/user.service";
-import { RoleService } from "../api/services/role.service";
-import { User, Profile } from "../types";
-import { AppProfileService } from "../api/services/profile.service";
+import { Role, UserLogin } from "../services/authentications.service";
+import { AuthenticationService } from "../services/authentications.service";
+import { UserService } from "../services/user.service";
+import { RoleService } from "../services/role.service";
+import { Profile, User } from "../types";
+import { AppProfileService } from "../services/profile.service";
 import FormUser from "../components/forms/FormUser.vue";
 
 const router = useRouter();

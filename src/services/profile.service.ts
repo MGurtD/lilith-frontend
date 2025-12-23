@@ -1,12 +1,12 @@
-import BaseService from "../base.service";
+import BaseService from "@/api/base.service";
 import {
   UserMenuResponse,
   ProfileDetail,
   CreateProfileRequest,
   UpdateProfileRequest,
   ProfileMenuAssignmentRequest,
-} from "../../types/profile";
-import { Profile } from "../../types";
+} from "@/types/profile";
+import { Profile } from "@/types";
 
 export class ProfileService extends BaseService<any> {
   constructor() {
