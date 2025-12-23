@@ -17,15 +17,14 @@
         <BaseInput label="Descripció" v-model="phase.description" />
       </div>
       <div>
-        <DropdownLifecycle
+        <DropdownLifecycleStatusTransitions
           label="Estat"
+          :statusId="phase.statusId"
           v-model="phase.statusId"
-          name="WorkOrder"
           :class="{
             'p-invalid': validation.errors.statusId,
           }"
-        >
-        </DropdownLifecycle>
+        />
       </div>
     </section>
     <section class="four-columns mb-2">
@@ -133,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { computed, onMounted, ref } from "vue";
 import { WorkOrder, WorkOrderPhase } from "../types";
 import * as Yup from "yup";

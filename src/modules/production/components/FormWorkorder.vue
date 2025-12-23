@@ -43,15 +43,14 @@
     </section>
     <section class="four-columns">
       <div>
-        <DropdownLifecycle
-          label="Estat"
+        <label class="block text-900 mb-2">Estat</label>
+        <DropdownLifecycleStatusTransitions
           v-model="workorder.statusId"
-          name="WorkOrder"
+          :statusId="workorder.statusId"
           :class="{
             'p-invalid': validation.errors.statusId,
           }"
-        >
-        </DropdownLifecycle>
+        />
       </div>
       <div>
         <label class="block text-900 mb-2">Data Inici</label>
@@ -100,7 +99,7 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { PrimeIcons } from "primevue/api";
 
 const lifecycleStore = useLifecyclesStore();

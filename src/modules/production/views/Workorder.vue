@@ -141,7 +141,6 @@ const plantModelStore = usePlantModelStore();
 const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
-const workorderForm = ref();
 
 const dialogOptions = reactive({
   visible: false,
