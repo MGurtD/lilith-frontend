@@ -5,6 +5,8 @@
     tableStyle="min-width: 100%"
     scrollable
     scrollHeight="40vh"
+    stripedRows
+    :rowHover="true"
   >
     <template #header>
       <slot name="header"></slot>

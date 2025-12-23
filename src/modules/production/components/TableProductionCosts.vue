@@ -6,6 +6,8 @@
     :rows="18"
     class="p-datatable-sm"
     sortMode="multiple"
+    stripedRows
+    :rowHover="true"
   >
     <Column field="year" header="Any"></Column>
     <Column field="month" header="Mes" sortable></Column>

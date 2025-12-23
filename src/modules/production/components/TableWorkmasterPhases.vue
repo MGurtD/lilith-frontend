@@ -1,13 +1,15 @@
 <template>
   <DataTable
     @row-click="onEditRow"
-    class="p-datatable-sm"
+    class="p-datatable-sm clickable-rows"
     :value="workmasterPhases"
     tableStyle="min-width: 100%"
     sort-field="code"
     :sort-order="1"
     :scrollable="scrollHeight !== undefined"
     :scrollHeight="scrollHeight ? `${scrollHeight}vh` : ''"
+    stripedRows
+    :rowHover="true"
   >
     <template #header>
       <div
