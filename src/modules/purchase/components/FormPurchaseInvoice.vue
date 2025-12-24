@@ -37,14 +37,10 @@
           />
         </div>
         <div>
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
+          <DropdownLifecycleStatusTransitions
+            label="Estat"
+            :statusId="purchaseInvoice.statusId"
             v-model="purchaseInvoice.statusId"
-            editable
-            :options="lifecycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
             :class="{
               'p-invalid': validation.errors.statusId,
             }"
@@ -151,28 +147,23 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import BaseInput from "../../../components/BaseInput.vue";
+import BaseInput from "@/components/BaseInput.vue";
+import DropdownLifecycleStatusTransitions from "@/modules/shared/components/DropdownLifecycleStatusTransitions.vue";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { PurchaseInvoice, PurchaseInvoiceDueDate } from "../types";
 import * as Yup from "yup";
-import {
-  FormValidation,
-  FormValidationResult,
-} from "../../../utils/form-validator";
+import { FormValidation, FormValidationResult } from "@/utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
-import { BaseInputType } from "../../../types/component";
-import { convertDateTimeToJSON } from "../../../utils/functions";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
-
+import { BaseInputType } from "@/types/component";
+import { convertDateTimeToJSON } from "@/utils/functions";
 const emit = defineEmits<{
   (e: "submit", purchaseInvoice: PurchaseInvoice): void;
   (e: "cancel"): void;
 }>();
 
 const purchaseStore = usePurchaseInvoiceStore();
-const lifecycleStore = useLifecyclesStore();
 const purchaseMasterData = usePurchaseMasterDataStore();
 const { purchaseInvoice } = storeToRefs(purchaseStore);
 

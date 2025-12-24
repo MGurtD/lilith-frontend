@@ -30,14 +30,10 @@
       </section>
       <section class="three-columns mt-2">
         <div>
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
+          <DropdownLifecycleStatusTransitions
+            label="Estat"
+            :statusId="budget.statusId"
             v-model="budget.statusId"
-            editable
-            :options="lifeCycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
             :class="{
               'p-invalid': validation.errors.statusId,
             }"
@@ -111,8 +107,8 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useCustomersStore } from "../store/customers";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { Budget } from "../types";
 import { BaseInputType } from "../../../types/component";
 import { convertDateTimeToJSON } from "../../../utils/functions";
@@ -125,7 +121,6 @@ const emit = defineEmits<{
 
 const budgetStore = useBudgetStore();
 const customerStore = useCustomersStore();
-const lifeCycleStore = useLifecyclesStore();
 const toast = useToast();
 
 const { budget } = storeToRefs(budgetStore);
