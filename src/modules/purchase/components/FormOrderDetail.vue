@@ -11,9 +11,9 @@
         ></DropdownReference>
       </div>
       <div>
-        <DropdownLifecycle
+        <DropdownLifecycleStatusTransitions
           label="Estat"
-          name="PurchaseOrderDetail"
+          :statusId="detail.statusId"
           v-model="detail.statusId"
         />
       </div>
@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
-import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { ref, watch } from "vue";
 import { PurchaseOrderDetail, PurchaseOrder } from "../types";
 import * as Yup from "yup";

@@ -39,14 +39,10 @@
       </section>
       <section class="three-columns">
         <div class="mt-1">
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
+          <DropdownLifecycleStatusTransitions
+            label="Estat"
+            :statusId="receipt.statusId"
             v-model="receipt.statusId"
-            editable
-            :options="lifeCycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
             :class="{
               'p-invalid': validation.errors.statusId,
             }"
@@ -83,7 +79,7 @@ import { onMounted, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useReceiptsStore } from "../store/receipt";
 import { useSuppliersStore } from "../store/suppliers";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 
 import { Receipt } from "../types";
 import * as Yup from "yup";
@@ -105,7 +101,6 @@ const emit = defineEmits<{
 const receiptStore = useReceiptsStore();
 const suppliersStore = useSuppliersStore();
 const sharedDataStore = useSharedDataStore();
-const lifeCycleStore = useLifecyclesStore();
 const toast = useToast();
 
 const { receipt } = storeToRefs(receiptStore);
@@ -113,7 +108,6 @@ const { receipt } = storeToRefs(receiptStore);
 onMounted(async () => {
   await sharedDataStore.fetchMasterData();
   await suppliersStore.fetchSuppliers();
-  await lifeCycleStore.fetchOneByName("Receipts");
 });
 
 const schema = Yup.object().shape({

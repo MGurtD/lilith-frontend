@@ -44,14 +44,10 @@
           />
         </div>
         <div>
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
+          <DropdownLifecycleStatusTransitions
+            label="Estat"
+            :statusId="salesOrder.statusId"
             v-model="salesOrder.statusId"
-            editable
-            :options="lifeCycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
             :class="{
               'p-invalid': validation.errors.statusId,
             }"
@@ -99,8 +95,8 @@ import {
   FormValidationResult,
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSalesOrderStore } from "../store/order";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { useCustomersStore } from "../store/customers";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { SalesOrderHeader } from "../types";
@@ -115,7 +111,6 @@ const emit = defineEmits<{
 
 const salesOrderStore = useSalesOrderStore();
 const customerStore = useCustomersStore();
-const lifeCycleStore = useLifecyclesStore();
 const deliveryNoteStore = useDeliveryNoteStore();
 const budgetStore = useBudgetStore();
 const toast = useToast();

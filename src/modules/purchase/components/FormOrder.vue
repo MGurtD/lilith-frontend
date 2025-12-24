@@ -31,9 +31,9 @@
     </section>
     <section class="three-columns">
       <div class="mt-1">
-        <DropdownLifecycle
+        <DropdownLifecycleStatusTransitions
           label="Estat"
-          name="PurchaseOrder"
+          :statusId="order.statusId"
           v-model="order.statusId"
         />
       </div>
@@ -59,7 +59,7 @@ import { ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useOrderStore } from "../store/order";
 import { useSuppliersStore } from "../store/suppliers";
-import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { PurchaseOrder, Receipt } from "../types";
 import * as Yup from "yup";
 import {

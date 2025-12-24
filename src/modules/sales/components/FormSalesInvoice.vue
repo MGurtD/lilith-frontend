@@ -13,14 +13,10 @@
         <Calendar v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
       </div>
       <div class="mt-2">
-        <label class="block text-900 mb-2">Estat</label>
-        <Dropdown
+        <DropdownLifecycleStatusTransitions
+          label="Estat"
+          :statusId="invoice.statusId"
           v-model="invoice.statusId"
-          editable
-          :options="lifecycleStore.lifecycle?.statuses"
-          optionValue="id"
-          optionLabel="name"
-          class="w-full"
         />
       </div>
       <div class="mt-2">
@@ -78,7 +74,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { useSharedDataStore } from "../../shared/store/masterData";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { useSalesInvoiceStore } from "../store/invoice";
 
 const props = defineProps<{
@@ -92,7 +88,6 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const sharedData = useSharedDataStore();
-const lifecycleStore = useLifecyclesStore();
 const invoiceStore = useSalesInvoiceStore();
 
 const schema = Yup.object().shape({
