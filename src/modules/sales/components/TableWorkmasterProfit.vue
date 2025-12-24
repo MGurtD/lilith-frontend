@@ -27,10 +27,11 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :minFractionDigits="2"
-          class="mb-2"
           id="profitPercentage"
           v-model="slotProps.data.profitPercentage"
-          @input="(event:any) => updateProfitPercentage(slotProps.data, event.value)"
+          @input="
+            (event: any) => updateProfitPercentage(slotProps.data, event.value)
+          "
           suffix="%"
         />
       </template>
@@ -39,11 +40,10 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <span class="text-l text-900">Temps total operatiu: </span>
+        <span class="text-l text-900">Temps total operatiu </span>
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :minFractionDigits="0"
-          class="mb-2"
           id="totalTime"
           :modelValue="totalTime"
           readonly
@@ -54,7 +54,6 @@
         <BaseInput
           :type="BaseInputType.NUMERIC"
           :minFractionDigits="2"
-          class="mb-2"
           id="profitAverage"
           :modelValue="profitAverage"
           suffix="%"
