@@ -165,7 +165,7 @@ const onAddClick = () => {
     externalWorkCost: 0,
     transportCost: 0,
     serviceReferenceId: null,
-    statusId: "",
+    statusId: lifecycleStore.lifecycle?.initialStatusId || "",
     startTime: null,
     endTime: null,
     profitPercentage: 0,

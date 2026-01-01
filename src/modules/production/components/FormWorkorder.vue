@@ -98,11 +98,8 @@ import {
 import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { PrimeIcons } from "primevue/api";
-
-const lifecycleStore = useLifecyclesStore();
 
 const props = defineProps<{
   workorder: WorkOrder;

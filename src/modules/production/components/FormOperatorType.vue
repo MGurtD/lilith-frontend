@@ -21,8 +21,9 @@
       ></BaseInput>
       <BaseInput
         class="mb-2"
-        label="Cost/h"
+        label="Cost/hora"
         id="cost"
+        :type="BaseInputType.CURRENCY"
         v-model="operatorType.cost"
         :class="{
           'p-invalid': validation.errors.cost,
@@ -56,6 +57,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
 import { usePlantModelStore } from "../store/plantmodel";
+import { BaseInputType } from "@/types/component";
 
 const props = defineProps<{
   operatortype: OperatorType;
@@ -81,9 +83,7 @@ const schema = Yup.object().shape({
   description: Yup.string()
     .required("La descripció és obligatori")
     .max(250, "La descripció pot superar els 250 carácters"),
-  cost: Yup.number()
-    .required("El cost es obligatori")
-    .min(0),
+  cost: Yup.number().required("El cost es obligatori").min(0),
 });
 const validation = ref({
   result: false,
