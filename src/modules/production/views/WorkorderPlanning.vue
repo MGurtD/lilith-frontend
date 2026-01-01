@@ -13,8 +13,9 @@
       <div
         class="flex flex-wrap align-items-center justify-content-between gap-2"
       >
-        <div class="datatable-filter-1">
-          <div class="filter-field">
+        <div>
+          <div class="flex flex-wrap gap-3 align-items-center">
+            <label class="block text-900">Tipus de centre</label>
             <Dropdown
               label=""
               v-model="filter.workcenterType"
@@ -79,8 +80,10 @@ import { ref, computed } from "vue";
 import { formatDate } from "../../../utils/functions";
 import { WorkOrderOrder } from "../types";
 import { useStore } from "@/store";
+import { useToast } from "primevue/usetoast";
 
 const store = useStore();
+const toast = useToast();
 const plantModelStore = usePlantModelStore();
 const workorderStore = useWorkOrderStore();
 
@@ -129,6 +132,21 @@ const updateOrder = async () => {
       order: item.order,
     };
   });
-  await workorderStore.updateOrder(payload);
+  const updated = await workorderStore.updateOrder(payload);
+  if (updated) {
+    toast.add({
+      severity: "success",
+      summary: "Ordres de fabricació actualitzades",
+      detail: "L'ordre de les ordres de fabricació s'ha actualitzat.",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "No s'han pogut actualitzar les ordres de fabricació.",
+      life: 3000,
+    });
+  }
 };
 </script>

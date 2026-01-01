@@ -120,7 +120,6 @@ export const useWorkOrderStore = defineStore("workorder", {
     async updateOrder(workOrderOrders: WorkOrderOrder[]) {
       const result =
         await Services.WorkOrder.UpdateOrdersOrder(workOrderOrders);
-      if (result) await this.fetchAll();
       return result;
     },
     async delete(id: string) {

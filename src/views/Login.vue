@@ -51,6 +51,7 @@ const manageAuthorizationResponse = (response: AuthenticationResponse) => {
     toast.add({
       severity: "error",
       summary: response.errors[0],
+      life: 8000,
     });
     return;
   } else {

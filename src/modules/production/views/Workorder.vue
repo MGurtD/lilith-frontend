@@ -174,6 +174,14 @@ const fetchWorkOrder = async () => {
     workorderStore.workorder.plannedDate = formatDate(
       workorderStore.workorder.plannedDate
     );
+    if (workorderStore.workorder.startTime)
+      workorderStore.workorder.startTime = formatDate(
+        workorderStore.workorder.startTime
+      );
+    if (workorderStore.workorder.endTime)
+      workorderStore.workorder.endTime = formatDate(
+        workorderStore.workorder.endTime
+      );
   }
 };
 
@@ -187,14 +195,37 @@ const loadViewData = async () => {
 };
 
 const onWorkorderSubmit = async (workorder: WorkOrder) => {
-  if (workorderStore.workorder) {
-    workorderStore.workorder.plannedDate = convertDateTimeToJSON(
-      workorderStore.workorder.plannedDate
-    );
-  }
+  // Convert dates from display format to API format
+  const workorderToSubmit = {
+    ...workorder,
+    plannedDate: workorder.plannedDate
+      ? convertDateTimeToJSON(workorder.plannedDate)
+      : null,
+    startTime: workorder.startTime
+      ? convertDateTimeToJSON(workorder.startTime)
+      : null,
+    endTime: workorder.endTime
+      ? convertDateTimeToJSON(workorder.endTime)
+      : null,
+  };
 
-  const updated = await workorderStore.update(id.value, workorder);
-  if (updated) await loadViewData();
+  const updated = await workorderStore.update(id.value, workorderToSubmit);
+  if (updated) {
+    toast.add({
+      severity: "success",
+      summary: "Ordre de fabricació actualitzada",
+      life: 3000,
+    });
+
+    await loadViewData();
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al actualitzar l'ordre de fabricació",
+      detail: "Revisi el log per a més informació",
+      life: 10000,
+    });
+  }
 };
 
 // Phases

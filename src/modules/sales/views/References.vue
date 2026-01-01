@@ -54,6 +54,7 @@ const deleteReference = (reference: Reference) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       const response = await referenceStore.deleteReference(reference.id);
+      console.log("Delete reference response:", response);
       if (!response.result) {
         toast.add({
           severity: "warn",

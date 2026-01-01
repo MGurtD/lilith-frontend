@@ -107,6 +107,8 @@ apiClient.interceptors.response.use(
     // Parse error with our utility
     const errorInfo = parseAxiosError(error);
 
+    console.log("Parsed error info:", errorInfo);
+
     // Store error info for components that might need it
     store.setErrorInfo(errorInfo);
 
