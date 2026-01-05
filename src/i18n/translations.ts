@@ -314,6 +314,30 @@ const messages = {
           loadError: "Error carregant les peticions d'integració",
         },
       },
+      responsabilities: {
+        title: "DECLARACIÓ RESPONSABLE D’IMPLEMENTACIÓ DEL SISTEMA VERI*FACTU",
+        locationDate: "A [ciutat],a [data]",
+        declarant:
+          "[Nom i cognoms], amb DNI [XXXXX], en qualitat de [càrrec] de l’empresa [RAÓ SOCIAL], amb CIF [CIF] i domicili social a [adreça completa],",
+        declares: "DECLARA SOTA LA SEVA RESPONSABILITAT",
+        softwareCompliance:
+          "Que el programari de facturació denominat [Nom del software], desenvolupat i mantingut per [RAÓ SOCIAL], en la seva versió [versió o rang de versions], compleix amb els requisits establerts per a sistemes informàtics de facturació previstos al Reial decret 1007/2023, així com a l’Ordre Ministerial que el desenvolupa, en relació amb el sistema Veri*Factu.",
+        specificsIntro: "En concret, el programari:",
+        specifics: {
+          integrity:
+            "- Genera registres de facturació de forma íntegra, consecutiva, traçable i inalterable.",
+          hash: "- Implementa mecanismes de hash i encadenament dels registres de facturació conforme a la normativa vigent.",
+          noModification:
+            "- Impedeix la modificació o eliminació de factures un cop emeses.",
+          transmission:
+            "- Permet l’enviament automàtic o immediat dels registres de facturació a l’Agència Estatal d’Administració Tributària mitjançant el sistema Veri*Factu, o bé manté els registres disponibles per al seu enviament quan sigui requerit.",
+          retention:
+            "- Conserva els registres de facturació durant el període legalment establert.",
+          uniqueId: "- Garanteix la identificació única de cada factura emesa.",
+        },
+        liability:
+          "Aquesta declaració s’emet als efectes previstos en la normativa tributària vigent, assumint [RAÓ SOCIAL] la responsabilitat derivada del correcte funcionament del programari en relació amb els requisits declarats.",
+      },
     },
     forms: {
       user: {
@@ -595,6 +619,32 @@ const messages = {
           loadError: "Error cargando las solicitudes de integración",
         },
       },
+      responsabilities: {
+        title:
+          "DECLARACIÓN RESPONSABLE DE IMPLEMENTACIÓN DEL SISTEMA VERI*FACTU",
+        locationDate: "En [ciudad], a [fecha]",
+        declarant:
+          "[Nombre y apellidos], con DNI [XXXXX], en calidad de [cargo] de la empresa [RAZÓN SOCIAL], con CIF [CIF] y domicilio social en [dirección completa],",
+        declares: "DECLARA BAJO SU RESPONSABILIDAD",
+        softwareCompliance:
+          "Que el software de facturación denominado [Nombre del software], desarrollado y mantenido por [RAZÓN SOCIAL], en su versión [versión o rango de versiones], cumple con los requisitos establecidos para sistemas informáticos de facturación previstos en el Real Decreto 1007/2023, así como en la Orden Ministerial que lo desarrolla, en relación con el sistema Veri*Factu.",
+        specificsIntro: "En concreto, el software:",
+        specifics: {
+          integrity:
+            "- Genera registros de facturación de forma íntegra, consecutiva, trazable e inalterable.",
+          hash: "- Implementa mecanismos de hash y encadenamiento de los registros de facturación conforme a la normativa vigente.",
+          noModification:
+            "- Impide la modificación o eliminación de facturas una vez emitidas.",
+          transmission:
+            "- Permite el envío automático o inmediato de los registros de facturación a la Agencia Estatal de Administración Tributaria mediante el sistema Veri*Factu, o bien mantiene los registros disponibles para su envío cuando sea requerido.",
+          retention:
+            "- Conserva los registros de facturación durante el periodo legalmente establecido.",
+          uniqueId:
+            "- Garantiza la identificación única de cada factura emitida.",
+        },
+        liability:
+          "Esta declaración se emite a los efectos previstos en la normativa tributaria vigente, asumiendo [RAZÓN SOCIAL] la responsabilidad derivada del correcto funcionamiento del software en relación con los requisitos declarados.",
+      },
     },
     forms: {
       user: {
@@ -865,6 +915,31 @@ const messages = {
         messages: {
           loadError: "Error loading integration requests",
         },
+      },
+      responsabilities: {
+        title: "RESPONSIBLE DECLARATION OF VERI*FACTU SYSTEM IMPLEMENTATION",
+        locationDate: "In [city], on [date]",
+        declarant:
+          "[Name and surname], with ID [XXXXX], in the capacity of [position] of the company [COMPANY NAME], with Tax ID [CIF] and registered office at [full address],",
+        declares: "DECLARES UNDER THEIR RESPONSIBILITY",
+        softwareCompliance:
+          "That the billing software named [Software Name], developed and maintained by [COMPANY NAME], in its version [version or version range], complies with the requirements established for billing computer systems provided for in Royal Decree 1007/2023, as well as the Ministerial Order that develops it, in relation to the Veri*Factu system.",
+        specificsIntro: "Specifically, the software:",
+        specifics: {
+          integrity:
+            "- Generates billing records in an integral, consecutive, traceable, and unalterable manner.",
+          hash: "- Implements hash mechanisms and chaining of billing records in accordance with current regulations.",
+          noModification:
+            "- Prevents the modification or deletion of invoices once issued.",
+          transmission:
+            "- Allows the automatic or immediate sending of billing records to the State Tax Administration Agency via the Veri*Factu system, or keeps the records available for submission when required.",
+          retention:
+            "- Retains billing records for the legally established period.",
+          uniqueId:
+            "- Guarantees the unique identification of each issued invoice.",
+        },
+        liability:
+          "This declaration is issued for the purposes provided for in current tax regulations, with [COMPANY NAME] assuming the responsibility derived from the correct functioning of the software in relation to the declared requirements.",
       },
     },
     forms: {
