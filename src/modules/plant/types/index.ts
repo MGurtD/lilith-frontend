@@ -65,6 +65,18 @@ export interface ChangeMachineStatusRequest {
   workcenterId: string;
   statusId: string;
   statusReasonId?: string;
+  workOrderPhaseId?: string;
+}
+
+export interface LoadWorkOrderPhaseRequest {
+  workcenterId: string;
+  workOrderPhaseId: string;
+  machineStatusId: string;
+}
+
+export interface UnloadWorkOrderPhaseRequest {
+  workcenterId: string;
+  workOrderPhaseId: string;
 }
 
 export interface LoadWorkOrderPhaseRequest {
