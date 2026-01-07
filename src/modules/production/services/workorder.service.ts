@@ -3,6 +3,8 @@ import {
   WorkOrderPhase,
   WorkOrderPhaseDetail,
   WorkOrderPhaseBillOfMaterials,
+  WorkOrderWithPhases,
+  WorkOrderPhaseDetailed,
   CreateWorkOrderDto,
   DetailedWorkOrder,
   WorkOrderOrder,
@@ -113,6 +115,38 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
       }));
       return workOrderPhases;
     }
+  }
+
+  async GetPlannedPhasesByWorkcenterType(
+    workcenterTypeId: string
+  ): Promise<Array<WorkOrderWithPhases> | undefined> {
+    const response = await this.apiClient.get(
+      `/WorkOrder/Planned/WorkcenterType/${workcenterTypeId}`
+    );
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderWithPhases>;
+    }
+  }
+
+  async GetWorkOrderPhasesDetailed(
+    workOrderId: string
+  ): Promise<Array<WorkOrderPhaseDetailed> | undefined> {
+    const response = await this.apiClient.get(
+      `/WorkOrder/${workOrderId}/PhasesDetailed`
+    );
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderPhaseDetailed>;
+    }
+  }
+
+  async GetLoadedByPhaseIds(
+    phaseIds: string[]
+  ): Promise<Array<WorkOrderWithPhases>> {
+    const response = await this.apiClient.post(`/WorkOrder/Loaded`, phaseIds);
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderWithPhases>;
+    }
+    return [];
   }
 }
 

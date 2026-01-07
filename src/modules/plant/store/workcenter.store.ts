@@ -1,5 +1,9 @@
 import { defineStore } from "pinia";
-import { Workcenter, WorkOrder } from "../../production/types";
+import {
+  Workcenter,
+  WorkOrder,
+  WorkOrderWithPhases,
+} from "../../production/types";
 import {
   WorkcenterRealtime,
   WorkcenterViewState,
@@ -15,15 +19,14 @@ import { usePlantOperatorStore } from "./operator.store";
 export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
   state: () => ({
     workcenter: undefined as Workcenter | undefined,
-    workcenterPictureBlob: undefined as Blob | undefined,
-    workcenterPictureUrl: undefined as string | undefined,
     workcenterRt: undefined as WorkcenterRealtime | undefined,
-    selectedWorkOrder: undefined as WorkOrder | undefined,
+    loadedWorkOrders: [] as WorkOrderWithPhases[],
     productionInstructionsDocuments: [] as File[],
     _realtimeHandler: null as
       | RealtimeHandler
       | WorkcenterRealtimeHandler
       | null,
+    _lastLoadedPhaseIds: [] as string[],
   }),
   getters: {
     workcenterView(): WorkcenterViewState | undefined {
@@ -36,46 +39,8 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
   },
   actions: {
     async fetchWorkcenter(workcenterId: string) {
-      this.selectedWorkOrder = undefined;
       this.workcenter =
         await ProductionServices.Workcenter.getById(workcenterId);
-      if (this.workcenter) {
-        this.fetchWorkcenterPicture();
-        await this.restoreSelectedWorkOrder();
-      }
-    },
-    async fetchWorkcenterPicture() {
-      if (!this.workcenter) return;
-      try {
-        const fileService = new FileService();
-        const files = await fileService.GetEntityFiles(
-          "WorkcenterPicture",
-          this.workcenter.id
-        );
-        if (files && files.length > 0) {
-          const { blob, contentType } = await fileService.Download(files[0]);
-          this.workcenterPictureBlob = new Blob([blob], {
-            type: contentType || "image/jpeg",
-          });
-          if (this.workcenterPictureUrl) {
-            URL.revokeObjectURL(this.workcenterPictureUrl);
-          }
-          this.workcenterPictureUrl = URL.createObjectURL(
-            this.workcenterPictureBlob
-          );
-        } else {
-          this.clearWorkcenterPicture();
-        }
-      } catch (error) {
-        console.error("Error loading workcenter picture:", error);
-        this.clearWorkcenterPicture();
-      }
-    },
-    clearWorkcenterPicture() {
-      if (this.workcenterPictureUrl) {
-        URL.revokeObjectURL(this.workcenterPictureUrl);
-      }
-      this.workcenterPictureUrl = undefined;
     },
     async fetchWorkInstructionDocuments(referenceId: string) {
       if (!this.workcenter) return;
@@ -88,24 +53,6 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         this.productionInstructionsDocuments = files;
       }
     },
-    async restoreSelectedWorkOrder() {
-      if (!this.workcenter) return;
-      const key = `plant_workcenter_${this.workcenter.id}_selected_wo`;
-      const storedId = localStorage.getItem(key);
-      if (storedId) {
-        try {
-          const wo = await ProductionServices.WorkOrder.getById(storedId);
-          if (wo) {
-            this.selectedWorkOrder = wo;
-          } else {
-            localStorage.removeItem(key);
-          }
-        } catch (error) {
-          console.error("Error restoring selected work order:", error);
-          localStorage.removeItem(key);
-        }
-      }
-    },
     connectToWorkcenter(workcenterId: string) {
       if (this._realtimeHandler) {
         this._realtimeHandler.cleanup();
@@ -113,8 +60,62 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       const handler = ActionsService.client.connectToWorkcenter(workcenterId);
       handler.onUpdate((data) => {
         this.workcenterRt = data;
+
+        // Extract phase IDs from workorders array (normalize PascalCase to camelCase)
+        const phaseIds = (data.Workorders || []).map(
+          (wo: any) => wo.workOrderPhaseId || wo.WorkOrderPhaseId
+        );
+
+        // Check if phase IDs have changed
+        const hasChanged =
+          phaseIds.length !== this._lastLoadedPhaseIds.length ||
+          phaseIds.some(
+            (id: string, idx: number) => id !== this._lastLoadedPhaseIds[idx]
+          );
+
+        if (hasChanged) {
+          // Clear immediately if empty
+          if (phaseIds.length === 0) {
+            this.loadedWorkOrders = [];
+            this._lastLoadedPhaseIds = [];
+          } else {
+            // Fetch new data when phase IDs have changed
+            this.fetchLoadedWorkOrders(phaseIds);
+          }
+        }
       });
       this._realtimeHandler = handler;
+    },
+    async fetchLoadedWorkOrders(phaseIds: string[]) {
+      if (!phaseIds || phaseIds.length === 0) {
+        this.loadedWorkOrders = [];
+        this._lastLoadedPhaseIds = [];
+        this.productionInstructionsDocuments = [];
+        return;
+      }
+
+      try {
+        const workOrders =
+          await ProductionServices.WorkOrderPhase.GetLoadedByPhaseIds(phaseIds);
+        this.loadedWorkOrders = workOrders || [];
+        this._lastLoadedPhaseIds = phaseIds;
+
+        // Carregar automàticament la documentació de la primera workorder
+        if (this.loadedWorkOrders.length > 0) {
+          const firstWorkOrder = this.loadedWorkOrders[0];
+          if (firstWorkOrder.salesReferenceId) {
+            await this.fetchWorkInstructionDocuments(
+              firstWorkOrder.salesReferenceId
+            );
+          }
+        } else {
+          this.productionInstructionsDocuments = [];
+        }
+      } catch (error) {
+        console.error("Error fetching loaded work orders:", error);
+        this.loadedWorkOrders = [];
+        this.productionInstructionsDocuments = [];
+      }
     },
     disconnectWebSocket() {
       if (this._realtimeHandler) {
@@ -150,22 +151,16 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         statusReasonId,
       });
     },
-    setSelectedWorkOrder(workOrder: WorkOrder) {
-      this.selectedWorkOrder = workOrder;
-      if (this.workcenter) {
-        localStorage.setItem(
-          `plant_workcenter_${this.workcenter.id}_selected_wo`,
-          workOrder.id
-        );
-      }
-    },
-    clearSelectedWorkOrder() {
-      this.selectedWorkOrder = undefined;
-      if (this.workcenter) {
-        localStorage.removeItem(
-          `plant_workcenter_${this.workcenter.id}_selected_wo`
-        );
-      }
+    clearWorkcenter() {
+      // Desconnectar WebSocket si està actiu
+      this.disconnectWebSocket();
+
+      // Netejar tot l'estat del workcenter
+      this.workcenter = undefined;
+      this.workcenterRt = undefined;
+      this.loadedWorkOrders = [];
+      this.productionInstructionsDocuments = [];
+      this._lastLoadedPhaseIds = [];
     },
   },
 });
