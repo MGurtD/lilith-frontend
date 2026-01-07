@@ -126,6 +126,7 @@ import {
 interface Props {
   visible: boolean;
   statuses: MachineStatus[];
+  workOrderPhaseId?: string;
 }
 
 const props = defineProps<Props>();
@@ -249,6 +250,7 @@ const emitStatusChange = () => {
     workcenterId: "", // Will be set by parent component
     statusId: selectedStatus.value.id,
     statusReasonId: selectedReason.value?.id,
+    workOrderPhaseId: props.workOrderPhaseId,
   };
 
   emit("status-changed", request);

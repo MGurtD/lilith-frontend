@@ -22,15 +22,18 @@
               <WorkcenterDocumentation :workcenter="workcenter" />
             </TabPanel>
 
-            <!-- Production Tab -->
+            <!-- Available Phases Tab -->
             <TabPanel>
               <template #header>
                 <div class="flex align-items-center gap-2">
-                  <i :class="PrimeIcons.COG"></i>
-                  <span class="font-bold">Producció</span>
+                  <i :class="PrimeIcons.CALENDAR"></i>
+                  <span class="font-bold">Fases disponibles</span>
                 </div>
               </template>
-              <WorkcenterProduction :workcenter="workcenter" />
+              <WorkcenterWorkOrderSelector
+                :workcenterTypeId="workcenter.config.workcenterTypeId"
+                @workorder-selected="handleWorkOrderSelected"
+              />
             </TabPanel>
           </TabView>
         </section>
@@ -63,6 +66,14 @@
           class="touch-button"
           @click="handleMachineStatusChange"
         />
+        <Button
+          v-if="hasLoadedPhase"
+          :icon="PrimeIcons.STOP"
+          label="Tancar fase"
+          severity="secondary"
+          class="touch-button"
+          @click="handleWorkOrderPhaseClose"
+        />
       </div>
     </footer>
 
@@ -72,11 +83,22 @@
       :statuses="dataStore.machineStatuses"
       @status-changed="onStatusChanged"
     />
+
+    <!-- Work Order Loader Dialog -->
+    <WorkOrderLoader
+      v-model:visible="workOrderLoaderVisible"
+      :workOrderId="selectedWorkOrderData.workOrderId"
+      :workOrderCode="selectedWorkOrderData.workOrderCode"
+      :referenceCode="selectedWorkOrderData.referenceCode"
+      :quantity="selectedWorkOrderData.quantity"
+      :workcenterTypeId="workcenter?.config.workcenterTypeId || ''"
+      @phase-detail-selected="handlePhaseDetailSelected"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { PrimeIcons } from "primevue/api";
@@ -87,14 +109,21 @@ import {
   usePlantDataStore,
 } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
-import WorkcenterProduction from "../components/workcenter-detail/WorkcenterProduction.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+import WorkcenterWorkOrderSelector from "../components/workcenter-detail/WorkcenterWorkOrderSelector.vue";
+import WorkOrderLoader from "../components/workcenter-detail/WorkOrderLoader.vue";
 import MachineStatusSelector from "../components/MachineStatusSelector.vue";
+import { WorkOrderWithPhases } from "../../production/types";
 import {
   useWebSocketConnection,
   WS_ENDPOINTS,
 } from "../composables/useWebSocketConnection";
-import { ChangeMachineStatusRequest } from "../types";
+import {
+  ChangeMachineStatusRequest,
+  LoadWorkOrderPhaseRequest,
+  UnloadWorkOrderPhaseRequest,
+} from "../types";
+import actionsService from "../services/actions.service";
 
 const route = useRoute();
 const toast = useToast();
@@ -107,6 +136,13 @@ const { connect } = useWebSocketConnection();
 const id = route.params.id as string;
 const activeTab = ref(0);
 const statusSelectorVisible = ref(false);
+const workOrderLoaderVisible = ref(false);
+const selectedWorkOrderData = ref({
+  workOrderId: "",
+  workOrderCode: "",
+  referenceCode: "",
+  quantity: 0,
+});
 
 const workcenter = computed(() => workcenterStore.workcenterView);
 
@@ -117,6 +153,14 @@ const isOperatorClockedIn = computed(() => {
   }
   return workcenter.value.realtime.operators.some(
     (op) => op.operatorId === operatorStore.operator!.id
+  );
+});
+
+// Computed para determinar si hay una fase cargada
+const hasLoadedPhase = computed(() => {
+  return (
+    workcenter.value?.realtime?.Workorders &&
+    workcenter.value.realtime.Workorders.length > 0
   );
 });
 
@@ -143,12 +187,22 @@ onMounted(async () => {
   // 3. Carregar estats de màquina
   await dataStore.fetchMachineStatuses();
 
-  // 4. Connectar WebSocket específic del workcenter
+  // 4. Establir pestanya activa segons si hi ha fase carregada
+  // Tab 0: Documentació
+  // Tab 1: Fases disponibles
+  // Si NO hi ha fase carregada → mostrar Fases disponibles (tab 1)
+  // Si hi ha fase carregada → mostrar Documentació (tab 0)
+  activeTab.value = hasLoadedPhase.value ? 0 : 1;
+
+  // 5. Connectar WebSocket específic del workcenter
   workcenterStore.connectToWorkcenter(id);
   connect(WS_ENDPOINTS.WORKCENTER(id), { debug: true });
 });
 
-// onUnmounted gestionat automàticament pel composable
+onUnmounted(() => {
+  // Netejar informació del workcenter dels stores
+  workcenterStore.clearWorkcenter();
+});
 
 const handleOperatorClockIn = async () => {
   const result = await workcenterStore.clockInOperator();
@@ -204,6 +258,85 @@ const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
     toast.add({
       severity: "error",
       summary: "Error al canviar l'estat",
+      life: 4000,
+    });
+  }
+};
+
+const handleWorkOrderSelected = (workOrder: WorkOrderWithPhases) => {
+  selectedWorkOrderData.value = {
+    workOrderId: workOrder.workOrderId,
+    workOrderCode: workOrder.workOrderCode,
+    referenceCode: workOrder.salesReferenceDisplay,
+    quantity: workOrder.plannedQuantity,
+  };
+  workOrderLoaderVisible.value = true;
+};
+
+const handlePhaseDetailSelected = async (data: {
+  workOrderId: string;
+  workOrderPhaseId: string;
+  machineStatusId: string;
+}) => {
+  const request: LoadWorkOrderPhaseRequest = {
+    workcenterId: id,
+    workOrderPhaseId: data.workOrderPhaseId,
+    machineStatusId: data.machineStatusId,
+  };
+
+  const result =
+    await actionsService.client.loadWorkOrderPhaseAndMachineStatus(request);
+
+  if (result) {
+    workOrderLoaderVisible.value = false;
+    toast.add({
+      severity: "success",
+      summary: "Fase de fabricació carregada",
+      detail: "L'activitat s'ha carregat correctament al centre de treball",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al carregar la fase",
+      detail: "No s'ha pogut carregar l'activitat",
+      life: 4000,
+    });
+  }
+};
+
+const handleWorkOrderPhaseClose = async () => {
+  if (
+    !workcenter.value?.realtime?.Workorders ||
+    workcenter.value.realtime.Workorders.length === 0
+  ) {
+    toast.add({
+      severity: "warn",
+      summary: "No hi ha cap fase carregada",
+      life: 4000,
+    });
+    return;
+  }
+
+  const request: UnloadWorkOrderPhaseRequest = {
+    workcenterId: id,
+    workOrderPhaseId: workcenter.value.realtime.Workorders[0].WorkOrderPhaseId,
+  };
+
+  const result = await actionsService.client.unloadWorkOrderPhase(request);
+
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Fase tancada correctament",
+      detail: "L'activitat s'ha descarregat del centre de treball",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al tancar la fase",
+      detail: "No s'ha pogut descarregar l'activitat",
       life: 4000,
     });
   }

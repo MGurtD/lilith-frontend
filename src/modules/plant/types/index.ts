@@ -3,11 +3,18 @@ import { Workcenter as WorkcenterMaster } from "../../production/types";
 // Re-export del modelo maestro para claridad
 export type WorkcenterConfig = WorkcenterMaster;
 
+// Active work order on workcenter
+export interface WorkOrderActive {
+  WorkOrderPhaseId: string;
+  StartTime: string; // ISO 8601 datetime string
+}
+
 // Snapshot de datos en tiempo real desde WebSocket
 export interface WorkcenterRealtime {
   workcenterId: string;
   workcenterName: string;
   workcenterDescription: string;
+  multiWoAvailable: boolean;
   areaId: string;
   areaDescription: string;
   shiftId: string;
@@ -25,6 +32,7 @@ export interface WorkcenterRealtime {
   statusColor: string;
   statusStartTime: string; // ISO 8601 datetime string
   operators: OperatorRealtime[];
+  Workorders: WorkOrderActive[];
   workOrderCode?: string;
   referenceCode?: string;
   phaseDescription?: string;
@@ -48,19 +56,6 @@ export interface OperatorRealtime {
   operatorStartTime: string;
 }
 
-export interface WorkOrderPhase {
-  workOrderCode: string;
-  referenceCode: string;
-  referenceDescription: string;
-  phaseId: string;
-  phaseCode: string;
-  phaseDescription: string;
-  phaseStartTime: Date;
-  phaseEndTime: Date;
-  counterOk: number;
-  counterKo: number;
-}
-
 export interface OperatorClockInOutRequest {
   workcenterId: string;
   operatorId: string;
@@ -70,6 +65,17 @@ export interface ChangeMachineStatusRequest {
   workcenterId: string;
   statusId: string;
   statusReasonId?: string;
+}
+
+export interface LoadWorkOrderPhaseRequest {
+  workcenterId: string;
+  workOrderPhaseId: string;
+  machineStatusId: string;
+}
+
+export interface UnloadWorkOrderPhaseRequest {
+  workcenterId: string;
+  workOrderPhaseId: string;
 }
 
 export interface OperatorResponse {
