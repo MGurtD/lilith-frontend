@@ -61,9 +61,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       handler.onUpdate((data) => {
         this.workcenterRt = data;
 
-        // Extract phase IDs from workorders array (normalize PascalCase to camelCase)
-        const phaseIds = (data.Workorders || []).map(
-          (wo: any) => wo.workOrderPhaseId || wo.WorkOrderPhaseId
+        // Extract phase IDs from workorders array
+        const phaseIds = (data.workorders || []).map(
+          (wo) => wo.workOrderPhaseId
         );
 
         // Check if phase IDs have changed
