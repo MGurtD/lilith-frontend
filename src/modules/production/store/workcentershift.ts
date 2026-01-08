@@ -1,10 +1,14 @@
 import { defineStore } from "pinia";
-import { WorkcenterShiftGroup, WorkcenterShiftRequest } from "../types";
+import {
+  WorkcenterShiftGroup,
+  WorkcenterShiftHistorical,
+  WorkcenterShiftRequest,
+} from "../types";
 import services from "../services";
 
 export const useWorkcenterShiftStore = defineStore("workcentershift", {
   state: () => ({
-    workcenterShifts: undefined as Array<WorkcenterShiftGroup> | undefined,
+    workcenterShifts: undefined as Array<WorkcenterShiftHistorical> | undefined,
     workcenterShift: undefined as WorkcenterShiftGroup | undefined,
   }),
   getters: {},

@@ -374,10 +374,52 @@ export interface WorkDetail {
 export interface WorkcenterShiftRequest {
   startTime: string;
   endTime: string;
-  workcenterId?: string;
-  operatorId?: string;
-  workorderPhaseId?: string;
-  groupBy?: string;
+  groupBy: string;
+  timeGroupBy: string;
+}
+
+export interface WorkcenterShiftHistorical {
+  id: string;
+  key: string | null;
+
+  workcenter: string;
+  machineStatus: string;
+  operator: string;
+
+  startTime: string;
+  endTime: string | null;
+
+  quantityOk: number;
+  quantityKo: number;
+
+  totalHours: number;
+  operatorCost: number;
+  workcenterCost: number;
+  totalCost: number;
+
+  workOrderCode: string;
+  plannedQuantity: number;
+
+  estimatedMachineCost: number;
+  estimatedMachineTime: number;
+  estimatedOperatorCost: number;
+  estimatedOperatorTime: number;
+
+  workOrderPhaseCode: string;
+  workOrderPhaseDescription: string;
+
+  isPreferredWorkcenter: boolean;
+
+  referenceCode: string;
+  referenceDescription: string;
+  customerComercialName: string;
+
+  operatorId: string;
+  workcenterId: string;
+  referenceId: string;
+  customerId: string;
+  workOrderId: string;
+  workOrderPhaseId: string;
 }
 
 export interface WorkOrderPhaseDisplay {
