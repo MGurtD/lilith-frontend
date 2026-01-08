@@ -19,7 +19,17 @@
           <span>Ordre</span>
         </div>
         <div class="stat__value">
-          {{ workcenter.realtime?.workOrderCode || "-" }}
+          {{ currentWorkOrder?.workOrderCode || "-" }}
+        </div>
+      </div>
+
+      <div class="workcenter-card__stat">
+        <div class="stat__label">
+          <i class="pi pi-cog"></i>
+          <span>Fase</span>
+        </div>
+        <div class="stat__value stat__value--phase">
+          {{ formattedPhase }}
         </div>
       </div>
 
@@ -28,7 +38,7 @@
           <i class="pi pi-tag"></i>
           <span>Referència</span>
         </div>
-        <div class="stat__value">
+        <div class="stat__value stat__value--reference">
           {{ formattedReference }}
         </div>
       </div>
@@ -43,7 +53,7 @@
         </div>
       </div>
 
-      <div class="workcenter-card__stat">
+      <!-- <div class="workcenter-card__stat">
         <div class="stat__label">
           <i :class="PrimeIcons.USERS"></i>
           <span>Operaris</span>
@@ -51,7 +61,7 @@
         <div class="stat__value">
           {{ workcenter.realtime?.operators.length || 0 }}
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -101,14 +111,31 @@ const statusIcon = computed((): string => {
   return machineStatus.icon;
 });
 
+// Obtener el trabajo activo actual (primer elemento del array workorders)
+const currentWorkOrder = computed(() => {
+  const workorders = props.workcenter.realtime?.workorders;
+  if (!workorders || workorders.length === 0) return undefined;
+  return workorders[0];
+});
+
+// Formatear fase con código y descripción
+const formattedPhase = computed((): string => {
+  const wo = currentWorkOrder.value;
+  if (!wo) return "-";
+  if (wo.workOrderPhaseDescription) {
+    return `${wo.workOrderPhaseCode} - ${wo.workOrderPhaseDescription}`;
+  }
+  return wo.workOrderPhaseCode || "-";
+});
+
 // Formatear referencia con código y descripción
 const formattedReference = computed((): string => {
-  const snapshot = props.workcenter.realtime;
-  if (!snapshot?.referenceCode) return "-";
-  if (snapshot.phaseDescription) {
-    return `${snapshot.referenceCode} - ${snapshot.phaseDescription}`;
+  const wo = currentWorkOrder.value;
+  if (!wo) return "-";
+  if (wo.referenceDescription && wo.referenceDescription !== wo.referenceCode) {
+    return `${wo.referenceCode} - ${wo.referenceDescription}`;
   }
-  return snapshot.referenceCode;
+  return wo.referenceCode || "-";
 });
 
 // Formatear tiempo desde statusStartTime
@@ -264,5 +291,23 @@ const handleClick = () => {
   font-family: "Courier New", monospace;
   font-size: 1.1rem;
   color: var(--primary-600);
+}
+
+.stat__value--phase {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat__value--reference {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

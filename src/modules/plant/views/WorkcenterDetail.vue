@@ -159,8 +159,8 @@ const isOperatorClockedIn = computed(() => {
 // Computed para determinar si hay una fase cargada
 const hasLoadedPhase = computed(() => {
   return (
-    workcenter.value?.realtime?.Workorders &&
-    workcenter.value.realtime.Workorders.length > 0
+    workcenter.value?.realtime?.workorders &&
+    workcenter.value.realtime.workorders.length > 0
   );
 });
 
@@ -307,8 +307,8 @@ const handlePhaseDetailSelected = async (data: {
 
 const handleWorkOrderPhaseClose = async () => {
   if (
-    !workcenter.value?.realtime?.Workorders ||
-    workcenter.value.realtime.Workorders.length === 0
+    !workcenter.value?.realtime?.workorders ||
+    workcenter.value.realtime.workorders.length === 0
   ) {
     toast.add({
       severity: "warn",
@@ -320,7 +320,7 @@ const handleWorkOrderPhaseClose = async () => {
 
   const request: UnloadWorkOrderPhaseRequest = {
     workcenterId: id,
-    workOrderPhaseId: workcenter.value.realtime.Workorders[0].WorkOrderPhaseId,
+    workOrderPhaseId: workcenter.value.realtime.workorders[0].workOrderPhaseId,
   };
 
   const result = await actionsService.client.unloadWorkOrderPhase(request);
