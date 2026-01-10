@@ -149,14 +149,14 @@ const currentWorkOrderData = computed(() => {
   if (
     workcenterStore.loadedWorkOrders &&
     workcenterStore.loadedWorkOrders.length > 0 &&
-    props.workcenter.realtime?.Workorders &&
-    props.workcenter.realtime.Workorders.length > 0
+    props.workcenter.realtime?.workorders &&
+    props.workcenter.realtime.workorders.length > 0
   ) {
     const wo = workcenterStore.loadedWorkOrders[0];
-    const activeWorkOrder = props.workcenter.realtime.Workorders[0];
+    const activeWorkOrder = props.workcenter.realtime.workorders[0];
     // Find the current phase from the loaded work order
     const currentPhase = wo.phases.find(
-      (p) => p.phaseId === activeWorkOrder.WorkOrderPhaseId
+      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId
     );
 
     return {
@@ -165,7 +165,7 @@ const currentWorkOrderData = computed(() => {
       reference: wo.salesReferenceDisplay,
       phaseCode: currentPhase?.phaseCode,
       phaseDescription: currentPhase?.phaseDescription,
-      loadedStartTime: activeWorkOrder.StartTime,
+      loadedStartTime: activeWorkOrder.startTime,
       counterOk: undefined, // TODO: Obtener de ProductionParts si es necesario
       counterKo: undefined, // TODO: Obtener de ProductionParts si es necesario
     };
