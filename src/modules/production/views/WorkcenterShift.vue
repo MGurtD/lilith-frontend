@@ -15,57 +15,34 @@
         <div
           class="flex flex-wrap align-items-center justify-content-between gap-2"
         >
-          <div class="datatable-filter">
-            <div class="filter-field">
-              <label>Desde:</label>
+          <div class="flex flex-wrap gap-3 flex-1 align-items-end">
+            <div style="min-width: 300px">
+              <label class="block text-900 mb-2">Període</label>
               <Calendar
-                :modelValue="
-                  filter.startTime ? new Date(filter.startTime) : null
-                "
-                @update:modelValue="
-                  (val: Date | Date[] | (Date | null)[] | null | undefined) => {
-                    if (val instanceof Date) {
-                      filter.startTime = val.toISOString();
-                    } else {
-                      filter.startTime = '';
-                    }
-                  }
-                "
+                v-model="filter.dates"
+                selectionMode="range"
+                dateFormat="dd/mm/yy"
                 showIcon
               />
             </div>
-            <div class="filter-field">
-              <label>Fins a:</label>
-              <Calendar
-                :modelValue="filter.endTime ? new Date(filter.endTime) : null"
-                @update:modelValue="
-                  (val: Date | Date[] | (Date | null)[] | null | undefined) => {
-                    if (val instanceof Date) {
-                      filter.endTime = val.toISOString();
-                    } else {
-                      filter.endTime = '';
-                    }
-                  }
-                "
-                showIcon
-              />
-            </div>
-            <div class="filter-field">
-              <label>Grup</label>
+            <div style="min-width: 200px">
+              <label class="block text-900 mb-2">Grup</label>
               <Dropdown
                 v-model="filter.groupBy"
                 :options="groupByOptions"
                 optionLabel="label"
                 optionValue="value"
+                class="w-full"
               />
             </div>
-            <div class="filter-field">
-              <label>Grup per temps</label>
+            <div style="min-width: 200px">
+              <label class="block text-900 mb-2">Grup per temps</label>
               <Dropdown
                 v-model="filter.timeGroupBy"
                 :options="timeGroupByOptions"
                 optionLabel="label"
                 optionValue="value"
+                class="w-full"
               />
             </div>
           </div>
@@ -163,7 +140,12 @@ import type {
   WorkcenterShiftRequest,
 } from "../types";
 import { PrimeIcons } from "primevue/api";
+import { useToast } from "primevue/usetoast";
 import { formatCurrency, formatDateTimeUTC } from "../../../utils/functions";
+import { useStore } from "@/store";
+
+const store = useStore();
+const toast = useToast();
 
 const workcenterShifts = ref<WorkcenterShiftHistorical[]>([]);
 const workcenterShiftStore = useWorkcenterShiftStore();
@@ -183,25 +165,48 @@ const timeGroupByOptions = [
   { label: "Cap", value: "None" },
 ];
 
-const filter = ref<WorkcenterShiftRequest>({
-  startTime: "",
-  endTime: "",
+const filter = ref({
+  dates: undefined as Array<Date> | undefined,
   groupBy: "None",
   timeGroupBy: "None",
 });
 
-onMounted(async () => {});
+onMounted(async () => {
+  store.setMenuItem({
+    title: "Històric",
+    icon: "pi pi-fw pi-clock",
+    backButtonVisible: false,
+  });
+});
 
 const filterData = async () => {
-  let response = await workcenterShiftStore.query(filter.value);
-  if (response) {
-    workcenterShifts.value = response;
+  if (filter.value.dates) {
+    const startTime = filter.value.dates[0];
+    const endTime = filter.value.dates[1];
+
+    const request: WorkcenterShiftRequest = {
+      startTime,
+      endTime,
+      groupBy: filter.value.groupBy,
+      timeGroupBy: filter.value.timeGroupBy,
+    };
+
+    const response = await workcenterShiftStore.query(request);
+    if (response) {
+      workcenterShifts.value = response;
+    }
+  } else {
+    toast.add({
+      severity: "info",
+      summary: "Filtre invàlid",
+      detail: "Seleccioni un període",
+      life: 5000,
+    });
   }
 };
 
-const cleanFilter = async () => {
-  filter.value.startTime = "";
-  filter.value.endTime = "";
+const cleanFilter = () => {
+  filter.value.dates = undefined;
   filter.value.groupBy = "None";
   filter.value.timeGroupBy = "None";
   workcenterShifts.value = [];

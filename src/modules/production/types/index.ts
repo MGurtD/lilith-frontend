@@ -372,8 +372,8 @@ export interface WorkDetail {
 }
 
 export interface WorkcenterShiftRequest {
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   groupBy: string;
   timeGroupBy: string;
 }
