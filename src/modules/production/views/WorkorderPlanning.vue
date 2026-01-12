@@ -10,37 +10,8 @@
     @rowReorder="onRowReorder"
   >
     <template #header>
-      <div
-        class="flex flex-wrap align-items-center justify-content-between gap-2"
-      >
-        <div>
-          <div class="flex flex-wrap gap-3 align-items-center">
-            <label class="block text-900">Tipus de centre</label>
-            <Dropdown
-              label=""
-              v-model="filter.workcenterType"
-              :options="plantModelStore.workcenterTypes"
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Tipus de center de treball"
-            />
-          </div>
-        </div>
+      <div class="flex flex-wrap align-items-end justify-content-end gap-2">
         <div class="datatable-buttons">
-          <Button
-            class="datatable-button mr-2"
-            :icon="PrimeIcons.FILTER"
-            rounded
-            raised
-            @click="filterData"
-          />
-          <Button
-            class="datatable-button mr-2"
-            :icon="PrimeIcons.FILTER_SLASH"
-            rounded
-            raised
-            @click="cleanFilter"
-          />
           <Button :icon="PrimeIcons.SAVE" rounded raised @click="updateOrder" />
         </div>
       </div>
@@ -50,6 +21,11 @@
     <Column header="Estat">
       <template #body="slotProps">
         {{ slotProps.data.status?.name }}
+      </template>
+    </Column>
+    <Column header="Client">
+      <template #body="slotProps">
+        {{ slotProps.data.reference?.customer?.comercialName }}
       </template>
     </Column>
     <Column header="Referència">
@@ -73,10 +49,8 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useWorkOrderStore } from "../store/workorder";
-import { usePlantModelStore } from "../store/plantmodel";
-import Dropdown from "primevue/dropdown";
 import { PrimeIcons } from "primevue/api";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { formatDate } from "../../../utils/functions";
 import { WorkOrderOrder } from "../types";
 import { useStore } from "@/store";
@@ -84,17 +58,16 @@ import { useToast } from "primevue/usetoast";
 
 const store = useStore();
 const toast = useToast();
-const plantModelStore = usePlantModelStore();
 const workorderStore = useWorkOrderStore();
 
 onMounted(async () => {
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
     backButtonVisible: false,
-    title: "Priorització d'Ordres de Fabricació",
+    title: "Prioritzar ordres de fabricació",
   });
 
-  await plantModelStore.fetchActiveWorkcenterTypes();
+  await workorderStore.fetchPlannable();
 });
 
 const workorders = computed(() => {
@@ -102,21 +75,6 @@ const workorders = computed(() => {
     ? workorderStore.workorders
     : [];
 });
-
-const filter = ref({
-  workcenterType: undefined,
-});
-
-const cleanFilter = () => {
-  filter.value.workcenterType = undefined;
-};
-
-const filterData = async () => {
-  if (filter.value.workcenterType) {
-    await workorderStore.fetchByWorkcenterType(filter.value.workcenterType);
-    console.log(workorderStore.workorders);
-  }
-};
 
 const onRowReorder = async (event: any) => {
   workorderStore.workorders = event.value.map((item: any, index: number) => {
@@ -132,8 +90,9 @@ const updateOrder = async () => {
       order: item.order,
     };
   });
-  const updated = await workorderStore.updateOrder(payload);
-  if (updated) {
+  const response = await workorderStore.priorize(payload);
+  console.log(response);
+  if (response.result) {
     toast.add({
       severity: "success",
       summary: "Ordres de fabricació actualitzades",
@@ -143,9 +102,10 @@ const updateOrder = async () => {
   } else {
     toast.add({
       severity: "error",
-      summary: "Error",
-      detail: "No s'han pogut actualitzar les ordres de fabricació.",
-      life: 3000,
+      summary: "Error actualitzant les ordres de fabricació",
+      detail:
+        response.errors?.join(", ") || "S'ha produït un error desconegut.",
+      life: 5000,
     });
   }
 };

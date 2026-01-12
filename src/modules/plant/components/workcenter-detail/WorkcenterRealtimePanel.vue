@@ -32,59 +32,17 @@
       :toggleable="false"
       class="panel-section"
     >
-      <div v-if="currentWorkOrderData" class="info-grid">
-        <div class="info-item">
-          <label>OF:</label>
-          <span class="info-value font-bold">{{
-            currentWorkOrderData.workOrderCode
-          }}</span>
-        </div>
-        <div v-if="currentWorkOrderData.customer" class="info-item">
-          <label>Client:</label>
-          <span class="info-value font-bold">{{
-            currentWorkOrderData.customer
-          }}</span>
-        </div>
-        <div class="info-item">
-          <label>Referència:</label>
-          <span class="info-value">{{ currentWorkOrderData.reference }}</span>
-        </div>
-
-        <div v-if="currentWorkOrderData.phaseCode" class="info-item">
-          <label>Fase:</label>
-          <span class="info-value">
-            <span class="font-bold">{{ currentWorkOrderData.phaseCode }}</span>
-            <span v-if="currentWorkOrderData.phaseDescription">
-              - {{ currentWorkOrderData.phaseDescription }}</span
-            >
-          </span>
-        </div>
-        <div v-if="currentWorkOrderData.loadedStartTime" class="info-item">
-          <label>Hora d'inici:</label>
-          <span class="info-value">{{
-            formatDateTime(currentWorkOrderData.loadedStartTime)
-          }}</span>
-        </div>
-
-        <div
-          v-if="currentWorkOrderData.counterOk !== undefined"
-          class="info-item"
-        >
-          <label>Unitats OK:</label>
-          <span class="info-value counter-ok">{{
-            currentWorkOrderData.counterOk
-          }}</span>
-        </div>
-        <div
-          v-if="currentWorkOrderData.counterKo !== undefined"
-          class="info-item"
-        >
-          <label>Unitats KO:</label>
-          <span class="info-value counter-ko">{{
-            currentWorkOrderData.counterKo
-          }}</span>
-        </div>
-      </div>
+      <WorkOrderPhaseDetail
+        v-if="currentWorkOrderData"
+        :workOrderCode="currentWorkOrderData.workOrderCode"
+        :customer="currentWorkOrderData.customer"
+        :reference="currentWorkOrderData.reference"
+        :phaseCode="currentWorkOrderData.phaseCode"
+        :phaseDescription="currentWorkOrderData.phaseDescription"
+        :loadedStartTime="currentWorkOrderData.loadedStartTime"
+        :counterOk="currentWorkOrderData.counterOk"
+        :counterKo="currentWorkOrderData.counterKo"
+      />
       <div v-else class="no-data">
         <p>No hi ha cap ordre de fabricació carregada</p>
       </div>
@@ -116,6 +74,7 @@
 import { computed, onMounted, onUnmounted } from "vue";
 import { WorkcenterViewState } from "../../types";
 import OperatorDetail from "./OperatorDetail.vue";
+import WorkOrderPhaseDetail from "./WorkOrderPhaseDetail.vue";
 import MachineStatusDetail from "../MachineStatusDetail.vue";
 import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
 import { formatDateTime } from "@/utils/functions";

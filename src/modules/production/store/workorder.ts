@@ -89,9 +89,8 @@ export const useWorkOrderStore = defineStore("workorder", {
       this.workorders =
         await Services.WorkOrder.GetBySalesOrderId(salesOrderId);
     },
-    async fetchByWorkcenterType(workcenterTypeId: string) {
-      const data =
-        await Services.WorkOrder.GetWorkOrderByWorkcenterType(workcenterTypeId);
+    async fetchPlannable() {
+      const data = await Services.WorkOrder.GetPlannableWorkOrders();
       if (data && Array.isArray(data)) {
         this.workorders = data;
       }
@@ -117,9 +116,8 @@ export const useWorkOrderStore = defineStore("workorder", {
       if (result) await this.fetchAll();
       return result;
     },
-    async updateOrder(workOrderOrders: WorkOrderOrder[]) {
-      const result =
-        await Services.WorkOrder.UpdateOrdersOrder(workOrderOrders);
+    async priorize(workOrderOrders: WorkOrderOrder[]) {
+      const result = await Services.WorkOrder.Priorize(workOrderOrders);
       return result;
     },
     async delete(id: string) {

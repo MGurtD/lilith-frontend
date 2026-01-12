@@ -2,7 +2,6 @@
   <div class="operator-item">
     <div class="operator-info">
       <span class="operator-name">{{ operator.operatorName }}</span>
-      <span class="operator-type">{{ operator.operatorTypeName }}</span>
     </div>
     <div class="operator-time">
       <div class="time-info">
@@ -68,11 +67,6 @@ onUnmounted(() => {
 .operator-name {
   font-weight: 600;
   font-size: 0.95rem;
-}
-
-.operator-type {
-  font-size: 0.85rem;
-  color: var(--text-color-secondary);
 }
 
 .operator-time {

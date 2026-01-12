@@ -47,21 +47,8 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       return response.data as Array<WorkOrder>;
     }
   }
-  async GetByWorkcenterIdInProduction(
-    workcenterId: string
-  ): Promise<Array<WorkOrder> | undefined> {
-    const endpoint = `${this.resource}/Workcenter/${workcenterId}/Production`;
-    const response = await this.apiClient.get(endpoint);
-    if (response.status === 200) {
-      return response.data as Array<WorkOrder>;
-    }
-  }
-  async GetWorkOrderByWorkcenterType(
-    workcenterTypeId: string
-  ): Promise<Array<WorkOrder> | undefined> {
-    const response = await this.apiClient.get(
-      `${this.resource}/WorkcenterType/${workcenterTypeId}`
-    );
+  async GetPlannableWorkOrders(): Promise<Array<WorkOrder> | undefined> {
+    const response = await this.apiClient.get(`${this.resource}/Plannable`);
     if (response.status === 200) return response.data as Array<WorkOrder>;
   }
   async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
@@ -81,13 +68,14 @@ export class WorkOrderService extends BaseService<WorkOrder> {
     );
     return response.data as GenericResponse<WorkOrder>;
   }
-  async UpdateOrdersOrder(workOrderOrders: WorkOrderOrder[]): Promise<boolean> {
-    const response = await this.apiClient.put(
-      `${this.resource}/UpdateOrders`,
+  async Priorize(
+    workOrderOrders: WorkOrderOrder[]
+  ): Promise<GenericResponse<boolean>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/Priorize`,
       workOrderOrders
     );
-    if (response.status === 200) return true;
-    return false;
+    return response.data as GenericResponse<boolean>;
   }
 }
 export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
