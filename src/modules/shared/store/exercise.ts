@@ -17,6 +17,8 @@ export const useExerciseStore = defineStore({
         description: "",
         startDate: new Date(),
         endDate: new Date(),
+        materialProfit: 30,
+        externalProfit: 30,
         disabled: false,
       } as Exercise;
     },
@@ -46,6 +48,5 @@ export const useExerciseStore = defineStore({
       if (result) await this.fetchAll();
       return result;
     },
-    
   },
 });

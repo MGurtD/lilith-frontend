@@ -24,6 +24,8 @@ export interface Exercise {
   salesInvoiceCounter: string;
   deliveryNoteCounter: string;
   purchaseInvoiceCounter: string;
+  materialProfit: number;
+  externalProfit: number;
   disabled: boolean;
 }
 

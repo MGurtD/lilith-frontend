@@ -207,14 +207,18 @@ const openBudgetDetailDialog = (
   detail: BudgetDetail
 ) => {
   if (formMode === FormActionMode.CREATE) {
+    const budgetExercise = exerciseStore.exercises?.find(
+      (e) => e.id === budget.value!.exerciseId
+    );
+
     detail = {
       id: getNewUuid(),
       referenceId: "",
       workMasterId: null,
       profit: 0,
       productionProfit: 0,
-      materialProfit: 30,
-      externalProfit: 30,
+      materialProfit: budgetExercise?.materialProfit || 30,
+      externalProfit: budgetExercise?.externalProfit || 30,
       discount: 0,
       quantity: 1,
       unitCost: 0,
