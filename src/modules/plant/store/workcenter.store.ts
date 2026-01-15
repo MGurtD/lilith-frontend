@@ -21,7 +21,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
     workcenter: undefined as Workcenter | undefined,
     workcenterRt: undefined as WorkcenterRealtime | undefined,
     loadedWorkOrders: [] as WorkOrderWithPhases[],
-    productionInstructionsDocuments: [] as File[],
+    availableWorkOrders: [] as WorkOrderWithPhases[],
+    availableWorkOrdersLoading: false,
+    workOrderReferenceDocuments: [] as File[],
     _realtimeHandler: null as
       | RealtimeHandler
       | WorkcenterRealtimeHandler
@@ -38,21 +40,6 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
     },
   },
   actions: {
-    async fetchWorkcenter(workcenterId: string) {
-      this.workcenter =
-        await ProductionServices.Workcenter.getById(workcenterId);
-    },
-    async fetchWorkInstructionDocuments(referenceId: string) {
-      if (!this.workcenter) return;
-      const fileService = new FileService();
-      const files = await fileService.GetEntityFiles(
-        "referenceMaps",
-        referenceId
-      );
-      if (files) {
-        this.productionInstructionsDocuments = files;
-      }
-    },
     connectToWorkcenter(workcenterId: string) {
       if (this._realtimeHandler) {
         this._realtimeHandler.cleanup();
@@ -76,8 +63,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         if (hasChanged) {
           // Clear immediately if empty
           if (phaseIds.length === 0) {
-            this.loadedWorkOrders = [];
             this._lastLoadedPhaseIds = [];
+            this.loadedWorkOrders = [];
+            this.workOrderReferenceDocuments = [];
           } else {
             // Fetch new data when phase IDs have changed
             this.fetchLoadedWorkOrders(phaseIds);
@@ -86,11 +74,46 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       });
       this._realtimeHandler = handler;
     },
+    async fetchWorkcenter(workcenterId: string) {
+      this.workcenter =
+        await ProductionServices.Workcenter.getById(workcenterId);
+    },
+    async fetchWorkInstructionDocuments(referenceId: string) {
+      if (!this.workcenter) return;
+      const fileService = new FileService();
+      const files = await fileService.GetEntityFiles(
+        "referenceMaps",
+        referenceId
+      );
+      if (files) {
+        this.workOrderReferenceDocuments = files;
+      }
+    },
+    async fetchAvailableWorkOrders(workcenterTypeId: string) {
+      if (!workcenterTypeId) {
+        this.availableWorkOrders = [];
+        return;
+      }
+
+      this.availableWorkOrdersLoading = true;
+      try {
+        const workOrders =
+          await ProductionServices.WorkOrderPhase.GetPlannedPhasesByWorkcenterType(
+            workcenterTypeId
+          );
+        this.availableWorkOrders = workOrders || [];
+      } catch (error) {
+        console.error("Error fetching available work orders:", error);
+        this.availableWorkOrders = [];
+      } finally {
+        this.availableWorkOrdersLoading = false;
+      }
+    },
     async fetchLoadedWorkOrders(phaseIds: string[]) {
       if (!phaseIds || phaseIds.length === 0) {
         this.loadedWorkOrders = [];
         this._lastLoadedPhaseIds = [];
-        this.productionInstructionsDocuments = [];
+        this.workOrderReferenceDocuments = [];
         return;
       }
 
@@ -109,12 +132,12 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
             );
           }
         } else {
-          this.productionInstructionsDocuments = [];
+          this.workOrderReferenceDocuments = [];
         }
       } catch (error) {
         console.error("Error fetching loaded work orders:", error);
         this.loadedWorkOrders = [];
-        this.productionInstructionsDocuments = [];
+        this.workOrderReferenceDocuments = [];
       }
     },
     disconnectWebSocket() {
@@ -159,7 +182,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       this.workcenter = undefined;
       this.workcenterRt = undefined;
       this.loadedWorkOrders = [];
-      this.productionInstructionsDocuments = [];
+      this.availableWorkOrders = [];
+      this.availableWorkOrdersLoading = false;
+      this.workOrderReferenceDocuments = [];
       this._lastLoadedPhaseIds = [];
     },
   },

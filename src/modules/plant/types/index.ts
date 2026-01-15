@@ -80,6 +80,10 @@ export interface LoadWorkOrderPhaseRequest {
 export interface UnloadWorkOrderPhaseRequest {
   workcenterId: string;
   workOrderPhaseId: string;
+  workOrderStatusId: string;
+  counterOk: number;
+  counterKo: number;
+  nextWorkOrderPhaseId?: string;
 }
 
 export interface OperatorResponse {

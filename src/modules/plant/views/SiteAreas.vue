@@ -317,11 +317,11 @@ const totalWorkcentersCount = computed(() => {
   justify-content: space-between;
   background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   color: white;
-  padding: 1.25rem 1.75rem;
-  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
   cursor: pointer;
   user-select: none;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
@@ -334,25 +334,25 @@ const totalWorkcentersCount = computed(() => {
 .area__header-content {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .area__icon {
-  font-size: 1.75rem;
+  font-size: 1.35rem;
   opacity: 0.9;
 }
 
 .area__name {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .area__count {
   background: rgba(255, 255, 255, 0.25);
-  padding: 0.35rem 0.85rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -361,15 +361,15 @@ const totalWorkcentersCount = computed(() => {
 }
 
 .area__toggle-icon {
-  font-size: 1.25rem;
+  font-size: 1rem;
   transition: transform 0.3s ease;
 }
 
 /* Workcenters Grid */
 .area__workcenters {
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   animation: fadeIn 0.4s ease;
 }
 
@@ -387,21 +387,21 @@ const totalWorkcentersCount = computed(() => {
 /* Responsive */
 @media (max-width: 1400px) {
   .area__workcenters {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .plant-layout {
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .area__header {
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1rem;
   }
 
   .area__name {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
 
   .area__workcenters {

@@ -77,7 +77,6 @@ import OperatorDetail from "./OperatorDetail.vue";
 import WorkOrderPhaseDetail from "./WorkOrderPhaseDetail.vue";
 import MachineStatusDetail from "../MachineStatusDetail.vue";
 import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
-import { formatDateTime } from "@/utils/functions";
 
 interface Props {
   workcenter: WorkcenterViewState;

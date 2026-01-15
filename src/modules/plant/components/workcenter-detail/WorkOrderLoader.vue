@@ -3,23 +3,43 @@
     :visible="visible"
     modal
     :closable="true"
-    :style="{ width: '90vw', height: '80vh' }"
+    :style="{ width: '90vw' }"
     @update:visible="$emit('update:visible', $event)"
   >
     <template #header>
-      <div class="header-info">
-        <div class="header-details">
-          <div class="detail-item">
-            <span class="detail-label">Ordre:</span>
-            <span class="detail-value">{{ workOrderCode }}</span>
+      <div class="w-full flex align-items-center justify-content-between pr-4">
+        <div class="flex align-items-center gap-3">
+          <div
+            class="flex align-items-center justify-content-center bg-primary-100 border-circle p-2"
+            style="width: 3rem; height: 3rem"
+          >
+            <i :class="PrimeIcons.COG" class="text-primary text-xl"></i>
           </div>
-          <div class="detail-item">
-            <span class="detail-label">Referència:</span>
-            <span class="detail-value">{{ referenceCode }}</span>
+          <div class="flex flex-column">
+            <span class="font-bold text-lg text-900">Carregar Ordre</span>
+            <span class="text-sm text-500">Selecció de fase i activitat</span>
           </div>
-          <div class="detail-item">
-            <span class="detail-label">Quantitat:</span>
-            <span class="detail-value">{{ quantity }}</span>
+        </div>
+        <div class="flex gap-4 flex-wrap">
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500 uppercase font-semibold">Ordre</span>
+            <span class="font-medium text-900 text-lg">{{
+              workOrderCode
+            }}</span>
+          </div>
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500 uppercase font-semibold"
+              >Referència</span
+            >
+            <span class="font-medium text-900 text-lg">{{
+              referenceCode
+            }}</span>
+          </div>
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500 uppercase font-semibold"
+              >Quantitat</span
+            >
+            <span class="font-medium text-900 text-lg">{{ quantity }}</span>
           </div>
         </div>
       </div>
@@ -65,7 +85,7 @@
         <Column header="Inici" :sortable="true" style="min-width: 150px">
           <template #body="slotProps">
             <span v-if="slotProps.data.startTime">
-              {{ formatDate(slotProps.data.startTime) }}
+              {{ formatDateTime(slotProps.data.startTime) }}
             </span>
           </template>
         </Column>
@@ -74,7 +94,7 @@
         <Column header="Fi" :sortable="true" style="min-width: 150px">
           <template #body="slotProps">
             <span v-if="slotProps.data.endTime">
-              {{ formatDate(slotProps.data.endTime) }}
+              {{ formatDateTime(slotProps.data.endTime) }}
             </span>
           </template>
         </Column>
@@ -95,8 +115,29 @@
         </template>
       </DataTable>
 
+      <!-- Warning message when there are loaded work orders -->
+      <div
+        v-if="hasLoadedWorkOrders && phases.length > 0"
+        class="warning-message"
+      >
+        <i :class="PrimeIcons.EXCLAMATION_TRIANGLE"></i>
+        <p>
+          No es pot carregar una nova ordre mentre hi hagi fases en procés a la
+          màquina. Finalitza les fases carregades abans de carregar-ne una de
+          nova.
+        </p>
+      </div>
+
+      <!-- No Valid Phases Message (only when no loaded work orders) -->
+      <div v-else-if="phases.length == 0" class="warning-message">
+        <i :class="PrimeIcons.EXCLAMATION_TRIANGLE" style="font-size: 2rem"></i>
+        <p>
+          No hi ha fases disponibles per carregar en aquest centre de treball
+        </p>
+      </div>
+
       <!-- Bottom Panel with Dropdown and Button -->
-      <div class="bottom-panel" v-if="hasValidPhases">
+      <div class="bottom-panel" v-if="!hasLoadedWorkOrders">
         <div class="panel-content">
           <div class="dropdown-container">
             <label for="activity-dropdown" class="dropdown-label">
@@ -164,19 +205,11 @@
             :icon="PrimeIcons.COG"
             label="Carregar"
             severity="success"
-            :disabled="!selectedDetailId"
+            :disabled="!selectedDetailId || hasLoadedWorkOrders"
             @click="onLoadActivity"
             class="load-button"
           />
         </div>
-      </div>
-
-      <!-- No Valid Phases Message -->
-      <div v-else-if="!loading && phases.length > 0" class="no-valid-phases">
-        <i :class="PrimeIcons.EXCLAMATION_TRIANGLE" style="font-size: 2rem"></i>
-        <p>
-          No hi ha fases disponibles per carregar en aquest centre de treball
-        </p>
       </div>
     </div>
   </Dialog>
@@ -188,7 +221,8 @@ import { PrimeIcons } from "primevue/api";
 import { WorkOrderPhaseDetailed } from "../../../production/types";
 import { WorkOrderPhaseService } from "../../../production/services/workorder.service";
 import { useToast } from "primevue/usetoast";
-import { formatDate } from "../../../../utils/functions";
+import { formatDateTime } from "../../../../utils/functions";
+import { usePlantWorkcenterStore } from "../../store/workcenter.store";
 
 interface Props {
   visible: boolean;
@@ -214,11 +248,17 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const phaseService = new WorkOrderPhaseService("WorkOrderPhase");
+const workcenterStore = usePlantWorkcenterStore();
 
 const phases = ref<WorkOrderPhaseDetailed[]>([]);
 const loading = ref(false);
 const selectedDetailId = ref<string>("");
 const selectedPhaseId = ref<string>("");
+
+// Check if there are loaded work orders in the workcenter
+const hasLoadedWorkOrders = computed(() => {
+  return workcenterStore.loadedWorkOrders.length > 0;
+});
 
 // Auto-select first phase with endTime = null and matching workcenterTypeId
 // Important: Sort by phaseCode first to get the first one in order
@@ -241,9 +281,9 @@ const selectedPhase = computed(() => {
   return autoSelectedPhase.value;
 });
 
-// Check if there are valid phases available
+// Check if there are valid phases available and no loaded work orders
 const hasValidPhases = computed(() => {
-  return selectedPhase.value !== undefined;
+  return selectedPhase.value !== undefined && !hasLoadedWorkOrders.value;
 });
 
 const getSelectedActivityName = (machineStatusId: string): string => {
@@ -272,7 +312,7 @@ const selectPhase = (phase: WorkOrderPhaseDetailed) => {
 const handleRowClick = (event: any) => {
   const phase = event.data as WorkOrderPhaseDetailed;
   // Only allow selection if phase is valid (same criteria as button visibility)
-  if (!phase.endTime && phase.workcenterTypeId === props.workcenterTypeId) {
+  if (phase.workcenterTypeId === props.workcenterTypeId) {
     selectPhase(phase);
   }
 };
@@ -360,48 +400,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.header-info {
-  width: 100%;
-}
-
-.header-title {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.header-details {
-  display: flex;
-  gap: 2rem;
-  padding: 0.75rem 1rem;
-  background: var(--surface-100);
-  border-radius: var(--border-radius);
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.detail-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-color-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.detail-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
 .dialog-content {
   display: flex;
   flex-direction: column;
+
   height: 100%;
   gap: 1rem;
 }
@@ -435,27 +437,29 @@ onMounted(() => {
   font-size: 1rem;
 }
 
-.no-valid-phases {
+.warning-message {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 0.75rem;
-  padding: 2rem 1rem;
-  background: var(--yellow-50);
-  border: 1px solid var(--yellow-200);
+  padding: 1rem 1.25rem;
+  background: var(--orange-50);
+  border: 2px solid var(--orange-300);
   border-radius: var(--border-radius);
-  color: var(--yellow-900);
+  color: var(--orange-900);
+  margin-bottom: 1rem;
 }
 
-.no-valid-phases i {
-  color: var(--yellow-600);
+.warning-message i {
+  color: var(--orange-600);
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
-.no-valid-phases p {
+.warning-message p {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
+  line-height: 1.5;
 }
 
 .bottom-panel {

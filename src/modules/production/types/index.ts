@@ -473,7 +473,9 @@ export interface PlannedPhase {
   phaseCode: string;
   phaseDescription: string;
   phaseDisplay: string;
+  phaseStatusId: string;
   phaseStatus: string;
+  isExternalWork: boolean;
   startTime?: Date | string | null;
   preferredWorkcenterName: string;
 }
@@ -496,6 +498,7 @@ export interface WorkOrderPhaseDetailed {
   endTime?: Date | string | null;
   preferredWorkcenterName: string;
   workcenterTypeId: string;
+
   details: PhaseDetailItem[];
   billOfMaterials: BillOfMaterialsItem[];
 }
@@ -574,6 +577,7 @@ export interface PlannedPhase {
   phaseCode: string;
   phaseDescription: string;
   phaseDisplay: string;
+  phaseStatusId: string;
   phaseStatus: string;
   startTime?: Date | string | null;
   preferredWorkcenterName: string;
@@ -597,6 +601,7 @@ export interface WorkOrderPhaseDetailed {
   endTime?: Date | string | null;
   preferredWorkcenterName: string;
   workcenterTypeId: string;
+  isExternalWork: boolean;
   details: PhaseDetailItem[];
   billOfMaterials: BillOfMaterialsItem[];
 }

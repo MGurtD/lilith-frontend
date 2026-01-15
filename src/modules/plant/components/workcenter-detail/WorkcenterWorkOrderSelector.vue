@@ -95,11 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
 import { WorkOrderWithPhases } from "../../../production/types";
-import { WorkOrderPhaseService } from "../../../production/services/workorder.service";
-import { useToast } from "primevue/usetoast";
+import { usePlantWorkcenterStore } from "../../store";
 import { formatDate } from "../../../../utils/functions";
 
 interface Props {
@@ -112,44 +112,21 @@ const emit = defineEmits<{
   (e: "workorder-selected", workOrder: WorkOrderWithPhases): void;
 }>();
 
-const selectedKey = ref();
-const toast = useToast();
-const phaseService = new WorkOrderPhaseService("WorkOrderPhase");
+const workcenterStore = usePlantWorkcenterStore();
+const { availableWorkOrders, availableWorkOrdersLoading } =
+  storeToRefs(workcenterStore);
 
-const workOrders = ref<WorkOrderWithPhases[]>([]);
-const loading = ref(false);
+const selectedKey = ref();
+
+const workOrders = computed(() => availableWorkOrders.value);
+const loading = computed(() => availableWorkOrdersLoading.value);
 
 const onRowSelect = (event: any) => {
   emit("workorder-selected", event.data);
 };
 
-const loadPhases = async () => {
-  loading.value = true;
-  try {
-    const result = await phaseService.GetPlannedPhasesByWorkcenterType(
-      props.workcenterTypeId
-    );
-    if (result) {
-      workOrders.value = result;
-    } else {
-      workOrders.value = [];
-    }
-  } catch (error) {
-    console.error("Error loading planned phases:", error);
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "Error al carregar les fases planificades",
-      life: 4000,
-    });
-    workOrders.value = [];
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  loadPhases();
+onMounted(async () => {
+  await workcenterStore.fetchAvailableWorkOrders(props.workcenterTypeId);
 });
 </script>
 

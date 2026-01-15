@@ -52,16 +52,6 @@
           {{ formattedTime }}
         </div>
       </div>
-
-      <!-- <div class="workcenter-card__stat">
-        <div class="stat__label">
-          <i :class="PrimeIcons.USERS"></i>
-          <span>Operaris</span>
-        </div>
-        <div class="stat__value">
-          {{ workcenter.realtime?.operators.length || 0 }}
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -211,7 +201,7 @@ const handleClick = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--surface-border);
   gap: 0.2rem;
 }
@@ -219,25 +209,25 @@ const handleClick = () => {
 .workcenter-card__title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .workcenter-card__icon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: var(--primary-600);
 }
 
 .workcenter-card__title h3 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-color);
 }
 
 .workcenter-card__badge {
-  padding: 0.35rem 0.75rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 20px;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -247,20 +237,22 @@ const handleClick = () => {
 
 /* Card Content */
 .workcenter-card__content {
-  padding: 1.25rem 1.5rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .workcenter-card__stat {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
   background: var(--surface-50);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: background 0.2s ease;
+  overflow: hidden;
+  gap: 0.75rem; /* Separación asegurada */
 }
 
 .workcenter-card__stat:hover {
@@ -270,44 +262,41 @@ const handleClick = () => {
 .stat__label {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .stat__label i {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: var(--primary-500);
 }
 
 .stat__value {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  flex: 1;
+  min-width: 0; /* Necesario para truncate flex item */
 }
 
 .stat__value--time {
   font-family: "Courier New", monospace;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--primary-600);
 }
 
 .stat__value--phase {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Hereda truncate de .stat__value */
 }
 
 .stat__value--reference {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Hereda truncate de .stat__value */
 }
 </style>
