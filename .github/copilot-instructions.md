@@ -710,6 +710,11 @@ Add new utilities only if:
 ### Code Quality Standards
 
 Generated code should:
+- Type-check (no implicit `any`)
+- Avoid unused imports
+- Functions < ~40 lines (split if larger)
+- Use early returns for validation failures
+- Null/undefined guard nested access
 
 - Type-check (no implicit `any`)
 - Avoid unused imports
