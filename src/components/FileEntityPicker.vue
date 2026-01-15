@@ -222,25 +222,6 @@ const getFileIcon = (file: File): string => {
   return PrimeIcons.FILE;
 };
 
-const getFileIcon = (file: File): string => {
-  if (file.type === FileType.IMAGE) {
-    return PrimeIcons.IMAGE;
-  }
-
-  const fileName = file.originalName.toLowerCase();
-  if (fileName.endsWith(".pdf")) {
-    return PrimeIcons.FILE_PDF;
-  }
-  if (fileName.endsWith(".docx") || fileName.endsWith(".doc")) {
-    return PrimeIcons.FILE_WORD;
-  }
-  if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-    return PrimeIcons.FILE_EXCEL;
-  }
-
-  return PrimeIcons.FILE;
-};
-
 const deleteFile = async (file: File) => {
   confirm.require({
     message: "Està segur que vol eliminar l'arxiu seleccionat",
