@@ -1,10 +1,10 @@
-import apiClient from "../api.client";
+import apiClient from "@/api/api.client";
 import type {
   CreateMenuItemRequest,
   MenuItemFlat,
   MenuItemNode,
   UpdateMenuItemRequest,
-} from "../../types/menuitem";
+} from "@/types/menuitem";
 
 const baseUrl = "/MenuItem";
 

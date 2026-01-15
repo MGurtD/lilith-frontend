@@ -6,7 +6,7 @@ import {
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
-} from "../api/services/menuitem.service";
+} from "../services/menuitem.service";
 import type {
   MenuItemFlat,
   MenuItemNode,

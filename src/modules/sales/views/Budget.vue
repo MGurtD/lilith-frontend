@@ -108,7 +108,7 @@ import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useTaxesStore } from "../../shared/store/tax";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 import Services from "../services";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useBudgetStore } from "../store/budget";
@@ -207,14 +207,18 @@ const openBudgetDetailDialog = (
   detail: BudgetDetail
 ) => {
   if (formMode === FormActionMode.CREATE) {
+    const budgetExercise = exerciseStore.exercises?.find(
+      (e) => e.id === budget.value!.exerciseId
+    );
+
     detail = {
       id: getNewUuid(),
       referenceId: "",
       workMasterId: null,
       profit: 0,
       productionProfit: 0,
-      materialProfit: 25,
-      externalProfit: 25,
+      materialProfit: budgetExercise?.materialProfit || 30,
+      externalProfit: budgetExercise?.externalProfit || 30,
       discount: 0,
       quantity: 1,
       unitCost: 0,

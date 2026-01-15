@@ -99,6 +99,12 @@ body {
 .grid_delete_column_button {
   color: var(--red-600);
   cursor: pointer;
+
+  &:hover {
+    color: var(--red-800);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+  }
 }
 
 .grid_copy_column_button {
@@ -167,4 +173,8 @@ table > tbody > tr {
 .filter-field > label {
   padding-top: 12px;
   font-size: 1rem;
+}
+
+.clickable-rows :deep(.p-datatable-tbody > tr) {
+  cursor: pointer;
 }

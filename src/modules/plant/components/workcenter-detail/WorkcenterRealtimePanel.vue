@@ -32,72 +32,19 @@
       :toggleable="false"
       class="panel-section"
     >
-      <template #icons>
-        <Button
-          v-if="currentWorkOrderData"
-          :icon="PrimeIcons.PENCIL"
-          @click="openWorkOrderSelector"
-          text
-          rounded
-          size="small"
-          severity="secondary"
-          v-tooltip.left="'Canviar ordre de fabricació'"
-        />
-      </template>
-      <div v-if="currentWorkOrderData" class="info-grid">
-        <div class="info-item">
-          <label>OF:</label>
-          <span class="info-value font-bold">{{
-            currentWorkOrderData.workOrderCode
-          }}</span>
-        </div>
-        <div v-if="currentWorkOrderData.customer" class="info-item">
-          <label>Client:</label>
-          <span class="info-value font-bold">{{
-            currentWorkOrderData.customer
-          }}</span>
-        </div>
-        <div class="info-item">
-          <label>Referència:</label>
-          <span class="info-value">{{
-            referenceStore.getFullName(currentWorkOrderData.reference!)
-          }}</span>
-        </div>
-        <!-- <div v-if="currentWorkOrderData.phaseCode" class="info-item">
-          <label>Fase:</label>
-          <span class="info-value"
-            >{{ currentWorkOrderData.phaseCode }} -
-            {{ currentWorkOrderData.phaseDescription }}</span
-          >
-        </div> -->
-        <div
-          v-if="currentWorkOrderData.counterOk !== undefined"
-          class="info-item"
-        >
-          <label>Unitats OK:</label>
-          <span class="info-value counter-ok">{{
-            currentWorkOrderData.counterOk
-          }}</span>
-        </div>
-        <div
-          v-if="currentWorkOrderData.counterKo !== undefined"
-          class="info-item"
-        >
-          <label>Unitats KO:</label>
-          <span class="info-value counter-ko">{{
-            currentWorkOrderData.counterKo
-          }}</span>
-        </div>
-      </div>
+      <WorkOrderPhaseDetail
+        v-if="currentWorkOrderData"
+        :workOrderCode="currentWorkOrderData.workOrderCode"
+        :customer="currentWorkOrderData.customer"
+        :reference="currentWorkOrderData.reference"
+        :phaseCode="currentWorkOrderData.phaseCode"
+        :phaseDescription="currentWorkOrderData.phaseDescription"
+        :loadedStartTime="currentWorkOrderData.loadedStartTime"
+        :counterOk="currentWorkOrderData.counterOk"
+        :counterKo="currentWorkOrderData.counterKo"
+      />
       <div v-else class="no-data">
-        <Button
-          label="Buscar"
-          :icon="PrimeIcons.SEARCH"
-          @click="openWorkOrderSelector"
-          size="small"
-          severity="secondary"
-          outlined
-        />
+        <p>No hi ha cap ordre de fabricació carregada</p>
       </div>
     </Panel>
 
@@ -120,33 +67,16 @@
         <p>No hi ha operaris fitxats</p>
       </div>
     </Panel>
-
-    <!-- Dialog Work Order Selector -->
-    <Dialog
-      v-model:visible="workOrderSelectorVisible"
-      modal
-      header="Seleccionar ordre de fabricació"
-      :style="{ width: '90vw', maxWidth: '1200px' }"
-    >
-      <WorkcenterWorkOrderSelector
-        :workcenterId="workcenter.config.id"
-        :excludeWorkOrderId="workcenterStore.selectedWorkOrder?.id"
-        @workorder-selected="onWorkOrderSelected"
-      />
-    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { computed, onMounted, onUnmounted } from "vue";
 import { WorkcenterViewState } from "../../types";
-import { WorkOrder } from "../../../production/types";
 import OperatorDetail from "./OperatorDetail.vue";
+import WorkOrderPhaseDetail from "./WorkOrderPhaseDetail.vue";
 import MachineStatusDetail from "../MachineStatusDetail.vue";
-import WorkcenterWorkOrderSelector from "./WorkcenterWorkOrderSelector.vue";
 import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
-import { useReferenceStore } from "../../../shared/store/reference";
 
 interface Props {
   workcenter: WorkcenterViewState;
@@ -155,9 +85,6 @@ interface Props {
 const props = defineProps<Props>();
 const workcenterStore = usePlantWorkcenterStore();
 const dataStore = usePlantDataStore();
-const referenceStore = useReferenceStore();
-
-const workOrderSelectorVisible = ref(false);
 
 const currentStatus = computed(() => {
   if (!props.workcenter.realtime?.statusId) return undefined;
@@ -174,48 +101,39 @@ const currentReason = computed(() => {
   );
 });
 
-// Computed para decidir qué datos mostrar (prioridad: selectedWorkOrder > realtime)
+// Computed para mostrar datos de la orden de fabricación cargada
 const currentWorkOrderData = computed(() => {
-  // Si hay una WorkOrder seleccionada manualmente, usar esa
-  if (workcenterStore.selectedWorkOrder) {
-    const wo = workcenterStore.selectedWorkOrder;
-    // Obtener la primera fase si existe
-    const firstPhase = wo.phases && wo.phases.length > 0 ? wo.phases[0] : null;
+  // Usar la primera orden de trabajo cargada desde el WebSocket
+  if (
+    workcenterStore.loadedWorkOrders &&
+    workcenterStore.loadedWorkOrders.length > 0 &&
+    props.workcenter.realtime?.workorders &&
+    props.workcenter.realtime.workorders.length > 0
+  ) {
+    const wo = workcenterStore.loadedWorkOrders[0];
+    const activeWorkOrder = props.workcenter.realtime.workorders[0];
+    // Find the current phase from the loaded work order
+    const currentPhase = wo.phases.find(
+      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId
+    );
 
     return {
-      workOrderCode: wo.code,
-      reference: wo.reference,
-      customer: wo.reference?.customer?.comercialName,
-      phaseCode: firstPhase?.code,
-      phaseDescription: firstPhase?.description,
-      counterOk: undefined, // No disponible en WorkOrder manual
-      counterKo: undefined, // No disponible en WorkOrder manual
+      workOrderCode: wo.workOrderCode,
+      customer: wo.customerName,
+      reference: wo.salesReferenceDisplay,
+      phaseCode: currentPhase?.phaseCode,
+      phaseDescription: currentPhase?.phaseDescription,
+      loadedStartTime: activeWorkOrder.startTime,
+      counterOk: undefined, // TODO: Obtener de ProductionParts si es necesario
+      counterKo: undefined, // TODO: Obtener de ProductionParts si es necesario
     };
   }
 
   return null;
 });
 
-const openWorkOrderSelector = () => {
-  workOrderSelectorVisible.value = true;
-};
-
-const onWorkOrderSelected = (workOrder: WorkOrder) => {
-  workcenterStore.setSelectedWorkOrder(workOrder);
-  workOrderSelectorVisible.value = false;
-
-  // Opcional: cargar documentos de instrucciones de producción
-  workcenterStore.fetchWorkInstructionDocuments(workOrder.reference?.id!);
-};
-
 onMounted(() => {});
-
-onUnmounted(() => {
-  // Limpia el ObjectURL cuando el componente se desmonta
-  workcenterStore.clearWorkcenterPicture();
-  // Opcionalmente limpiar la WorkOrder seleccionada
-  // workcenterStore.clearSelectedWorkOrder();
-});
+onUnmounted(() => {});
 </script>
 
 <style scoped>

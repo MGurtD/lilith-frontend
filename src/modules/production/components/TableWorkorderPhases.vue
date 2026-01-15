@@ -1,11 +1,13 @@
 <template>
   <DataTable
     @row-click="onEditRow"
-    class="p-datatable-sm"
+    class="p-datatable-sm clickable-rows"
     :value="workorderPhases"
     tableStyle="min-width: 100%"
     sort-field="code"
     :sort-order="1"
+    stripedRows
+    :rowHover="true"
   >
     <template #header>
       <div
@@ -163,7 +165,7 @@ const onAddClick = () => {
     externalWorkCost: 0,
     transportCost: 0,
     serviceReferenceId: null,
-    statusId: "",
+    statusId: lifecycleStore.lifecycle?.initialStatusId || "",
     startTime: null,
     endTime: null,
     profitPercentage: 0,

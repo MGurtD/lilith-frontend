@@ -106,7 +106,7 @@ import FormBudgetOrderDetail from "../components/FormBudgetOrderDetail.vue";
 import TableSalesOrderDetails from "../components/TableSalesOrderDetails.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 import services from "../services";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { useWorkMasterStore } from "../../production/store/workmaster";
@@ -221,14 +221,18 @@ const openOrderDetailDialog = (
   salesOrderDetail: SalesOrderDetail
 ) => {
   if (formMode === FormActionMode.CREATE) {
+    const orderExercise = exerciseStore.exercises?.find(
+      (e) => e.id === salesOrder.value!.exerciseId
+    );
+
     salesOrderDetail = {
       id: getNewUuid(),
       referenceId: "",
       quantity: 1,
       profit: 0,
       productionProfit: 0,
-      materialProfit: 25,
-      externalProfit: 25,
+      materialProfit: orderExercise?.materialProfit || 30,
+      externalProfit: orderExercise?.externalProfit || 30,
       discount: 0,
       unitCost: 0,
       serviceCost: 0,

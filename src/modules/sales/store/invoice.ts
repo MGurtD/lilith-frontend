@@ -10,7 +10,7 @@ import {
 } from "../types";
 import { GenericResponse } from "../../../types";
 import { PurchaseInvoiceUpdateStatues as InvoiceUpdateStatues } from "../../purchase/types";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 import { createBlobAndDownloadFile } from "../../../utils/functions";
 import { Lifecycle } from "../../shared/types";
 
@@ -40,9 +40,8 @@ export const useSalesInvoiceStore = defineStore({
     async CreateRectificative(
       request: CreateRectificativeInvoiceRequest
     ): Promise<GenericResponse<SalesInvoice> | undefined> {
-      const response = await SalesService.SalesInvoice.CreateRectificative(
-        request
-      );
+      const response =
+        await SalesService.SalesInvoice.CreateRectificative(request);
       return response;
     },
     async GetHeaderById(id: string) {
@@ -56,18 +55,16 @@ export const useSalesInvoiceStore = defineStore({
     },
     async GetVerifactuLifecycle() {
       if (!this.verifactuLifecycle) {
-        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
-          "Verifactu"
-        );
+        this.verifactuLifecycle =
+          await SharedService.Lifecycle.getByName("Verifactu");
       }
     },
     async GetById(id: string) {
       this.invoice = await SalesService.SalesInvoice.getById(id);
 
       if (!this.verifactuLifecycle) {
-        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
-          "Verifactu"
-        );
+        this.verifactuLifecycle =
+          await SharedService.Lifecycle.getByName("Verifactu");
       }
     },
     async GetDetailsById(id: string) {
@@ -83,9 +80,8 @@ export const useSalesInvoiceStore = defineStore({
       excludeStatusId?: string
     ) {
       if (!this.verifactuLifecycle) {
-        this.verifactuLifecycle = await SharedService.Lifecycle.getByName(
-          "Verifactu"
-        );
+        this.verifactuLifecycle =
+          await SharedService.Lifecycle.getByName("Verifactu");
       }
 
       if (customerId) {
@@ -126,9 +122,8 @@ export const useSalesInvoiceStore = defineStore({
     async UpdateInvoicesStatuses(
       invoiceImport: InvoiceUpdateStatues
     ): Promise<boolean> {
-      const updated = await SalesService.SalesInvoice.UpdateStatuses(
-        invoiceImport
-      );
+      const updated =
+        await SalesService.SalesInvoice.UpdateStatuses(invoiceImport);
       return updated;
     },
     async Delete(id: string): Promise<boolean> {
@@ -164,9 +159,8 @@ export const useSalesInvoiceStore = defineStore({
     async CreateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<GenericResponse<any>> {
-      const response = await SalesService.SalesInvoice.CreateDetail(
-        invoiceDetail
-      );
+      const response =
+        await SalesService.SalesInvoice.CreateDetail(invoiceDetail);
       this.GetDetailsById(invoiceDetail.salesInvoiceId);
       this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return response;
@@ -174,9 +168,8 @@ export const useSalesInvoiceStore = defineStore({
     async UpdateInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<boolean> {
-      const updated = await SalesService.SalesInvoice.UpdateDetail(
-        invoiceDetail
-      );
+      const updated =
+        await SalesService.SalesInvoice.UpdateDetail(invoiceDetail);
       this.GetDetailsById(invoiceDetail.salesInvoiceId);
       this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return updated;
@@ -184,17 +177,15 @@ export const useSalesInvoiceStore = defineStore({
     async DeleteInvoiceDetail(
       invoiceDetail: SalesInvoiceDetail
     ): Promise<boolean> {
-      const deleted = await SalesService.SalesInvoice.DeleteDetail(
-        invoiceDetail
-      );
+      const deleted =
+        await SalesService.SalesInvoice.DeleteDetail(invoiceDetail);
       this.GetDetailsById(invoiceDetail.salesInvoiceId);
       this.GetHeaderById(invoiceDetail.salesInvoiceId);
       return deleted;
     },
     async PrintInvoice(id: string, number: string): Promise<boolean> {
-      const invoiceReport = await SalesService.SalesInvoice.GetReportDataById(
-        id
-      );
+      const invoiceReport =
+        await SalesService.SalesInvoice.GetReportDataById(id);
       if (!invoiceReport) return false;
 
       const fileName = `Factura_${number}.docx`;

@@ -128,8 +128,16 @@ export const calculateDuration = (startTime: string | null): string => {
   return `${hours}h ${minutes}m`;
 };
 
-export const createBlobAndDownloadFile = (name: string, data: any) => {
-  const url = window.URL.createObjectURL(new Blob([data]));
+export const createBlobAndDownloadFile = (
+  name: string,
+  data: any,
+  mimeType?: string
+) => {
+  // Create blob with proper MIME type if provided
+  const blob = mimeType
+    ? new Blob([data], { type: mimeType })
+    : new Blob([data]);
+  const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
 
   link.href = url;
@@ -137,6 +145,9 @@ export const createBlobAndDownloadFile = (name: string, data: any) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
+  // Clean up the URL after a short delay
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 };
 
 export const getNewUuid = () => {

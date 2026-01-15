@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { FormValidation } from "../../utils/form-validator";
 import IconPicker from "../IconPicker.vue";
 import type { MenuItemFlat, MenuItemNode } from "../../types/menuitem";
-import { getMenuItemsHierarchy } from "../../api/services/menuitem.service";
+import { getMenuItemsHierarchy } from "../../services/menuitem.service";
 import { BaseInputType } from "../../types/component";
 
 const props = defineProps<{
@@ -46,11 +46,15 @@ const parentFlat = computed<MenuItemFlat[]>(() => {
   return list.filter((i) => !form.value.id || i.id !== form.value.id);
 });
 
+// REMOVED: Bidirectional watcher that was causing infinite loops
+// The parent passes initial data via props, child maintains its own state
+// Child only syncs back to parent on submit, not on every change
 watch(
   () => props.modelValue,
   (v) => {
     form.value = { ...v };
-  }
+  },
+  { immediate: true }
 );
 
 const validate = () => {
@@ -61,6 +65,8 @@ const validate = () => {
 
 const submit = () => {
   if (!validate()) return;
+  // Sync final state to parent before submit
+  emit("update:modelValue", form.value);
   emit("submit");
 };
 
@@ -69,12 +75,6 @@ const loadHierarchy = async () => {
 };
 
 onMounted(loadHierarchy);
-
-watch(
-  () => form.value,
-  (v) => emit("update:modelValue", v),
-  { deep: true }
-);
 </script>
 <template>
   <div class="form-menu-item">
@@ -97,7 +97,7 @@ watch(
         <label class="block mb-2">{{ t("menuItems.form.sortOrder") }}</label>
         <BaseInput
           :type="BaseInputType.NUMERIC"
-          v-model="(form.sortOrder as any)"
+          v-model="form.sortOrder as any"
           :min="0"
         />
         <small class="p-error" v-if="errors.sortOrder">{{

@@ -1,12 +1,12 @@
-import BaseService from "../base.service";
+import BaseService from "@/api/base.service";
 import {
   UserMenuResponse,
   ProfileDetail,
   CreateProfileRequest,
   UpdateProfileRequest,
   ProfileMenuAssignmentRequest,
-} from "../../types/profile";
-import { Profile } from "../../types";
+} from "@/types/profile";
+import { Profile } from "@/types";
 
 export class ProfileService extends BaseService<any> {
   constructor() {
@@ -79,7 +79,11 @@ export class ProfileService extends BaseService<any> {
       );
       if (response.status === 200)
         return response.data as ProfileMenuAssignmentRequest;
-    } catch {}
+      console.warn(`GetMenuAssignment returned status ${response.status}`);
+    } catch (err) {
+      console.error("GetMenuAssignment failed:", err);
+      throw err; // Re-throw so caller knows it failed
+    }
   }
 
   async UpdateMenuAssignment(

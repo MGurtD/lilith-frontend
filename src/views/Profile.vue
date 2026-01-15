@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
 import { useProfilesStore } from "../store/profiles";
@@ -14,11 +14,12 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id as string;
-const isNew = id === "new";
 const store = useStore();
 const profiles = useProfilesStore();
 const toast = useToast();
 const confirm = useConfirm();
+const isNew = ref(false);
+const componentReady = ref(false);
 
 const formModel = ref<any>({});
 const menuModel = ref<{
@@ -29,7 +30,7 @@ const menuModel = ref<{
 const refreshHeader = () => {
   store.setMenuItem({
     icon: PrimeIcons.USER,
-    title: t(isNew ? "profiles.newTitle" : "profiles.editTitle"),
+    title: t(isNew.value ? "profiles.newTitle" : "profiles.editTitle"),
     backButtonVisible: true,
   });
 };
@@ -44,22 +45,48 @@ const initMenuModel = () => {
     : { menuItemIds: [], defaultMenuItemId: null };
 };
 
-onMounted(async () => {
-  refreshHeader();
-  if (isNew) {
-    profiles.setNew();
-    formModel.value = { ...profiles.current };
-    initMenuModel();
-  } else {
-    await profiles.fetchOne(id);
-    formModel.value = { ...profiles.current };
-    initMenuModel();
-  }
+onMounted(() => {
+  // Wrap entire initialization in setTimeout to completely break reactive chain
+  // This prevents "Maximum recursive updates" during component mount
+  setTimeout(async () => {
+    try {
+      await profiles.fetchOne(id);
+
+      if (!profiles.current) {
+        isNew.value = true;
+        profiles.setNew(id);
+        // For new profiles, initialize with empty menu model immediately
+        initMenuModel();
+      }
+      // For existing profiles, initMenuModel will be called by onMenuAssignmentLoaded event
+
+      // Break reactive link by creating a plain object copy (parse/stringify removes all reactivity)
+      formModel.value = JSON.parse(JSON.stringify(profiles.current));
+
+      refreshHeader();
+
+      // Now it's safe to render child component
+      componentReady.value = true;
+      console.log("Profile.vue: Component ready, child can render");
+    } catch (err) {
+      console.error("Profile.vue: Error during initialization:", err);
+    }
+  }, 0);
 });
+
+// Called by ProfileMenuAssignment component when it finishes loading data
+// Use nextTick to break the reactive chain and prevent recursive updates
+const onMenuAssignmentLoaded = () => {
+  console.log("Profile.vue: Menu assignment loaded event received");
+  nextTick(() => {
+    initMenuModel();
+    console.log("Profile.vue: Menu model initialized");
+  });
+};
 
 const saveProfile = async () => {
   let ok = false;
-  if (isNew) {
+  if (isNew.value) {
     ok = await profiles.create({
       name: formModel.value.name || "",
       description: formModel.value.description,
@@ -80,11 +107,13 @@ const saveProfile = async () => {
     }
     toast.add({
       severity: "success",
-      summary: t(isNew ? "profiles.created" : "profiles.updated"),
+      summary: t(isNew.value ? "profiles.created" : "profiles.updated"),
       life: 2500,
     });
-    if (isNew && profiles.current)
-      router.replace({ path: `/profile/${profiles.current.id}` });
+    if (isNew.value) {
+      isNew.value = false;
+      router.replace({ path: `/profile/${profiles.current!.id}` });
+    }
   } else {
     toast.add({ severity: "error", summary: t("profiles.error"), life: 3000 });
   }
@@ -93,8 +122,9 @@ const saveProfile = async () => {
 const onMenuSelectionChange = (ids: string[]) => {
   if (!menuModel.value) return;
   menuModel.value.menuItemIds = ids;
-  // also update store working selection so other parts remain in sync
-  profiles.setMenuSelection(ids);
+  // REMOVED: profiles.setMenuSelection(ids) - was causing infinite loop
+  // Store updates happen only when user explicitly saves via onSaveMenus
+  // This prevents child component watcher from re-triggering during user selection
 };
 
 const onSaveMenus = () => {
@@ -139,11 +169,12 @@ const onSaveMenus = () => {
         />
       </div>
     </div>
-    <div class="col-12">
+    <div class="col-12" v-if="componentReady">
       <div class="card">
         <ProfileMenuAssignment
           :profileId="id"
           @menu-selection-change="onMenuSelectionChange"
+          @menu-assignment-loaded="onMenuAssignmentLoaded"
           @save="onSaveMenus"
         />
       </div>

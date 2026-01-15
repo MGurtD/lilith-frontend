@@ -8,6 +8,7 @@ import { useStore } from "../store";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { useMenusStore } from "../store/menus";
+import { v4 as uuidv4 } from "uuid";
 
 const router = useRouter();
 const appStore = useStore();
@@ -28,8 +29,51 @@ const toTreeNode = (n: MenuItemNode): TreeNodeLocal => ({
   children: n.children?.map(toTreeNode),
 });
 
+const searchFilter = ref("");
+
+const filterNode = (node: MenuItemNode, search: string): boolean => {
+  const searchLower = search.toLowerCase();
+  const matchesNode =
+    node.title.toLowerCase().includes(searchLower) ||
+    node.key.toLowerCase().includes(searchLower);
+
+  if (matchesNode) return true;
+
+  // Check if any children match
+  if (node.children) {
+    return node.children.some((child) => filterNode(child, search));
+  }
+
+  return false;
+};
+
+const filteredTree = computed<MenuItemNode[]>(() => {
+  if (!searchFilter.value) return menusStore.tree;
+
+  const filterTree = (nodes: MenuItemNode[]): MenuItemNode[] => {
+    return nodes
+      .map((node) => {
+        const matches = filterNode(node, searchFilter.value);
+        if (matches) {
+          // If node or any descendant matches, include it with filtered children
+          if (node.children) {
+            return {
+              ...node,
+              children: filterTree(node.children),
+            };
+          }
+          return node;
+        }
+        return null;
+      })
+      .filter((node): node is MenuItemNode => node !== null);
+  };
+
+  return filterTree(menusStore.tree);
+});
+
 const treeData = computed<TreeNodeLocal[]>(() =>
-  menusStore.tree.map(toTreeNode)
+  filteredTree.value.map(toTreeNode)
 );
 
 // PrimeVue TreeTable single selection requires selectionKeys binding for node-select to fire reliably
@@ -40,7 +84,7 @@ const loading = computed(
   () => menusStore.loading || menusStore.treeLoading || menusStore.saving
 );
 
-const createNew = () => router.push({ path: "/menuitem/new" });
+const createNew = () => router.push({ path: `/menuitem/${uuidv4()}` });
 
 const open = (event: any) => {
   console.log(event);
@@ -94,14 +138,23 @@ onMounted(async () => {
       scrollable
     >
       <template #header>
-        <div class="flex justify-content-between align-items-center w-full">
-          <span class="font-bold">{{ t("menuItems.listTitle") }}</span>
-          <div class="flex gap-2">
-            <Button
-              :label="t('menuItems.newButton')"
-              icon="pi pi-plus"
-              @click="createNew"
-            />
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
+        >
+          <div class="datatable-filter-1">
+            <IconField iconPosition="left">
+              <InputIcon>
+                <i :class="PrimeIcons.SEARCH" />
+              </InputIcon>
+              <InputText
+                v-model="searchFilter"
+                :placeholder="t('common.search')"
+                class="w-full"
+              />
+            </IconField>
+          </div>
+          <div class="datatable-buttons">
+            <Button :icon="PrimeIcons.PLUS" rounded raised @click="createNew" />
           </div>
         </div>
       </template>

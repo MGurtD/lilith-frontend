@@ -2,11 +2,12 @@
   <div class="mt-4">
     <DataTable
       :value="reasons"
-      class="p-datatable-sm small-last-column"
+      class="p-datatable-sm small-last-column clickable-rows"
       tableStyle="min-width: 100%"
       paginator
       :rows="10"
       stripedRows
+      :rowHover="true"
     >
       <template #header>
         <div

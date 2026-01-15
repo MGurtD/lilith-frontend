@@ -4,7 +4,45 @@
     <section class="section_lifecycle mt-5">
       <FormLifecycle v-if="lifecycle" :lifecycle="lifecycle" />
     </section>
-    <section class="section_status">
+
+    <TabView v-if="formMode === FormActionMode.EDIT && lifecycle">
+      <TabPanel header="Estats i Transicions">
+        <section class="section_status">
+          <div class="section_status_list">
+            <TableStatuses
+              v-if="lifecycle"
+              :lifecycle-id="lifecycle.id"
+              :statuses="lifecycle.statuses"
+              :transitions="lifecycleStore.transitions"
+              @add="(s) => openStatus(FormActionMode.CREATE, s)"
+              @edit="(s) => openStatus(FormActionMode.EDIT, s)"
+              @delete="deleteStatus"
+            />
+          </div>
+          <div class="section_statustransition_list">
+            <TableStatusTransitions
+              v-if="lifecycle"
+              :statuses="lifecycle.statuses"
+              :transitions="lifecycleStore.transitions"
+              @add="(t) => openStatusTransition(FormActionMode.CREATE, t)"
+              @edit="(t) => openStatusTransition(FormActionMode.EDIT, t)"
+              @delete="deleteStatusTransition"
+            />
+          </div>
+        </section>
+      </TabPanel>
+
+      <TabPanel header="Etiquetes">
+        <TableLifecycleTags
+          :tags="lifecycle.tags || []"
+          @add="(t) => openTag(FormActionMode.CREATE, t)"
+          @edit="(t) => openTag(FormActionMode.EDIT, t)"
+          @delete="deleteTag"
+        />
+      </TabPanel>
+    </TabView>
+
+    <section v-else class="section_status">
       <div class="section_status_list">
         <TableStatuses
           v-if="lifecycle"
@@ -48,15 +86,29 @@
       :formAction="auxiliarFormAction"
       @submit="onStatusTransitionSubmit"
     />
+    <FormLifecycleTag
+      v-if="selectedTag"
+      :tag="selectedTag"
+      :formAction="auxiliarFormAction"
+      @submit="onTagSubmit"
+      @cancel="
+        () => {
+          dialogOptions.visible = false;
+          selectedTag = undefined;
+        }
+      "
+    />
   </Dialog>
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import TableStatuses from "../components/TableStatuses.vue";
 import TableStatusTransitions from "../components/TableStatusTransitions.vue";
+import TableLifecycleTags from "../components/TableLifecycleTags.vue";
 import FormLifecycle from "../components/FormLifecycle.vue";
 import FormStatus from "../components/FormStatus.vue";
 import FormStatusTransition from "../components/FormStatusTransition.vue";
+import FormLifecycleTag from "../components/FormLifecycleTag.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { storeToRefs } from "pinia";
@@ -64,7 +116,8 @@ import { useToast } from "primevue/usetoast";
 import { useLifecyclesStore } from "../store/lifecycle";
 import { PrimeIcons } from "primevue/api";
 import { FormActionMode, DialogOptions } from "../../../types/component";
-import { Lifecycle, Status, StatusTransition } from "../types";
+import { Lifecycle, Status, StatusTransition, LifecycleTag } from "../types";
+import SharedServices from "../services";
 
 const formMode = ref(FormActionMode.EDIT);
 const router = useRouter();
@@ -75,6 +128,7 @@ const { lifecycle, transitions } = storeToRefs(lifecycleStore);
 const auxiliarFormAction = ref(FormActionMode.CREATE);
 const selectedStatus = ref(undefined as Status | undefined);
 const selectedStatusTransition = ref(undefined as StatusTransition | undefined);
+const selectedTag = ref(undefined as LifecycleTag | undefined);
 
 const dialogOptions = reactive({
   visible: false,
@@ -115,6 +169,7 @@ const openStatus = (action: FormActionMode, status: Status) => {
   auxiliarFormAction.value = action;
   selectedStatus.value = status;
   selectedStatusTransition.value = undefined;
+  selectedTag.value = undefined;
 
   dialogOptions.visible = true;
   dialogOptions.title = "Introducció d'estats";
@@ -137,14 +192,33 @@ const deleteStatus = async (status: Status) => {
   await lifecycleStore.deleteStatus(status.id);
 };
 
-const onStatusSubmit = async (status: Status) => {
-  let asyncAction;
+const onStatusSubmit = async (
+  status: Status,
+  tagChanges: { assign: string[]; remove: string[] }
+) => {
+  let success = false;
+
   if (auxiliarFormAction.value == FormActionMode.CREATE) {
-    asyncAction = lifecycleStore.createStatus(status);
+    success = await lifecycleStore.createStatus(status);
   } else {
-    asyncAction = lifecycleStore.updateStatus(status.id, status);
+    success = await lifecycleStore.updateStatus(status.id, status);
   }
-  dialogOptions.visible = !(await asyncAction);
+
+  if (success) {
+    // Apply tag changes
+    for (const tagId of tagChanges.assign) {
+      await lifecycleStore.assignTagToStatus(status.id, tagId);
+    }
+    for (const tagId of tagChanges.remove) {
+      await lifecycleStore.removeTagFromStatus(status.id, tagId);
+    }
+
+    dialogOptions.visible = false;
+    selectedStatus.value = undefined;
+    await loadView();
+  } else {
+    dialogOptions.visible = false;
+  }
 };
 
 // StatusTransition
@@ -157,6 +231,7 @@ const openStatusTransition = (
   auxiliarFormAction.value = action;
   selectedStatus.value = undefined;
   selectedStatusTransition.value = transition;
+  selectedTag.value = undefined;
 
   dialogOptions.visible = true;
   dialogOptions.title = "Introducció de transicions";
@@ -172,7 +247,59 @@ const onStatusTransitionSubmit = async (transition: StatusTransition) => {
   } else {
     asyncAction = lifecycleStore.updateTransition(transition.id, transition);
   }
-  dialogOptions.visible = !(await asyncAction);
+  const success = await asyncAction;
+
+  if (success) {
+    dialogOptions.visible = false;
+    selectedStatusTransition.value = undefined;
+    await loadView();
+  }
+};
+
+// LifecycleTag
+const openTag = (action: FormActionMode, tag: LifecycleTag) => {
+  if (formMode.value === FormActionMode.CREATE) return;
+
+  auxiliarFormAction.value = action;
+  selectedStatus.value = undefined;
+  selectedStatusTransition.value = undefined;
+  selectedTag.value = { ...tag, lifecycleId: lifecycle.value!.id };
+
+  dialogOptions.visible = true;
+  dialogOptions.title =
+    action === FormActionMode.CREATE ? "Nova etiqueta" : "Editar etiqueta";
+};
+
+const deleteTag = async (tag: LifecycleTag) => {
+  const result = await lifecycleStore.deleteTag(tag.id);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Etiqueta eliminada correctament",
+      life: 4000,
+    });
+    await loadView();
+  }
+};
+
+const onTagSubmit = async (tag: LifecycleTag) => {
+  let result;
+  if (auxiliarFormAction.value === FormActionMode.CREATE) {
+    result = await lifecycleStore.createTag(lifecycle.value!.id, tag);
+  } else {
+    result = await lifecycleStore.updateTag(tag);
+  }
+
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Etiqueta desada correctament",
+      life: 4000,
+    });
+    dialogOptions.visible = false;
+    selectedTag.value = undefined;
+    await loadView();
+  }
 };
 
 // Lifecycle submit

@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { Lifecycle, Status, StatusTransition } from "../types";
+import {
+  Lifecycle,
+  Status,
+  StatusTransition,
+  LifecycleTag,
+  AvailableStatusTransitionDto,
+} from "../types";
 import Services from "../services";
 import { ref } from "vue";
 
@@ -9,6 +15,9 @@ export const useLifecyclesStore = defineStore({
     lifecycle: ref(undefined as Lifecycle | undefined),
     secondaryLifecycle: ref(undefined as Lifecycle | undefined),
     lifecycles: ref(undefined as Array<Lifecycle> | undefined),
+    availableTransitions: ref(
+      undefined as Array<AvailableStatusTransitionDto> | undefined
+    ),
   }),
   getters: {
     transitions: (state): Array<StatusTransition> => {
@@ -116,6 +125,48 @@ export const useLifecyclesStore = defineStore({
       const result = await Services.Lifecycle.deleteTransition(id);
       if (result) await this.fetchOne(this.lifecycle!.id);
       return result;
+    },
+
+    // Tags
+    async createTag(lifecycleId: string, model: LifecycleTag) {
+      const result = await Services.Lifecycle.createTag(lifecycleId, model);
+      if (result) await this.fetchOne(this.lifecycle!.id);
+      return result;
+    },
+    async updateTag(model: LifecycleTag) {
+      const result = await Services.Lifecycle.updateTag(model);
+      if (result) await this.fetchOne(this.lifecycle!.id);
+      return result;
+    },
+    async deleteTag(id: string) {
+      const result = await Services.Lifecycle.deleteTag(id);
+      if (result) await this.fetchOne(this.lifecycle!.id);
+      return result;
+    },
+    async fetchTagsByStatus(statusId: string) {
+      return await Services.Lifecycle.getTagsByStatus(statusId);
+    },
+    async assignTagToStatus(statusId: string, tagId: string) {
+      const result = await Services.Lifecycle.assignTagToStatus(
+        statusId,
+        tagId
+      );
+      if (result) await this.fetchOne(this.lifecycle!.id);
+      return result;
+    },
+    async removeTagFromStatus(statusId: string, tagId: string) {
+      const result = await Services.Lifecycle.removeTagFromStatus(
+        statusId,
+        tagId
+      );
+      if (result) await this.fetchOne(this.lifecycle!.id);
+      return result;
+    },
+
+    // Available Transitions
+    async fetchAvailableTransitions(statusId: string) {
+      this.availableTransitions =
+        await Services.Lifecycle.getAvailableTransitions(statusId);
     },
   },
 });

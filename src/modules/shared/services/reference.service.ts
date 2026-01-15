@@ -46,20 +46,9 @@ export class ReferenceService extends BaseService<Reference> {
   async deleteReference(id: string): Promise<GenericResponse<Reference>> {
     const response = await this.apiClient.delete(`${this.resource}/${id}`);
     if (response.status === 200) {
-      return {
-        result: true,
-        errors: [],
-        content: response.data as Reference,
-      };
+      return response.data as GenericResponse<Reference>;
     } else {
-      const errorMessage = response.data
-        ? response.data.toString()
-        : "Error desconegut";
-      return {
-        result: false,
-        errors: [errorMessage],
-        content: null,
-      };
+      return response.data as GenericResponse<Reference>;
     }
   }
 

@@ -44,14 +44,10 @@
       </section>
       <section class="three-columns">
         <div class="mt-2">
-          <label class="block text-900 mb-2">Estat</label>
-          <Dropdown
+          <DropdownLifecycleStatusTransitions
+            label="Estat"
+            :statusId="deliveryNote.statusId"
             v-model="deliveryNote.statusId"
-            editable
-            :options="lifeCycleStore.lifecycle?.statuses"
-            optionValue="id"
-            optionLabel="name"
-            class="w-full"
             :class="{
               'p-invalid': validation.errors.statusId,
             }"
@@ -80,7 +76,7 @@
 import { computed, ref } from "vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { useCustomersStore } from "../store/customers";
-import { useLifecyclesStore } from "../../shared/store/lifecycle";
+import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { DeliveryNote } from "../types";
 import * as Yup from "yup";
@@ -103,7 +99,6 @@ const emit = defineEmits<{
 
 const customerStore = useCustomersStore();
 const sharedDataStore = useSharedDataStore();
-const lifeCycleStore = useLifecyclesStore();
 const toast = useToast();
 
 const salesInvoiceNumber = computed(() => {

@@ -1,6 +1,6 @@
 <template>
   <form v-if="exercise">
-    <div class="two-columns">
+    <div class="four-columns">
       <BaseInput
         class="mb-2"
         label="Nom"
@@ -19,8 +19,6 @@
           'p-invalid': validation.errors.description,
         }"
       ></BaseInput>
-    </div>
-    <div class="two-columns" style="margin-bottom: 1rem">
       <div>
         <label class="block text-900 mb-2">Data inici</label>
         <Calendar
@@ -92,6 +90,25 @@
       </div>
     </div>
 
+    <section class="four-columns mt-2">
+      <div>
+        <BaseInput
+          label="Marge material per defecte (%)"
+          v-model.number="exercise.materialProfit"
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+        />
+      </div>
+      <div>
+        <BaseInput
+          label="Marge extern per defecte (%)"
+          v-model.number="exercise.externalProfit"
+          :type="BaseInputType.NUMERIC"
+          :decimals="2"
+        />
+      </div>
+    </section>
+
     <div class="mt-2">
       <Button label="Guardar" class="mr-2" @click="submitForm" />
     </div>
@@ -109,6 +126,7 @@ import {
 } from "../../../utils/form-validator";
 import { useToast } from "primevue/usetoast";
 import { convertDateTimeToJSON } from "../../../utils/functions";
+import { BaseInputType } from "@/types/component";
 
 const props = defineProps<{
   exercise: Exercise;

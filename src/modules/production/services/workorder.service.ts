@@ -3,8 +3,11 @@ import {
   WorkOrderPhase,
   WorkOrderPhaseDetail,
   WorkOrderPhaseBillOfMaterials,
+  WorkOrderWithPhases,
+  WorkOrderPhaseDetailed,
   CreateWorkOrderDto,
   DetailedWorkOrder,
+  WorkOrderOrder,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -44,14 +47,9 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       return response.data as Array<WorkOrder>;
     }
   }
-  async GetByWorkcenterIdInProduction(
-    workcenterId: string
-  ): Promise<Array<WorkOrder> | undefined> {
-    const endpoint = `${this.resource}/Workcenter/${workcenterId}/Production`;
-    const response = await this.apiClient.get(endpoint);
-    if (response.status === 200) {
-      return response.data as Array<WorkOrder>;
-    }
+  async GetPlannableWorkOrders(): Promise<Array<WorkOrder> | undefined> {
+    const response = await this.apiClient.get(`${this.resource}/Plannable`);
+    if (response.status === 200) return response.data as Array<WorkOrder>;
   }
   async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
     const response = await this.apiClient.post(
@@ -69,6 +67,15 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       dto
     );
     return response.data as GenericResponse<WorkOrder>;
+  }
+  async Priorize(
+    workOrderOrders: WorkOrderOrder[]
+  ): Promise<GenericResponse<boolean>> {
+    const response = await this.apiClient.post(
+      `${this.resource}/Priorize`,
+      workOrderOrders
+    );
+    return response.data as GenericResponse<boolean>;
   }
 }
 export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
@@ -96,6 +103,38 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
       }));
       return workOrderPhases;
     }
+  }
+
+  async GetPlannedPhasesByWorkcenterType(
+    workcenterTypeId: string
+  ): Promise<Array<WorkOrderWithPhases> | undefined> {
+    const response = await this.apiClient.get(
+      `/WorkOrder/Planned/WorkcenterType/${workcenterTypeId}`
+    );
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderWithPhases>;
+    }
+  }
+
+  async GetWorkOrderPhasesDetailed(
+    workOrderId: string
+  ): Promise<Array<WorkOrderPhaseDetailed> | undefined> {
+    const response = await this.apiClient.get(
+      `/WorkOrder/${workOrderId}/PhasesDetailed`
+    );
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderPhaseDetailed>;
+    }
+  }
+
+  async GetLoadedByPhaseIds(
+    phaseIds: string[]
+  ): Promise<Array<WorkOrderWithPhases>> {
+    const response = await this.apiClient.post(`/WorkOrder/Loaded`, phaseIds);
+    if (response.status === 200) {
+      return response.data as Array<WorkOrderWithPhases>;
+    }
+    return [];
   }
 }
 

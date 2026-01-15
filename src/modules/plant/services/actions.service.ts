@@ -4,6 +4,8 @@ import {
   WorkcenterRealtimeHandler,
   WorkcenterRealtime,
   ChangeMachineStatusRequest,
+  LoadWorkOrderPhaseRequest,
+  UnloadWorkOrderPhaseRequest,
 } from "../types";
 import serverClient, {
   connectWebSocket,
@@ -25,6 +27,16 @@ class ActionsService {
   }
   async changeMachineStatus(request: ChangeMachineStatusRequest) {
     const endpoint = `/api/status/in`;
+    const response = await serverClient.post(endpoint, request);
+    return response.status === 200;
+  }
+  async loadWorkOrderPhaseAndMachineStatus(request: LoadWorkOrderPhaseRequest) {
+    const endpoint = `/api/workorderphase/in`;
+    const response = await serverClient.post(endpoint, request);
+    return response.status === 200;
+  }
+  async unloadWorkOrderPhase(request: UnloadWorkOrderPhaseRequest) {
+    const endpoint = `/api/workorderphase/out`;
     const response = await serverClient.post(endpoint, request);
     return response.status === 200;
   }

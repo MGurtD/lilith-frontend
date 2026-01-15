@@ -1,9 +1,11 @@
 <template>
   <DataTable
     @row-click="onEditRow"
-    class="p-datatable-sm"
+    class="p-datatable-sm clickable-rows"
     :value="billOfMaterials"
     tableStyle="min-width: 100%"
+    stripedRows
+    :rowHover="true"
   >
     <template #header>
       <div

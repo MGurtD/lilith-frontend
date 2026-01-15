@@ -45,12 +45,19 @@ import catalan from "./i18n/primevue/catalan";
 import Badge from "primevue/badge";
 import InputGroupAddon from "primevue/inputgroupaddon";
 import InputGroup from "primevue/inputgroup";
+import InputIcon from "primevue/inputicon";
+import IconField from "primevue/iconfield";
+import MultiSelect from "primevue/multiselect";
+import { globalToast } from "@/utils/global-toast";
 
 app.use(PrimeVue, {
   locale: catalan,
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+
+// Initialize global toast service for axios interceptor
+globalToast.init(app);
 
 app.directive("tooltip", Tooltip);
 
@@ -82,6 +89,9 @@ app
   .component("Badge", Badge)
   .component("Panel", Panel)
   .component("InputGroup", InputGroup)
-  .component("InputGroupAddon", InputGroupAddon);
+  .component("InputGroupAddon", InputGroupAddon)
+  .component("InputIcon", InputIcon)
+  .component("IconField", IconField)
+  .component("MultiSelect", MultiSelect);
 
 app.mount("#app");

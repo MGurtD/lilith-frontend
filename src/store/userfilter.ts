@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { UserFilter } from "../types";
-import AppServices from "../api/services";
+import AppServices from "../services";
 import { useStore } from ".";
 import { getNewUuid } from "../utils/functions";
 

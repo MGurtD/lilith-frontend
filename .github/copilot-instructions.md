@@ -47,7 +47,7 @@ modules/
 ```
 
 **Route Registration**: `src/router.ts` imports and spreads all domain route arrays  
-**Naming**: Stores use `use<Entity>Store`, services `<Entity>Service extends BaseService<T>`  
+**Naming**: Stores use `use<Entity>Store`, services `<Entity>Service extends BaseService<T>`
 
 ### Service Layer Pattern
 
@@ -56,9 +56,15 @@ All HTTP communication through service classes:
 ```typescript
 // Example: src/modules/production/services/workorder.service.ts
 export class WorkOrderService extends BaseService<WorkOrder> {
-  constructor() { super("workorder"); }
-  
-  async GetBetweenDatesAndStatus(start: string, end: string, statusId?: string) {
+  constructor() {
+    super("workorder");
+  }
+
+  async GetBetweenDatesAndStatus(
+    start: string,
+    end: string,
+    statusId?: string
+  ) {
     const response = await this.apiClient.get(
       `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`
     );
@@ -69,7 +75,7 @@ export class WorkOrderService extends BaseService<WorkOrder> {
 
 **Base CRUD**: `getAll()`, `getById(id)`, `create(model)`, `update(id, model)`, `delete(id)` inherited  
 **Custom queries**: Add methods like `GetBetweenDates()`, `GetBySalesOrderId()`, etc.  
-**Returns**: Boolean for simple CRUD, typed data or `GenericResponse<T>` for complex operations  
+**Returns**: Boolean for simple CRUD, typed data or `GenericResponse<T>` for complex operations
 
 ### Pinia Store Pattern
 
@@ -84,7 +90,7 @@ export const useWorkOrderStore = defineStore({
   }),
   actions: {
     setNew(id: string) {
-      this.workorder = { id, /* ...defaults */ } as WorkOrder;
+      this.workorder = { id /* ...defaults */ } as WorkOrder;
     },
     async fetchAll() {
       this.workorders = await Services.WorkOrder.getAll();
@@ -107,6 +113,7 @@ export const useWorkOrderStore = defineStore({
 ```
 
 **Key Conventions**:
+
 - Mutate state only in actions
 - After create/update/delete: re-fetch parent or list to sync UI
 - Nested entities (phases, details): separate actions that re-fetch parent
@@ -115,6 +122,7 @@ export const useWorkOrderStore = defineStore({
 ### Global State (`src/store/`)
 
 **Core stores**:
+
 - `useStore()` (index.ts): Auth, JWT, user, sidebar menus, language, exercise picker
 - `useUserFilterStore()`: Persisted user-specific filters (table states, etc.)
 - `useApiStore()` (backend.ts): Loading state, error messages
@@ -129,10 +137,12 @@ export const useWorkOrderStore = defineStore({
 ### API Clients & Interceptors
 
 **Two Axios instances**:
+
 1. `apiClient` (api.client.ts): Main backend at `VITE_API_BASE_URL`
 2. `reportsClient` (reports.client.ts): Reports microservice at `VITE_REPORTS_BASE_URL`
 
 Both have identical interceptor patterns:
+
 - **Request**: Set `Accept-Language` from `useStore().language.current`, add `?culture=X` override if set, toggle `useApiStore().isWaiting`
 - **Response**: Clear loading state, log errors, show toast on failures
 - **Status validation**: Accept <500 status codes (handle 4xx in business logic)
@@ -168,6 +178,7 @@ const downloadReport = async (id: string) => {
 ### PWA Behavior
 
 Configured via `vite-plugin-pwa` with:
+
 - **Auto-update strategy**: Background service worker updates
 - **Runtime caching**: Network-first for API, cache-first for assets/CDN
 - **Redirect logic**: PWA standalone mode redirects `/` to `/plant` (shop floor module)
@@ -176,6 +187,31 @@ Configured via `vite-plugin-pwa` with:
 Check PWA mode: `window.matchMedia("(display-mode: standalone)").matches`
 
 ## Component & Form Patterns
+
+### DataTable Interaction Patterns
+
+**Row Hover & Click Styling**:
+
+- For clickable tables (with `@row-click` event), add `clickable-rows` class to apply pointer cursor
+- Always include `stripedRows` for better row distinction
+- Add `:rowHover="true"` to enable hover highlighting (explicit is better)
+
+```vue
+<DataTable
+  :value="items"
+  @row-click="onEditRow"
+  class="p-datatable-sm clickable-rows"
+  stripedRows
+  :rowHover="true"
+>
+  <!-- columns -->
+</DataTable>
+```
+
+**Non-clickable tables** (view-only or with button-only actions):
+
+- Include `stripedRows` and `:rowHover="true"` for visual feedback
+- Omit `clickable-rows` class - no pointer cursor needed
 
 ### Typical Detail View Flow
 
@@ -193,11 +229,11 @@ const appStore = useStore();
 onMounted(async () => {
   const id = route.params.id as string;
   await store.fetchOne(id);
-  
+
   if (!store.workorder) {
     store.setNew(id);
   }
-  
+
   appStore.setMenuItem({
     icon: PrimeIcons.BOOK,
     title: store.workorder?.code || "Nova ordre",
@@ -216,7 +252,7 @@ const temp = ref<PhaseDetail | undefined>();
 const formMode = ref<FormActionMode>(FormActionMode.CREATE);
 
 const openCreate = () => {
-  temp.value = { 
+  temp.value = {
     id: getNewUuid(),
     workOrderPhaseId: currentPhase.value!.id,
     // ...defaults with numeric fields = 0 not undefined
@@ -235,10 +271,11 @@ const openEdit = (item: PhaseDetail) => {
 
 const save = async () => {
   // Validate if needed
-  const result = formMode.value === FormActionMode.CREATE
-    ? await store.createDetail(temp.value!)
-    : await store.updateDetail(temp.value!.id, temp.value!);
-  
+  const result =
+    formMode.value === FormActionMode.CREATE
+      ? await store.createDetail(temp.value!)
+      : await store.updateDetail(temp.value!.id, temp.value!);
+
   if (result) {
     dialog.visible = false;
     toast.add({ severity: "success", summary: "Desat correctament" });
@@ -247,6 +284,7 @@ const save = async () => {
 ```
 
 **Key rules**:
+
 - Always clone objects when editing to prevent premature state mutation
 - Numeric defaults should be `0`, not `undefined` (avoids NaN in calculations)
 - Re-fetch parent entity after nested entity changes
@@ -261,7 +299,9 @@ import { FormValidation, FormValidationResult } from "@/utils/form-validator";
 
 const schema = Yup.object({
   name: Yup.string().required("El nom és obligatori"),
-  quantity: Yup.number().min(1, "La quantitat ha de ser superior a 0").required(),
+  quantity: Yup.number()
+    .min(1, "La quantitat ha de ser superior a 0")
+    .required(),
   price: Yup.number().min(0, "El preu no pot ser negatiu"),
 });
 
@@ -270,13 +310,15 @@ const validation = ref<FormValidationResult>({ result: false, errors: {} });
 const submit = async () => {
   const validator = new FormValidation(schema);
   validation.value = validator.validate(model.value);
-  
+
   if (!validation.value.result) {
-    const errorMessages = Object.values(validation.value.errors).flat().join("\n");
+    const errorMessages = Object.values(validation.value.errors)
+      .flat()
+      .join("\n");
     toast.add({ severity: "warn", summary: errorMessages, life: 8000 });
     return;
   }
-  
+
   // Proceed with save
   const success = await store.create(model.value);
   if (success) {
@@ -286,6 +328,7 @@ const submit = async () => {
 ```
 
 **Validation rules**:
+
 - All error messages in Catalan
 - Use `FormValidation` class from `utils/form-validator.ts`
 - Display errors with toast (severity: "warn")
@@ -305,9 +348,9 @@ interface GenericResponse<T> {
 // Handling in services/stores
 const response = await service.ComplexOperation(payload);
 if (!response.result) {
-  toast.add({ 
-    severity: "error", 
-    summary: response.errors[0] || "Error desconegut" 
+  toast.add({
+    severity: "error",
+    summary: response.errors[0] || "Error desconegut",
   });
   return false;
 }
@@ -328,6 +371,7 @@ if (!response.result) {
 - **`calculateDuration(startTime)`**: Calculate elapsed time from start
 
 **Extension rules**:
+
 - Add new utilities only if reusable across ≥2 modules
 - Keep functions pure and generic (no domain-specific logic)
 - Include JSDoc comments for new utilities
@@ -335,6 +379,7 @@ if (!response.result) {
 ## Date & Time Handling
 
 **Critical rules**:
+
 - Always normalize dates before API calls: `convertDateTimeToJSON(dateValue)`
 - Clone date objects if applying multiple transformations
 - Use `formatDateForQueryParameter()` for filtering queries
@@ -356,12 +401,14 @@ await store.create(workorder);
 **WorkMaster / WorkOrder → Phases → Details & BOM Items**
 
 The production module uses a hierarchical structure:
+
 - **WorkMaster/WorkOrder**: Top-level manufacturing definitions/instances
 - **Phases**: Steps in the manufacturing process
 - **Phase Details**: Specific operations within a phase
 - **BOM Items**: Bill of materials - components consumed in the phase
 
 **CRUD rules for nested entities**:
+
 - Child entity changes must re-fetch parent phase
 - Use consistent property naming: `workMasterPhaseId`, `workOrderPhaseId`
 - Provide proper defaults on creation (numeric fields = `0`, not `undefined`)
@@ -385,10 +432,10 @@ Many list views depend on `exercisePicker.dates` from global store for date rang
 ```typescript
 const appStore = useStore();
 if (!appStore.exercisePicker.dates) {
-  toast.add({ 
-    severity: "warn", 
-    summary: "Selecciona un exercici per continuar", 
-    life: 4000 
+  toast.add({
+    severity: "warn",
+    summary: "Selecciona un exercici per continuar",
+    life: 4000,
   });
   return;
 }
@@ -402,6 +449,7 @@ await store.fetchFiltered(
 ```
 
 **Initialize exercise picker**:
+
 ```typescript
 // Set current year automatically
 appStore.setCurrentYear();
@@ -410,6 +458,7 @@ appStore.setCurrentYear();
 ## Authentication & Navigation
 
 **Authentication flow**:
+
 - JWT stored in `authorization` property of `useStore()`
 - Decoded with `jwt-decode` to extract user ID and locale
 - User object loaded via `UserService.GetById()`
@@ -417,12 +466,13 @@ appStore.setCurrentYear();
 - Language preference from JWT `locale` field or localStorage
 
 **Setting page headers**:
+
 ```typescript
 const appStore = useStore();
 appStore.setMenuItem({
   icon: PrimeIcons.BOOK,
   title: "Nova ordre de treball",
-  backButtonVisible: true
+  backButtonVisible: true,
 });
 ```
 
@@ -431,16 +481,20 @@ appStore.setMenuItem({
 ## Lifecycle & Status Management
 
 Entity lifecycle controls workflow states:
+
 - Each major entity type has named lifecycle (e.g., "WorkOrder", "SalesOrder", "Budget")
 - Status transitions managed by backend
 - Frontend uses lifecycle/status for guards and UI state
 
 **Status-based guards**:
+
 ```typescript
 // Compute permission guards based on lifecycle state
 const canModifyWorkOrder = computed(() => {
-  return store.workorder?.statusId !== 'completed' && 
-         store.workorder?.statusId !== 'cancelled';
+  return (
+    store.workorder?.statusId !== "completed" &&
+    store.workorder?.statusId !== "cancelled"
+  );
 });
 ```
 
@@ -463,6 +517,7 @@ toast.add({ severity: "info", summary: "Processant...", life: 3000 });
 ```
 
 **Rules**:
+
 - All messages in Catalan
 - Life: 3-8 seconds (longer for errors/validation)
 - Show first backend error message when available: `response.errors[0]`
@@ -470,24 +525,27 @@ toast.add({ severity: "info", summary: "Processant...", life: 3000 });
 ## Naming & Code Style
 
 **File naming**:
+
 - Vue SFC components: PascalCase (e.g., `WorkOrderDetail.vue`)
 - Utilities/services: camelCase files (e.g., `form-validator.ts`)
 - Stores: `use<Entity>Store` with id matching entity name
 
 **Component conventions**:
+
 - Use Composition API with `<script setup>`
 - Function names: camelCase
 - Avoid very large components (> ~200 lines) — extract subcomponents when possible
 - Type emitted events explicitly:
 
 ```typescript
-const emit = defineEmits<{ 
+const emit = defineEmits<{
   (e: "saved", entity: MyEntity): void;
   (e: "cancelled"): void;
 }>();
 ```
 
 **TypeScript**:
+
 - Prefer explicit types over `var` for clarity
 - Use nullable reference types appropriately (`Type | undefined`)
 - Avoid `any` - use `unknown` if type truly unknown
@@ -518,6 +576,7 @@ export default [
 ```
 
 **Conventions**:
+
 - Lazy imports for all views: `() => import('./views/MyView.vue')`
 - Consistent naming: lowercase path segments matching plural/singular entity names
 - Use `props: true` when binding route params to component props
@@ -534,17 +593,17 @@ const appStore = useStore();
 onMounted(async () => {
   const id = route.params.id as string;
   await store.fetchOne(id);
-  
-  const title = store.workorder 
-    ? `Editar ${store.workorder.code}` 
+
+  const title = store.workorder
+    ? `Editar ${store.workorder.code}`
     : "Alta nova ordre";
-    
+
   appStore.setMenuItem({
     icon: PrimeIcons.BOOK,
     backButtonVisible: true,
     title,
   });
-  
+
   if (!store.workorder) {
     store.setNew(id);
   }
@@ -556,11 +615,12 @@ onMounted(async () => {
 ```typescript
 const submit = async () => {
   const entity = store.current!;
-  
-  const ok = formMode.value === FormActionMode.CREATE
-    ? await store.create(entity)
-    : await store.update(entity.id, entity);
-    
+
+  const ok =
+    formMode.value === FormActionMode.CREATE
+      ? await store.create(entity)
+      : await store.update(entity.id, entity);
+
   if (ok) {
     toast.add({ severity: "success", summary: "Desat correctament" });
     // Optional: navigate away
@@ -575,21 +635,24 @@ const submit = async () => {
 const downloadReport = async (id: string) => {
   const data = await service.GetReportDataById(id);
   if (!data) {
-    toast.add({ severity: "warn", summary: "Sense dades per generar el document" });
+    toast.add({
+      severity: "warn",
+      summary: "Sense dades per generar el document",
+    });
     return;
   }
-  
+
   const blob = await new ReportService().Download(
-    data, 
-    REPORTS.ORDER, 
+    data,
+    REPORTS.ORDER,
     "comanda.pdf"
   );
-  
+
   if (!blob) {
     toast.add({ severity: "warn", summary: "Error al generar el document" });
     return;
   }
-  
+
   createBlobAndDownloadFile("comanda.pdf", blob);
 };
 ```
@@ -608,10 +671,11 @@ const openEdit = (row: PhaseDetail) => {
 };
 
 const saveDetail = async () => {
-  const ok = formMode.value === FormActionMode.CREATE
-    ? await phaseStore.createDetail(temp.value!)
-    : await phaseStore.updateDetail(temp.value!.id, temp.value!);
-    
+  const ok =
+    formMode.value === FormActionMode.CREATE
+      ? await phaseStore.createDetail(temp.value!)
+      : await phaseStore.updateDetail(temp.value!.id, temp.value!);
+
   if (ok) {
     await phaseStore.fetchPhaseById(parentId); // Re-fetch parent
     dialog.visible = false;
@@ -638,6 +702,7 @@ const saveDetail = async () => {
 ### Extension Rules for Utilities
 
 Add new utilities only if:
+
 - Generic (not domain-specific)
 - Reused by ≥2 components
 - Include concise JSDoc for new utilities
@@ -651,9 +716,16 @@ Generated code should:
 - Use early returns for validation failures
 - Null/undefined guard nested access
 
+- Type-check (no implicit `any`)
+- Avoid unused imports
+- Functions < ~40 lines (split if larger)
+- Use early returns for validation failures
+- Null/undefined guard nested access
+
 ## Common Anti-Patterns to Avoid
 
 **DON'T**:
+
 - Hard-code API URLs in components (use service layer)
 - Duplicate validation logic across components
 - Mix languages in UI (maintain Catalan)
@@ -663,6 +735,7 @@ Generated code should:
 - Forget to re-fetch after nested entity changes
 
 **DO**:
+
 - Reuse helpers & naming conventions
 - Keep business logic in store actions
 - Validate before all API calls

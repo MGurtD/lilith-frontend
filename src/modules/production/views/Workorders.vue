@@ -1,14 +1,8 @@
 <template>
-  <DataTable
-    :value="workOrderStore.workorders"
-    tableStyle="min-width: 100%"
-    class="p-datatable-sm small-datatable"
-    scrollable
-    scrollHeight="76vh"
-    sort-mode="multiple"
-    @row-click="editRow"
-    paginator
-    :rows="25"
+  <TableWorkorders
+    :workorders="workOrderStore.workorders"
+    @edit="editRow"
+    @delete="deleteButton"
   >
     <template #header>
       <div
@@ -55,52 +49,7 @@
         </div>
       </div>
     </template>
-    <Column field="code" header="Codi" style="width: 15%"></Column>
-    <Column header="Referencia" style="width: 40%">
-      <template #body="slotProps">
-        {{ referenceStore.getFullNameById(slotProps.data.referenceId) }}
-      </template>
-    </Column>
-    <Column header="Client" style="width: 15%">
-      <template #body="slotProps">
-        {{
-          customersStore.getCustomerNameById(
-            slotProps.data.reference.customerId
-          )
-        }}
-      </template>
-    </Column>
-    <Column field="statusId" header="Estat" style="width: 10%">
-      <template #body="slotProps">
-        {{ lifecycleStore.getStatusName(slotProps.data.statusId) }}
-      </template>
-    </Column>
-    <Column
-      field="plannedDate"
-      header="Data Prevista"
-      sortable
-      style="width: 12%"
-    >
-      <template #body="slotProps">
-        {{ formatDate(slotProps.data.plannedDate) }}
-      </template>
-    </Column>
-    <Column field="order" header="Prioritat" style="width: 10%"></Column>
-    <Column
-      field="plannedQuantity"
-      header="Quantitat"
-      style="width: 10%"
-    ></Column>
-    <Column>
-      <template #body="slotProps">
-        <i
-          :class="PrimeIcons.TIMES"
-          class="grid_delete_column_button"
-          @click="deleteButton($event, slotProps.data)"
-        />
-      </template>
-    </Column>
-  </DataTable>
+  </TableWorkorders>
 
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -119,25 +68,21 @@ import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import DropdownLifecycle from "../../shared/components/DropdownLifecycle.vue";
 import FormCreateWorkorder from "../components/FormCreateWorkorder.vue";
+import TableWorkorders from "../components/TableWorkorders.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { PrimeIcons } from "primevue/api";
-import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";
 import { CreateWorkOrderDto, WorkOrder } from "../types";
-import {
-  formatDateForQueryParameter,
-  formatDate,
-} from "../../../utils/functions";
+import { formatDateForQueryParameter } from "../../../utils/functions";
 import { DialogOptions } from "../../../types/component";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useWorkOrderStore } from "../store/workorder";
 import { useWorkMasterStore } from "../store/workmaster";
-import { useCustomersStore } from "../../sales/store/customers";
 import { useUserFilterStore } from "../../../store/userfilter";
 
 const router = useRouter();
@@ -148,7 +93,6 @@ const confirm = useConfirm();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 const referenceStore = useReferenceStore();
-const customersStore = useCustomersStore();
 const exerciseStore = useExerciseStore();
 const lifecycleStore = useLifecyclesStore();
 
@@ -249,14 +193,8 @@ const createButtonClick = () => {
   dialogOptions.visible = true;
 };
 
-const editRow = (row: DataTableRowClickEvent) => {
-  if (
-    !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
-    )
-  ) {
-    router.push({ path: `/workorder/${row.data.id}` });
-  }
+const editRow = (workorder: WorkOrder) => {
+  router.push({ path: `/workorder/${workorder.id}` });
 };
 
 const createWorkOrder = async () => {
@@ -267,9 +205,8 @@ const createWorkOrder = async () => {
     router.push({ path: `/workorder/${workOrderStore.workorder.id}` });
 };
 
-const deleteButton = (event: any, workorder: WorkOrder) => {
+const deleteButton = (workorder: WorkOrder) => {
   confirm.require({
-    target: event.currentTarget,
     message: `Está segur que vol eliminar la ordre ${workorder.code}?`,
     icon: "pi pi-question-circle",
     acceptIcon: "pi pi-check",

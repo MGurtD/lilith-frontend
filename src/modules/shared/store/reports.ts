@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import Services from "../../../api/services";
+import Services from "../../../services";
 import { File } from "../../../types";
 import { Parameter } from "../types";
 import { createBlobAndDownloadFile } from "../../../utils/functions";
-import { REPORTS_ENTITY_ID } from "../../../api/services/report.service";
+import { REPORTS_ENTITY_ID } from "../../../services/report.service";
 
 export const useReportsStore = defineStore({
   id: "reports",

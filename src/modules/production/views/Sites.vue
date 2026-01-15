@@ -67,7 +67,7 @@ onMounted(async () => {
 });
 
 const createButtonClick = () => {
-  router.push({ path: `/enterprise/${uuidv4()}` });
+  router.push({ path: `/site/${uuidv4()}` });
 };
 
 const editSite = (row: DataTableRowClickEvent) => {

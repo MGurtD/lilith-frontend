@@ -1,65 +1,93 @@
 <template>
-  <div class="workorder-selector">
+  <div class="phase-selector">
     <DataTable
       :value="workOrders"
       :loading="loading"
-      selectionMode="single"
-      @row-select="onRowSelect"
-      dataKey="id"
-      :paginator="true"
-      :rows="10"
       responsiveLayout="scroll"
       stripedRows
+      v-model:selectionKeys="selectedKey"
+      selectionMode="single"
+      @row-select="onRowSelect"
     >
-      <Column field="code" header="Codi OF" :sortable="true">
+      <!-- Code -->
+      <Column field="workOrderCode" header="Codi" :sortable="true">
         <template #body="slotProps">
-          <span class="font-bold">{{ slotProps.data.code }}</span>
+          <span class="font-bold">{{ slotProps.data.workOrderCode }}</span>
         </template>
       </Column>
-      <Column header="Client">
+
+      <!-- Customer Name -->
+      <Column field="customerName" header="Client" :sortable="true">
+        <template #body="slotProps">
+          <span class="font-bold">{{ slotProps.data.customerName }}</span>
+        </template>
+      </Column>
+
+      <!-- Reference -->
+      <Column
+        field="salesReferenceDisplay"
+        header="Referència"
+        :sortable="true"
+      >
         <template #body="slotProps">
           <span class="font-bold">{{
-            slotProps.data.reference.customer.comercialName
+            slotProps.data.salesReferenceDisplay
           }}</span>
         </template>
       </Column>
-      <Column header="Referència" :sortable="true">
-        <template #body="slotProps">
-          <div class="reference-column">
-            <span class="font-bold">{{
-              referenceStore.getFullName(slotProps.data.reference)
-            }}</span>
-          </div>
-        </template>
-      </Column>
-      <Column field="plannedDate" header="Data planificada" :sortable="true">
-        <template #body="slotProps">
-          {{ formatDate(slotProps.data.plannedDate) }}
-        </template>
-      </Column>
+
+      <!-- Quantity -->
       <Column
         field="plannedQuantity"
         header="Quantitat"
+        :sortable="true"
         style="min-width: 100px; text-align: right"
-      >
+      />
+
+      <!-- Planned Date -->
+      <Column header="Data Planificada" :sortable="true">
         <template #body="slotProps">
-          {{ slotProps.data.plannedQuantity }}
+          <span v-if="slotProps.data.plannedDate">
+            {{ formatDate(slotProps.data.plannedDate) }}
+          </span>
         </template>
       </Column>
-      <Column header="Fases" style="min-width: 80px; text-align: center">
+
+      <!-- Start Time -->
+      <Column header="Inici" :sortable="true">
+        <template #body="slotProps">
+          <span v-if="slotProps.data.startTime">
+            {{ formatDate(slotProps.data.startTime) }}
+          </span>
+        </template>
+      </Column>
+
+      <!-- Work Order Status -->
+      <Column header="Estat OF" :sortable="true">
         <template #body="slotProps">
           <Tag
-            :value="slotProps.data.phases?.length || 0"
-            severity="info"
+            :value="slotProps.data.workOrderStatus"
+            severity="secondary"
             rounded
           />
         </template>
       </Column>
 
+      <!-- Priority -->
+      <Column
+        field="priority"
+        header="Prioritat"
+        :sortable="true"
+        style="min-width: 100px; text-align: center"
+      />
+
       <template #empty>
         <div class="no-data">
           <i :class="PrimeIcons.INBOX" style="font-size: 2rem"></i>
-          <p>No s'han trobat ordres de fabricació en producció</p>
+          <p>
+            No s'han trobat ordres de fabricació planificades per aquest tipus
+            de màquina
+          </p>
         </div>
       </template>
     </DataTable>
@@ -67,87 +95,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { PrimeIcons } from "primevue/api";
-import { WorkOrder } from "../../../production/types";
-import { WorkOrderService } from "../../../production/services/workorder.service";
-import { useToast } from "primevue/usetoast";
+import { WorkOrderWithPhases } from "../../../production/types";
+import { usePlantWorkcenterStore } from "../../store";
 import { formatDate } from "../../../../utils/functions";
-import { useReferenceStore } from "../../../shared/store/reference";
 
 interface Props {
-  workcenterId: string;
-  excludeWorkOrderId?: string;
+  workcenterTypeId: string;
+  excludePhaseId?: string;
 }
-
-const referenceStore = useReferenceStore();
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  (e: "workorder-selected", workOrder: WorkOrder): void;
+  (e: "workorder-selected", workOrder: WorkOrderWithPhases): void;
 }>();
 
-const toast = useToast();
-const workOrderService = new WorkOrderService("WorkOrder");
+const workcenterStore = usePlantWorkcenterStore();
+const { availableWorkOrders, availableWorkOrdersLoading } =
+  storeToRefs(workcenterStore);
 
-const allWorkOrders = ref<WorkOrder[]>([]);
-const loading = ref(false);
+const selectedKey = ref();
 
-// Computed para filtrar la orden de fabricación actual si existe
-const workOrders = computed(() => {
-  if (!props.excludeWorkOrderId) {
-    return allWorkOrders.value;
-  }
-  return allWorkOrders.value.filter((wo) => wo.id !== props.excludeWorkOrderId);
-});
+const workOrders = computed(() => availableWorkOrders.value);
+const loading = computed(() => availableWorkOrdersLoading.value);
 
 const onRowSelect = (event: any) => {
   emit("workorder-selected", event.data);
 };
 
-const loadWorkOrders = async () => {
-  loading.value = true;
-  try {
-    const result = await workOrderService.GetByWorkcenterIdInProduction(
-      props.workcenterId
-    );
-    if (result) {
-      allWorkOrders.value = result;
-    } else {
-      allWorkOrders.value = [];
-    }
-  } catch (error) {
-    console.error("Error loading work orders:", error);
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "Error al carregar les ordres de fabricació",
-      life: 4000,
-    });
-    allWorkOrders.value = [];
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  loadWorkOrders();
+onMounted(async () => {
+  await workcenterStore.fetchAvailableWorkOrders(props.workcenterTypeId);
 });
 </script>
 
 <style scoped>
-.workorder-selector {
+.phase-selector {
   width: 100%;
-}
-
-.reference-column {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.text-secondary {
-  color: var(--text-color-secondary);
 }
 
 .no-data {
@@ -168,13 +153,5 @@ onMounted(() => {
 .no-data p {
   margin: 0;
   font-size: 1rem;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  cursor: pointer;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr:hover) {
-  background-color: var(--surface-hover);
 }
 </style>

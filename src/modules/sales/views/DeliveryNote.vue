@@ -75,7 +75,7 @@ import {
 import { useSalesOrderStore } from "../store/order";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import Services from "../services";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 
 const deliveryNoteForm = ref();
 

@@ -4,7 +4,7 @@
       <!-- Master: Document List -->
       <div class="documents-panel">
         <DataTable
-          :value="workcenterStore.productionInstructionsDocuments"
+          :value="workcenterStore.workOrderReferenceDocuments"
           v-model:selection="selectedDocument"
           selectionMode="single"
           @row-select="onDocumentSelect"

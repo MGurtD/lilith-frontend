@@ -20,6 +20,7 @@ const profilesStore = useProfilesStore();
 
 const emit = defineEmits<{
   (e: "menu-selection-change", ids: string[]): void;
+  (e: "menu-assignment-loaded"): void;
   (e: "save"): void;
 }>();
 
@@ -180,6 +181,20 @@ const saveSelection = () => {
   emit("save");
 };
 
+// Search filter
+const searchFilter = ref("");
+
+const filteredRows = computed<RowItem[]>(() => {
+  if (!searchFilter.value) return rows.value;
+
+  const searchLower = searchFilter.value.toLowerCase();
+  return rows.value.filter(
+    (row) =>
+      row.title.toLowerCase().includes(searchLower) ||
+      row.key.toLowerCase().includes(searchLower)
+  );
+});
+
 // Dynamic height handling
 const rootEl = ref<HTMLElement | null>(null);
 const tableHeight = ref<string>("400px");
@@ -196,45 +211,67 @@ const computeHeight = () => {
 };
 
 onMounted(async () => {
-  await menusStore.fetchHierarchy(true);
-  // No llamar a fetchMenuAssignment aquí - el padre ya lo cargó
-  buildIndexes(menusStore.tree);
-  buildRows(menusStore.tree);
-  seedSelectionFromStore();
-  emit("menu-selection-change", Array.from(selectionIds.value));
+  console.log(
+    "ProfileMenuAssignment: Starting data load for profile",
+    props.profileId
+  );
+
+  try {
+    // Step 1: Load menu hierarchy (await properly, no promise chains)
+    console.log("ProfileMenuAssignment: Loading menu hierarchy...");
+    await menusStore.fetchHierarchy(true);
+    console.log(
+      "ProfileMenuAssignment: Menu hierarchy loaded, tree length:",
+      menusStore.tree.length
+    );
+
+    // Step 2: Build UI structure from menu tree
+    buildIndexes(menusStore.tree);
+    buildRows(menusStore.tree);
+    console.log("ProfileMenuAssignment: Rows built:", rows.value.length);
+
+    // Step 3: Load menu assignment for this profile (independent of parent)
+    console.log(
+      "ProfileMenuAssignment: Loading menu assignment for profile..."
+    );
+    await profilesStore.fetchMenuAssignment(props.profileId);
+    console.log(
+      "ProfileMenuAssignment: Menu assignment loaded:",
+      profilesStore.menuAssignment
+    );
+
+    // Step 4: Seed selection from loaded data
+    seedSelectionFromStore();
+    console.log(
+      "ProfileMenuAssignment: Selection seeded, selected IDs:",
+      selectionIds.value.size
+    );
+
+    // Step 5: Notify parent that data is loaded and ready
+    emit("menu-assignment-loaded");
+    console.log("ProfileMenuAssignment: Emitted menu-assignment-loaded event");
+  } catch (err) {
+    console.error("ProfileMenuAssignment: Error during data load:", err);
+    // Initialize empty rows so UI doesn't break
+    rows.value = [];
+    // Still emit the event so parent can initialize with empty data
+    emit("menu-assignment-loaded");
+  }
+
+  // Setup UI dimensions (independent of data loading)
   await nextTick();
   computeHeight();
   window.addEventListener("resize", computeHeight);
+
+  console.log("ProfileMenuAssignment: Initialization complete");
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", computeHeight);
 });
 
-watch(
-  () => menusStore.tree,
-  (v) => {
-    buildIndexes(v);
-    buildRows(v);
-    syncSelectionRows();
-  }
-);
-
-watch(
-  () => props.profileId,
-  async (newId) => {
-    if (newId) {
-      await profilesStore.fetchMenuAssignment(newId);
-      seedSelectionFromStore();
-    }
-  }
-);
-
-watch(
-  () => profilesStore.menuAssignment,
-  () => seedSelectionFromStore(),
-  { deep: true }
-);
+// NO WATCHERS - All data loading is handled in onMounted with proper async/await
+// This prevents reactivity-based deadlocks and makes the flow transparent
 </script>
 
 <template>
@@ -242,7 +279,7 @@ watch(
     <DataTable
       scrollable
       :scrollHeight="tableHeight"
-      :value="rows"
+      :value="filteredRows"
       v-model:selection="selectionRows"
       :loading="loading"
       dataKey="id"
@@ -254,11 +291,22 @@ watch(
       "
     >
       <template #header>
-        <div class="flex justify-content-between align-items-center w-full">
-          <span class="text-xl font-bold">{{
-            t("profiles.menuAssignment.title") || "Assignació de menús"
-          }}</span>
-          <div class="flex gap-2">
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
+        >
+          <div class="datatable-filter-1">
+            <IconField iconPosition="left">
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText
+                v-model="searchFilter"
+                :placeholder="t('common.search')"
+                class="w-full"
+              />
+            </IconField>
+          </div>
+          <div class="datatable-buttons">
             <Button
               size="small"
               icon="pi pi-link"

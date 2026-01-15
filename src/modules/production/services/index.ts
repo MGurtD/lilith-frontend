@@ -25,7 +25,6 @@ import {
 } from "./workorder.service";
 import { ProductionPartService } from "./productionpart.service";
 import ShiftService from "./shift.service";
-import PlanningService from "./planning.service";
 import ProductionCostDashboardService from "./productioncostdashboard.service";
 import { WorkcenterShiftService } from "./workcentershift.service";
 import { AreaService } from "./area.service";
@@ -86,7 +85,6 @@ export default {
   ProductionPart: new ProductionPartService("/ProductionPart"),
   DetailedWorkOrder: new DetailedWorkOrderService("/WorkOrder/Detailed"),
   ShiftService: new ShiftService("/Shift"),
-  PlanningService: new PlanningService("/Planning"),
   ProductionCostDashboardService: new ProductionCostDashboardService(
     "/productioncost"
   ),

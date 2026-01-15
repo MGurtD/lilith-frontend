@@ -146,7 +146,7 @@
 
 <script setup lang="ts">
 import { computed, reactive } from "vue";
-import { UserRegister } from "../../api/services/authentications.service";
+import { UserRegister } from "../../services/authentications.service";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useToast } from "primevue/usetoast";

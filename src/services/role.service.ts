@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
-import apiClient from "../api.client";
-import { Role } from "../../types";
+import apiClient from "@/api/api.client";
+import { Role } from "@/types";
 
 export class RoleService {
   public apiClient: AxiosInstance;

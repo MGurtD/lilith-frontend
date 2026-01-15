@@ -24,6 +24,8 @@ export interface Exercise {
   salesInvoiceCounter: string;
   deliveryNoteCounter: string;
   purchaseInvoiceCounter: string;
+  materialProfit: number;
+  externalProfit: number;
   disabled: boolean;
 }
 
@@ -42,6 +44,7 @@ export interface Lifecycle {
   initialStatusId?: string;
   finalStatusId?: string;
   statuses: Array<Status>;
+  tags?: Array<LifecycleTag>;
 }
 
 export interface Status {
@@ -51,6 +54,7 @@ export interface Status {
   disabled: boolean;
   lifecycleId: string;
   transitions: Array<StatusTransition>;
+  lifecycleTags?: Array<LifecycleTag>;
 }
 
 export interface StatusTransition {
@@ -59,6 +63,26 @@ export interface StatusTransition {
   disabled: boolean;
   statusId: string;
   statusToId: string;
+}
+
+export interface AvailableStatusTransitionDto {
+  transitionName: string;
+  statusToId: string;
+  statusToName: string;
+  statusToColor?: string;
+  statusToDescription: string;
+}
+
+export interface LifecycleTag {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  lifecycleId: string;
+  disabled: boolean;
+  createdOn: Date;
+  updatedOn: Date;
 }
 
 export interface Parameter {

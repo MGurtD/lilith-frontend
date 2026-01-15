@@ -20,6 +20,8 @@
       :value="supplierReferences"
       tableStyle="min-width: 100%"
       :scroll-height="'calc(100vh - 260px)'"
+      sortField="supplierCode"
+      :sortOrder="1"
       @row-click="rowContactClick"
     >
       <template #header>
@@ -54,19 +56,26 @@
         header="Proveïdor"
         field="supplierId"
         style="width: 25%"
+        sortable
       >
         <template #body="slotProps">
           {{ supplierStore.getName(slotProps.data.supplierId) }}
         </template>
       </Column>
-      <Column header="Codi proveïdor" field="supplierCode" style="width: 20%">
+      <Column
+        header="Codi proveïdor"
+        field="supplierCode"
+        style="width: 20%"
+        sortable
+      >
       </Column>
       <Column
         header="Descripció"
         field="supplierDescription"
         style="width: 25%"
+        sortable
       ></Column>
-      <Column header="Preu" field="supplierPrice" style="width: 20%">
+      <Column header="Preu" field="supplierPrice" style="width: 20%" sortable>
         <template #body="slotProps">
           {{ formatCurrency(slotProps.data.supplierPrice) }}
         </template>
@@ -75,6 +84,7 @@
         header="Dies submin."
         field="supplyDays"
         style="width: 20%"
+        sortable
       ></Column>
       <Column>
         <template #body="slotProps">

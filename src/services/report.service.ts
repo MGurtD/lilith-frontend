@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import reportApiClient from "../reports.client";
+import reportApiClient from "@/api/reports.client";
 import Services from "./";
 
 export const REPORTS_ENTITY = "Reports";

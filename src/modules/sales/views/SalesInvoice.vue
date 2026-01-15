@@ -115,7 +115,7 @@ import FormSalesInvoiceDetail from "../components/FormSalesInvoiceDetail.vue";
 import FormRectificativeInvoice from "../components/FormRectificativeInvoice.vue";
 import SelectorDeliveryNotes from "../components/SelectorDeliveryNotes.vue";
 import Services from "../services";
-import { REPORTS, ReportService } from "../../../api/services/report.service";
+import { REPORTS, ReportService } from "../../../services/report.service";
 import { useToast } from "primevue/usetoast";
 import { useVerifactuStore } from "../../verifactu/store/verifactu";
 

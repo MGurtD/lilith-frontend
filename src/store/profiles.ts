@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { AppProfileService } from "../api/services/profile.service";
+import { AppProfileService } from "../services/profile.service";
 import type { Profile } from "../types";
 import type {
   ProfileDetail,
@@ -40,18 +40,18 @@ export const useProfilesStore = defineStore("profiles", {
       this.loading = true;
       try {
         this.current = (await AppProfileService.Get(id)) ?? null;
-        if (this.current) {
-          await this.fetchMenuAssignment(this.current.id);
-        } else {
+        // Removed automatic fetchMenuAssignment call - caller must explicitly load menu data
+        // This follows single responsibility principle and prevents hidden nested API calls
+        if (!this.current) {
           this.menuAssignment = null;
         }
       } finally {
         this.loading = false;
       }
     },
-    setNew() {
+    setNew(id?: string) {
       this.current = {
-        id: "",
+        id: id || "",
         name: "",
         description: "",
         isSystem: false,

@@ -3,6 +3,7 @@ import {
   CreateWorkOrderDto,
   DetailedWorkOrder,
   WorkOrder,
+  WorkOrderOrder,
   WorkOrderPhase,
   WorkOrderPhaseBillOfMaterials,
   WorkOrderPhaseDetail,
@@ -88,6 +89,12 @@ export const useWorkOrderStore = defineStore("workorder", {
       this.workorders =
         await Services.WorkOrder.GetBySalesOrderId(salesOrderId);
     },
+    async fetchPlannable() {
+      const data = await Services.WorkOrder.GetPlannableWorkOrders();
+      if (data && Array.isArray(data)) {
+        this.workorders = data;
+      }
+    },
     async create(model: CreateWorkOrderDto) {
       const result = await Services.WorkOrder.Create(model);
       if (result) await this.fetchOne(result.content!.id);
@@ -107,6 +114,10 @@ export const useWorkOrderStore = defineStore("workorder", {
     async update(id: string, model: WorkOrder) {
       const result = await Services.WorkOrder.update(id, model);
       if (result) await this.fetchAll();
+      return result;
+    },
+    async priorize(workOrderOrders: WorkOrderOrder[]) {
+      const result = await Services.WorkOrder.Priorize(workOrderOrders);
       return result;
     },
     async delete(id: string) {

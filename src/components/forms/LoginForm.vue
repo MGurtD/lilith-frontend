@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { UserLogin } from "../../api/services/authentications.service";
+import { UserLogin } from "../../services/authentications.service";
 import { useToast } from "primevue/usetoast";
 import InputGroup from "primevue/inputgroup";
 import InputGroupAddon from "primevue/inputgroupaddon";

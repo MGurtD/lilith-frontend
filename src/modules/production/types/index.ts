@@ -55,6 +55,11 @@ export interface Workcenter {
   disabled: boolean;
 }
 
+export interface WorkOrderOrder {
+  id: string;
+  order: number;
+}
+
 export interface MachineStatus {
   id: string;
   name: string;
@@ -367,10 +372,259 @@ export interface WorkDetail {
 }
 
 export interface WorkcenterShiftRequest {
+  startTime: Date;
+  endTime: Date;
+  groupBy: string;
+  timeGroupBy: string;
+}
+
+export interface WorkcenterShiftHistorical {
+  id: string;
+  key: string | null;
+
+  workcenter: string;
+  machineStatus: string;
+  operator: string;
+
   startTime: string;
-  endTime: string;
-  workcenterId?: string;
-  operatorId?: string;
-  workorderPhaseId?: string;
-  groupBy?: string;
+  endTime: string | null;
+
+  quantityOk: number;
+  quantityKo: number;
+
+  totalHours: number;
+  operatorCost: number;
+  workcenterCost: number;
+  totalCost: number;
+
+  workOrderCode: string;
+  plannedQuantity: number;
+
+  estimatedMachineCost: number;
+  estimatedMachineTime: number;
+  estimatedOperatorCost: number;
+  estimatedOperatorTime: number;
+
+  workOrderPhaseCode: string;
+  workOrderPhaseDescription: string;
+
+  isPreferredWorkcenter: boolean;
+
+  referenceCode: string;
+  referenceDescription: string;
+  customerComercialName: string;
+
+  operatorId: string;
+  workcenterId: string;
+  referenceId: string;
+  customerId: string;
+  workOrderId: string;
+  workOrderPhaseId: string;
+}
+
+export interface WorkOrderPhaseDisplay {
+  // Work Order Info
+  workOrderId: string;
+  workOrderCode: string;
+  customerName: string;
+
+  // Phase Info
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseDisplay: string;
+
+  // Reference (Product) Info
+  salesReferenceCode: string;
+  salesReferenceDescription: string;
+  salesReferenceDisplay: string;
+
+  // Production
+  plannedQuantity: number;
+  plannedDate: Date | string;
+  phaseStatus: string;
+  priority: number; // Added for consistency with backend
+}
+
+/**
+ * Hierarchical DTO for work orders with their planned phases.
+ * Used for TreeTable display in plant module.
+ */
+export interface WorkOrderWithPhases {
+  workOrderId: string;
+  workOrderCode: string;
+  customerName: string;
+  salesReferenceId: string;
+  salesReferenceDisplay: string;
+  plannedQuantity: number;
+  plannedDate: Date | string;
+  startTime?: Date | string | null;
+  workOrderStatus: string;
+  priority: number;
+  phases: PlannedPhase[];
+}
+
+/**
+ * Individual phase within a work order.
+ * Child node in TreeTable structure.
+ */
+export interface PlannedPhase {
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseDisplay: string;
+  phaseStatusId: string;
+  phaseStatus: string;
+  isExternalWork: boolean;
+  startTime?: Date | string | null;
+  preferredWorkcenterName: string;
+}
+
+/**
+ * Detailed phase information including work order context,
+ * phase details, and bill of materials.
+ * Used for Step 2 of work order selection process.
+ */
+export interface WorkOrderPhaseDetailed {
+  workOrderId: string;
+  workOrderCode: string;
+  salesReferenceDisplay: string;
+  plannedQuantity: number;
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseStatus: string;
+  startTime?: Date | string | null;
+  endTime?: Date | string | null;
+  preferredWorkcenterName: string;
+  workcenterTypeId: string;
+
+  details: PhaseDetailItem[];
+  billOfMaterials: BillOfMaterialsItem[];
+}
+
+/**
+ * Individual operation detail within a phase.
+ * Represents a specific machine status and time estimate.
+ */
+export interface PhaseDetailItem {
+  comment: string;
+  machineStatusId?: string;
+  machineStatusName: string;
+  estimatedTime: number;
+  estimatedOperatorTime: number;
+  isCycleTime: boolean;
+}
+
+/**
+ * Material component required for a phase.
+ * References product/material catalog.
+ */
+export interface BillOfMaterialsItem {
+  referenceCode: string;
+  referenceDescription: string;
+  quantity: number;
+}
+
+export interface WorkOrderPhaseDisplay {
+  // Work Order Info
+  workOrderId: string;
+  workOrderCode: string;
+  customerName: string;
+
+  // Phase Info
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseDisplay: string;
+
+  // Reference (Product) Info
+  salesReferenceCode: string;
+  salesReferenceDescription: string;
+  salesReferenceDisplay: string;
+
+  // Production
+  plannedQuantity: number;
+  plannedDate: Date | string;
+  phaseStatus: string;
+  priority: number; // Added for consistency with backend
+}
+
+/**
+ * Hierarchical DTO for work orders with their planned phases.
+ * Used for TreeTable display in plant module.
+ */
+export interface WorkOrderWithPhases {
+  workOrderId: string;
+  workOrderCode: string;
+  customerName: string;
+  salesReferenceId: string;
+  salesReferenceDisplay: string;
+  plannedQuantity: number;
+  plannedDate: Date | string;
+  startTime?: Date | string | null;
+  workOrderStatus: string;
+  priority: number;
+  phases: PlannedPhase[];
+}
+
+/**
+ * Individual phase within a work order.
+ * Child node in TreeTable structure.
+ */
+export interface PlannedPhase {
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseDisplay: string;
+  phaseStatusId: string;
+  phaseStatus: string;
+  startTime?: Date | string | null;
+  preferredWorkcenterName: string;
+}
+
+/**
+ * Detailed phase information including work order context,
+ * phase details, and bill of materials.
+ * Used for Step 2 of work order selection process.
+ */
+export interface WorkOrderPhaseDetailed {
+  workOrderId: string;
+  workOrderCode: string;
+  salesReferenceDisplay: string;
+  plannedQuantity: number;
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+  phaseStatus: string;
+  startTime?: Date | string | null;
+  endTime?: Date | string | null;
+  preferredWorkcenterName: string;
+  workcenterTypeId: string;
+  isExternalWork: boolean;
+  details: PhaseDetailItem[];
+  billOfMaterials: BillOfMaterialsItem[];
+}
+
+/**
+ * Individual operation detail within a phase.
+ * Represents a specific machine status and time estimate.
+ */
+export interface PhaseDetailItem {
+  comment: string;
+  machineStatusId?: string;
+  machineStatusName: string;
+  estimatedTime: number;
+  estimatedOperatorTime: number;
+  isCycleTime: boolean;
+}
+
+/**
+ * Material component required for a phase.
+ * References product/material catalog.
+ */
+export interface BillOfMaterialsItem {
+  referenceCode: string;
+  referenceDescription: string;
+  quantity: number;
 }

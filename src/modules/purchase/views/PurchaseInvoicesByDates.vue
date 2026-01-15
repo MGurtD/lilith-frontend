@@ -128,7 +128,7 @@ import { useStore } from "../../../store";
 import { usePurchaseMasterDataStore } from "../store/purchase";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { PurchaseInvoice, PurchaseInvoiceUpdateStatues } from "../types";
-import SharedServices from "../../../api/services";
+import SharedServices from "../../../services";
 import {
   createBlobAndDownloadFile,
   formatCurrency,
@@ -259,8 +259,8 @@ const downloadInvoices = async (invoice: PurchaseInvoice) => {
   );
   if (files) {
     files.forEach(async (f) => {
-      const response = await SharedServices.File.Download(f);
-      createBlobAndDownloadFile(f.originalName, response);
+      const { blob, contentType } = await SharedServices.File.Download(f);
+      createBlobAndDownloadFile(f.originalName, blob, contentType);
     });
   }
 };
