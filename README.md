@@ -97,8 +97,8 @@ pnpm exec vue-tsc --noEmit
 
 ## Build Variants
 
-| Command                     | Purpose                   | Output Directory | Mode                   |
-| --------------------------- | ------------------------- | ---------------- | ---------------------- |
+| Command                      | Purpose                   | Output Directory | Mode                   |
+| ---------------------------- | ------------------------- | ---------------- | ---------------------- |
 | `pnpm run build`             | Production build          | `dist/`          | default (`production`) |
 | `pnpm run build-development` | Dev-like build artifact   | `dist-test/`     | `development`          |
 | `pnpm run build-preprod`     | Pre-production test build | `dist-preprod/`  | `preprod`              |

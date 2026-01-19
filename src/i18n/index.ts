@@ -22,7 +22,7 @@ export const i18n = createI18n({
 
 export const applyPrimeVueLocale = (
   primevue: PrimeVueConfiguration,
-  code: string
+  code: string,
 ) => {
   const lang = (code || "ca").toLowerCase();
   primevue.locale = (

@@ -64,10 +64,10 @@ export class WorkOrderService extends BaseService<WorkOrder> {
   async GetBetweenDatesAndStatus(
     start: string,
     end: string,
-    statusId?: string
+    statusId?: string,
   ) {
     const response = await this.apiClient.get(
-      `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`
+      `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`,
     );
     return response.data;
   }
@@ -445,7 +445,7 @@ if (!appStore.exercisePicker.dates) {
 await store.fetchFiltered(
   formatDateForQueryParameter(appStore.exercisePicker.dates[0]),
   formatDateForQueryParameter(appStore.exercisePicker.dates[1]),
-  statusId
+  statusId,
 );
 ```
 
@@ -646,7 +646,7 @@ const downloadReport = async (id: string) => {
   const blob = await new ReportService().Download(
     data,
     REPORTS.ORDER,
-    "comanda.pdf"
+    "comanda.pdf",
   );
 
   if (!blob) {
@@ -711,6 +711,7 @@ Add new utilities only if:
 ### Code Quality Standards
 
 Generated code should:
+
 - Type-check (no implicit `any`)
 - Avoid unused imports
 - Functions < ~40 lines (split if larger)
