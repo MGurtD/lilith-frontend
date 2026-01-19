@@ -628,3 +628,12 @@ export interface BillOfMaterialsItem {
   referenceDescription: string;
   quantity: number;
 }
+
+export interface WorkcenterTypeSaturation {
+  code: string;
+  plannedQuantity: number;
+  phaseCode: string;
+  phaseDescription: string;
+  workcenterTypeId: string;
+  estimatedTime: number;
+}
