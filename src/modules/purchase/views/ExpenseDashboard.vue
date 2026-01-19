@@ -17,6 +17,8 @@
     <div class="dashboard-filter-field">
       <label>Detall</label>
       <Dropdown
+        showClear
+        filter
         :options="pieChartData?.labels"
         v-model="filter.typeDetail"
         @change="filterDashboard(false)"
@@ -159,7 +161,7 @@ const totalAmount = computed((): number => {
 const filterDashboard = async (clearDetail: boolean) => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -169,24 +171,24 @@ const filterDashboard = async (clearDetail: boolean) => {
       startTime,
       endTime,
       filter.value.type,
-      filter.value.typeDetail
+      filter.value.typeDetail,
     );
     if (dataResponse) consolidatedExpenses.value = dataResponse;
 
     chartData.value = transformConsolidatedExpensesToChartOptions(
       consolidatedExpenses.value,
-      "monthPaymentKey"
+      "monthPaymentKey",
     );
     pieChartData.value = transformConsolidatedExpensesToChartOptions(
       consolidatedExpenses.value,
-      "typeDetail"
+      "typeDetail",
     );
   }
 };
 
 const transformConsolidatedExpensesToChartOptions = (
   expenses: Array<ConsolidatedExpense>,
-  fieldToGroup: string
+  fieldToGroup: string,
 ): ChartOptions => {
   const options = {} as ChartOptions;
 

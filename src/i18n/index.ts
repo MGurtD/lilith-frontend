@@ -33,5 +33,5 @@ export const applyPrimeVueLocale = (
 
 export function setI18nLocale(locale: string) {
   const lang = (locale || "ca").slice(0, 2).toLowerCase();
-  (i18n.global.locale as any).value = lang;
+  i18n.global.locale.value = lang as "ca" | "es" | "en";
 }

@@ -63,14 +63,14 @@ Access in code with `import.meta.env.VITE_API_BASE_URL`.
 ## Prerequisites
 
 - **Node.js**: Recommend LTS (≥ 18) for best compatibility with Vite 4.
-- **Package Manager**: npm (default) or pnpm/yarn (stick to one consistently).
+- **Package Manager**: pnpm (recommended) - Install with `npm install -g pnpm`
 
 ---
 
 ## Install Dependencies
 
 ```powershell
-npm install
+pnpm install
 ```
 
 ---
@@ -78,7 +78,7 @@ npm install
 ## Run in Development
 
 ```powershell
-npm run dev
+pnpm run dev
 ```
 
 Default dev server: http://localhost:8100
@@ -90,7 +90,7 @@ If you need different env values for dev, create `.env.development`.
 ## Type Check (Without Building)
 
 ```powershell
-npx vue-tsc --noEmit
+pnpm exec vue-tsc --noEmit
 ```
 
 ---
@@ -99,9 +99,9 @@ npx vue-tsc --noEmit
 
 | Command                     | Purpose                   | Output Directory | Mode                   |
 | --------------------------- | ------------------------- | ---------------- | ---------------------- |
-| `npm run build`             | Production build          | `dist/`          | default (`production`) |
-| `npm run build-development` | Dev-like build artifact   | `dist-test/`     | `development`          |
-| `npm run build-preprod`     | Pre-production test build | `dist-preprod/`  | `preprod`              |
+| `pnpm run build`             | Production build          | `dist/`          | default (`production`) |
+| `pnpm run build-development` | Dev-like build artifact   | `dist-test/`     | `development`          |
+| `pnpm run build-preprod`     | Pre-production test build | `dist-preprod/`  | `preprod`              |
 
 Each mode loads corresponding `.env.<mode>` if present.
 
@@ -110,8 +110,8 @@ Each mode loads corresponding `.env.<mode>` if present.
 ## Preview a Production Build Locally
 
 ```powershell
-npm run build
-npm run preview
+pnpm run build
+pnpm run preview
 ```
 
 Preview server (default): http://localhost:4173
@@ -125,7 +125,7 @@ The provided `Dockerfile` expects a pre-built `dist` folder.
 ### Build & Run Manually
 
 ```powershell
-npm run build
+pnpm run build
 docker build -t lilith-frontend .
 docker run -p 9000:80 --name lilith-frontend lilith-frontend
 ```
