@@ -8,6 +8,7 @@ import {
   CreateWorkOrderDto,
   DetailedWorkOrder,
   WorkOrderOrder,
+  WorkcenterTypeSaturation,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -26,7 +27,7 @@ export class WorkOrderService extends BaseService<WorkOrder> {
     endTime: string,
     statusId?: string,
     referenceId?: string,
-    customerId?: string
+    customerId?: string,
   ): Promise<Array<WorkOrder> | undefined> {
     let endpoint = `${this.resource}?startTime=${startTime}&endTime=${endTime}`;
     if (statusId) endpoint += `&statusId=${statusId}`;
@@ -39,7 +40,7 @@ export class WorkOrderService extends BaseService<WorkOrder> {
     }
   }
   async GetBySalesOrderId(
-    salesOrderId: string
+    salesOrderId: string,
   ): Promise<Array<WorkOrder> | undefined> {
     let endpoint = `${this.resource}/SalesOrder/${salesOrderId}`;
     const response = await this.apiClient.get(endpoint);
@@ -54,46 +55,57 @@ export class WorkOrderService extends BaseService<WorkOrder> {
   async Create(dto: CreateWorkOrderDto): Promise<GenericResponse<WorkOrder>> {
     const response = await this.apiClient.post(
       `${this.resource}/CreateFromWorkMaster`,
-      dto
+      dto,
     );
     return response.data as GenericResponse<WorkOrder>;
   }
   async CreateFromSalesOrderDetail(
     dto: CreateWorkOrderDto,
-    salesOrderDetailId: string
+    salesOrderDetailId: string,
   ): Promise<GenericResponse<WorkOrder>> {
     const response = await this.apiClient.post(
       `${this.resource}/CreateFromSalesOrderDetail/${salesOrderDetailId}`,
-      dto
+      dto,
     );
     return response.data as GenericResponse<WorkOrder>;
   }
   async Priorize(
-    workOrderOrders: WorkOrderOrder[]
+    workOrderOrders: WorkOrderOrder[],
   ): Promise<GenericResponse<boolean>> {
     const response = await this.apiClient.post(
       `${this.resource}/Priorize`,
-      workOrderOrders
+      workOrderOrders,
     );
     return response.data as GenericResponse<boolean>;
+  }
+  async GetWorkcenterTypeSaturation(
+    startDate: string,
+    endDate: string,
+  ): Promise<Array<WorkcenterTypeSaturation> | undefined> {
+    const response = await this.apiClient.get(
+      `${this.resource}/workcenterload?startDate=${startDate}&endDate=${endDate}`,
+    );
+    if (response.status === 200)
+      return response.data as Array<WorkcenterTypeSaturation>;
+    if (response.status === 204) return [];
   }
 }
 export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
   async getByWorkOrderId(
-    workOrderId: string
+    workOrderId: string,
   ): Promise<Array<WorkOrderPhase> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}?workOrderId=${workOrderId}`
+      `${this.resource}?workOrderId=${workOrderId}`,
     );
     if (response.status === 200) return response.data as Array<WorkOrderPhase>;
   }
 
   async getExternalWorkOrderPhases(
     startTime: string,
-    endTime: string
+    endTime: string,
   ): Promise<Array<WorkOrderPhase> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}/External?startTime=${startTime}&endTime=${endTime}`
+      `${this.resource}/External?startTime=${startTime}&endTime=${endTime}`,
     );
     if (response.status === 200) {
       const data = response.data as Array<{ workOrder: any; phase: any }>;
@@ -106,10 +118,10 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
   }
 
   async GetPlannedPhasesByWorkcenterType(
-    workcenterTypeId: string
+    workcenterTypeId: string,
   ): Promise<Array<WorkOrderWithPhases> | undefined> {
     const response = await this.apiClient.get(
-      `/WorkOrder/Planned/WorkcenterType/${workcenterTypeId}`
+      `/WorkOrder/Planned/WorkcenterType/${workcenterTypeId}`,
     );
     if (response.status === 200) {
       return response.data as Array<WorkOrderWithPhases>;
@@ -117,10 +129,10 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
   }
 
   async GetWorkOrderPhasesDetailed(
-    workOrderId: string
+    workOrderId: string,
   ): Promise<Array<WorkOrderPhaseDetailed> | undefined> {
     const response = await this.apiClient.get(
-      `/WorkOrder/${workOrderId}/PhasesDetailed`
+      `/WorkOrder/${workOrderId}/PhasesDetailed`,
     );
     if (response.status === 200) {
       return response.data as Array<WorkOrderPhaseDetailed>;
@@ -128,7 +140,7 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
   }
 
   async GetLoadedByPhaseIds(
-    phaseIds: string[]
+    phaseIds: string[],
   ): Promise<Array<WorkOrderWithPhases>> {
     const response = await this.apiClient.post(`/WorkOrder/Loaded`, phaseIds);
     if (response.status === 200) {
@@ -140,10 +152,10 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
 
 export class WorkOrderPhaseDetailService extends BaseService<WorkOrderPhaseDetail> {
   async getByWorkOrderPhaseId(
-    workOrderPhaseId: string
+    workOrderPhaseId: string,
   ): Promise<Array<WorkOrderPhaseDetail> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}?workOrderPhaseId=${workOrderPhaseId}`
+      `${this.resource}?workOrderPhaseId=${workOrderPhaseId}`,
     );
     if (response.status === 200)
       return response.data as Array<WorkOrderPhaseDetail>;
@@ -151,10 +163,10 @@ export class WorkOrderPhaseDetailService extends BaseService<WorkOrderPhaseDetai
 }
 export class WorkOrderPhaseBillOfMaterialsService extends BaseService<WorkOrderPhaseBillOfMaterials> {
   async getByWorkOrderPhaseId(
-    workOrderPhaseId: string
+    workOrderPhaseId: string,
   ): Promise<Array<WorkOrderPhaseBillOfMaterials> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}?workOrderPhaseId=${workOrderPhaseId}`
+      `${this.resource}?workOrderPhaseId=${workOrderPhaseId}`,
     );
     if (response.status === 200)
       return response.data as Array<WorkOrderPhaseBillOfMaterials>;
@@ -162,19 +174,19 @@ export class WorkOrderPhaseBillOfMaterialsService extends BaseService<WorkOrderP
 }
 export class DetailedWorkOrderService extends BaseService<DetailedWorkOrder> {
   async getByWorkcenterId(
-    workcenterId: string
+    workcenterId: string,
   ): Promise<Array<DetailedWorkOrder> | undefined> {
     const response = await this.apiClient.get(
-      `${this.resource}/ByWorkcenter/${workcenterId}`
+      `${this.resource}/ByWorkcenter/${workcenterId}`,
     );
     if (response.status === 200)
       return response.data as Array<DetailedWorkOrder>;
   }
   async getByWorkOrderId(
-    workOrderId: string
+    workOrderId: string,
   ): Promise<Array<DetailedWorkOrder> | undefined> {
     const response = await this.apiClient.get(
-      `/WorkOrder/${workOrderId}/Detailed`
+      `/WorkOrder/${workOrderId}/Detailed`,
     );
     if (response.status === 200)
       return response.data as Array<DetailedWorkOrder>;

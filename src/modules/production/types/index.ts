@@ -635,3 +635,11 @@ export interface WorkcenterProfitPercentage {
   profitPercentage: number;
   disabled: boolean;
 }
+export interface WorkcenterTypeSaturation {
+  code: string;
+  plannedQuantity: number;
+  phaseCode: string;
+  phaseDescription: string;
+  workcenterTypeId: string;
+  estimatedTime: number;
+}
