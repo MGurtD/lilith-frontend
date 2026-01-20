@@ -10,6 +10,7 @@ import {
   MachineStatusService,
   MachineStatusReasonService,
   WorkcenterCostService,
+  WorkcenterProfitPercentageService,
 } from "../services";
 import {
   Workcenter,
@@ -22,6 +23,7 @@ import {
   OperatorType,
   MachineStatus,
   MachineStatusReason,
+  WorkcenterProfitPercentage,
 } from "../types";
 
 const workcenterService = new WorkcenterService("/workcenter");
@@ -34,7 +36,10 @@ const operatorService = new OperatorService("/operator");
 const operatorTypeService = new OperatorTypeService("/operatortype");
 const machineStatusService = new MachineStatusService("/machinestatus");
 const machineStatusReasonService = new MachineStatusReasonService(
-  "/machinestatus/reason"
+  "/machinestatus/reason",
+);
+const workcenterProfitPercentageService = new WorkcenterProfitPercentageService(
+  "/workcenterprofitpercentage",
 );
 
 export const usePlantModelStore = defineStore("plantmodel", {
@@ -57,6 +62,12 @@ export const usePlantModelStore = defineStore("plantmodel", {
     operatorTypes: undefined as Array<OperatorType> | undefined,
     machineStatus: undefined as MachineStatus | undefined,
     machineStatuses: undefined as Array<MachineStatus> | undefined,
+    workcenterProfitPercentage: undefined as
+      | WorkcenterProfitPercentage
+      | undefined,
+    workcenterProfitPercentages: undefined as
+      | Array<WorkcenterProfitPercentage>
+      | undefined,
   }),
   getters: {
     getWorkcentersByTypeId: (state) => {
@@ -207,6 +218,53 @@ export const usePlantModelStore = defineStore("plantmodel", {
       if (result) await this.fetchWorkcenterCosts();
       return result;
     },
+    //workcenterprofitpercentages
+    setNewWorkcenterProfitPercentage(id: string) {
+      this.workcenterProfitPercentage = {
+        id: id,
+        workcenterId: "",
+        profitPercentage: 0.0,
+        disabled: false,
+      };
+    },
+    async fetchWorkcenterProfitPercentages() {
+      this.workcenterProfitPercentages =
+        await workcenterProfitPercentageService.getAll();
+    },
+    async fetchWorkcenterProfitPercentage(id: string) {
+      this.workcenterProfitPercentage =
+        await workcenterProfitPercentageService.getById(id);
+    },
+    async fetchWorkcenterProfitPercentagesByWorkcenterId(workcenterId: string) {
+      this.workcenterProfitPercentages =
+        await workcenterProfitPercentageService.getByWorkcenterId(workcenterId);
+    },
+    async createWorkcenterProfitPercentage(
+      workcenterProfitPercentage: WorkcenterProfitPercentage,
+    ) {
+      const result = await workcenterProfitPercentageService.create(
+        workcenterProfitPercentage,
+      );
+      if (result) await this.fetchWorkcenterProfitPercentages();
+      return result;
+    },
+    async updateWorkcenterProfitPercentage(
+      id: string,
+      workcenterProfitPercentage: WorkcenterProfitPercentage,
+    ) {
+      const result = await workcenterProfitPercentageService.update(
+        id,
+        workcenterProfitPercentage,
+      );
+      if (result) await this.fetchWorkcenterProfitPercentages();
+      return result;
+    },
+    async deleteWorkcenterProfitPercentage(id: string) {
+      const result = await workcenterProfitPercentageService.delete(id);
+      if (result) await this.fetchWorkcenterProfitPercentages();
+      return result;
+    },
+
     //area
     setNewArea(id: string) {
       this.area = {
