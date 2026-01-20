@@ -40,7 +40,7 @@ export class MachineStatusService extends BaseService<MachineStatus> {
   async getAllWithReasons(): Promise<Array<MachineStatus> | undefined> {
     try {
       const response = await this.apiClient.get(
-        `${this.resource}?includeReasons=true`
+        `${this.resource}?includeReasons=true`,
       );
       if (response.status === 200) {
         return response.data as Array<MachineStatus>;
@@ -69,24 +69,24 @@ export default {
   WorkMaster: new WorkMasterService("/WorkMaster"),
   WorkMasterPhase: new WorkMasterPhaseService("/WorkMaster/Phase"),
   WorkMasterPhaseDetail: new WorkMasterPhaseDetailService(
-    "/WorkMaster/Phase/Detail"
+    "/WorkMaster/Phase/Detail",
   ),
   WorkMasterPhaseBillOfMaterials: new WorkMasterPhaseBillOfMaterialsService(
-    "/WorkMaster/Phase/BillOfMaterials"
+    "/WorkMaster/Phase/BillOfMaterials",
   ),
   WorkOrder: new WorkOrderService("/WorkOrder"),
   WorkOrderPhase: new WorkOrderPhaseService("/WorkOrder/Phase"),
   WorkOrderPhaseDetail: new WorkOrderPhaseDetailService(
-    "/WorkOrder/Phase/Detail"
+    "/WorkOrder/Phase/Detail",
   ),
   WorkOrderPhaseBillOfMaterials: new WorkOrderPhaseBillOfMaterialsService(
-    "/WorkOrder/Phase/BillOfMaterials"
+    "/WorkOrder/Phase/BillOfMaterials",
   ),
   ProductionPart: new ProductionPartService("/ProductionPart"),
   DetailedWorkOrder: new DetailedWorkOrderService("/WorkOrder/Detailed"),
   ShiftService: new ShiftService("/Shift"),
   ProductionCostDashboardService: new ProductionCostDashboardService(
-    "/productioncost"
+    "/productioncost",
   ),
   WorkcenterShift: new WorkcenterShiftService("/WorkcenterShift"),
 };

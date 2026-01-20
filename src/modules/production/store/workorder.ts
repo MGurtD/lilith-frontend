@@ -7,6 +7,7 @@ import {
   WorkOrderPhase,
   WorkOrderPhaseBillOfMaterials,
   WorkOrderPhaseDetail,
+  WorkcenterTypeSaturation,
 } from "../types";
 import Services from "../services";
 
@@ -19,6 +20,7 @@ export const useWorkOrderStore = defineStore("workorder", {
     workorderPhaseDetail: undefined as WorkOrderPhaseDetail | undefined,
     workorderPhaseDetails: undefined as Array<WorkOrderPhaseDetail> | undefined,
     detailedWorkOrders: undefined as Array<DetailedWorkOrder> | undefined,
+    workcenterTypeSaturation: undefined as Array<WorkcenterTypeSaturation> | undefined,
   }),
   getters: {},
   actions: {
@@ -124,6 +126,11 @@ export const useWorkOrderStore = defineStore("workorder", {
       const result = await Services.WorkOrder.delete(id);
       if (result) await this.fetchAll();
       return result;
+    },
+
+    async fetchWorkcenterTypeSaturation(startDate: string, endDate: string) {
+      const data = await Services.WorkOrder.GetWorkcenterTypeSaturation(startDate, endDate);
+      this.workcenterTypeSaturation = data || [];
     },
 
     // Phases
