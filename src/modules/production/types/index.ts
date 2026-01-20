@@ -628,3 +628,10 @@ export interface BillOfMaterialsItem {
   referenceDescription: string;
   quantity: number;
 }
+
+export interface WorkcenterProfitPercentage {
+  id: string;
+  workcenterId: string;
+  profitPercentage: number;
+  disabled: boolean;
+}

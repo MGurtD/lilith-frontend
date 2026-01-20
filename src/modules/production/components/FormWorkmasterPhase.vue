@@ -46,15 +46,34 @@
         />
       </div>
       <div>
-        <BaseInput
-          :type="BaseInputType.NUMERIC"
-          :minFractionDigits="2"
-          class="mb-2"
-          label="Marge de benefici"
-          id="profitPercentage"
+        <label class="block text-900 mb-2">Marge de benefici</label>
+        <Dropdown
+          v-if="workcenterProfitPercentages.length > 0"
           v-model="phase.profitPercentage"
+          :options="workcenterProfitPercentages"
+          optionValue="profitPercentage"
+          optionLabel="profitPercentage"
+          class="w-full"
+          placeholder="Selecciona un percentatge"
+          @change="onProfitPercentageChanged"
+        >
+          <template #value="slotProps">
+            <span v-if="slotProps.value">{{ slotProps.value }}%</span>
+            <span v-else>{{ slotProps.placeholder }}</span>
+          </template>
+          <template #option="slotProps">
+            {{ slotProps.option.profitPercentage }}%
+          </template>
+        </Dropdown>
+        <InputNumber
+          v-else
+          v-model="phase.profitPercentage"
+          :minFractionDigits="2"
+          :maxFractionDigits="2"
           suffix="%"
-        ></BaseInput>
+          class="w-full"
+          :disabled="true"
+        />
       </div>
       <div>
         <label class="block text-900 mb-2">Tipus d'operari</label>
@@ -122,7 +141,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { WorkMaster, WorkMasterPhase } from "../types";
+import {
+  WorkMaster,
+  WorkMasterPhase,
+  WorkcenterProfitPercentage,
+} from "../types";
 import * as Yup from "yup";
 import {
   FormValidation,
@@ -145,11 +168,13 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
+const workcenterProfitPercentages = ref([] as WorkcenterProfitPercentage[]);
+
 onMounted(async () => {
   serviceReferences.value =
     await referencesStore.getReferencesByModuleAndCategory(
       "purchase",
-      ReferenceCategoryEnum.SERVICE
+      ReferenceCategoryEnum.SERVICE,
     );
 });
 
@@ -168,22 +193,46 @@ const preferredWorkcenters = computed(() => {
 const workcenterTypeUpdated = () => {
   props.phase.preferredWorkcenterId = null;
   let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-    (wt) => wt.id === props.phase.workcenterTypeId
+    (wt) => wt.id === props.phase.workcenterTypeId,
   );
   props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
 };
-const workcenterUpdated = () => {
+const workcenterUpdated = async () => {
   let selectedWorkcenter = plantModelStore.workcenters?.find(
-    (wt) => wt.id === props.phase.preferredWorkcenterId
+    (wt) => wt.id === props.phase.preferredWorkcenterId,
   );
-  if (selectedWorkcenter!.profitPercentage > 0) {
-    props.phase.profitPercentage = selectedWorkcenter!.profitPercentage;
-  } else {
-    let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-      (wt) => wt.id === props.phase.workcenterTypeId
+
+  // Carregar percentatges de benefici del workcenter
+  if (props.phase.preferredWorkcenterId) {
+    await plantModelStore.fetchWorkcenterProfitPercentagesByWorkcenterId(
+      props.phase.preferredWorkcenterId,
     );
-    props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
+    workcenterProfitPercentages.value =
+      plantModelStore.workcenterProfitPercentages || [];
+  } else {
+    workcenterProfitPercentages.value = [];
   }
+
+  // Establir el valor per defecte
+  if (workcenterProfitPercentages.value.length > 0) {
+    // Si hi ha percentatges personalitzats, seleccionar el primer
+    props.phase.profitPercentage =
+      workcenterProfitPercentages.value[0].profitPercentage;
+  } else if (selectedWorkcenter && selectedWorkcenter.profitPercentage > 0) {
+    // Si no hi ha percentatges personalitzats, usar el del workcenter
+    props.phase.profitPercentage = selectedWorkcenter.profitPercentage;
+  } else {
+    // Si no, usar el del tipus de workcenter
+    let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
+      (wt) => wt.id === props.phase.workcenterTypeId,
+    );
+    props.phase.profitPercentage =
+      selectedWorkcenterType?.profitPercentage || 0;
+  }
+};
+
+const onProfitPercentageChanged = () => {
+  // El v-model ja actualitza automàticament el valor
 };
 const isExternalWorkChanged = async () => {
   if (props.phase.isExternalWork) {
@@ -200,7 +249,7 @@ const isExternalWorkChanged = async () => {
 const onServiceReferenceChanged = () => {
   if (serviceReferences.value) {
     const selectedReference = serviceReferences.value.find(
-      (r) => r.id === props.phase.serviceReferenceId
+      (r) => r.id === props.phase.serviceReferenceId,
     );
     if (selectedReference) {
       props.phase.externalWorkCost = selectedReference.price;
