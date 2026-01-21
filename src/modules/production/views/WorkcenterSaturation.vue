@@ -23,6 +23,13 @@
               />
             </div>
           </div>
+          <div
+            v-if="workingDaysInfo"
+            class="flex align-items-center gap-2 text-700"
+          >
+            <i :class="PrimeIcons.CALENDAR" class="text-primary"></i>
+            <span class="font-semibold">{{ workingDaysInfo }}</span>
+          </div>
           <div class="datatable-buttons">
             <Button
               class="datatable-button mr-2"
@@ -96,7 +103,7 @@
         :rows="10"
       >
         <Column
-          field="code"
+          field="workOrderCode"
           header="Ordre Treball"
           sortable
           style="width: 15%"
@@ -134,7 +141,6 @@
 </template>
 
 <script setup lang="ts">
-import { useWorkOrderStore } from "../store/workorder";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { useStore } from "../../../store";
@@ -146,13 +152,12 @@ import { formatDateForQueryParameter } from "../../../utils/functions";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import type { WorkcenterTypeSaturation } from "../types";
 
-const workOrderStore = useWorkOrderStore();
 const plantModelStore = usePlantModelStore();
 const exerciseStore = useExerciseStore();
 const store = useStore();
 const toast = useToast();
 
-const { workcenterTypeSaturation } = storeToRefs(workOrderStore);
+const { workcenterTypeSaturation } = storeToRefs(plantModelStore);
 
 // Dialog state
 const detailDialogVisible = ref(false);
@@ -161,7 +166,10 @@ const selectedWorkcenterTypeName = ref("");
 
 // Computed property to group data by workcenterTypeId
 const groupedSaturation = computed(() => {
-  if (!workcenterTypeSaturation.value || workcenterTypeSaturation.value.length === 0) {
+  if (
+    !workcenterTypeSaturation.value ||
+    workcenterTypeSaturation.value.length === 0
+  ) {
     return [];
   }
 
@@ -179,9 +187,11 @@ const groupedSaturation = computed(() => {
   workcenterTypeSaturation.value.forEach((item) => {
     if (!grouped.has(item.workcenterTypeId)) {
       const workcenterType = plantModelStore.workcenterTypes?.find(
-        (wt) => wt.id === item.workcenterTypeId
+        (wt) => wt.id === item.workcenterTypeId,
       );
-      const workcenterCount = plantModelStore.getWorkcentersByTypeId(item.workcenterTypeId)?.length || 0;
+      const workcenterCount =
+        plantModelStore.getWorkcentersByTypeId(item.workcenterTypeId)?.length ||
+        0;
 
       grouped.set(item.workcenterTypeId, {
         workcenterTypeId: item.workcenterTypeId,
@@ -200,6 +210,41 @@ const groupedSaturation = computed(() => {
   return Array.from(grouped.values());
 });
 
+// Calculate working days (excluding weekends)
+const calculateWorkingDays = (startDate: Date, endDate: Date): number => {
+  let count = 0;
+  const current = new Date(startDate);
+
+  while (current <= endDate) {
+    const dayOfWeek = current.getDay();
+    // 0 = Sunday, 6 = Saturday
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  return count;
+};
+
+// Computed property for working days information
+const workingDaysInfo = computed(() => {
+  if (!store.exercisePicker.dates || store.exercisePicker.dates.length !== 2) {
+    return null;
+  }
+
+  const startDate = store.exercisePicker.dates[0];
+  const endDate = store.exercisePicker.dates[1];
+  const workingDays = calculateWorkingDays(startDate, endDate);
+
+  const hoursPerDay = 8; // Hores per torn
+  const hours1Shift = workingDays * hoursPerDay;
+  const hours2Shifts = workingDays * hoursPerDay * 2;
+  const hours3Shifts = workingDays * hoursPerDay * 3;
+
+  return `${workingDays} dies - ${hours1Shift}h a 1 torn - ${hours2Shifts}h a 2 torns - ${hours3Shifts}h a 3 torns`;
+});
+
 // Format time from minutes to readable format
 const formatTime = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
@@ -212,10 +257,7 @@ const formatTime = (minutes: number): string => {
 
 // Filter data based on selected date range
 const filterData = async () => {
-  if (
-    !store.exercisePicker.dates ||
-    store.exercisePicker.dates.length !== 2
-  ) {
+  if (!store.exercisePicker.dates || store.exercisePicker.dates.length !== 2) {
     toast.add({
       severity: "info",
       summary: "Filtre invàlid",
@@ -228,13 +270,13 @@ const filterData = async () => {
   const startDate = formatDateForQueryParameter(store.exercisePicker.dates[0]);
   const endDate = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
-  await workOrderStore.fetchWorkcenterTypeSaturation(startDate, endDate);
+  await plantModelStore.fetchWorkcenterTypeSaturation(startDate, endDate);
 };
 
 // Clean filter and reset to default
 const cleanFilter = () => {
   store.cleanExercisePicker();
-  workOrderStore.workcenterTypeSaturation = undefined;
+  plantModelStore.workcenterTypeSaturation = undefined;
 };
 
 // Show detail dialog
@@ -269,7 +311,8 @@ onMounted(async () => {
 
   // Load necessary data
   if (!exerciseStore.exercises) await exerciseStore.fetchActive();
-  if (!plantModelStore.workcenterTypes) await plantModelStore.fetchWorkcenterTypes();
+  if (!plantModelStore.workcenterTypes)
+    await plantModelStore.fetchWorkcenterTypes();
   if (!plantModelStore.workcenters) await plantModelStore.fetchWorkcenters();
 
   // Set default date range and fetch data

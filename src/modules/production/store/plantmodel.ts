@@ -23,6 +23,7 @@ import {
   OperatorType,
   MachineStatus,
   MachineStatusReason,
+  WorkcenterTypeSaturation,
   WorkcenterProfitPercentage,
 } from "../types";
 
@@ -62,6 +63,8 @@ export const usePlantModelStore = defineStore("plantmodel", {
     operatorTypes: undefined as Array<OperatorType> | undefined,
     machineStatus: undefined as MachineStatus | undefined,
     machineStatuses: undefined as Array<MachineStatus> | undefined,
+    workcenterTypeSaturation: undefined as
+      | Array<WorkcenterTypeSaturation>
     workcenterProfitPercentage: undefined as
       | WorkcenterProfitPercentage
       | undefined,
@@ -153,6 +156,13 @@ export const usePlantModelStore = defineStore("plantmodel", {
       const result = await workcenterService.delete(id);
       if (result) await this.fetchWorkcenters();
       return result;
+    },
+    async fetchWorkcenterTypeSaturation(startDate: string, endDate: string) {
+      const data = await workcenterService.GetWorkcenterTypeSaturation(
+        startDate,
+        endDate,
+      );
+      this.workcenterTypeSaturation = data || [];
     },
     //workcentertype
     setNewWorkcenterType(id: string) {
