@@ -65,6 +65,7 @@ export const usePlantModelStore = defineStore("plantmodel", {
     machineStatuses: undefined as Array<MachineStatus> | undefined,
     workcenterTypeSaturation: undefined as
       | Array<WorkcenterTypeSaturation>
+      | undefined,
     workcenterProfitPercentage: undefined as
       | WorkcenterProfitPercentage
       | undefined,
