@@ -92,7 +92,7 @@ const validate = () => {
       ...schema,
       taxId: Yup.string().required("L'IVA és obligatori"),
       referenceTypeId: Yup.string().required(
-        "El tipus de referència és obligatori"
+        "El tipus de referència és obligatori",
       ),
       referenceFormatId: Yup.string().required("El format és obligatori"),
     });
@@ -101,7 +101,7 @@ const validate = () => {
       ...schema,
       price: Yup.number().required("El preu és obligatori"),
       transportAmount: Yup.number().required(
-        "El preu de transport és obligatori"
+        "El preu de transport és obligatori",
       ),
     });
   } else if (props.reference.categoryName === ReferenceCategoryEnum.TOOL) {
