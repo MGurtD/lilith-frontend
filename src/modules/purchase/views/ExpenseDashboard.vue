@@ -9,7 +9,7 @@
     <div class="dashboard-filter-field">
       <label>Tipus</label>
       <Dropdown
-        :options="['Despesa', 'Compra']"
+        :options="['Compra', 'Despesa']"
         v-model="filter.type"
         @change="filterDashboard(true)"
       />
@@ -193,7 +193,10 @@ const transformConsolidatedExpensesToChartOptions = (
   const options = {} as ChartOptions;
 
   const groupedData = _.groupBy(expenses, fieldToGroup);
-  options.labels = Object.keys(groupedData);
+  const sortedKeys = Object.keys(groupedData).sort((a, b) =>
+    a.localeCompare(b, "ca", { sensitivity: "base" }),
+  );
+  options.labels = sortedKeys;
 
   const chartColors = getChartColors(options.labels.length);
   options.datasets = [
@@ -206,7 +209,7 @@ const transformConsolidatedExpensesToChartOptions = (
     },
   ];
 
-  Object.keys(groupedData).forEach((key) => {
+  sortedKeys.forEach((key) => {
     let totalAmount = 0;
     groupedData[key].forEach((mov) => {
       totalAmount += mov.amount;
