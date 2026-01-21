@@ -22,6 +22,7 @@ import {
   OperatorType,
   MachineStatus,
   MachineStatusReason,
+  WorkcenterTypeSaturation,
 } from "../types";
 
 const workcenterService = new WorkcenterService("/workcenter");
@@ -34,7 +35,7 @@ const operatorService = new OperatorService("/operator");
 const operatorTypeService = new OperatorTypeService("/operatortype");
 const machineStatusService = new MachineStatusService("/machinestatus");
 const machineStatusReasonService = new MachineStatusReasonService(
-  "/machinestatus/reason"
+  "/machinestatus/reason",
 );
 
 export const usePlantModelStore = defineStore("plantmodel", {
@@ -57,6 +58,9 @@ export const usePlantModelStore = defineStore("plantmodel", {
     operatorTypes: undefined as Array<OperatorType> | undefined,
     machineStatus: undefined as MachineStatus | undefined,
     machineStatuses: undefined as Array<MachineStatus> | undefined,
+    workcenterTypeSaturation: undefined as
+      | Array<WorkcenterTypeSaturation>
+      | undefined,
   }),
   getters: {
     getWorkcentersByTypeId: (state) => {
@@ -142,6 +146,13 @@ export const usePlantModelStore = defineStore("plantmodel", {
       const result = await workcenterService.delete(id);
       if (result) await this.fetchWorkcenters();
       return result;
+    },
+    async fetchWorkcenterTypeSaturation(startDate: string, endDate: string) {
+      const data = await workcenterService.GetWorkcenterTypeSaturation(
+        startDate,
+        endDate,
+      );
+      this.workcenterTypeSaturation = data || [];
     },
     //workcentertype
     setNewWorkcenterType(id: string) {

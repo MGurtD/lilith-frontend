@@ -630,7 +630,7 @@ export interface BillOfMaterialsItem {
 }
 
 export interface WorkcenterTypeSaturation {
-  code: string;
+  workOrderCode: string;
   plannedQuantity: number;
   phaseCode: string;
   phaseDescription: string;

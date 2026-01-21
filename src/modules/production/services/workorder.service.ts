@@ -8,7 +8,6 @@ import {
   CreateWorkOrderDto,
   DetailedWorkOrder,
   WorkOrderOrder,
-  WorkcenterTypeSaturation,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { GenericResponse } from "../../../types";
@@ -77,17 +76,6 @@ export class WorkOrderService extends BaseService<WorkOrder> {
       workOrderOrders,
     );
     return response.data as GenericResponse<boolean>;
-  }
-  async GetWorkcenterTypeSaturation(
-    startDate: string,
-    endDate: string,
-  ): Promise<Array<WorkcenterTypeSaturation> | undefined> {
-    const response = await this.apiClient.get(
-      `${this.resource}/workcenterload?startDate=${startDate}&endDate=${endDate}`,
-    );
-    if (response.status === 200)
-      return response.data as Array<WorkcenterTypeSaturation>;
-    if (response.status === 204) return [];
   }
 }
 export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
