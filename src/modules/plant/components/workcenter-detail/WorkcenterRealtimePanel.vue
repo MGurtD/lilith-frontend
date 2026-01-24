@@ -89,7 +89,7 @@ const dataStore = usePlantDataStore();
 const currentStatus = computed(() => {
   if (!props.workcenter.realtime?.statusId) return undefined;
   return dataStore.machineStatuses.find(
-    (s) => s.id === props.workcenter.realtime?.statusId
+    (s) => s.id === props.workcenter.realtime?.statusId,
   );
 });
 
@@ -97,7 +97,7 @@ const currentReason = computed(() => {
   if (!props.workcenter.realtime?.statusReasonId || !currentStatus.value)
     return undefined;
   return currentStatus.value.reasons?.find(
-    (r) => r.id === props.workcenter.realtime?.statusReasonId
+    (r) => r.id === props.workcenter.realtime?.statusReasonId,
   );
 });
 
@@ -105,16 +105,16 @@ const currentReason = computed(() => {
 const currentWorkOrderData = computed(() => {
   // Usar la primera orden de trabajo cargada desde el WebSocket
   if (
-    workcenterStore.loadedWorkOrders &&
-    workcenterStore.loadedWorkOrders.length > 0 &&
+    workcenterStore.loadedWorkOrdersPhases &&
+    workcenterStore.loadedWorkOrdersPhases.length > 0 &&
     props.workcenter.realtime?.workorders &&
     props.workcenter.realtime.workorders.length > 0
   ) {
-    const wo = workcenterStore.loadedWorkOrders[0];
+    const wo = workcenterStore.loadedWorkOrdersPhases[0];
     const activeWorkOrder = props.workcenter.realtime.workorders[0];
     // Find the current phase from the loaded work order
     const currentPhase = wo.phases.find(
-      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId
+      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId,
     );
 
     return {

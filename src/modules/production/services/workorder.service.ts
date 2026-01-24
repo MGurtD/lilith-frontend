@@ -8,8 +8,10 @@ import {
   CreateWorkOrderDto,
   DetailedWorkOrder,
   WorkOrderOrder,
+  ValidatePreviousPhaseQuantityRequest,
 } from "../types";
 import BaseService from "../../../api/base.service";
+import { NextPhaseInfo } from "../../plant/types";
 import { GenericResponse } from "../../../types";
 
 export class WorkOrderService extends BaseService<WorkOrder> {
@@ -135,6 +137,29 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
       return response.data as Array<WorkOrderWithPhases>;
     }
     return [];
+  }
+
+  async ValidatePreviousPhaseQuantity(
+    request: ValidatePreviousPhaseQuantityRequest,
+  ): Promise<GenericResponse<boolean>> {
+    const response = await this.apiClient.post(
+      `/WorkOrder/Phase/ValidatePreviousQuantity`,
+      request,
+    );
+    return response.data as GenericResponse<boolean>;
+  }
+
+  async GetNextPhaseForWorkcenter(
+    currentPhaseId: string,
+    workcenterId: string,
+  ): Promise<NextPhaseInfo | undefined> {
+    const response = await this.apiClient.get(
+      `/WorkOrder/Phase/${currentPhaseId}/NextForWorkcenter/${workcenterId}`,
+    );
+    if (response.status === 200) {
+      return response.data as NextPhaseInfo;
+    }
+    return undefined;
   }
 }
 

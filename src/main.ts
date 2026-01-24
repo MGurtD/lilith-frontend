@@ -36,6 +36,7 @@ import SplitButton from "primevue/splitbutton";
 import ConfirmPopup from "primevue/confirmpopup";
 import BaseInput from "./components/BaseInput.vue";
 import BooleanColumn from "./components/tables/BooleanColumn.vue";
+import InfoPanel from "./components/InfoPanel.vue";
 import ConfirmationService from "primevue/confirmationservice";
 import Calendar from "primevue/calendar";
 import TreeTable from "primevue/treetable";
@@ -83,6 +84,7 @@ app
   .component("RadioButton", RadioButton)
   .component("BaseInput", BaseInput)
   .component("BooleanColumn", BooleanColumn)
+  .component("InfoPanel", InfoPanel)
   .component("ColorPicker", ColorPicker)
   .component("TreeTable", TreeTable)
   .component("Tag", Tag)

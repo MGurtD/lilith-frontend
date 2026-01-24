@@ -161,7 +161,7 @@ onMounted(async () => {
   serviceReferences.value =
     await referencesStore.getReferencesByModuleAndCategory(
       "purchase",
-      ReferenceCategoryEnum.SERVICE
+      ReferenceCategoryEnum.SERVICE,
     );
 });
 
@@ -180,7 +180,7 @@ const preferredWorkcenters = computed(() => {
 const onServiceReferenceChanged = () => {
   if (serviceReferences.value) {
     const selectedReference = serviceReferences.value.find(
-      (r) => r.id === props.phase.serviceReferenceId
+      (r) => r.id === props.phase.serviceReferenceId,
     );
     if (selectedReference) {
       props.phase.externalWorkCost = selectedReference.price;
@@ -192,20 +192,20 @@ const onServiceReferenceChanged = () => {
 const workcenterTypeUpdated = () => {
   props.phase.preferredWorkcenterId = null;
   let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-    (wt) => wt.id === props.phase.workcenterTypeId
+    (wt) => wt.id === props.phase.workcenterTypeId,
   );
   props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
 };
 
 const workcenterUpdated = () => {
   let selectedWorkcenter = plantModelStore.workcenters?.find(
-    (wt) => wt.id === props.phase.preferredWorkcenterId
+    (wt) => wt.id === props.phase.preferredWorkcenterId,
   );
   if (selectedWorkcenter!.profitPercentage > 0) {
     props.phase.profitPercentage = selectedWorkcenter!.profitPercentage;
   } else {
     let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-      (wt) => wt.id === props.phase.workcenterTypeId
+      (wt) => wt.id === props.phase.workcenterTypeId,
     );
     props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
   }

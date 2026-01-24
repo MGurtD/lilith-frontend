@@ -7,6 +7,10 @@ html {
   --side-bar-width: 240px;
   --side-bar-collapsed-width: 50px;
   --collapsed-side-padding: 15px;
+
+  /* Quantity status colors */
+  --quantity-ok-color: var(--green-600);
+  --quantity-ko-color: var(--red-600);
 }
 
 body {
@@ -92,7 +96,7 @@ body {
 
 .grid_add_row_button {
   position: fixed !important;
-  right: 2rem !important;
+  right: 1rem !important;
   z-index: 1 !important;
 }
 
@@ -177,4 +181,15 @@ table > tbody > tr {
 
 .clickable-rows :deep(.p-datatable-tbody > tr) {
   cursor: pointer;
+}
+
+/* Quantity status classes */
+.quantity-ok {
+  color: var(--quantity-ok-color);
+  font-weight: 600;
+}
+
+.quantity-ko {
+  color: var(--quantity-ko-color);
+  font-weight: 600;
 }

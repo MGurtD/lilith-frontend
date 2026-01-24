@@ -99,6 +99,13 @@ export interface WorkOrderPhaseRequest {
   workOrderPhaseId: string;
 }
 
+// Next phase info for auto-loading
+export interface NextPhaseInfo {
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
+}
+
 export interface WorkOrderPhaseResponse {
   code: string;
   description: string;

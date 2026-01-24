@@ -178,7 +178,7 @@ const isOperatorClockedIn = computed(() => {
     return false;
   }
   return workcenter.value.realtime.operators.some(
-    (op) => op.operatorId === operatorStore.operator!.id
+    (op) => op.operatorId === operatorStore.operator!.id,
   );
 });
 
@@ -267,7 +267,7 @@ const handleMachineStatusChange = async () => {
 const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
   const result = await workcenterStore.changeMachineStatus(
     request.statusId,
-    request.statusReasonId
+    request.statusReasonId,
   );
 
   if (result) {
@@ -314,7 +314,7 @@ const handlePhaseDetailSelected = async (data: {
     // Refresh available work orders list
     if (workcenter.value?.config.workcenterTypeId) {
       await workcenterStore.fetchAvailableWorkOrders(
-        workcenter.value.config.workcenterTypeId
+        workcenter.value.config.workcenterTypeId,
       );
     }
     toast.add({
@@ -348,7 +348,7 @@ const handleWorkOrderPhaseClose = async () => {
 
   // Extract current phase data from realtime and loaded work orders
   const currentActivePhase = workcenter.value.realtime.workorders[0];
-  const loadedWorkOrder = workcenterStore.loadedWorkOrders?.[0];
+  const loadedWorkOrder = workcenterStore.loadedWorkOrdersPhases?.[0];
 
   if (!loadedWorkOrder) {
     toast.add({
@@ -361,7 +361,7 @@ const handleWorkOrderPhaseClose = async () => {
 
   // Find the matching phase in the loaded work order
   const currentPhase = loadedWorkOrder.phases.find(
-    (p) => p.phaseId === currentActivePhase.workOrderPhaseId
+    (p) => p.phaseId === currentActivePhase.workOrderPhaseId,
   );
 
   if (!currentPhase) {
@@ -395,7 +395,7 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
     // Refresh available work orders list
     if (workcenter.value?.config.workcenterTypeId) {
       await workcenterStore.fetchAvailableWorkOrders(
-        workcenter.value.config.workcenterTypeId
+        workcenter.value.config.workcenterTypeId,
       );
     }
     toast.add({
