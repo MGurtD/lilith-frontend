@@ -34,9 +34,15 @@
         {{ getOperatorType(slotProps.data.operatorTypeId) }}
       </template>
     </Column>
-    <Column header="Estat" style="width: 15%">
+    <Column header="Estat">
       <template #body="slotProps">
         {{ getStatus(slotProps.data.statusId) }}
+      </template>
+    </Column>
+    <Column header="Quantitat">
+      <template #body="slotProps">
+        <span class="quantity-ok">{{ slotProps.data.quantityOk }}</span> /
+        <span class="quantity-ko">{{ slotProps.data.quantityKo }}</span>
       </template>
     </Column>
     <Column header="Extern" style="width: 5%">
@@ -169,6 +175,8 @@ const onAddClick = () => {
     startTime: null,
     endTime: null,
     profitPercentage: 0,
+    quantityOk: 0,
+    quantityKo: 0,
     workOrderPhaseDetails: [],
     workOrderPhaseBillOfMaterials: [],
   } as WorkOrderPhase;
@@ -195,7 +203,7 @@ const onAddHandler = (phase: WorkOrderPhase) => {
 const onEditRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);

@@ -228,6 +228,8 @@ export interface WorkOrderPhase {
   statusId: string;
   startTime: any;
   endTime: any;
+  quantityOk: number;
+  quantityKo: number;
   purchaseOrderId?: string | null;
   workOrder?: WorkOrder;
   details?: Array<WorkOrderPhaseDetail>;
@@ -262,6 +264,11 @@ export interface CreateWorkOrderDto {
   plannedQuantity: number;
   plannedDate: any;
   comment: string;
+}
+
+export interface ValidatePreviousPhaseQuantityRequest {
+  workOrderPhaseId: string;
+  quantity: number;
 }
 
 export interface ProductionPart {
@@ -476,6 +483,8 @@ export interface PlannedPhase {
   phaseStatusId: string;
   phaseStatus: string;
   isExternalWork: boolean;
+  quantityOk: number;
+  quantityKo: number;
   startTime?: Date | string | null;
   preferredWorkcenterName: string;
 }
@@ -498,6 +507,9 @@ export interface WorkOrderPhaseDetailed {
   endTime?: Date | string | null;
   preferredWorkcenterName: string;
   workcenterTypeId: string;
+  quantityOk: number;
+  quantityKo: number;
+  isExternalWork: boolean;
 
   details: PhaseDetailItem[];
   billOfMaterials: BillOfMaterialsItem[];
