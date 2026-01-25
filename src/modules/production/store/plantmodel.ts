@@ -34,7 +34,7 @@ const operatorService = new OperatorService("/operator");
 const operatorTypeService = new OperatorTypeService("/operatortype");
 const machineStatusService = new MachineStatusService("/machinestatus");
 const machineStatusReasonService = new MachineStatusReasonService(
-  "/machinestatus/reason"
+  "/machinestatus/reason",
 );
 
 export const usePlantModelStore = defineStore("plantmodel", {
@@ -386,6 +386,7 @@ export const usePlantModelStore = defineStore("plantmodel", {
         operatorsAllowed: true,
         closed: false,
         preferred: false,
+        workOrderAllowed: true,
         icon: "",
         disabled: false,
       } as MachineStatus;

@@ -1,89 +1,73 @@
 <template>
   <form v-if="machineStatus">
-    <div class="grid_add_row_button">
-      <Button label="Guardar" style="float: right" @click="submitForm" />
+    <div class="flex justify-content-end">
+      <Button label="Guardar" @click="submitForm" />
     </div>
-    <section class="four-columns pt-4">
-      <BaseInput
-        class="mb-2"
-        label="Nom"
-        id="name"
-        v-model="machineStatus.name"
-        :class="{
-          'p-invalid': validation.errors.name,
-        }"
-      ></BaseInput>
-      <BaseInput
-        class="mb-2"
-        label="Descripció"
-        id="description"
-        v-model="machineStatus.description"
-        :class="{
-          'p-invalid': validation.errors.description,
-        }"
-      ></BaseInput>
-      <div>
+
+    <!-- Fila 1: Camps de text -->
+    <div class="grid">
+      <div class="col-12 md:col-6 lg:col-3">
+        <BaseInput
+          class="mb-2"
+          label="Nom"
+          id="name"
+          v-model="machineStatus.name"
+          :class="{ 'p-invalid': validation.errors.name }"
+        />
+      </div>
+      <div class="col-12 md:col-6 lg:col-3">
+        <BaseInput
+          class="mb-2"
+          label="Descripció"
+          id="description"
+          v-model="machineStatus.description"
+          :class="{ 'p-invalid': validation.errors.description }"
+        />
+      </div>
+      <div class="col-12 md:col-6 lg:col-3">
         <label class="block text-900 mb-2">Color</label>
         <ColorPicker
           v-model="machineStatus.color"
           class="mb-2"
-          label="Color"
-          id="color"
-          :class="{
-            'p-invalid': validation.errors.color,
-          }"
-        ></ColorPicker>
+          :class="{ 'p-invalid': validation.errors.color }"
+        />
       </div>
-      <div>
+      <div class="col-12 md:col-6 lg:col-3">
         <label class="block text-900 mb-2">Icona</label>
         <IconPicker
           v-model="machineStatus.icon"
           placeholder="Selecciona una icona"
         />
       </div>
-    </section>
-    <section class="five-columns">
-      <div>
+    </div>
+
+    <!-- Fila 2: Checkboxes -->
+    <div class="grid mt-3">
+      <div class="col-6 md:col-4 lg:col-2">
         <label class="block text-900 mb-2">Aturada</label>
-        <Checkbox
-          v-model="machineStatus.stopped"
-          class="w-full"
-          :binary="true"
-        />
+        <Checkbox v-model="machineStatus.stopped" :binary="true" />
       </div>
-      <div>
+      <div class="col-6 md:col-4 lg:col-2">
         <label class="block text-900 mb-2">Operaris</label>
-        <Checkbox
-          v-model="machineStatus.operatorsAllowed"
-          class="w-full"
-          :binary="true"
-        />
+        <Checkbox v-model="machineStatus.operatorsAllowed" :binary="true" />
       </div>
-      <div>
+      <div class="col-6 md:col-4 lg:col-2">
         <label class="block text-900 mb-2">Tancada</label>
-        <Checkbox
-          v-model="machineStatus.closed"
-          class="w-full"
-          :binary="true"
-        />
+        <Checkbox v-model="machineStatus.closed" :binary="true" />
       </div>
-      <div>
+      <div class="col-6 md:col-4 lg:col-2">
         <label class="block text-900 mb-2">Preferida</label>
-        <Checkbox
-          v-model="machineStatus.preferred"
-          class="w-full"
-          :binary="true"
-        />
+        <Checkbox v-model="machineStatus.preferred" :binary="true" />
       </div>
-      <div>
+      <div class="col-6 md:col-4 lg:col-2">
+        <label class="block text-900 mb-2">Permet OF</label>
+        <Checkbox v-model="machineStatus.workOrderAllowed" :binary="true" />
+      </div>
+      <div class="col-6 md:col-4 lg:col-2">
         <label class="block text-900 mb-2">Desactivat</label>
-        <Checkbox
-          v-model="machineStatus.disabled"
-          class="w-full"
-          :binary="true"
-        />
+        <Checkbox v-model="machineStatus.disabled" :binary="true" />
       </div>
-    </section>
+    </div>
   </form>
 </template>
 
