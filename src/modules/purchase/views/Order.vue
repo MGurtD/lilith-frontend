@@ -174,7 +174,7 @@ const openCreateDetailForm = () => {
     quantity: 0,
     receivedQuantity: 0,
     referenceId: "",
-    statusId: "",
+    statusId: lifecycleStore.lifecycle?.initialStatusId || "",
     expectedReceiptDate: null,
     workOrderPhaseId: null,
     disabled: false,

@@ -49,7 +49,7 @@ const category = ref({} as ReferenceCategory);
 onMounted(async () => {
   id.value = route.params.id as string;
   category.value = referenceStore.referenceCategories.find(
-    (c) => c.code === route.params.category
+    (c) => c.code === route.params.category,
   )!;
 
   await loadView();
@@ -65,7 +65,7 @@ const loadView = async () => {
     formMode.value = FormActionMode.CREATE;
     referenceStore.setNewReference(
       id.value,
-      category.value.code as ReferenceCategoryEnum
+      category.value.code as ReferenceCategoryEnum,
     );
     pageTitle = `Alta ${category.value.description}`;
   } else {
@@ -85,6 +85,15 @@ const submitForm = async () => {
   const data = reference.value as Reference;
   let result = false;
   let message = "";
+
+  if (data.categoryName === ReferenceCategoryEnum.TOOL) {
+    const unitFormat = referenceStore.referenceFormats?.find(
+      (f) => f.code === "UNITATS",
+    );
+    if (unitFormat) {
+      data.referenceFormatId = unitFormat.id;
+    }
+  }
 
   if (formMode.value === FormActionMode.CREATE) {
     result = await referenceStore.createReference(data);

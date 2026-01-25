@@ -5,23 +5,38 @@
     @submit="submitForm"
   />
   <section class="mt-4">
-    <FileEntityPicker
-      title="Imatge de la màquina"
-      entity="WorkcenterPicture"
-      :max-files="1"
-      :id="(route.params.id as string)"
-    />
+    <!-- Afegir tab -->
+    <TabView>
+      <TabPanel header="Imatge">
+        <FileEntityPicker
+          title="Imatge de la màquina"
+          entity="WorkcenterPicture"
+          :max-files="1"
+          :id="route.params.id as string"
+        />
+      </TabPanel>
+      <TabPanel header="Percentatges">
+        <TableWorkcenterProfitPercentage
+          v-if="workcenter"
+          :workcenterProfitPercentages="workcenterProfitPercentages"
+          :workcenterId="workcenter.id"
+          @delete="deleteWorkcenterProfitPercentage"
+          @add="addWorkcenterProfitPercentage"
+        />
+      </TabPanel>
+    </TabView>
   </section>
 </template>
 <script setup lang="ts">
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import FormWorkcenter from "../components/FormWorkcenter.vue";
+import TableWorkcenterProfitPercentage from "../components/TableWorkcenterProfitPercentage.vue";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { PrimeIcons } from "primevue/api";
 
 import { storeToRefs } from "pinia";
-import { Workcenter } from "../types";
+import { Workcenter, WorkcenterProfitPercentage } from "../types";
 import { useStore } from "../../../store";
 
 import { useToast } from "primevue/usetoast";
@@ -34,6 +49,7 @@ const route = useRoute();
 const store = useStore();
 const plantmodelStore = usePlantModelStore();
 const { workcenter } = storeToRefs(plantmodelStore);
+const { workcenterProfitPercentages } = storeToRefs(plantmodelStore);
 
 const loadView = async () => {
   await plantmodelStore.fetchWorkcenter(route.params.id as string);
@@ -46,6 +62,11 @@ const loadView = async () => {
     formMode.value = FormActionMode.EDIT;
     pageTitle = `Màquina: ${workcenter.value.name}`;
   }
+  await plantmodelStore.fetchWorkcenterProfitPercentagesByWorkcenterId(
+    route.params.id as string,
+  );
+  workcenterProfitPercentages.value =
+    plantmodelStore.workcenterProfitPercentages;
 
   store.setMenuItem({
     icon: PrimeIcons.BUILDING,
@@ -79,6 +100,32 @@ const submitForm = async () => {
       life: 5000,
     });
     router.back();
+  }
+};
+
+const deleteWorkcenterProfitPercentage = async (
+  workcenterProfitPercentage: WorkcenterProfitPercentage,
+) => {
+  await plantmodelStore.deleteWorkcenterProfitPercentage(
+    workcenterProfitPercentage.id,
+  );
+  await loadView();
+};
+
+const addWorkcenterProfitPercentage = async (
+  workcenterProfitPercentage: WorkcenterProfitPercentage,
+) => {
+  const result = await plantmodelStore.createWorkcenterProfitPercentage(
+    workcenterProfitPercentage,
+  );
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Percentatge creat",
+      detail: "El percentatge de profit s'ha creat correctament",
+      life: 5000,
+    });
+    await loadView();
   }
 };
 </script>

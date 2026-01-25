@@ -641,3 +641,18 @@ export interface BillOfMaterialsItem {
   referenceDescription: string;
   quantity: number;
 }
+
+export interface WorkcenterProfitPercentage {
+  id: string;
+  workcenterId: string;
+  profitPercentage: number;
+  disabled: boolean;
+}
+export interface WorkcenterTypeSaturation {
+  workOrderCode: string;
+  plannedQuantity: number;
+  phaseCode: string;
+  phaseDescription: string;
+  workcenterTypeId: string;
+  estimatedTime: number;
+}

@@ -69,14 +69,14 @@ export const useWorkOrderStore = defineStore("workorder", {
       endTime: string,
       statusId?: string,
       referenceId?: string,
-      customerId?: string
+      customerId?: string,
     ) {
       this.workorders = await Services.WorkOrder.GetBetweenDatesAndStatus(
         startTime,
         endTime,
         statusId,
         referenceId,
-        customerId
+        customerId,
       );
     },
     async fetchAll() {
@@ -102,11 +102,11 @@ export const useWorkOrderStore = defineStore("workorder", {
     },
     async createAndUpdateSalesOrderDetail(
       model: CreateWorkOrderDto,
-      detailId: string
+      detailId: string,
     ) {
       const result = await Services.WorkOrder.CreateFromSalesOrderDetail(
         model,
-        detailId
+        detailId,
       );
       if (result) await this.fetchOne(result.content!.id);
       return result;
@@ -134,7 +134,7 @@ export const useWorkOrderStore = defineStore("workorder", {
       this.workorderPhases =
         await Services.WorkOrderPhase.getExternalWorkOrderPhases(
           startTime,
-          endTime
+          endTime,
         );
     },
     async createPhase(model: WorkOrderPhase) {
@@ -179,7 +179,7 @@ export const useWorkOrderStore = defineStore("workorder", {
     async updatePhaseBomItem(id: string, model: WorkOrderPhaseBillOfMaterials) {
       const result = await Services.WorkOrderPhaseBillOfMaterials.update(
         id,
-        model
+        model,
       );
       if (result) await this.fetchPhaseById(model.workOrderPhaseId);
       return result;
@@ -204,7 +204,7 @@ export const useWorkOrderStore = defineStore("workorder", {
           return detailedWorkOrders; // Devuelve las órdenes de trabajo detalladas
         } else {
           console.error(
-            `No se encontraron órdenes de trabajo detalladas para el ID: ${id}`
+            `No se encontraron órdenes de trabajo detalladas para el ID: ${id}`,
           );
           return undefined;
         }
