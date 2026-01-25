@@ -11,17 +11,6 @@
         <!-- Right panel - Tabs -->
         <section class="tabs-panel">
           <TabView v-model:activeIndex="activeTab">
-            <!-- Documentation Tab -->
-            <TabPanel>
-              <template #header>
-                <div class="flex align-items-center gap-2">
-                  <i :class="PrimeIcons.FILE"></i>
-                  <span class="font-bold">Documentació</span>
-                </div>
-              </template>
-              <WorkcenterDocumentation :workcenter="workcenter" />
-            </TabPanel>
-
             <!-- Available Phases Tab -->
             <TabPanel>
               <template #header>
@@ -34,6 +23,17 @@
                 :workcenterTypeId="workcenter.config.workcenterTypeId"
                 @workorder-selected="handleWorkOrderSelected"
               />
+            </TabPanel>
+
+            <!-- Documentation Tab -->
+            <TabPanel>
+              <template #header>
+                <div class="flex align-items-center gap-2">
+                  <i :class="PrimeIcons.FILE"></i>
+                  <span class="font-bold">Documentació</span>
+                </div>
+              </template>
+              <WorkcenterDocumentation :workcenter="workcenter" />
             </TabPanel>
           </TabView>
         </section>
@@ -214,6 +214,7 @@ onMounted(async () => {
   await dataStore.fetchMachineStatuses();
 
   // 4. Establir pestanya activa segons si hi ha fase carregada
+  // Si hi ha fase carregada -> Documentació (tab 1), si no -> Fases disponibles (tab 0)
   activeTab.value = hasLoadedPhase.value ? 1 : 0;
 
   // 5. Connectar WebSocket específic del workcenter

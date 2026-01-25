@@ -11,6 +11,10 @@ html {
   /* Quantity status colors */
   --quantity-ok-color: var(--green-600);
   --quantity-ko-color: var(--red-600);
+
+  /* Loaded row highlight colors */
+  --loaded-row-bg: var(--green-100);
+  --loaded-row-border: var(--green-600);
 }
 
 body {

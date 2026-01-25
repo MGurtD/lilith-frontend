@@ -7,6 +7,7 @@
       stripedRows
       v-model:selectionKeys="selectedKey"
       selectionMode="single"
+      :rowClass="getRowClass"
       @row-select="onRowSelect"
     >
       <!-- Code -->
@@ -113,13 +114,26 @@ const emit = defineEmits<{
 }>();
 
 const workcenterStore = usePlantWorkcenterStore();
-const { availableWorkOrders, availableWorkOrdersLoading } =
+const { availableWorkOrders, availableWorkOrdersLoading, workcenterRt } =
   storeToRefs(workcenterStore);
 
 const selectedKey = ref();
 
 const workOrders = computed(() => availableWorkOrders.value);
 const loading = computed(() => availableWorkOrdersLoading.value);
+
+// Set of loaded work order codes for quick lookup
+const loadedWorkOrderCodes = computed(() => {
+  if (!workcenterRt.value?.workorders) return new Set<string>();
+  return new Set(workcenterRt.value.workorders.map((wo) => wo.workOrderCode));
+});
+
+const getRowClass = (data: WorkOrderWithPhases) => {
+  if (loadedWorkOrderCodes.value.has(data.workOrderCode)) {
+    return "loaded-workorder-row";
+  }
+  return "";
+};
 
 const onRowSelect = (event: any) => {
   emit("workorder-selected", event.data);
@@ -133,6 +147,11 @@ onMounted(async () => {
 <style scoped>
 .phase-selector {
   width: 100%;
+}
+
+.phase-selector :deep(.loaded-workorder-row) {
+  background: var(--loaded-row-bg) !important;
+  border-left: 4px solid var(--loaded-row-border) !important;
 }
 
 .no-data {

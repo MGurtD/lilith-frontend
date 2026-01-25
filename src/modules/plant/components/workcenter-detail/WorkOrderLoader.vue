@@ -407,8 +407,8 @@ onMounted(() => {
 }
 
 .dialog-content :deep(.selected-phase-row) {
-  background: var(--green-100) !important;
-  border-left: 4px solid var(--green-600) !important;
+  background: var(--loaded-row-bg) !important;
+  border-left: 4px solid var(--loaded-row-border) !important;
 }
 
 .dialog-content :deep(.p-datatable-tbody > tr > td .p-button) {

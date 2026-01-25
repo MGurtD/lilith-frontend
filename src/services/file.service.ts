@@ -16,10 +16,10 @@ export class FileService {
 
   public async GetEntityFiles(
     entity: string,
-    id: string
+    id: string,
   ): Promise<undefined | Array<File>> {
     let response = await this.apiClient.get(
-      `${this.resource}?entity=${entity}&entityId=${id}`
+      `${this.resource}?entity=${entity}&entityId=${id}`,
     );
     if (response.status === 200) {
       return response.data;
@@ -27,12 +27,12 @@ export class FileService {
   }
 
   public async Download(
-    file: File
+    file: File,
   ): Promise<{ blob: Blob; contentType: string }> {
     let response = await this.apiClient.post(
       `${this.resource}/Download`,
       file,
-      { responseType: "blob", timeout: fileRequestTimeout }
+      { responseType: "blob", timeout: fileRequestTimeout },
     );
     if (response.status === 200) {
       const contentType =
@@ -42,17 +42,17 @@ export class FileService {
         contentType: contentType,
       };
     }
-    throw new Error("Failed to download file");
+    throw new Error("");
   }
 
   public async DownloadReport(
     file: File,
-    parameters: Array<Parameter>
+    parameters: Array<Parameter>,
   ): Promise<any> {
     let response = await this.apiClient.post(
       `Report/Download`,
       { file, parameters },
-      { responseType: "blob" }
+      { responseType: "blob" },
     );
     if (response.status === 200) {
       return response.data;
@@ -73,7 +73,7 @@ export class FileService {
           "Content-Type": "multipart/form-data",
         },
         timeout: fileRequestTimeout,
-      }
+      },
     );
     if (response.status === 200) {
       return response.data;
