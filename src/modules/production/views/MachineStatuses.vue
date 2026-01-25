@@ -51,6 +51,11 @@
         <BooleanColumn :value="slotProps.data.preferred" />
       </template>
     </Column>
+    <Column header="Permet OF" style="width: 2%">
+      <template #body="slotProps">
+        <BooleanColumn :value="slotProps.data.workOrderAllowed" />
+      </template>
+    </Column>
     <Column header="Desactivat" style="width: 2%">
       <template #body="slotProps">
         <BooleanColumn :value="slotProps.data.disabled" />
@@ -103,7 +108,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/machinestatus/${row.data.id}` });
@@ -118,7 +123,7 @@ const deleteButton = (event: any, machineStatus: MachineStatus) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       const deleted = await plantmodelStore.deleteMachineStatus(
-        machineStatus.id
+        machineStatus.id,
       );
 
       if (deleted) {

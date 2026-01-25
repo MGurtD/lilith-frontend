@@ -455,6 +455,7 @@ export const usePlantModelStore = defineStore("plantmodel", {
         operatorsAllowed: true,
         closed: false,
         preferred: false,
+        workOrderAllowed: true,
         icon: "",
         disabled: false,
       } as MachineStatus;

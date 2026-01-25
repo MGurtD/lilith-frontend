@@ -69,6 +69,7 @@ export interface MachineStatus {
   operatorsAllowed: boolean;
   closed: boolean;
   preferred: boolean;
+  workOrderAllowed: boolean;
   icon: string;
   disabled: boolean;
   reasons?: Array<MachineStatusReason>;
