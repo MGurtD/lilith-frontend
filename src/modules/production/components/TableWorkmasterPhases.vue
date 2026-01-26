@@ -6,8 +6,8 @@
     tableStyle="min-width: 100%"
     sort-field="code"
     :sort-order="1"
-    :scrollable="scrollHeight !== undefined"
-    :scrollHeight="scrollHeight ? `${scrollHeight}vh` : ''"
+    scrollable
+    scrollHeight="flex"
     stripedRows
     :rowHover="true"
   >
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import { getNewUuid } from "../../../utils/functions";
@@ -82,7 +82,6 @@ import { useToast } from "primevue/usetoast";
 const props = defineProps<{
   workmaster: WorkMaster;
   workmasterPhases: Array<WorkMasterPhase>;
-  scrollHeight?: number;
 }>();
 
 const emit = defineEmits<{
@@ -164,7 +163,7 @@ const onAddClick = () => {
 
 const onAddHandler = (phase: WorkMasterPhase) => {
   const existsPhase = props.workmaster.phases.find(
-    (p) => p.code === phase.code
+    (p) => p.code === phase.code,
   );
   if (existsPhase) {
     toast.add({
@@ -183,7 +182,7 @@ const onAddHandler = (phase: WorkMasterPhase) => {
 const onEditRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);

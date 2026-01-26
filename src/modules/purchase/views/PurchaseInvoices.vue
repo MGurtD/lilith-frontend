@@ -1,119 +1,114 @@
 <template>
-  <div>
-    <DataTable
-      class="p-datatable-sm small-datatable"
-      tableStyle="min-width: 100%"
-      scrollable
-      scrollHeight="80vh"
-      :paginator="
-        purchaseInvoiceStore.purchaseInvoices &&
-        purchaseInvoiceStore.purchaseInvoices.length > 20
-      "
-      :rows="20"
-      sortMode="multiple"
-      :value="purchaseInvoiceStore.purchaseInvoices"
-      @row-click="editPurchaseInvoice"
-    >
-      <template #header>
-        <div
-          class="flex flex-wrap align-items-center justify-content-between gap-2"
-        >
-          <div class="datatable-filter">
-            <div class="filter-field">
-              <ExerciseDatePicker
-                :exercises="puchaseMasterDataStore.masterData.exercises"
-                @range-selected="filterInvoices"
-              />
-            </div>
-            <div class="filter-field">
-              <label class="block text-900 mb-2">Proveïdor</label>
-              <Dropdown
-                v-model="filter.supplierId"
-                editable
-                :options="puchaseMasterDataStore.masterData.suppliers"
-                optionValue="id"
-                optionLabel="comercialName"
-                class="w-full"
-              />
-            </div>
+  <DataTable
+    class="small-datatable"
+    tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="flex"
+    :paginator="
+      purchaseInvoiceStore.purchaseInvoices &&
+      purchaseInvoiceStore.purchaseInvoices.length > 20
+    "
+    :rows="20"
+    sortMode="multiple"
+    :value="purchaseInvoiceStore.purchaseInvoices"
+    @row-click="editPurchaseInvoice"
+  >
+    <template #header>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <div class="datatable-filter">
+          <div class="filter-field">
+            <ExerciseDatePicker
+              :exercises="puchaseMasterDataStore.masterData.exercises"
+              @range-selected="filterInvoices"
+            />
           </div>
-          <div class="datatable-buttons">
-            <Button
-              class="datatable-button mr-2"
-              :icon="PrimeIcons.FILTER"
-              rounded
-              raised
-              @click="filterInvoices"
-            />
-            <Button
-              class="datatable-button mr-2"
-              :icon="PrimeIcons.FILTER_SLASH"
-              rounded
-              raised
-              @click="cleanFilter"
-            />
-            <Button
-              :icon="PrimeIcons.PLUS"
-              rounded
-              raised
-              @click="createButtonClick"
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Proveïdor</label>
+            <Select
+              v-model="filter.supplierId"
+              :options="puchaseMasterDataStore.masterData.suppliers"
+              optionValue="id"
+              optionLabel="comercialName"
+              class="w-full"
             />
           </div>
         </div>
-      </template>
-      <Column
-        field="number"
-        header="Número"
-        :sortable="true"
-        style="width: 10%"
-      ></Column>
-      <Column
-        header="Data"
-        field="purchaseInvoiceDate"
-        sortable
-        style="width: 10%"
-      >
-        <template #body="slotProps">
-          {{ formatDate(slotProps.data.purchaseInvoiceDate) }}
-        </template>
-      </Column>
-      <Column header="Proveïdor" style="width: 15%">
-        <template #body="slotProps">
-          {{ getSupplierNameById(slotProps.data.supplierId) }}
-        </template>
-      </Column>
-      <Column
-        header="Núm. Fra. Proveïdor"
-        style="width: 15%"
-        field="supplierNumber"
-      ></Column>
-      <Column header="Estat" style="width: 15%">
-        <template #body="slotProps">
-          {{ getStatusNameById(slotProps.data.statusId) }}
-        </template>
-      </Column>
-      <Column header="Venciment" style="width: 10%">
-        <template #body="slotProps">
-          {{ getLastDueDate(slotProps.data) }}
-        </template>
-      </Column>
-      <Column header="Import" style="width: 10%">
-        <template #body="slotProps">
-          {{ slotProps.data.netAmount }} €
-        </template>
-      </Column>
-      <Column style="width: 5%">
-        <template #body="slotProps">
-          <i
-            v-if="getStatusNameById(slotProps.data.statusId) === 'Nova'"
-            :class="PrimeIcons.TIMES"
-            class="grid_delete_column_button"
-            @click="deletePurchaseInvoice($event, slotProps.data)"
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER"
+            rounded
+            raised
+            @click="filterInvoices"
           />
-        </template>
-      </Column>
-    </DataTable>
-  </div>
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+        </div>
+      </div>
+    </template>
+    <Column
+      field="number"
+      header="Número"
+      :sortable="true"
+      style="width: 10%"
+    ></Column>
+    <Column
+      header="Data"
+      field="purchaseInvoiceDate"
+      sortable
+      style="width: 10%"
+    >
+      <template #body="slotProps">
+        {{ formatDate(slotProps.data.purchaseInvoiceDate) }}
+      </template>
+    </Column>
+    <Column header="Proveïdor" style="width: 15%">
+      <template #body="slotProps">
+        {{ getSupplierNameById(slotProps.data.supplierId) }}
+      </template>
+    </Column>
+    <Column
+      header="Núm. Fra. Proveïdor"
+      style="width: 15%"
+      field="supplierNumber"
+    ></Column>
+    <Column header="Estat" style="width: 15%">
+      <template #body="slotProps">
+        {{ getStatusNameById(slotProps.data.statusId) }}
+      </template>
+    </Column>
+    <Column header="Venciment" style="width: 10%">
+      <template #body="slotProps">
+        {{ getLastDueDate(slotProps.data) }}
+      </template>
+    </Column>
+    <Column header="Import" style="width: 10%">
+      <template #body="slotProps"> {{ slotProps.data.netAmount }} € </template>
+    </Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          v-if="getStatusNameById(slotProps.data.statusId) === 'Nova'"
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deletePurchaseInvoice($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+  </DataTable>
 </template>
 <script setup lang="ts">
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
@@ -126,7 +121,7 @@ import { usePurchaseMasterDataStore } from "../store/purchase";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { onMounted, onUnmounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   formatDateForQueryParameter,
   formatDate,
@@ -190,7 +185,7 @@ const getUserFilter = () => {
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
   const currentExercise = puchaseMasterDataStore.masterData.exercises?.find(
-    (e) => e.name === year
+    (e) => e.name === year,
   );
 
   if (currentExercise) {
@@ -211,7 +206,7 @@ const filterLocalStorageKey = "temges.purchaseinvoice.filter";
 const filterInvoices = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -220,7 +215,7 @@ const filterInvoices = async () => {
       endTime,
       undefined,
       undefined,
-      filter.value.supplierId
+      filter.value.supplierId,
     );
 
     localStorage.setItem(filterLocalStorageKey, JSON.stringify(filter.value));
@@ -236,7 +231,7 @@ const filterInvoices = async () => {
 
 const getSupplierNameById = (id: string) => {
   const supplier = puchaseMasterDataStore.masterData.suppliers?.find(
-    (s) => s.id === id
+    (s) => s.id === id,
   );
   if (supplier) return supplier.comercialName;
   else return "";
@@ -257,7 +252,7 @@ const getLastDueDate = (invoice: PurchaseInvoice): string => {
     return formatDate(
       invoice.purchaseInvoiceDueDates[
         invoice.purchaseInvoiceDueDates.length - 1
-      ].dueDate
+      ].dueDate,
     );
   }
 };
@@ -269,7 +264,7 @@ const createButtonClick = () => {
 const editPurchaseInvoice = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/purchaseinvoice/${row.data.id}` });

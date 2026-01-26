@@ -20,7 +20,7 @@
 import TableSupplierReferences from "../components/TableSupplierReferences.vue";
 import { onMounted, ref } from "vue";
 import { FormActionMode } from "../../../types/component";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";

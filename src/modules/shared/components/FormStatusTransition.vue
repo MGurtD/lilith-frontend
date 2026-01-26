@@ -11,9 +11,8 @@
     <section class="two-columns">
       <div>
         <label class="block text-900 mb-2">Origen</label>
-        <Dropdown
+        <Select
           v-model="transition.statusId"
-          editable
           :options="statuses"
           optionValue="id"
           optionLabel="name"
@@ -21,9 +20,8 @@
       </div>
       <div class="mb-4">
         <label class="block text-900 mb-2">Destí</label>
-        <Dropdown
+        <Select
           v-model="transition.statusToId"
-          editable
           :options="statuses"
           optionValue="id"
           optionLabel="name"

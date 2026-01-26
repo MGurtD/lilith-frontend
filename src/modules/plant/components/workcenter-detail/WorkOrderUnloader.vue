@@ -179,7 +179,7 @@
 
 <script setup lang="ts">
 import { watch, computed, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { UnloadWorkOrderPhaseRequest } from "../../types";
 import { usePlantWorkcenterStore } from "../../store";
@@ -324,7 +324,7 @@ const onUnload = async (closePhase: boolean) => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--p-surface-border);
 }
 
 .section-title {
@@ -344,7 +344,7 @@ const onUnload = async (closePhase: boolean) => {
 
 /* Produced Units Section */
 .info-section {
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -367,16 +367,16 @@ const onUnload = async (closePhase: boolean) => {
   justify-content: center;
   padding: 1rem;
   border-radius: 8px;
-  background: var(--surface-0);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-surface-border);
 }
 
 .produced-unit-card.ok {
-  border-left: 4px solid var(--green-500);
+  border-left: 4px solid var(--p-green-500);
 }
 
 .produced-unit-card.ko {
-  border-left: 4px solid var(--red-500);
+  border-left: 4px solid var(--p-red-500);
 }
 
 .produced-value {
@@ -387,8 +387,8 @@ const onUnload = async (closePhase: boolean) => {
 
 /* Input Section */
 .input-section {
-  background: var(--surface-0);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-surface-border);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -406,8 +406,8 @@ const onUnload = async (closePhase: boolean) => {
 
 /* Options Section */
 .options-section {
-  background: var(--surface-0);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-surface-border);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -423,13 +423,13 @@ const onUnload = async (closePhase: boolean) => {
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   border-radius: 6px;
   transition: background-color 0.2s;
 }
 
 .option-item:hover {
-  background: var(--surface-100);
+  background: var(--p-surface-100);
 }
 
 .option-label {

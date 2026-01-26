@@ -4,9 +4,9 @@
     tableStyle="min-width: 100%"
     class="p-datatable-sm"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     paginator
-    :rows="19"
+    :rows="20"
     @row-click="editRow"
   >
     <template #header>
@@ -119,7 +119,7 @@ import DropdownReferenceTypes from "../../../modules/shared/components/DropdownR
 import BaseInput from "../../../components/BaseInput.vue";
 import { computed, onMounted, onUnmounted, Ref, ref } from "vue";
 import { useReferenceStore } from "../../shared/store/reference";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference, ReferenceCategoryEnum } from "../../shared/types";
 import { useReferenceTypeStore } from "../../shared/store/referenceType";
@@ -172,7 +172,7 @@ const selectedCategoryReferences = computed(() => {
   }
 
   return referenceStore.references!.filter(
-    (r) => r.categoryName === props.filter.referenceCategory
+    (r) => r.categoryName === props.filter.referenceCategory,
   );
 });
 
@@ -187,13 +187,13 @@ const filteredData = computed(() => {
     props.filter.referenceTypeId!.length > 0
   ) {
     filteredReferences = filteredReferences.filter(
-      (r) => r.referenceTypeId === props.filter.referenceTypeId
+      (r) => r.referenceTypeId === props.filter.referenceTypeId,
     );
   }
   // Code filter
   if (props.filter.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
-      r.code.toLowerCase().includes(props.filter.code.toLowerCase())
+      r.code.toLowerCase().includes(props.filter.code.toLowerCase()),
     );
   }
 
@@ -217,7 +217,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);
@@ -236,7 +236,7 @@ const getReferenceTypeDensity = (referenceTypeId: string) => {
 
 const getFormatDescription = (formatId: string) => {
   const format = referenceStore.referenceFormats?.find(
-    (f) => f.id === formatId
+    (f) => f.id === formatId,
   );
   if (format) return format.description;
   else return "";

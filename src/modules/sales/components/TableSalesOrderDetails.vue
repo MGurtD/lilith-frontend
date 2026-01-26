@@ -126,7 +126,7 @@
 import LinkReference from "../../shared/components/LinkReference.vue";
 import { computed, onMounted, ref } from "vue";
 import FormCreateWorkorder from "../../production/components/FormCreateWorkorder.vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   SalesOrderHeader,

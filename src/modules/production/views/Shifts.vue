@@ -80,7 +80,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../../../store";
 import { Shift, ShiftDetail } from "../types";
 import { useToast } from "primevue/usetoast";

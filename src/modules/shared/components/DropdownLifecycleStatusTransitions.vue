@@ -3,7 +3,7 @@
     <label v-if="label && label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       :options="store.availableTransitions"
       :placeholder="

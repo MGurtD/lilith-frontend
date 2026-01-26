@@ -58,7 +58,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useOperatorTypeStore } from "../store/operatortype";
 import { onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Operator } from "../types";
 

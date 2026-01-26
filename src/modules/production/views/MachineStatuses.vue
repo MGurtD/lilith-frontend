@@ -3,7 +3,7 @@
     :value="plantmodelStore.machineStatuses"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     @row-click="editRow"
   >
     <template #header>
@@ -80,7 +80,7 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
 import { onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { MachineStatus } from "../types";
 import ColorColumn from "../../../components/tables/ColorColumn.vue";

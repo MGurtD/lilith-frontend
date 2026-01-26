@@ -22,7 +22,7 @@
           shape="circle"
         />
       </div>
-      <OverlayPanel ref="op">
+      <Popover ref="op">
         <div class="user-menu">
           <div class="user-menu__header">
             <Avatar
@@ -54,7 +54,7 @@
             />
           </div>
         </div>
-      </OverlayPanel>
+      </Popover>
     </div>
     <div class="title-bar__user" v-else-if="store.user">
       <div class="avatar-container" @click="showOverlayPanel">
@@ -65,7 +65,7 @@
           shape="circle"
         />
       </div>
-      <OverlayPanel ref="op">
+      <Popover ref="op">
         <div class="user-menu">
           <div class="user-menu__header">
             <Avatar
@@ -102,7 +102,7 @@
             />
           </div>
         </div>
-      </OverlayPanel>
+      </Popover>
     </div>
   </div>
 </template>
@@ -112,8 +112,8 @@ import { ref } from "vue";
 import { useStore } from "../store";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
-import OverlayPanel from "primevue/overlaypanel";
-import { PrimeIcons } from "primevue/api";
+import Popover from "primevue/popover";
+import { PrimeIcons } from "@primevue/core/api";
 import { useRouter } from "vue-router";
 import { usePlantOperatorStore } from "../modules/plant/store";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
@@ -136,8 +136,8 @@ const goBack = () => router.back();
 <style scoped>
 .title-bar {
   position: fixed;
-  background-color: var(--blue-900);
-  color: var(--bluegray-200);
+  background-color: var(--p-blue-900);
+  color: var(--p-surface-400);
   top: 0;
   left: var(--side-bar-width);
   height: var(--top-panel-height);
@@ -263,19 +263,19 @@ const goBack = () => router.back();
 
 .user-menu__name {
   font-weight: 600;
-  color: var(--surface-900, #1f2937);
+  color: var(--p-surface-900, #1f2937);
 }
 
 .user-menu__username {
   font-size: 0.85rem;
-  color: var(--surface-500, #6b7280);
+  color: var(--p-surface-500, #6b7280);
   display: flex;
   align-items: center;
 }
 
 .divider {
   height: 1px;
-  background: var(--surface-200, #e5e7eb);
+  background: var(--p-surface-200, #e5e7eb);
   margin: 0.75rem 0;
 }
 
@@ -286,7 +286,7 @@ const goBack = () => router.back();
 
 .user-menu__label {
   font-size: 0.85rem;
-  color: var(--surface-600, #4b5563);
+  color: var(--p-surface-600, #4b5563);
 }
 
 .user-menu__actions {

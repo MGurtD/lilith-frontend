@@ -2,7 +2,7 @@
   <DataTable
     :value="paymentMethodStore.paymentMethods"
     tableStyle="min-width: 100%"
-    :scrollHeight="`calc(100vh - 180px)`"
+    scrollHeight="flex"
     @row-click="editPaymentMethod"
   >
     <template #header>
@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { onMounted } from "vue";
@@ -67,7 +67,7 @@ const createButtonClick = () => {
 const editPaymentMethod = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/payment-methods/${row.data.id}` });

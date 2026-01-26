@@ -56,22 +56,28 @@
       :closable="dialogOptions.closable"
       :modal="dialogOptions.modal"
     >
-      <TabView v-model:activeIndex="formsActiveIndex">
-        <TabPanel header="Línea">
-          <FormReceiptDetail
-            :detail="selectedDetail"
-            :receipt="receipt"
-            @submit="submitDetailForm"
-          />
-        </TabPanel>
-        <TabPanel header="Referencia">
-          <FormMaterial
-            v-if="referenceStore.reference"
-            :reference="referenceStore.reference"
-            @submit="onFormReferenceSubmit"
-          />
-        </TabPanel>
-      </TabView>
+      <Tabs v-model:value="formsActiveIndex">
+        <TabList>
+          <Tab value="0">Línea</Tab>
+          <Tab value="1">Referencia</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel value="0">
+            <FormReceiptDetail
+              :detail="selectedDetail"
+              :receipt="receipt"
+              @submit="submitDetailForm"
+            />
+          </TabPanel>
+          <TabPanel value="1">
+            <FormMaterial
+              v-if="referenceStore.reference"
+              :reference="referenceStore.reference"
+              @submit="onFormReferenceSubmit"
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Dialog>
   </main>
   <main v-else>Carregant albarà ...</main>
@@ -84,7 +90,7 @@ import FormMaterial from "../components/FormMaterial.vue";
 import SelectorOrdersDetailsToReceipt from "../components/SelectorOrdersDetailsToReceipt.vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useRoute } from "vue-router";
 import { useStore } from "../../../store";
@@ -110,7 +116,7 @@ const receiptStore = useReceiptsStore();
 const orderStore = useOrderStore();
 const lifecycleStore = useLifecyclesStore();
 const { receipt } = storeToRefs(receiptStore);
-const formsActiveIndex = ref(0);
+const formsActiveIndex = ref("0");
 
 const loadView = async () => {
   await receiptStore.fetchReceipt(route.params.id as string);
@@ -138,7 +144,7 @@ const hasToBlockDetailCreation = computed(() => {
   if (!lifecycleStore.lifecycle) return false;
 
   const warehouseStatus = lifecycleStore.lifecycle!.statuses.find(
-    (s) => s.name === "Recepcionat"
+    (s) => s.name === "Recepcionat",
   );
   if (!warehouseStatus) return false;
   return receipt.value?.statusId === warehouseStatus.id;
@@ -276,11 +282,11 @@ const onFormReferenceSubmit = async (reference: Reference) => {
 
   if (result) {
     selectedDetail.value!.referenceId = reference.id;
-    formsActiveIndex.value = 0;
+    formsActiveIndex.value = "0";
 
     referenceStore.setNewReference(
       getNewUuid(),
-      ReferenceCategoryEnum.MATERIAL
+      ReferenceCategoryEnum.MATERIAL,
     );
   }
 };
@@ -290,7 +296,7 @@ const openOrderDetailsToReceiptSelector = async () => {
   dialogOptionsSelector.visible = true;
 };
 const onOrderDetailsSelected = async (
-  addReceptionRequest: AddReceptionsRequest | null
+  addReceptionRequest: AddReceptionsRequest | null,
 ) => {
   if (!addReceptionRequest) {
     dialogOptionsSelector.visible = false;

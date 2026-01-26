@@ -3,7 +3,7 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sortMode="multiple"
     @row-click="editRow"
   >
@@ -14,9 +14,8 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <label class="block text-900 mb-2">Tipus</label>
-            <Dropdown
+            <Select
               v-model="filter.workcenterTypeId"
-              editable
               :options="plantmodelStore.workcenterTypes"
               optionValue="id"
               optionLabel="name"
@@ -25,9 +24,8 @@
           </div>
           <div class="filter-field">
             <label class="block text-900 mb-2">Àrea</label>
-            <Dropdown
+            <Select
               v-model="filter.areaId"
-              editable
               :options="plantmodelStore.areas"
               optionValue="id"
               optionLabel="name"
@@ -86,7 +84,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { usePlantModelStore } from "../store/plantmodel";
 import { computed, onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
@@ -127,7 +125,7 @@ const filteredData = computed(() => {
   }
   if (filter.value.workcenterTypeId) {
     filteredWc = filteredWc.filter(
-      (w) => w.workcenterTypeId === filter.value.workcenterTypeId
+      (w) => w.workcenterTypeId === filter.value.workcenterTypeId,
     );
   }
 
@@ -158,7 +156,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/workcenter/${row.data.id}` });

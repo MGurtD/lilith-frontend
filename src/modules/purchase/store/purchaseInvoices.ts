@@ -47,14 +47,21 @@ export const usePurchaseInvoiceStore = defineStore({
       return created;
     },
     async GetById(id: string) {
-      this.purchaseInvoice = await PurchaseService.PurchaseInvoice.getById(id);
+      const data = await PurchaseService.PurchaseInvoice.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.purchaseInvoiceDate) {
+          data.purchaseInvoiceDate = new Date(data.purchaseInvoiceDate) as any;
+        }
+      }
+      this.purchaseInvoice = data;
     },
     async GetFiltered(
       startDate: string,
       endDate: string,
       statusId?: string,
       excludeStatusId?: string,
-      supplierId?: string
+      supplierId?: string,
     ) {
       if (excludeStatusId && supplierId) {
         this.purchaseInvoices =
@@ -62,41 +69,41 @@ export const usePurchaseInvoiceStore = defineStore({
             startDate,
             endDate,
             excludeStatusId,
-            supplierId
+            supplierId,
           );
       } else if (statusId) {
         this.purchaseInvoices =
           await PurchaseService.PurchaseInvoice.GetBetweenDatesAndStatus(
             startDate,
             endDate,
-            statusId
+            statusId,
           );
       } else if (excludeStatusId) {
         this.purchaseInvoices =
           await PurchaseService.PurchaseInvoice.GetBetweenDatesAndExcludeStatus(
             startDate,
             endDate,
-            excludeStatusId
+            excludeStatusId,
           );
       } else if (supplierId) {
         this.purchaseInvoices =
           await PurchaseService.PurchaseInvoice.GetBetweenDatesAndSupplier(
             startDate,
             endDate,
-            supplierId
+            supplierId,
           );
       } else {
         this.purchaseInvoices =
           await PurchaseService.PurchaseInvoice.GetBetweenDates(
             startDate,
-            endDate
+            endDate,
           );
       }
     },
     async Update(purchaseInvoice: PurchaseInvoice) {
       const updated = await PurchaseService.PurchaseInvoice.update(
         purchaseInvoice.id,
-        purchaseInvoice
+        purchaseInvoice,
       );
       return updated;
     },
@@ -112,7 +119,7 @@ export const usePurchaseInvoiceStore = defineStore({
     },
 
     async UpdateInvoicesStatus(
-      invoiceImport: PurchaseInvoiceUpdateStatues
+      invoiceImport: PurchaseInvoiceUpdateStatues,
     ): Promise<boolean> {
       const updated =
         await PurchaseService.PurchaseInvoice.UpdateStatuses(invoiceImport);
@@ -120,21 +127,21 @@ export const usePurchaseInvoiceStore = defineStore({
     },
 
     async CreateInvoiceImport(
-      invoiceImport: PurchaseInvoiceImport
+      invoiceImport: PurchaseInvoiceImport,
     ): Promise<boolean> {
       const created =
         await PurchaseService.PurchaseInvoice.CreateImport(invoiceImport);
       return created;
     },
     async UpdateInvoiceImport(
-      invoiceImport: PurchaseInvoiceImport
+      invoiceImport: PurchaseInvoiceImport,
     ): Promise<boolean> {
       const created =
         await PurchaseService.PurchaseInvoice.UpdateImport(invoiceImport);
       return created;
     },
     async DeleteInvoiceImport(
-      invoiceImport: PurchaseInvoiceImport
+      invoiceImport: PurchaseInvoiceImport,
     ): Promise<boolean> {
       const created =
         await PurchaseService.PurchaseInvoice.DeleteImport(invoiceImport);
@@ -142,7 +149,7 @@ export const usePurchaseInvoiceStore = defineStore({
     },
 
     async AddDueDates(
-      dueDates: Array<PurchaseInvoiceDueDate>
+      dueDates: Array<PurchaseInvoiceDueDate>,
     ): Promise<boolean> {
       const added = await PurchaseService.PurchaseInvoice.AddDueDates(dueDates);
       return added;
@@ -152,12 +159,12 @@ export const usePurchaseInvoiceStore = defineStore({
       return removed;
     },
     async ReplaceDueDates(
-      newDueDates: Array<PurchaseInvoiceDueDate>
+      newDueDates: Array<PurchaseInvoiceDueDate>,
     ): Promise<boolean> {
       if (!this.purchaseInvoice) return false;
       // remove existing first
       const existingIds = this.purchaseInvoice.purchaseInvoiceDueDates.map(
-        (d) => d.id
+        (d) => d.id,
       );
       if (existingIds.length) await this.RemoveDueDates(existingIds);
       const created = await this.AddDueDates(newDueDates);

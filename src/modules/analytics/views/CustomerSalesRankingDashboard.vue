@@ -2,7 +2,7 @@
   <div class="dashboard-filter">
     <div class="dashboard-filter-field">
       <label>{{ t("analytics.customerRanking.filters.year") }}</label>
-      <Dropdown
+      <Select
         v-model="selectedYear"
         :options="availableYears"
         :placeholder="t('analytics.customerRanking.filters.yearPlaceholder')"
@@ -11,7 +11,7 @@
     </div>
     <div class="dashboard-filter-field">
       <label>{{ t("analytics.customerRanking.filters.aggregation") }}</label>
-      <Dropdown
+      <Select
         v-model="aggregationType"
         :options="aggregationOptions"
         optionLabel="label"
@@ -46,86 +46,92 @@
     </div>
   </div>
 
-  <TabView>
-    <TabPanel :header="t('analytics.customerRanking.tabs.chart')">
-      <div class="dashboard-container">
-        <div
-          class="chart-area"
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 400px;
-          "
-        >
-          <Chart
-            v-if="pieChartData && pieChartData.labels.length > 0"
-            type="pie"
-            :data="pieChartData"
-            :options="pieChartOptions"
-            style="width: 60%; max-width: 600px"
-          />
-          <div v-else class="text-center text-gray-500">
-            {{ t("analytics.customerRanking.table.noData") }}
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">{{ t("analytics.customerRanking.tabs.chart") }}</Tab>
+      <Tab value="1">{{ t("analytics.customerRanking.tabs.data") }}</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <div class="dashboard-container">
+          <div
+            class="chart-area"
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 400px;
+            "
+          >
+            <Chart
+              v-if="pieChartData && pieChartData.labels.length > 0"
+              type="pie"
+              :data="pieChartData"
+              :options="pieChartOptions"
+              style="width: 60%; max-width: 600px"
+            />
+            <div v-else class="text-center text-gray-500">
+              {{ t("analytics.customerRanking.table.noData") }}
+            </div>
           </div>
         </div>
-      </div>
-    </TabPanel>
+      </TabPanel>
 
-    <TabPanel :header="t('analytics.customerRanking.tabs.data')">
-      <DataTable
-        :value="tableData"
-        class="small-datatable"
-        tableStyle="min-width: 100%"
-        scrollable
-        :scrollHeight="`calc(100vh - var(--top-panel-height) - 13rem)`"
-        sortField="totalSales"
-        :sortOrder="-1"
-      >
-        <Column
-          field="customerName"
-          :header="t('analytics.customerRanking.table.customer')"
-          style="width: 25%"
-          sortable
-          frozen
-        />
-        <Column
-          v-for="period in dynamicPeriods"
-          :key="period.key"
-          :field="period.key"
-          :header="period.label"
-          style="width: auto"
-          sortable
+      <TabPanel value="1">
+        <DataTable
+          :value="tableData"
+          class="small-datatable"
+          tableStyle="min-width: 100%"
+          scrollable
+          scrollHeight="flex"
+          sortField="totalSales"
+          :sortOrder="-1"
         >
-          <template #body="slotProps">
-            <span v-if="slotProps.data[period.key]">
-              {{ formatCurrency(slotProps.data[period.key]) }}
-            </span>
-            <span v-else class="text-gray-400">-</span>
-          </template>
-        </Column>
-        <Column
-          field="totalSales"
-          :header="t('analytics.customerRanking.table.total')"
-          style="width: 15%"
-          sortable
-        >
-          <template #body="slotProps">
-            <span class="font-semibold text-green-600">
-              {{ formatCurrency(slotProps.data.totalSales) }}
-            </span>
-          </template>
-        </Column>
-      </DataTable>
-    </TabPanel>
-  </TabView>
+          <Column
+            field="customerName"
+            :header="t('analytics.customerRanking.table.customer')"
+            style="width: 25%"
+            sortable
+            frozen
+          />
+          <Column
+            v-for="period in dynamicPeriods"
+            :key="period.key"
+            :field="period.key"
+            :header="period.label"
+            style="width: auto"
+            sortable
+          >
+            <template #body="slotProps">
+              <span v-if="slotProps.data[period.key]">
+                {{ formatCurrency(slotProps.data[period.key]) }}
+              </span>
+              <span v-else class="text-gray-400">-</span>
+            </template>
+          </Column>
+          <Column
+            field="totalSales"
+            :header="t('analytics.customerRanking.table.total')"
+            style="width: 15%"
+            sortable
+          >
+            <template #body="slotProps">
+              <span class="font-semibold text-green-600">
+                {{ formatCurrency(slotProps.data.totalSales) }}
+              </span>
+            </template>
+          </Column>
+        </DataTable>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { formatCurrency } from "../../../utils/functions";
 import { useI18n } from "vue-i18n";
 
@@ -179,7 +185,7 @@ const loadRankingData = async () => {
 
   try {
     const response = await customerRankingService.GetAnnualRanking(
-      selectedYear.value
+      selectedYear.value,
     );
     if (response) {
       rawRankings.value = response;
@@ -358,7 +364,7 @@ const prepareData = () => {
 
   // Sort by total sales descending
   tableData.value = Array.from(customerMap.values()).sort(
-    (a, b) => b.totalSales - a.totalSales
+    (a, b) => b.totalSales - a.totalSales,
   );
 
   // Prepare pie chart (top 10 customers)

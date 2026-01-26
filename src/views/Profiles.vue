@@ -4,7 +4,7 @@ import { useStore } from "../store";
 import { useProfilesStore } from "../store/profiles";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { v4 as uuidv4 } from "uuid";

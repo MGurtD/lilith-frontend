@@ -3,7 +3,7 @@
     <DataTable
       :value="groupedSaturation"
       :paginator="groupedSaturation && groupedSaturation.length > 10"
-      :rows="10"
+      :rows="20"
       :rowsPerPageOptions="[10, 25, 50]"
       stripedRows
       class="p-datatable-sm"
@@ -100,7 +100,7 @@
         stripedRows
         class="p-datatable-sm"
         :paginator="selectedDetails && selectedDetails.length > 10"
-        :rows="10"
+        :rows="20"
       >
         <Column
           field="workOrderCode"
@@ -146,7 +146,7 @@ import { useExerciseStore } from "../../shared/store/exercise";
 import { useStore } from "../../../store";
 import { storeToRefs } from "pinia";
 import { ref, computed, onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";

@@ -6,7 +6,6 @@ import {
   SalesOrderHeader,
 } from "../types";
 import SalesServices from "../services";
-import { formatDate } from "../../../utils/functions";
 
 export const useBudgetStore = defineStore({
   id: "budget",
@@ -18,31 +17,34 @@ export const useBudgetStore = defineStore({
   getters: {},
   actions: {
     async GetById(id: string) {
-      this.budget = await SalesServices.Budget.getById(id);
-
-      if (this.budget) {
-        this.budget.date = formatDate(this.budget.date);
-        if (this.budget.acceptanceDate) {
-          this.budget.acceptanceDate = formatDate(this.budget.acceptanceDate);
+      const data = await SalesServices.Budget.getById(id);
+      if (data) {
+        // Convert ISO date strings to Date objects for PrimeVue 4 DatePicker
+        if (data.date) {
+          data.date = new Date(data.date) as any;
+        }
+        if (data.acceptanceDate) {
+          data.acceptanceDate = new Date(data.acceptanceDate) as any;
         }
       }
+      this.budget = data;
     },
     async GetFiltered(
       startTime: string,
       endTime: string,
       customerId?: string,
-      statusId?: string
+      statusId?: string,
     ) {
       if (customerId) {
         this.budgets = await SalesServices.Budget.GetBetweenDatesAndCustomer(
           startTime,
           endTime,
-          customerId
+          customerId,
         );
       } else {
         this.budgets = await SalesServices.Budget.GetBetweenDates(
           startTime,
-          endTime
+          endTime,
         );
       }
 

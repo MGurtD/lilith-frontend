@@ -33,9 +33,8 @@
     <section class="three-columns mb-2">
       <div>
         <label class="block text-900 mb-2">País</label>
-        <Dropdown
+        <Select
           v-model="supplier.country"
-          editable
           :options="['Espanya']"
           class="w-full"
           :class="{
@@ -45,9 +44,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Província</label>
-        <Dropdown
+        <Select
           v-model="supplier.region"
-          editable
           :options="spanishGeo.regions"
           optionValue="nm"
           optionLabel="nm"
@@ -60,9 +58,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Municipi</label>
-        <Dropdown
+        <Select
           v-model="supplier.city"
-          editable
           :options="spanishGeo.getTownsByRegionName(supplier.region)"
           optionValue="nm"
           optionLabel="nm"
@@ -103,9 +100,8 @@
     <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Forma de pagament</label>
-        <Dropdown
+        <Select
           v-model="supplier.paymentMethodId"
-          editable
           :options="paymentMethodStore.paymentMethods"
           optionValue="id"
           optionLabel="name"
@@ -125,9 +121,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Tipus Proveïdor</label>
-        <Dropdown
+        <Select
           v-model="supplier.supplierTypeId"
-          editable
           :options="supplierStore.supplierTypes"
           optionValue="id"
           optionLabel="name"

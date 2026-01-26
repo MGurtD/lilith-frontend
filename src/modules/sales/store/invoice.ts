@@ -25,20 +25,20 @@ export const useSalesInvoiceStore = defineStore({
     getVerifactuStatusById: (state) => (statusId: string) => {
       if (!state.verifactuLifecycle) return "";
       const status = state.verifactuLifecycle.statuses.find(
-        (status) => status.id === statusId
+        (status) => status.id === statusId,
       );
       return status ? status.name : "";
     },
   },
   actions: {
     async Create(
-      createRequest: CreateSalesHeaderRequest
+      createRequest: CreateSalesHeaderRequest,
     ): Promise<GenericResponse<SalesInvoice> | undefined> {
       const response = await SalesService.SalesInvoice.Create(createRequest);
       return response;
     },
     async CreateRectificative(
-      request: CreateRectificativeInvoiceRequest
+      request: CreateRectificativeInvoiceRequest,
     ): Promise<GenericResponse<SalesInvoice> | undefined> {
       const response =
         await SalesService.SalesInvoice.CreateRectificative(request);
@@ -60,7 +60,14 @@ export const useSalesInvoiceStore = defineStore({
       }
     },
     async GetById(id: string) {
-      this.invoice = await SalesService.SalesInvoice.getById(id);
+      const data = await SalesService.SalesInvoice.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.invoiceDate) {
+          data.invoiceDate = new Date(data.invoiceDate) as any;
+        }
+      }
+      this.invoice = data;
 
       if (!this.verifactuLifecycle) {
         this.verifactuLifecycle =
@@ -77,7 +84,7 @@ export const useSalesInvoiceStore = defineStore({
       endDate: string,
       statusId?: string,
       customerId?: string,
-      excludeStatusId?: string
+      excludeStatusId?: string,
     ) {
       if (!this.verifactuLifecycle) {
         this.verifactuLifecycle =
@@ -89,38 +96,38 @@ export const useSalesInvoiceStore = defineStore({
           await SalesService.SalesInvoice.GetBetweenDatesAndCustomer(
             startDate,
             endDate,
-            customerId
+            customerId,
           );
       } else if (statusId) {
         this.invoices =
           await SalesService.SalesInvoice.GetBetweenDatesAndStatus(
             startDate,
             endDate,
-            statusId
+            statusId,
           );
       } else if (excludeStatusId) {
         this.invoices =
           await SalesService.SalesInvoice.GetBetweenDatesAndExcludeStatus(
             startDate,
             endDate,
-            excludeStatusId
+            excludeStatusId,
           );
       } else {
         this.invoices = await SalesService.SalesInvoice.GetBetweenDates(
           startDate,
-          endDate
+          endDate,
         );
       }
     },
     async Update(invoice: SalesInvoice) {
       const updated = await SalesService.SalesInvoice.update(
         invoice.id,
-        invoice
+        invoice,
       );
       return updated;
     },
     async UpdateInvoicesStatuses(
-      invoiceImport: InvoiceUpdateStatues
+      invoiceImport: InvoiceUpdateStatues,
     ): Promise<boolean> {
       const updated =
         await SalesService.SalesInvoice.UpdateStatuses(invoiceImport);
@@ -133,11 +140,11 @@ export const useSalesInvoiceStore = defineStore({
 
     async AddDeliveryNote(
       id: string,
-      deliveryNote: DeliveryNote
+      deliveryNote: DeliveryNote,
     ): Promise<GenericResponse<any>> {
       const response = await SalesService.SalesInvoice.AddDeliveryNote(
         id,
-        deliveryNote
+        deliveryNote,
       );
       this.GetDetailsById(id);
       this.GetHeaderById(id);
@@ -145,11 +152,11 @@ export const useSalesInvoiceStore = defineStore({
     },
     async RemoveDeliveryNote(
       id: string,
-      deliveryNote: DeliveryNote
+      deliveryNote: DeliveryNote,
     ): Promise<GenericResponse<any>> {
       const response = await SalesService.SalesInvoice.RemoveDeliveryNote(
         id,
-        deliveryNote
+        deliveryNote,
       );
       this.GetDetailsById(id);
       this.GetHeaderById(id);
@@ -157,7 +164,7 @@ export const useSalesInvoiceStore = defineStore({
     },
 
     async CreateInvoiceDetail(
-      invoiceDetail: SalesInvoiceDetail
+      invoiceDetail: SalesInvoiceDetail,
     ): Promise<GenericResponse<any>> {
       const response =
         await SalesService.SalesInvoice.CreateDetail(invoiceDetail);
@@ -166,7 +173,7 @@ export const useSalesInvoiceStore = defineStore({
       return response;
     },
     async UpdateInvoiceDetail(
-      invoiceDetail: SalesInvoiceDetail
+      invoiceDetail: SalesInvoiceDetail,
     ): Promise<boolean> {
       const updated =
         await SalesService.SalesInvoice.UpdateDetail(invoiceDetail);
@@ -175,7 +182,7 @@ export const useSalesInvoiceStore = defineStore({
       return updated;
     },
     async DeleteInvoiceDetail(
-      invoiceDetail: SalesInvoiceDetail
+      invoiceDetail: SalesInvoiceDetail,
     ): Promise<boolean> {
       const deleted =
         await SalesService.SalesInvoice.DeleteDetail(invoiceDetail);
@@ -193,7 +200,7 @@ export const useSalesInvoiceStore = defineStore({
       const report = await reportService.Download(
         invoiceReport,
         REPORTS.Invoice,
-        fileName
+        fileName,
       );
 
       if (report) {

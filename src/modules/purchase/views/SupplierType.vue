@@ -5,7 +5,7 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSuppliersStore } from "../store/suppliers";
-import { PrimeIcons, ToastSeverity } from "primevue/api";
+import { PrimeIcons, ToastSeverity } from "@primevue/core/api";
 
 import FormSupplierType from "../components/FormSupplierType.vue";
 import { storeToRefs } from "pinia";

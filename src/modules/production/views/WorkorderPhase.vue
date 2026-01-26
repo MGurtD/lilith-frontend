@@ -8,26 +8,32 @@
     ></FormWorkOrderPhase>
   </header>
   <main class="main" v-if="workorderPhase">
-    <TabView>
-      <TabPanel header="Pasos">
-        <TableWorkOrderPhaseDetails
-          :workorderPhase="workorderPhase"
-          :details="workorderPhase.details!"
-          @add="onAddDetail"
-          @edit="onEditDetail"
-          @delete="onDeleteDetail"
-        ></TableWorkOrderPhaseDetails>
-      </TabPanel>
-      <TabPanel header="Materials">
-        <TableWorkOrderPhaseBillOfMaterials
-          :workorderPhase="workorderPhase"
-          :billOfMaterials="workorderPhase.billOfMaterials!"
-          @add="onAddBomItem"
-          @edit="onEditBomItem"
-          @delete="onDeleteBomItem"
-        ></TableWorkOrderPhaseBillOfMaterials>
-      </TabPanel>
-    </TabView>
+    <Tabs value="0">
+      <TabList>
+        <Tab value="0">Pasos</Tab>
+        <Tab value="1">Materials</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <TableWorkOrderPhaseDetails
+            :workorderPhase="workorderPhase"
+            :details="workorderPhase.details!"
+            @add="onAddDetail"
+            @edit="onEditDetail"
+            @delete="onDeleteDetail"
+          ></TableWorkOrderPhaseDetails>
+        </TabPanel>
+        <TabPanel value="1">
+          <TableWorkOrderPhaseBillOfMaterials
+            :workorderPhase="workorderPhase"
+            :billOfMaterials="workorderPhase.billOfMaterials!"
+            @add="onAddBomItem"
+            @edit="onEditBomItem"
+            @delete="onDeleteBomItem"
+          ></TableWorkOrderPhaseBillOfMaterials>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
     <Dialog
       v-model:visible="dialogOptions.visible"
       :header="dialogOptions.title"
@@ -61,7 +67,7 @@ import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
 import { usePlantModelStore } from "../store/plantmodel";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   WorkOrderPhase,
   WorkOrderPhaseBillOfMaterials,
@@ -129,7 +135,7 @@ const onWorkOrderPhaseSubmit = async (phase: WorkOrderPhase) => {
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref(undefined as WorkOrderPhaseDetail | undefined);
 const selectedBomItem = ref(
-  undefined as WorkOrderPhaseBillOfMaterials | undefined
+  undefined as WorkOrderPhaseBillOfMaterials | undefined,
 );
 const cleanSelecteds = () => {
   selectedDetail.value = undefined;
@@ -154,7 +160,7 @@ const onEditDetail = (detail: WorkOrderPhaseDetail) => {
 const onDeleteDetail = async (detail: WorkOrderPhaseDetail) => {
   await workorderStore.updatePhase(
     phaseId.value,
-    workorderStore.workorderPhase!
+    workorderStore.workorderPhase!,
   );
   await workorderStore.deletePhaseDetail(detail.id);
 };
@@ -168,7 +174,7 @@ const onWorkOrderPhaseDetailSubmit = async (detail: WorkOrderPhaseDetail) => {
   }
   await workorderStore.updatePhase(
     phaseId.value,
-    workorderStore.workorderPhase!
+    workorderStore.workorderPhase!,
   );
   const result = await promise;
 
@@ -195,13 +201,13 @@ const onEditBomItem = (bomItem: WorkOrderPhaseBillOfMaterials) => {
 const onDeleteBomItem = async (bomItem: WorkOrderPhaseBillOfMaterials) => {
   await workorderStore.updatePhase(
     phaseId.value,
-    workorderStore.workorderPhase!
+    workorderStore.workorderPhase!,
   );
   await workorderStore.deletePhaseBomItem(bomItem.id);
 };
 
 const onWorkmasterPhasBomItemSubmit = async (
-  bomItem: WorkOrderPhaseBillOfMaterials
+  bomItem: WorkOrderPhaseBillOfMaterials,
 ) => {
   let promise;
   if (formAction.value === FormActionMode.CREATE) {
@@ -211,7 +217,7 @@ const onWorkmasterPhasBomItemSubmit = async (
   }
   await workorderStore.updatePhase(
     phaseId.value,
-    workorderStore.workorderPhase!
+    workorderStore.workorderPhase!,
   );
   const result = await promise;
 

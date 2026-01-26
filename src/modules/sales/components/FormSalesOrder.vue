@@ -14,9 +14,8 @@
         <div>
           <label class="block text-900 mb-2">Client</label>
           <div style="display: flex; align-items: center; gap: 0.5rem">
-            <Dropdown
+            <Select
               v-model="salesOrder.customerId"
-              editable
               :options="customerStore.customers"
               optionValue="id"
               optionLabel="comercialName"
@@ -44,7 +43,7 @@
           />
         </div>
         <div>
-          <DropdownLifecycleStatusTransitions
+          <SelectLifecycleStatusTransitions
             label="Estat"
             :statusId="salesOrder.statusId"
             v-model="salesOrder.statusId"
@@ -57,11 +56,11 @@
       <section class="four-columns mt-2">
         <div>
           <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar v-model="salesOrder.date" dateFormat="dd/mm/yy" />
+          <DatePicker v-model="salesOrder.date" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <label class="block text-900 mb-2">Data Entrega</label>
-          <Calendar v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
+          <DatePicker v-model="salesOrder.expectedDate" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <BaseInput
@@ -165,7 +164,7 @@ defineExpose({
 
 const updateCustomer = () => {
   const customer = customerStore.customers?.find(
-    (c) => c.id === salesOrder.value?.customerId
+    (c) => c.id === salesOrder.value?.customerId,
   );
   if (customer && salesOrder.value) {
     salesOrder.value.customerCode = customer.code;
@@ -183,7 +182,7 @@ const parseEntityDates = () => {
 
   if (salesOrder.value.expectedDate) {
     salesOrder.value.expectedDate = convertDateTimeToJSON(
-      salesOrder.value.expectedDate
+      salesOrder.value.expectedDate,
     );
   }
 };

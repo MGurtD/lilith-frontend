@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { PurchaseInvoiceImport } from "../types";
 import { getNewUuid } from "../../../utils/functions";

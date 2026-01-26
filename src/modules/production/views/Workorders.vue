@@ -72,7 +72,7 @@ import TableWorkorders from "../components/TableWorkorders.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useReferenceStore } from "../../shared/store/reference";

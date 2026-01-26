@@ -37,12 +37,12 @@ export const useReceiptsStore = defineStore({
       startDate: string,
       endDate: string,
       supplierId?: string,
-      statusId?: string
+      statusId?: string,
     ) {
       this.receipts = await Services.Receipt.getFiltered(
         startDate,
         endDate,
-        supplierId
+        supplierId,
       );
     },
     async fetchInvoiceableBySupplier(supplierId: string) {
@@ -58,7 +58,14 @@ export const useReceiptsStore = defineStore({
       this.receipts = await Services.Receipt.GetByReferenceId(id);
     },
     async fetchReceipt(id: string) {
-      this.receipt = await Services.Receipt.getById(id);
+      const data = await Services.Receipt.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.date) {
+          data.date = new Date(data.date) as any;
+        }
+      }
+      this.receipt = data;
     },
     async fetchReceiptDetails(id: string) {
       const updatedReceipt = await Services.Receipt.getById(id);
@@ -113,18 +120,17 @@ export const useReceiptsStore = defineStore({
       return response;
     },
     async calculateDetailWeightAndPrice(
-      detail: ReceiptDetail
+      detail: ReceiptDetail,
     ): Promise<GenericResponse<ReceiptDetail>> {
-      const response = await Services.Receipt.calculateDetailWeightAndPrice(
-        detail
-      );
+      const response =
+        await Services.Receipt.calculateDetailWeightAndPrice(detail);
       return response;
     },
     async getReceptions(orderId: string) {
       this.receptions = await Services.Order.getReceptions(orderId);
     },
     async addReceptions(
-      request: AddReceptionsRequest
+      request: AddReceptionsRequest,
     ): Promise<GenericResponse<any>> {
       return await Services.Receipt.addReceptions(request);
     },

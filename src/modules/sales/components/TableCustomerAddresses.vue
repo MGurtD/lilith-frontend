@@ -51,7 +51,7 @@ import { v4 as uuidv4 } from "uuid";
 import FormCustomerAddress from "./FormCustomerAddress.vue";
 import { CustomerAddress } from "../types";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { FormActionMode } from "../../../types/component";

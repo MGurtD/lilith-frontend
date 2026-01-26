@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 type Severity = "info" | "success" | "warn" | "error";
 
@@ -60,45 +60,45 @@ const iconClass = computed(() => {
 
 /* Info severity (default) */
 .info-panel--info {
-  background: var(--blue-50);
-  border-color: var(--blue-300);
-  color: var(--blue-900);
+  background: var(--p-blue-50);
+  border-color: var(--p-blue-300);
+  color: var(--p-blue-900);
 }
 
 .info-panel--info i {
-  color: var(--blue-600);
+  color: var(--p-blue-600);
 }
 
 /* Success severity */
 .info-panel--success {
-  background: var(--green-50);
-  border-color: var(--green-300);
-  color: var(--green-900);
+  background: var(--p-green-50);
+  border-color: var(--p-green-300);
+  color: var(--p-green-900);
 }
 
 .info-panel--success i {
-  color: var(--green-600);
+  color: var(--p-green-600);
 }
 
 /* Warn severity */
 .info-panel--warn {
-  background: var(--orange-50);
-  border-color: var(--orange-300);
-  color: var(--orange-900);
+  background: var(--p-orange-50);
+  border-color: var(--p-orange-300);
+  color: var(--p-orange-900);
 }
 
 .info-panel--warn i {
-  color: var(--orange-600);
+  color: var(--p-orange-600);
 }
 
 /* Error severity */
 .info-panel--error {
-  background: var(--red-50);
-  border-color: var(--red-300);
-  color: var(--red-900);
+  background: var(--p-red-50);
+  border-color: var(--p-red-300);
+  color: var(--p-red-900);
 }
 
 .info-panel--error i {
-  color: var(--red-600);
+  color: var(--p-red-600);
 }
 </style>

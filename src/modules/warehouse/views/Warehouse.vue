@@ -23,7 +23,7 @@ import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { useWarehouseStore } from "../store/warehouse";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { Warehouse, Location } from "../types";
 import { FormActionMode } from "../../../types/component";
 import TableLocations from "../components/TableLocations.vue";

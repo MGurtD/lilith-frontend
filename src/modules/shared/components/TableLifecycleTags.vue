@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { LifecycleTag } from "../types";
 
 defineProps<{

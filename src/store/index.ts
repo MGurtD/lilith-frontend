@@ -3,7 +3,7 @@ import { AuthenticationResponse, User } from "../types";
 import { MenuItem, SidebarConfig } from "../types/component";
 import jwtDecode from "jwt-decode";
 import { UserService } from "../services/user.service";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { getMenusByRole } from "./raw.menus"; // fallback
 import { AppProfileService } from "../services/profile.service";
 import { UserMenuResponse, MenuNode } from "../types/profile";
@@ -45,7 +45,7 @@ export const useStore = defineStore("applicationStore", {
       if (exerciseStore.exercises === undefined) exerciseStore.fetchActive();
       const year = new Date().getFullYear().toString();
       const currentExercise = exerciseStore.exercises?.find(
-        (e) => e.name === year
+        (e) => e.name === year,
       );
 
       if (currentExercise) {

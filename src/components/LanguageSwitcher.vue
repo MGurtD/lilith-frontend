@@ -27,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Dropdown
+  <Select
     :options="options"
     optionLabel="label"
     optionValue="value"
@@ -59,7 +59,7 @@ onMounted(async () => {
         <span>{{ slotProps.option.label }}</span>
       </div>
     </template>
-  </Dropdown>
+  </Select>
 </template>
 
 <style scoped>

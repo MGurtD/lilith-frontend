@@ -5,7 +5,7 @@
       class="p-datatable-sm small-last-column clickable-rows"
       tableStyle="min-width: 100%"
       paginator
-      :rows="10"
+      :rows="20"
       stripedRows
       :rowHover="true"
     >

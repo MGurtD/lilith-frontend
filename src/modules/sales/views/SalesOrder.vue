@@ -14,48 +14,58 @@
     @submit="onOrderSubmit"
   />
 
-  <TabView>
-    <TabPanel header="Detall">
-      <TableSalesOrderDetails
-        v-if="salesOrder"
-        :salesOrder="salesOrder"
-        :salesOrderDetails="salesOrder.salesOrderDetails"
-        :secondaryLifecycle="lifeCycleStore.secondaryLifecycle"
-        :workorders="workOrderStore.workorders"
-        @edit="
-          (det: SalesOrderDetail) =>
-            openOrderDetailDialog(FormActionMode.EDIT, det)
-        "
-        @delete="deleteOrderDetail"
-        @createWorkOrder="createWorkOrder"
-        @openWorkOrder="openWorkOrder"
-      >
-        <template #header>
-          <div
-            class="flex flex-wrap align-items-center justify-content-between gap-2"
-          >
-            <span class="text-l text-900 font-bold">Linies de la comanda</span>
-            <section v-if="!deliveryNoteStore.deliveryNote">
-              <Button
-                :size="'small'"
-                label="Afegir línea"
-                @click="openOrderDetailDialog(FormActionMode.CREATE, {} as any)"
-                class="mr-2"
-              />
-            </section>
-          </div>
-        </template>
-      </TableSalesOrderDetails>
-    </TabPanel>
-    <TabPanel header="Fitxers">
-      <FileEntityPicker
-        v-if="salesOrder"
-        entity="SalesOrder"
-        :id="salesOrder.id"
-        title=""
-      />
-    </TabPanel>
-  </TabView>
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">Detall</Tab>
+      <Tab value="1">Fitxers</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <TableSalesOrderDetails
+          v-if="salesOrder"
+          :salesOrder="salesOrder"
+          :salesOrderDetails="salesOrder.salesOrderDetails"
+          :secondaryLifecycle="lifeCycleStore.secondaryLifecycle"
+          :workorders="workOrderStore.workorders"
+          @edit="
+            (det: SalesOrderDetail) =>
+              openOrderDetailDialog(FormActionMode.EDIT, det)
+          "
+          @delete="deleteOrderDetail"
+          @createWorkOrder="createWorkOrder"
+          @openWorkOrder="openWorkOrder"
+        >
+          <template #header>
+            <div
+              class="flex flex-wrap align-items-center justify-content-between gap-2"
+            >
+              <span class="text-l text-900 font-bold"
+                >Linies de la comanda</span
+              >
+              <section v-if="!deliveryNoteStore.deliveryNote">
+                <Button
+                  :size="'small'"
+                  label="Afegir línea"
+                  @click="
+                    openOrderDetailDialog(FormActionMode.CREATE, {} as any)
+                  "
+                  class="mr-2"
+                />
+              </section>
+            </div>
+          </template>
+        </TableSalesOrderDetails>
+      </TabPanel>
+      <TabPanel value="1">
+        <FileEntityPicker
+          v-if="salesOrder"
+          entity="SalesOrder"
+          :id="salesOrder.id"
+          title=""
+        />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 
   <Dialog
     v-if="salesOrder"
@@ -78,7 +88,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { storeToRefs } from "pinia";
 import {
   BudgetDetail,
@@ -218,11 +228,11 @@ const submitForm = () => {
 
 const openOrderDetailDialog = (
   formMode: FormActionMode,
-  salesOrderDetail: SalesOrderDetail
+  salesOrderDetail: SalesOrderDetail,
 ) => {
   if (formMode === FormActionMode.CREATE) {
     const orderExercise = exerciseStore.exercises?.find(
-      (e) => e.id === salesOrder.value!.exerciseId
+      (e) => e.id === salesOrder.value!.exerciseId,
     );
 
     salesOrderDetail = {
@@ -298,7 +308,7 @@ const onOrderDetailSubmit = async (detail: BudgetDetail | SalesOrderDetail) => {
   } else if (formDetailMode.value === FormActionMode.EDIT) {
     await salesOrderStore.UpdateDetail(detail);
     const index = salesOrder.value!.salesOrderDetails!.findIndex(
-      (i) => i.id === detail.id
+      (i) => i.id === detail.id,
     );
     salesOrder.value!.salesOrderDetails![index] = detail;
   }
@@ -310,7 +320,7 @@ const deleteOrderDetail = async (detail: SalesOrderDetail) => {
     await salesOrderStore.DeleteDetail(detail);
   }
   const afterDelete = salesOrder.value!.salesOrderDetails!.filter(
-    (i) => i.id !== detail.id
+    (i) => i.id !== detail.id,
   );
   salesOrder.value!.salesOrderDetails = afterDelete;
   isDetailDialogVisible.value = false;
@@ -349,7 +359,7 @@ const openWorkOrder = (workorderid: string) => {
 const printInvoice = async (showPrices: boolean) => {
   const orderReport = await services.SalesOrder.GetReportDataById(
     salesOrder.value!.id,
-    showPrices
+    showPrices,
   );
 
   if (orderReport) {
@@ -359,7 +369,7 @@ const printInvoice = async (showPrices: boolean) => {
     const report = await reportService.Download(
       orderReport,
       REPORTS.Order,
-      fileName
+      fileName,
     );
 
     if (report) {

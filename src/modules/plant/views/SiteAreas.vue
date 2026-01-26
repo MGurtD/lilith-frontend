@@ -82,7 +82,7 @@ import {
 import { WorkcenterViewState } from "../types";
 import WorkcenterCard from "../components/WorkcenterCard.vue";
 import { useStore } from "../../../store";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   useWebSocketConnection,
   WS_ENDPOINTS,
@@ -270,13 +270,13 @@ const totalWorkcentersCount = computed(() => {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--surface-ground);
+  background: var(--p-surface-ground);
   padding: 1rem 0.5rem;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-bottom: 2px solid var(--surface-border);
+  border-bottom: 2px solid var(--p-surface-border);
 }
 
 .filter-chip {
@@ -289,9 +289,9 @@ const totalWorkcentersCount = computed(() => {
 }
 
 .filter-chip.filter-active {
-  background: var(--green-100);
-  color: var(--green-900);
-  border-color: var(--green-500);
+  background: var(--p-green-100);
+  color: var(--p-green-900);
+  border-color: var(--p-green-500);
 }
 
 .filter-summary {
@@ -303,7 +303,7 @@ const totalWorkcentersCount = computed(() => {
 }
 
 .filter-summary i {
-  color: var(--primary-500);
+  color: var(--p-primary-500);
 }
 
 .area-section {
@@ -315,7 +315,7 @@ const totalWorkcentersCount = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: linear-gradient(135deg, var(--p-primary-500), var(--p-primary-600));
   color: white;
   padding: 0.85rem 1.25rem;
   border-radius: 10px;

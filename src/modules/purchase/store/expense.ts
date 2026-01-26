@@ -62,16 +62,29 @@ export const useExpenseStore = defineStore({
     async fetchExpenses(
       startDate: string,
       endDate: string,
-      expenseTypeId?: string
+      expenseTypeId?: string,
     ) {
       this.expenses = await Services.Expense.getBetweenDatesAndType(
         startDate,
         endDate,
-        expenseTypeId
+        expenseTypeId,
       );
     },
     async fetchExpense(id: string) {
-      this.expense = await Services.Expense.getById(id);
+      const data = await Services.Expense.getById(id);
+      if (data) {
+        // Convert ISO date strings to Date objects for PrimeVue 4 DatePicker
+        if (data.creationDate) {
+          data.creationDate = new Date(data.creationDate) as any;
+        }
+        if (data.paymentDate) {
+          data.paymentDate = new Date(data.paymentDate) as any;
+        }
+        if (data.endDate) {
+          data.endDate = new Date(data.endDate) as any;
+        }
+      }
+      this.expense = data;
     },
     async getFiltered(id: string) {
       this.expenses = await Services.Expense.getByExpenseType(id);

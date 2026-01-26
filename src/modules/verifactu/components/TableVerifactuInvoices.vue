@@ -2,7 +2,7 @@
   <DataTable
     :value="invoices"
     :paginator="true"
-    :rows="10"
+    :rows="20"
     :loading="loading"
     dataKey="numSerieFactura"
     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"

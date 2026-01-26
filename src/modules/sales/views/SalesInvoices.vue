@@ -71,7 +71,7 @@ import { useSalesInvoiceStore } from "../store/invoice";
 import { useCustomersStore } from "../store/customers";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   formatDateForQueryParameter,
   getNewUuid,

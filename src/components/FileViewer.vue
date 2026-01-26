@@ -132,14 +132,14 @@
             strokeWidth="4"
             animationDuration="1s"
           />
-          <p class="loading-text">{{ t('fileViewer.loading.image') }}</p>
+          <p class="loading-text">{{ t("fileViewer.loading.image") }}</p>
         </div>
 
         <!-- Error State -->
         <div v-else-if="error" class="image-error-state">
           <i
             :class="PrimeIcons.EXCLAMATION_CIRCLE"
-            style="font-size: 3rem; color: var(--red-500)"
+            style="font-size: 3rem; color: var(--p-red-500)"
           ></i>
           <p class="error-text">{{ error }}</p>
           <Button
@@ -169,9 +169,9 @@
         <div v-else class="image-no-file-state">
           <i
             :class="PrimeIcons.IMAGE"
-            style="font-size: 4rem; color: var(--surface-400)"
+            style="font-size: 4rem; color: var(--p-surface-400)"
           ></i>
-          <p class="no-file-text">{{ t('fileViewer.noFile.selectFile') }}</p>
+          <p class="no-file-text">{{ t("fileViewer.noFile.selectFile") }}</p>
         </div>
       </div>
     </div>
@@ -184,15 +184,22 @@
         </div>
 
         <div class="file-info">
-          <h3 class="file-name">{{ file?.originalName || t('fileViewer.unsupported.title') }}</h3>
+          <h3 class="file-name">
+            {{ file?.originalName || t("fileViewer.unsupported.title") }}
+          </h3>
           <div class="file-details">
-            <Tag :value="getFileExtension() || t('fileViewer.unsupported.noExtension')" severity="secondary" />
+            <Tag
+              :value="
+                getFileExtension() || t('fileViewer.unsupported.noExtension')
+              "
+              severity="secondary"
+            />
             <span class="file-size">{{ formatFileSize(file?.size || 0) }}</span>
           </div>
         </div>
 
         <Message severity="info" :closable="false" class="info-message">
-          {{ t('fileViewer.unsupported.message') }}
+          {{ t("fileViewer.unsupported.message") }}
         </Message>
 
         <Button
@@ -210,9 +217,9 @@
     <div v-else class="no-file-container">
       <i
         :class="PrimeIcons.FILE"
-        style="font-size: 4rem; color: var(--surface-400)"
+        style="font-size: 4rem; color: var(--p-surface-400)"
       ></i>
-      <p class="no-file-text">{{ t('fileViewer.noFile.selectDocument') }}</p>
+      <p class="no-file-text">{{ t("fileViewer.noFile.selectDocument") }}</p>
     </div>
   </div>
 </template>
@@ -221,7 +228,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import PdfViewer from "./PdfViewer.vue";
 import { FileService } from "../services/file.service";
 import { createBlobAndDownloadFile } from "../utils/functions";

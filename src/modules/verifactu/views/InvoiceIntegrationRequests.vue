@@ -15,7 +15,7 @@
               <label class="auto-width-label">{{
                 $t("verifactu.integrationRequests.filters.fromDate")
               }}</label>
-              <Calendar
+              <DatePicker
                 v-model="filters.fromDate"
                 dateFormat="dd/mm/yy"
                 showIcon
@@ -27,7 +27,7 @@
               <label class="auto-width-label">{{
                 $t("verifactu.integrationRequests.filters.toDate")
               }}</label>
-              <Calendar
+              <DatePicker
                 v-model="filters.toDate"
                 dateFormat="dd/mm/yy"
                 showIcon
@@ -100,7 +100,7 @@
               rounded
               :aria-label="
                 $t(
-                  'verifactu.invoiceIntegration.tableInvoiceRequests.actions.copy'
+                  'verifactu.invoiceIntegration.tableInvoiceRequests.actions.copy',
                 )
               "
               @click="copyToClipboard(slotProps.data.request)"
@@ -150,7 +150,7 @@
               rounded
               :aria-label="
                 $t(
-                  'verifactu.invoiceIntegration.tableInvoiceRequests.actions.copy'
+                  'verifactu.invoiceIntegration.tableInvoiceRequests.actions.copy',
                 )
               "
               @click="copyToClipboard(slotProps.data.response)"
@@ -191,13 +191,13 @@
 import { ref, onMounted, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
-import Calendar from "primevue/calendar";
+import DatePicker from "primevue/datepicker";
 import Tag from "primevue/tag";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import { useVerifactuStore } from "../store/verifactu";
 import { useStore } from "../../../store";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { storeToRefs } from "pinia";
 import { formatDate } from "../../../utils/functions";
 
@@ -271,7 +271,7 @@ const loadRequests = async () => {
   try {
     await verifactuStore.GetIntegrationsBetweenDates(
       filters.value.fromDate as Date,
-      filters.value.toDate as Date
+      filters.value.toDate as Date,
     );
   } catch (err) {
     console.error("Error loading integration requests:", err);
@@ -298,7 +298,7 @@ watch(
     if (isRangeValid()) {
       loadRequests();
     }
-  }
+  },
 );
 
 onMounted(() => {

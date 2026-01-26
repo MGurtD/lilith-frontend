@@ -98,7 +98,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkOrderWithPhases } from "../../../production/types";
 import { usePlantWorkcenterStore } from "../../store";
 import { formatDate } from "../../../../utils/functions";

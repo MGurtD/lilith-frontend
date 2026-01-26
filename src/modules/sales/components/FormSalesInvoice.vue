@@ -10,10 +10,10 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Data Factura</label>
-        <Calendar v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
+        <DatePicker v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
       </div>
       <div class="mt-2">
-        <DropdownLifecycleStatusTransitions
+        <SelectLifecycleStatusTransitions
           label="Estat"
           :statusId="invoice.statusId"
           v-model="invoice.statusId"
@@ -21,9 +21,8 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Métode Pagament</label>
-        <Dropdown
+        <Select
           v-model="invoice.paymentMethodId"
-          editable
           :options="sharedData.paymentMethods"
           optionValue="id"
           optionLabel="name"
@@ -106,7 +105,7 @@ const validate = () => {
 
 const getVerifactuStatusClass = () => {
   const status = invoiceStore.getVerifactuStatusById(
-    props.invoice.integrationStatusId!
+    props.invoice.integrationStatusId!,
   );
 
   if (status === "OK") {

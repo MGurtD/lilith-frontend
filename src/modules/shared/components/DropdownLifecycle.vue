@@ -3,7 +3,7 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       :options="lifecycle?.statuses"
       placeholder="Selecciona..."
@@ -11,7 +11,7 @@
       optionLabel="name"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #option="slotProps">
@@ -19,7 +19,7 @@
           {{ slotProps.option.name }}
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">

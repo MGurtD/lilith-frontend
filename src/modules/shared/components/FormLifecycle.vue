@@ -21,16 +21,14 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Estat inicial</label>
-        <Dropdown
+        <Select
           class="w-full"
           v-model="lifecycle.initialStatusId"
-          editable
           :options="lifecycle.statuses"
           optionValue="id"
           optionLabel="name"
         />
       </div>
-  
     </section>
   </form>
 </template>

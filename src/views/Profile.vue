@@ -3,7 +3,7 @@ import { onMounted, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
 import { useProfilesStore } from "../store/profiles";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useI18n } from "vue-i18n";
 import FormProfile from "../components/forms/FormProfile.vue";
 import ProfileMenuAssignment from "../components/ProfileMenuAssignment.vue";

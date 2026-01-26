@@ -50,9 +50,9 @@ onUnmounted(() => {
 <style scoped>
 .operator-item {
   padding: 0.75rem;
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   border-radius: var(--border-radius);
-  border-left: 3px solid var(--primary-color);
+  border-left: 3px solid var(--p-primary-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -83,7 +83,7 @@ onUnmounted(() => {
 
 .duration {
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--p-primary-color);
   font-size: 0.9rem;
 }
 </style>

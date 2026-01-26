@@ -3,12 +3,11 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       :virtualScrollerOptions="{ itemSize: 38 }"
       showClear
       filter
       :filter-fields="['code', 'description']"
-      editable
       :options="filteredReferences"
       placeholder="Selecciona..."
       optionValue="id"
@@ -20,29 +19,28 @@
       "
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #value="slotProps">
-        <div v-if="slotProps.value" class="flex align-items-center p-2">
-          {{ getReferenceName(slotProps.value) }}
+        <div v-if="slotProps.value" class="flex align-items-center">
+          {{ getReferenceNameById(slotProps.value) }}
         </div>
         <span v-else>
           {{ slotProps.placeholder }}
         </span>
       </template>
       <template #option="slotProps">
-        <div v-if="slotProps.option" class="flex align-items-center p-2">
-          {{ getReferenceName(slotProps.option) }}
+        <div v-if="slotProps.option" class="flex align-items-center">
+          {{ getReferenceNameById(slotProps.option.id) }}
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">
 import { computed } from "vue";
 import { useReferenceStore } from "../store/reference";
-import { Reference } from "../types";
 
 const props = defineProps<{
   label: string;
@@ -57,10 +55,10 @@ const emit = defineEmits<{
 
 const referenceStore = useReferenceStore();
 
-const getReferenceName = (reference: Reference) => {
+const getReferenceNameById = (id: string) => {
   return props.fullName
-    ? referenceStore.getFullName(reference)
-    : referenceStore.getShortName(reference);
+    ? referenceStore.getFullNameById(id)
+    : referenceStore.getShortNameById(id);
 };
 
 const filteredReferences = computed(() => {

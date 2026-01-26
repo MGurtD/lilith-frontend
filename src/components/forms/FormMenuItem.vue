@@ -54,7 +54,7 @@ watch(
   (v) => {
     form.value = { ...v };
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const validate = () => {
@@ -106,7 +106,7 @@ onMounted(loadHierarchy);
       </div>
       <div class="field col-12 md:col-4">
         <label class="block mb-2">{{ t("menuItems.form.parent") }}</label>
-        <Dropdown
+        <Select
           v-model="form.parentId"
           :options="parentFlat"
           optionLabel="title"

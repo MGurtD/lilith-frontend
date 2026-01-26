@@ -3,7 +3,7 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     dataKey="id"
     :value="filteredOrders"
     v-model:selection="selectedReceipts"
@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { Receipt } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { formatDate } from "../../../utils/functions";
 
 const selectedReceipts = ref([] as Array<Receipt>);
@@ -65,7 +65,7 @@ const filteredOrders = computed(() => {
     filtered = props.receipts.filter(
       (o) =>
         o.number.toString().includes(selectedReceipt.value) ||
-        o.supplierNumber.includes(selectedReceipt.value)
+        o.supplierNumber.includes(selectedReceipt.value),
     );
   }
 

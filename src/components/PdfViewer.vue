@@ -132,7 +132,7 @@
       <div v-else-if="error" class="pdf-error-state">
         <i
           :class="PrimeIcons.EXCLAMATION_CIRCLE"
-          style="font-size: 3rem; color: var(--red-500)"
+          style="font-size: 3rem; color: var(--p-red-500)"
         ></i>
         <p class="error-text">{{ error }}</p>
         <Button
@@ -158,7 +158,7 @@
       <div v-else class="pdf-no-file-state">
         <i
           :class="PrimeIcons.FILE_PDF"
-          style="font-size: 4rem; color: var(--surface-400)"
+          style="font-size: 4rem; color: var(--p-surface-400)"
         ></i>
         <p class="no-file-text">Selecciona un document per visualitzar</p>
       </div>
@@ -169,7 +169,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import VuePdfEmbed from "vue-pdf-embed";
 import { FileService } from "../services/file.service";
 import { createBlobAndDownloadFile } from "../utils/functions";

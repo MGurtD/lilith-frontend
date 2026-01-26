@@ -7,9 +7,9 @@
     sort-mode="single"
     :sort-order="1"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     paginator
-    :rows="12"
+    :rows="20"
     @row-click="editRow"
   >
     <template #header>
@@ -135,7 +135,7 @@ import { useSalesOrderStore } from "../store/order";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   formatDateForQueryParameter,
@@ -253,7 +253,7 @@ const createButtonClick = () => {
 const filterSalesOrder = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -261,7 +261,7 @@ const filterSalesOrder = async () => {
       startTime,
       endTime,
       filter.value.customerId,
-      filter.value.statusId
+      filter.value.statusId,
     );
   } else {
     toast.add({
@@ -290,7 +290,7 @@ const createOrder = async () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/salesorder/${row.data.id}` });

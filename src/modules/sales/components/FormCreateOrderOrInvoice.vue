@@ -6,14 +6,13 @@
         label=""
         placeholder=""
         v-model="createRequest.customerId"
-      ></DropdownCustomers>
+      />
     </div>
     <div class="mt-2">
       <label class="block text-900 mb-2">Exercici</label>
-      <Dropdown
+      <Select
         class="w-full"
         v-model="createRequest.exerciseId"
-        editable
         :options="exerciseStore.exercises"
         optionValue="id"
         optionLabel="name"
@@ -21,7 +20,7 @@
     </div>
     <div class="mt-2">
       <label class="block text-900 mb-2">Data</label>
-      <Calendar v-model="createRequest.date" />
+      <DatePicker v-model="createRequest.date" />
     </div>
 
     <footer class="mt-2">
@@ -58,7 +57,7 @@ onMounted(async () => {
   }
 
   var currentExercise = exerciseStore.exercises?.find(
-    (e) => e.name === new Date().getFullYear().toString()
+    (e) => e.name === new Date().getFullYear().toString(),
   );
 
   if (currentExercise) {

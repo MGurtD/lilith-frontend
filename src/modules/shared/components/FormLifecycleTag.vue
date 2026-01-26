@@ -17,7 +17,7 @@
 
       <div class="mb-3">
         <label class="block text-900 mb-2">Color</label>
-        <Dropdown
+        <Select
           v-model="tag.color"
           :options="colors"
           optionValue="id"
@@ -74,7 +74,7 @@ const schema = Yup.object().shape({
     .max(250, "El nom no pot superar els 250 caràcters"),
   description: Yup.string().max(
     250,
-    "La descripció no pot superar els 250 caràcters"
+    "La descripció no pot superar els 250 caràcters",
   ),
 });
 

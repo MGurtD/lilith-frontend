@@ -14,7 +14,7 @@
             <label class="form-label pr-1 auto-width-label">{{
               $t("verifactu.invoiceIntegration.filters.toDate")
             }}</label>
-            <Calendar
+            <DatePicker
               v-model="filters.limitDate"
               dateFormat="dd/mm/yy"
               :placeholder="
@@ -175,13 +175,13 @@ import { ref, onMounted, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import { storeToRefs } from "pinia";
-import Calendar from "primevue/calendar";
+import DatePicker from "primevue/datepicker";
 import Dialog from "primevue/dialog";
 import ProgressBar from "primevue/progressbar";
 import { useVerifactuStore } from "../store/verifactu";
 import { useStore } from "../../../store";
 import { formatDate, formatCurrency } from "../../../utils/functions";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const { t } = useI18n();
 const toast = useToast();
@@ -222,13 +222,13 @@ const progress = ref<{
 const progressPercent = computed(() =>
   progress.value.total > 0
     ? Math.floor((progress.value.current / progress.value.total) * 100)
-    : 0
+    : 0,
 );
 const successCount = computed(
-  () => batchResults.value.filter((r) => r.status === "success").length
+  () => batchResults.value.filter((r) => r.status === "success").length,
 );
 const errorCount = computed(
-  () => batchResults.value.filter((r) => r.status === "error").length
+  () => batchResults.value.filter((r) => r.status === "error").length,
 );
 
 // Filters
@@ -287,7 +287,10 @@ const integrateVisibleInvoices = async () => {
 
   // Order invoices by invoiceNumber using natural ordering (numeric-aware)
   const ordered = [...invoices.value].sort((a, b) =>
-    naturalCompare(String(a.invoiceNumber ?? ""), String(b.invoiceNumber ?? ""))
+    naturalCompare(
+      String(a.invoiceNumber ?? ""),
+      String(b.invoiceNumber ?? ""),
+    ),
   );
 
   progress.value.total = ordered.length;
@@ -363,7 +366,7 @@ watch(
     if (validateDate()) {
       loadInvoices();
     }
-  }
+  },
 );
 </script>
 

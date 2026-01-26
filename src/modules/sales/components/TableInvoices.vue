@@ -3,11 +3,11 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sortMode="multiple"
     :value="invoices"
     paginator
-    :rows="12"
+    :rows="20"
     @row-click="editButtonClick"
   >
     <template #header>
@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { Customer, SalesInvoice } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useSalesInvoiceStore } from "../store/invoice";
 import { formatCurrency, formatDate } from "../../../utils/functions";
@@ -123,7 +123,7 @@ const getLastDueDate = (invoice: SalesInvoice): string => {
   } else {
     return formatDate(
       invoice.salesInvoiceDueDates[invoice.salesInvoiceDueDates.length - 1]
-        .dueDate
+        .dueDate,
     );
   }
 };
@@ -145,7 +145,7 @@ const getVerifactuStatusClass = (integrationStatusId: string) => {
 const editButtonClick = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);

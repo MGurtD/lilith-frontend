@@ -23,9 +23,8 @@
     <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Local</label>
-        <Dropdown
+        <Select
           v-model="area.siteId"
-          editable
           :options="areaStore.sites"
           optionValue="id"
           optionLabel="name"

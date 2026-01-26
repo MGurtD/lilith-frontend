@@ -8,26 +8,32 @@
     ></FormWorkmasterPhase>
   </header>
   <main class="main" v-if="workmasterPhase">
-    <TabView>
-      <TabPanel header="Pasos">
-        <TableWorkmasterPhaseDetails
-          :workmasterPhase="workmasterPhase"
-          :details="workmasterPhase.details!"
-          @add="onAddDetail"
-          @edit="onEditDetail"
-          @delete="onDeleteDetail"
-        ></TableWorkmasterPhaseDetails>
-      </TabPanel>
-      <TabPanel header="Materials">
-        <TableWorkmasterPhaseBillOfMaterials
-          :workmasterPhase="workmasterPhase"
-          :billOfMaterials="workmasterPhase.billOfMaterials!"
-          @add="onAddBomItem"
-          @edit="onEditBomItem"
-          @delete="onDeleteBomItem"
-        ></TableWorkmasterPhaseBillOfMaterials>
-      </TabPanel>
-    </TabView>
+    <Tabs value="0">
+      <TabList>
+        <Tab value="0">Pasos</Tab>
+        <Tab value="1">Materials</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <TableWorkmasterPhaseDetails
+            :workmasterPhase="workmasterPhase"
+            :details="workmasterPhase.details!"
+            @add="onAddDetail"
+            @edit="onEditDetail"
+            @delete="onDeleteDetail"
+          ></TableWorkmasterPhaseDetails>
+        </TabPanel>
+        <TabPanel value="1">
+          <TableWorkmasterPhaseBillOfMaterials
+            :workmasterPhase="workmasterPhase"
+            :billOfMaterials="workmasterPhase.billOfMaterials!"
+            @add="onAddBomItem"
+            @edit="onEditBomItem"
+            @delete="onDeleteBomItem"
+          ></TableWorkmasterPhaseBillOfMaterials>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
     <Dialog
       v-model:visible="dialogOptions.visible"
       :header="dialogOptions.title"
@@ -62,7 +68,7 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../store/workmaster";
 import { usePlantModelStore } from "../store/plantmodel";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   WorkMasterPhase,
   WorkMasterPhaseBillOfMaterials,
@@ -98,7 +104,7 @@ onMounted(async () => {
   pageTitle = `Ruta de fabricació`;
   if (workmaster.value && workmasterPhase.value) {
     pageTitle = `${pageTitle} ${referenceStore.getFullName(
-      workmaster.value.reference!
+      workmaster.value.reference!,
     )} - Fase ${workmasterPhase.value.code}`;
   }
 
@@ -130,7 +136,7 @@ const onWorkmasterPhaseSubmit = async (phase: WorkMasterPhase) => {
 const formAction = ref(FormActionMode.CREATE);
 const selectedDetail = ref(undefined as WorkMasterPhaseDetail | undefined);
 const selectedBomItem = ref(
-  undefined as WorkMasterPhaseBillOfMaterials | undefined
+  undefined as WorkMasterPhaseBillOfMaterials | undefined,
 );
 const cleanSelecteds = () => {
   selectedDetail.value = undefined;
@@ -155,7 +161,7 @@ const onEditDetail = (detail: WorkMasterPhaseDetail) => {
 const onDeleteDetail = async (detail: WorkMasterPhaseDetail) => {
   await workmasterStore.updatePhase(
     workmasterStore.workmasterPhase!.id,
-    workmasterStore.workmasterPhase!
+    workmasterStore.workmasterPhase!,
   );
   await workmasterStore.deletePhaseDetail(detail.id);
 };
@@ -169,7 +175,7 @@ const onWorkmasterPhaseDetailSubmit = async (detail: WorkMasterPhaseDetail) => {
   }
   await workmasterStore.updatePhase(
     workmasterStore.workmasterPhase!.id,
-    workmasterStore.workmasterPhase!
+    workmasterStore.workmasterPhase!,
   );
   const result = await promise;
 
@@ -196,13 +202,13 @@ const onEditBomItem = (bomItem: WorkMasterPhaseBillOfMaterials) => {
 const onDeleteBomItem = async (bomItem: WorkMasterPhaseBillOfMaterials) => {
   await workmasterStore.updatePhase(
     workmasterStore.workmasterPhase!.id,
-    workmasterStore.workmasterPhase!
+    workmasterStore.workmasterPhase!,
   );
   await workmasterStore.deletePhaseBomItem(bomItem.id);
 };
 
 const onWorkmasterPhasBomItemSubmit = async (
-  bomItem: WorkMasterPhaseBillOfMaterials
+  bomItem: WorkMasterPhaseBillOfMaterials,
 ) => {
   let promise;
   if (formAction.value === FormActionMode.CREATE) {
@@ -212,7 +218,7 @@ const onWorkmasterPhasBomItemSubmit = async (
   }
   await workmasterStore.updatePhase(
     workmasterStore.workmasterPhase!.id,
-    workmasterStore.workmasterPhase!
+    workmasterStore.workmasterPhase!,
   );
   const result = await promise;
 

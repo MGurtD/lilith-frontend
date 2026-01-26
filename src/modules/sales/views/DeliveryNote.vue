@@ -59,7 +59,7 @@ import TableDeliveryNoteDetails from "../components/TableDeliveryNoteDetails.vue
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";

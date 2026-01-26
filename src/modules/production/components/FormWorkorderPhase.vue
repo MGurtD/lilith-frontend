@@ -30,9 +30,8 @@
     <section class="four-columns mb-2">
       <div>
         <label class="block text-900 mb-2">Tipus de màquina</label>
-        <Dropdown
+        <Select
           v-model="phase.workcenterTypeId"
-          editable
           :options="plantModelStore.workcenterTypes"
           optionValue="id"
           optionLabel="name"
@@ -45,9 +44,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Màquina preferida</label>
-        <Dropdown
+        <Select
           v-model="phase.preferredWorkcenterId"
-          editable
           :options="preferredWorkcenters"
           optionValue="id"
           optionLabel="description"
@@ -69,9 +67,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Tipus d'operari</label>
-        <Dropdown
+        <Select
           v-model="phase.operatorTypeId"
-          editable
           :options="plantModelStore.operatorTypes"
           optionValue="id"
           optionLabel="description"
@@ -94,9 +91,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Servei</label>
-        <Dropdown
+        <Select
           v-model="phase.serviceReferenceId"
-          editable
           :options="serviceReferences"
           optionValue="id"
           :optionLabel="(r) => r.code + ' - ' + r.description"

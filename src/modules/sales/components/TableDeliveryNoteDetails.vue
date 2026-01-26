@@ -8,7 +8,7 @@
     sortMode="multiple"
     :sortOrder="1"
     scrollable
-    scrollHeight="60vh"
+    scrollHeight="flex"
   >
     <template #header>
       <slot name="header"></slot>
@@ -59,7 +59,7 @@
 </template>
 <script setup lang="ts">
 import LinkReference from "../../shared/components/LinkReference.vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { SalesOrderHeader } from "../types";
 import { computed } from "vue";
 import { formatDate, formatCurrency } from "../../../utils/functions";

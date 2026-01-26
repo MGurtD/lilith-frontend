@@ -60,15 +60,15 @@
       </div>
     </div>
 
-    <!-- Mobile Sidebar for Document List -->
-    <Sidebar
+    <!-- Mobile Drawer for Document List -->
+    <Drawer
       v-model:visible="drawerVisible"
       position="left"
       :style="{ width: '280px' }"
-      class="documents-sidebar"
+      class="documents-drawer"
     >
       <template #header>
-        <span class="sidebar-header">Documents</span>
+        <span class="drawer-header">Documents</span>
       </template>
       <DataTable
         :value="workcenterStore.workOrderReferenceDocuments"
@@ -101,15 +101,15 @@
           </template>
         </Column>
       </DataTable>
-    </Sidebar>
+    </Drawer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import Button from "primevue/button";
-import Sidebar from "primevue/sidebar";
+import Drawer from "primevue/drawer";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
@@ -274,8 +274,8 @@ onMounted(() => {
   max-width: 100%;
 }
 
-/* ===== SIDEBAR STYLES ===== */
-.documents-sidebar :deep(.p-sidebar-content) {
+/* ===== DRAWER STYLES ===== */
+.documents-drawer :deep(.p-drawer-content) {
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -283,7 +283,7 @@ onMounted(() => {
   min-height: 0;
 }
 
-.sidebar-header {
+.drawer-header {
   font-weight: 600;
   font-size: 1.125rem;
 }
@@ -319,11 +319,11 @@ onMounted(() => {
 }
 
 .clickable-rows :deep(.p-datatable-tbody > tr:hover) {
-  background: var(--primary-50) !important;
+  background: var(--p-primary-50) !important;
 }
 
 .clickable-rows :deep(.p-datatable-tbody > tr.p-highlight) {
-  background: var(--primary-100) !important;
+  background: var(--p-primary-100) !important;
 }
 
 /* ===== RESPONSIVE: TABLET (768px - 991px) ===== */
