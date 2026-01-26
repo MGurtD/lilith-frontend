@@ -9,7 +9,6 @@ import PwaUpdatePrompt from "./components/PwaUpdatePrompt.vue";
 import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { usePlantOperatorStore } from "./modules/plant/store";
-import ProgressSpinner from "primevue/progressspinner";
 import ScrollPanel from "primevue/scrollpanel";
 import { applyPrimeVueLocale } from "./i18n";
 import { usePrimeVue } from "primevue/config";
@@ -31,7 +30,7 @@ onMounted(async () => {
 
 watch(
   () => store.language.current,
-  (val) => applyPrimeVueLocale(primevue.config, val)
+  (val) => applyPrimeVueLocale(primevue.config, val),
 );
 
 const logout = () => {
@@ -63,7 +62,13 @@ const logoutOperator = () => {
 
   <Toast position="bottom-right" />
   <ConfirmDialog />
-  <ProgressSpinner v-if="apiStore.isWaiting" class="spinner" />
+
+  <!-- Subtle loading indicator -->
+  <Transition name="loading-fade">
+    <div v-if="apiStore.isWaiting" class="loading-indicator">
+      <div class="loading-bar"></div>
+    </div>
+  </Transition>
 </template>
 
 <style lang="scss">
@@ -86,10 +91,55 @@ const logoutOperator = () => {
   );
 }
 
-.spinner {
-  position: absolute;
-  top: calc(50% - var(--top-panel-height));
-  left: 50%;
-  transform: translate(-50%, -50%);
+/* Subtle loading indicator - top progress bar */
+.loading-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  overflow: hidden;
+  background: transparent;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(
+    90deg,
+    var(--p-primary-400),
+    var(--p-primary-500),
+    var(--p-primary-400)
+  );
+  border-radius: 0 2px 2px 0;
+  animation: loading-slide 1.2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--p-primary-400);
+}
+
+@keyframes loading-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+/* Fade transition for loading indicator */
+.loading-fade-enter-active {
+  transition: opacity 0.15s ease-out;
+}
+
+.loading-fade-leave-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.loading-fade-enter-from,
+.loading-fade-leave-to {
+  opacity: 0;
 }
 </style>
