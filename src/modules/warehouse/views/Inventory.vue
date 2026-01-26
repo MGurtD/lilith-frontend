@@ -3,9 +3,9 @@
     :value="inventoryStore.inventories"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     paginator
-    :rows="10"
+    :rows="20"
     :rowsPerPageOptions="[10, 20, 50]"
     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
     currentPageReportTemplate="{first} a {last} de {totalRecords} entrades"
@@ -81,7 +81,7 @@ import { useInventoryStore } from "../store/inventory";
 import { useReferenceStore } from "../../shared/store/reference";
 
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { Inventory, StockMovement } from "../types";
 import { useStockMovementStore } from "../store/stockMovement";
@@ -144,14 +144,14 @@ const filterMovements = () => {
     inventoryStore.inventories = inventoryStore.inventories?.filter((inv) =>
       inv.referenceName
         ?.toLowerCase()
-        .includes(filter.value.referenceName.toLowerCase())
+        .includes(filter.value.referenceName.toLowerCase()),
     );
   }
   if (filter.value.locationName) {
     inventoryStore.inventories = inventoryStore.inventories?.filter((inv) =>
       inv.locationName
         ?.toLowerCase()
-        .includes(filter.value.locationName.toLowerCase())
+        .includes(filter.value.locationName.toLowerCase()),
     );
   }
 };

@@ -80,7 +80,7 @@
 </template>
 <script setup lang="ts">
 import LinkReference from "../../shared/components/LinkReference.vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Budget, BudgetDetail } from "../types";
 import { useConfirm } from "primevue/useconfirm";

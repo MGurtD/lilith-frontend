@@ -75,9 +75,9 @@ body {
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    var(--blue-900) 0%,
-    var(--blue-800) 50%,
-    var(--blue-700) 100%
+    var(--p-blue-900) 0%,
+    var(--p-blue-800) 50%,
+    var(--p-blue-700) 100%
   );
   background-attachment: fixed;
   display: flex;

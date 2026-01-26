@@ -83,7 +83,25 @@ export const useWorkOrderStore = defineStore("workorder", {
       this.workorders = await Services.WorkOrder.getAll();
     },
     async fetchOne(id: string) {
-      this.workorder = await Services.WorkOrder.getById(id);
+      try {
+        const data = await Services.WorkOrder.getById(id);
+        if (data) {
+          // Convert ISO date strings to Date objects for DatePicker compatibility
+          if (data.plannedDate) {
+            data.plannedDate = new Date(data.plannedDate) as any;
+          }
+          if (data.startTime) {
+            data.startTime = new Date(data.startTime) as any;
+          }
+          if (data.endTime) {
+            data.endTime = new Date(data.endTime) as any;
+          }
+        }
+        this.workorder = data;
+      } catch (error) {
+        console.error("Error in fetchOne:", error);
+        throw error;
+      }
     },
     async fetchBySalesOrder(salesOrderId: string) {
       this.workorders =

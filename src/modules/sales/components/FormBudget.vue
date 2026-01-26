@@ -13,11 +13,11 @@
         </div>
         <div>
           <label class="block text-900 mb-2">Data Alta</label>
-          <Calendar v-model="budget.date" dateFormat="dd/mm/yy" />
+          <DatePicker v-model="budget.date" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <label class="block text-900 mb-2">Data Acceptació</label>
-          <Calendar v-model="budget.acceptanceDate" dateFormat="dd/mm/yy" />
+          <DatePicker v-model="budget.acceptanceDate" dateFormat="dd/mm/yy" />
         </div>
         <div>
           <BaseInput
@@ -42,9 +42,8 @@
         <div>
           <label class="block text-900 mb-2">Client</label>
           <div style="display: flex; align-items: center; gap: 0.5rem">
-            <Dropdown
+            <Select
               v-model="budget.customerId"
-              editable
               :options="customerStore.customers"
               optionValue="id"
               optionLabel="comercialName"
@@ -74,14 +73,12 @@
       <section class="mt-2">
         <div>
           <label class="block text-900 mb-2">Notes Internes</label>
-          <textarea
-            label="Notes Internes"
-            class="w-full p-inputtext p-component"
+          <Textarea
+            class="w-full"
             rows="3"
-            cols="30"
             placeholder="Notes internes"
             v-model="budget.userNotes"
-          ></textarea>
+          />
         </div>
       </section>
       <section v-if="budget.notes && budget.notes.length > 0" class="mt-2">
@@ -170,7 +167,7 @@ const parseEntityDates = () => {
   budget.value.date = convertDateTimeToJSON(budget.value.date);
   if (budget.value.acceptanceDate) {
     budget.value.acceptanceDate = convertDateTimeToJSON(
-      budget.value.acceptanceDate
+      budget.value.acceptanceDate,
     );
   }
 };

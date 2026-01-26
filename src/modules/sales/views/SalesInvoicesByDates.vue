@@ -4,7 +4,7 @@
       class="small-datatable"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="80vh"
+      scrollHeight="flex"
       sortMode="multiple"
       :value="invoiceStore.invoices"
       v-model:selection="selectedInvoices"
@@ -16,7 +16,7 @@
           <div class="datatable-filter">
             <div class="filter-field">
               <label class="block text-900 mb-2">Període</label>
-              <Calendar
+              <DatePicker
                 v-model="filter.dates"
                 :numberOfMonths="2"
                 selectionMode="range"
@@ -107,7 +107,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { useSalesInvoiceStore } from "../store/invoice";
@@ -166,14 +166,14 @@ const getLastDueDate = (invoice: SalesInvoice): string => {
   } else {
     return formatDate(
       invoice.salesInvoiceDueDates[invoice.salesInvoiceDueDates.length - 1]
-        .dueDate
+        .dueDate,
     );
   }
 };
 
 const isManagedStatus = (statusId: string): boolean => {
   const managedStatus = lifecycleStore.lifecycle?.statuses?.find(
-    (s) => s.name === "Gestionada"
+    (s) => s.name === "Gestionada",
   );
 
   return (managedStatus && managedStatus.id === statusId) as boolean;
@@ -184,7 +184,7 @@ const filterInvoices = async () => {
     let managedStatus = undefined;
     if (!filter.value.showManaged) {
       managedStatus = lifecycleStore.lifecycle?.statuses?.find(
-        (s) => s.name === "Gestionada"
+        (s) => s.name === "Gestionada",
       );
     }
 
@@ -197,7 +197,7 @@ const filterInvoices = async () => {
       endTime,
       undefined,
       undefined,
-      statusId
+      statusId,
     );
   } else {
     toast.add({
@@ -211,7 +211,7 @@ const filterInvoices = async () => {
 
 const updateSelectedInvoiceStatusToManaged = async () => {
   const statusTo = lifecycleStore.lifecycle?.statuses?.find(
-    (s) => s.name === "Gestionada"
+    (s) => s.name === "Gestionada",
   );
   if (statusTo) {
     const ids = selectedInvoices.value.map((i) => i.id);
@@ -237,7 +237,7 @@ const updateSelectedInvoiceStatusToManaged = async () => {
 const downloadInvoices = async (invoice: SalesInvoice) => {
   const printed = await invoiceStore.PrintInvoice(
     invoice.id,
-    invoice.invoiceNumber
+    invoice.invoiceNumber,
   );
 
   if (printed) {
@@ -263,7 +263,7 @@ const downloadInvoices = async (invoice: SalesInvoice) => {
 }
 
 .download_column:hover {
-  color: var(--blue-500);
+  color: var(--p-blue-500);
   cursor: pointer;
 }
 

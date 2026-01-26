@@ -150,7 +150,7 @@ onUnmounted(() => {});
 }
 
 .panel-section :deep(.p-panel-header) {
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
@@ -211,13 +211,13 @@ onUnmounted(() => {});
 }
 
 .counter-ok {
-  color: var(--green-600);
+  color: var(--p-green-600);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .counter-ko {
-  color: var(--red-600);
+  color: var(--p-red-600);
   font-weight: 700;
   font-size: 1.1rem;
 }

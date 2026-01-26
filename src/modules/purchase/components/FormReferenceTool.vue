@@ -2,9 +2,8 @@
   <section class="three-columns">
     <div class="mt-1">
       <label class="block text-900 mb-2">Impost</label>
-      <Dropdown
+      <Select
         v-model="reference.taxId"
-        editable
         :options="taxesStore.taxes"
         optionValue="id"
         optionLabel="name"
@@ -13,9 +12,8 @@
     </div>
     <div class="mt-1">
       <label class="block text-900 mb-2">Àrea de producció</label>
-      <Dropdown
+      <Select
         v-model="reference.areaId"
-        editable
         :options="plantModelStore.areas"
         optionValue="id"
         optionLabel="name"

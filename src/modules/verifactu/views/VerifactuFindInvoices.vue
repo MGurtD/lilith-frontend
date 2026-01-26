@@ -10,7 +10,7 @@
         <div class="datatable-filter">
           <div class="filter-field m-1">
             <label class="block text-900">Any</label>
-            <Dropdown
+            <Select
               v-model="filter.year"
               :options="yearOptions"
               optionValue="value"
@@ -21,7 +21,7 @@
           </div>
           <div class="filter-field m-1">
             <label class="block text-900">Mes</label>
-            <Dropdown
+            <Select
               v-model="filter.month"
               :options="monthOptions"
               optionValue="value"
@@ -59,7 +59,7 @@ import { useToast } from "primevue/usetoast";
 import { useStore } from "../../../store";
 import { useVerifactuStore } from "../store/verifactu";
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useUserFilterStore } from "../../../store/userfilter";
 
 const toast = useToast();
@@ -139,7 +139,7 @@ const searchInvoices = async () => {
   try {
     const response = await verifactuStore.FindInvoices(
       filter.value.month,
-      filter.value.year
+      filter.value.year,
     );
 
     if (response && response.invoices.length === 0) {

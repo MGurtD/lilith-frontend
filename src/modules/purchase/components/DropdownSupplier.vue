@@ -3,11 +3,10 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       filter
       :filter-fields="['comercialName']"
-      editable
       :options="supplierStore.suppliers"
       placeholder="Selecciona..."
       optionValue="id"
@@ -22,7 +21,7 @@
           {{ `${slotProps.option.comercialName}` }}
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">

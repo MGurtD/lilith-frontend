@@ -3,12 +3,12 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sort-field="reference.code"
     :sort-order="1"
     @row-click="editRow"
     paginator
-    :rows="12"
+    :rows="20"
   >
     <template #header>
       <div
@@ -63,7 +63,7 @@
       <template #body="slotProps">
         {{
           customersStore.getCustomerNameById(
-            slotProps.data.reference.customerId
+            slotProps.data.reference.customerId,
           )
         }}
       </template>
@@ -80,7 +80,7 @@
             slotProps.data.machineCost +
               slotProps.data.operatorCost +
               slotProps.data.materialCost +
-              slotProps.data.externalCost
+              slotProps.data.externalCost,
           )
         }}
       </template>
@@ -154,7 +154,7 @@
         <p>
           {{
             referenceStore.getFullNameById(
-              workmasterStore.workmasterToCopy!.workmaster.referenceId
+              workmasterStore.workmasterToCopy!.workmaster.referenceId,
             )
           }}
         </p>
@@ -167,7 +167,7 @@
           @change="checkDestinyCode"
         ></DropdownReference>
         <label class="block text-900 mb-2">Mode</label>
-        <Dropdown
+        <Select
           v-model="workmasterStore.workmasterToCopy!.mode"
           :options="workmasterStore.workmasterModes"
           optionLabel="value"
@@ -200,7 +200,7 @@ import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
@@ -240,14 +240,14 @@ const filteredData = computed(() => {
 
   if (filter.value.referenceId)
     filteredWorkmasters = filteredWorkmasters.filter(
-      (w) => w.referenceId === filter.value.referenceId
+      (w) => w.referenceId === filter.value.referenceId,
     );
 
   if (filter.value.customerId)
     filteredWorkmasters = filteredWorkmasters.filter(
       (w) =>
         w.reference?.customerId === filter.value.customerId ||
-        w.reference.customerId === null
+        w.reference.customerId === null,
     );
 
   return filteredWorkmasters;
@@ -347,10 +347,10 @@ const checkDestinyId = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     ) &&
     !(row.originalEvent.target as any).className.includes(
-      "grid_copy_column_button"
+      "grid_copy_column_button",
     )
   ) {
     router.push({ path: `/workmaster/${row.data.id}` });

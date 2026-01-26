@@ -97,7 +97,7 @@ import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useTaxesStore } from "../../shared/store/tax";
 import { useDeliveryNoteStore } from "../store/deliveryNote";
 import { useReferenceStore } from "../../shared/store/reference";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import {
   convertDateTimeToJSON,
   createBlobAndDownloadFile,

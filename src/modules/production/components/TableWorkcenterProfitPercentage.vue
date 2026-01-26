@@ -5,7 +5,7 @@
       class="p-datatable-sm"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="40vh"
+      scrollHeight="flex"
       stripedRows
       :rowHover="true"
     >
@@ -88,7 +88,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkcenterProfitPercentage } from "../types";
 import { reactive, ref } from "vue";
 import { DialogOptions } from "../../../types/component";

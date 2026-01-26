@@ -26,14 +26,14 @@ const emitDateSelected = () =>
   emit("rangeSelected", store.exercisePicker.dates!);
 </script>
 <template>
-  <Dropdown
+  <Select
     v-model="store.exercisePicker.exercise"
     :options="exercises"
     optionLabel="name"
     placeholder="Any"
     @change="setExerciseDates"
   />
-  <Calendar
+  <DatePicker
     placeholder="Període"
     v-model="store.exercisePicker.dates"
     selectionMode="range"

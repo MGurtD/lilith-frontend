@@ -47,7 +47,7 @@ import { useSuppliersStore } from "../store/suppliers";
 import SupplierContactForm from "./FormSupplierContact.vue";
 import { SupplierContact } from "../types";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { FormActionMode } from "../../../types/component";

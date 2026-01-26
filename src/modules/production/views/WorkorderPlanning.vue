@@ -6,7 +6,7 @@
     sortField="order"
     :sortOrder="1"
     scrollable
-    scrollHeight="76vh"
+    scrollHeight="flex"
     @rowReorder="onRowReorder"
   >
     <template #header>
@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useWorkOrderStore } from "../store/workorder";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { computed } from "vue";
 import { formatDate } from "../../../utils/functions";
 import { WorkOrderOrder } from "../types";

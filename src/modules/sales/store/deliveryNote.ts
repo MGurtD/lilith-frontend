@@ -18,7 +18,14 @@ export const useDeliveryNoteStore = defineStore({
   getters: {},
   actions: {
     async GetById(id: string) {
-      this.deliveryNote = await SalesServices.DeliveryNote.getById(id);
+      const data = await SalesServices.DeliveryNote.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.deliveryDate) {
+          data.deliveryDate = new Date(data.deliveryDate) as any;
+        }
+      }
+      this.deliveryNote = data;
     },
     async GetDetailsById(id: string) {
       const updatedDeliveryNote = await SalesServices.DeliveryNote.getById(id);
@@ -33,20 +40,19 @@ export const useDeliveryNoteStore = defineStore({
           await SalesServices.DeliveryNote.GetBetweenDatesAndCustomer(
             startTime,
             endTime,
-            customerId
+            customerId,
           );
       } else {
         this.deliveryNotes = await SalesServices.DeliveryNote.GetBetweenDates(
           startTime,
-          endTime
+          endTime,
         );
       }
     },
 
     async GetByInvoiceId(invoiceId: string) {
-      this.deliveryNotes = await SalesServices.DeliveryNote.GetByInvoiceId(
-        invoiceId
-      );
+      this.deliveryNotes =
+        await SalesServices.DeliveryNote.GetByInvoiceId(invoiceId);
     },
     async GetToInvoice(customerId: string) {
       this.invoiceableDeliveryNotes =
@@ -68,7 +74,7 @@ export const useDeliveryNoteStore = defineStore({
 
     async AddOrder(
       id: string,
-      order: SalesOrderHeader
+      order: SalesOrderHeader,
     ): Promise<GenericResponse<any>> {
       const response = await SalesServices.DeliveryNote.AddOrder(id, order);
       await this.GetDetailsById(id);
@@ -76,7 +82,7 @@ export const useDeliveryNoteStore = defineStore({
     },
     async DeleteOrder(
       id: string,
-      order: SalesOrderHeader
+      order: SalesOrderHeader,
     ): Promise<GenericResponse<any>> {
       const response = await SalesServices.DeliveryNote.DeleteOrder(id, order);
       await this.GetDetailsById(id);

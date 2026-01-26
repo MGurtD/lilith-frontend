@@ -3,9 +3,9 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     paginator
-    :rows="12"
+    :rows="20"
     @row-click="editRow"
   >
     <template #header>
@@ -84,7 +84,7 @@
 import DropdownCustomers from "../../sales/components/DropdownCustomers.vue";
 import BaseInput from "../../../components/BaseInput.vue";
 import { computed, ref, onUnmounted, onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../../shared/types";
 import { useCustomersStore } from "../../sales/store/customers";
@@ -132,13 +132,13 @@ const filteredData = computed(() => {
   // Customer filter
   if (filter.value.customerId && filter.value.customerId!.length > 0) {
     filteredReferences = filteredReferences.filter(
-      (r) => r.customerId === filter.value.customerId
+      (r) => r.customerId === filter.value.customerId,
     );
   }
   // Code filter
   if (filter.value.code && filter.value.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
-      r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+      r.code.toLowerCase().includes(filter.value.code.toLowerCase()),
     );
   }
 
@@ -147,7 +147,7 @@ const filteredData = computed(() => {
     filteredReferences = filteredReferences.filter((r) =>
       r.description
         .toLowerCase()
-        .includes(filter.value.description.toLowerCase())
+        .includes(filter.value.description.toLowerCase()),
     );
   }
 
@@ -161,7 +161,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);

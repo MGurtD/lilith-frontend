@@ -165,6 +165,7 @@ const messages = {
         title: "Integració de Factures a Verifactu",
         filters: {
           toDate: "Data factura fins",
+          selectToDate: "Selecciona una data",
         },
         actions: {
           search: "Cercar",
@@ -411,7 +412,8 @@ const messages = {
       },
       unsupported: {
         title: "Fitxer",
-        message: "Aquest tipus de fitxer no es pot previsualitzar directament al navegador. Pots descarregar-lo per obrir-lo amb l'aplicació corresponent.",
+        message:
+          "Aquest tipus de fitxer no es pot previsualitzar directament al navegador. Pots descarregar-lo per obrir-lo amb l'aplicació corresponent.",
         downloadButton: "Descarregar fitxer",
         noExtension: "Sense extensió",
         unknown: "Desconegut",
@@ -545,6 +547,7 @@ const messages = {
         title: "Integración de Facturas en Verifactu",
         filters: {
           toDate: "Fecha factura hasta",
+          selectToDate: "Selecciona una fecha",
         },
         actions: {
           integrateSelected: "Integrar Pendientes",
@@ -756,7 +759,8 @@ const messages = {
       },
       unsupported: {
         title: "Archivo",
-        message: "Este tipo de archivo no se puede previsualizar directamente en el navegador. Puedes descargarlo para abrirlo con la aplicación correspondiente.",
+        message:
+          "Este tipo de archivo no se puede previsualizar directamente en el navegador. Puedes descargarlo para abrirlo con la aplicación correspondiente.",
         downloadButton: "Descargar archivo",
         noExtension: "Sin extensión",
         unknown: "Desconocido",
@@ -914,6 +918,7 @@ const messages = {
         title: "Invoice Integration to Verifactu",
         filters: {
           toDate: "To invoice date",
+          selectToDate: "Select a date",
         },
         actions: {
           integrateSelected: "Integrate remaining",
@@ -1088,7 +1093,8 @@ const messages = {
       },
       unsupported: {
         title: "File",
-        message: "This file type cannot be previewed directly in the browser. You can download it to open with the corresponding application.",
+        message:
+          "This file type cannot be previewed directly in the browser. You can download it to open with the corresponding application.",
         downloadButton: "Download file",
         noExtension: "No extension",
         unknown: "Unknown",

@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 import { storeToRefs } from "pinia";
 import { OperatorType } from "../types";

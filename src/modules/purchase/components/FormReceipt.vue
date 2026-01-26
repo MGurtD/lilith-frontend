@@ -20,9 +20,8 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Exercici</label>
-          <Dropdown
+          <Select
             v-model="receipt.exerciseId"
-            editable
             :options="sharedDataStore.exercises"
             optionValue="id"
             optionLabel="name"
@@ -34,7 +33,7 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Data Albarà</label>
-          <Calendar v-model="receipt.date" dateFormat="dd/mm/yy" />
+          <DatePicker v-model="receipt.date" dateFormat="dd/mm/yy" />
         </div>
       </section>
       <section class="three-columns">
@@ -50,9 +49,8 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Proveïdor</label>
-          <Dropdown
+          <Select
             v-model="receipt.supplierId"
-            editable
             :options="suppliersStore.suppliers"
             optionValue="id"
             optionLabel="comercialName"

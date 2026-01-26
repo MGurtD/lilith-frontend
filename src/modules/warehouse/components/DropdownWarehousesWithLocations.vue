@@ -3,7 +3,7 @@
     <label v-if="label && label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       filter
       :options="groupedWarehouseLocations"
@@ -14,7 +14,7 @@
       optionGroupChildren="items"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #value="slotProps">
@@ -35,7 +35,7 @@
           <div>{{ slotProps.option.label }}</div>
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">

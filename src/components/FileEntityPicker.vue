@@ -75,7 +75,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { FileService } from "../services/file.service";
 import { File } from "../types";
 import Toolbar from "primevue/toolbar";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { loadImage, createBlobAndDownloadFile } from "../utils/functions";
 import { useConfirm } from "primevue/useconfirm";

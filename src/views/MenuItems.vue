@@ -3,7 +3,7 @@ import { onMounted, computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import type { MenuItemNode } from "../types/menuitem";
 import { useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../store";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";

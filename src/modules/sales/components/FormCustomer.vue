@@ -22,9 +22,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Tipus Client</label>
-        <Dropdown
+        <Select
           v-model="customer.customerTypeId"
-          editable
           :options="customerStore.customerTypes"
           optionValue="id"
           optionLabel="name"
@@ -80,9 +79,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Forma de pagament</label>
-        <Dropdown
+        <Select
           v-model="customer.paymentMethodId"
-          editable
           :options="sharedData.paymentMethods"
           optionValue="id"
           optionLabel="name"

@@ -5,42 +5,48 @@
       <FormLifecycle v-if="lifecycle" :lifecycle="lifecycle" />
     </section>
 
-    <TabView v-if="formMode === FormActionMode.EDIT && lifecycle">
-      <TabPanel header="Estats i Transicions">
-        <section class="section_status">
-          <div class="section_status_list">
-            <TableStatuses
-              v-if="lifecycle"
-              :lifecycle-id="lifecycle.id"
-              :statuses="lifecycle.statuses"
-              :transitions="lifecycleStore.transitions"
-              @add="(s) => openStatus(FormActionMode.CREATE, s)"
-              @edit="(s) => openStatus(FormActionMode.EDIT, s)"
-              @delete="deleteStatus"
-            />
-          </div>
-          <div class="section_statustransition_list">
-            <TableStatusTransitions
-              v-if="lifecycle"
-              :statuses="lifecycle.statuses"
-              :transitions="lifecycleStore.transitions"
-              @add="(t) => openStatusTransition(FormActionMode.CREATE, t)"
-              @edit="(t) => openStatusTransition(FormActionMode.EDIT, t)"
-              @delete="deleteStatusTransition"
-            />
-          </div>
-        </section>
-      </TabPanel>
+    <Tabs v-if="formMode === FormActionMode.EDIT && lifecycle" value="0">
+      <TabList>
+        <Tab value="0">Estats i Transicions</Tab>
+        <Tab value="1">Etiquetes</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <section class="section_status">
+            <div class="section_status_list">
+              <TableStatuses
+                v-if="lifecycle"
+                :lifecycle-id="lifecycle.id"
+                :statuses="lifecycle.statuses"
+                :transitions="lifecycleStore.transitions"
+                @add="(s) => openStatus(FormActionMode.CREATE, s)"
+                @edit="(s) => openStatus(FormActionMode.EDIT, s)"
+                @delete="deleteStatus"
+              />
+            </div>
+            <div class="section_statustransition_list">
+              <TableStatusTransitions
+                v-if="lifecycle"
+                :statuses="lifecycle.statuses"
+                :transitions="lifecycleStore.transitions"
+                @add="(t) => openStatusTransition(FormActionMode.CREATE, t)"
+                @edit="(t) => openStatusTransition(FormActionMode.EDIT, t)"
+                @delete="deleteStatusTransition"
+              />
+            </div>
+          </section>
+        </TabPanel>
 
-      <TabPanel header="Etiquetes">
-        <TableLifecycleTags
-          :tags="lifecycle.tags || []"
-          @add="(t) => openTag(FormActionMode.CREATE, t)"
-          @edit="(t) => openTag(FormActionMode.EDIT, t)"
-          @delete="deleteTag"
-        />
-      </TabPanel>
-    </TabView>
+        <TabPanel value="1">
+          <TableLifecycleTags
+            :tags="lifecycle.tags || []"
+            @add="(t) => openTag(FormActionMode.CREATE, t)"
+            @edit="(t) => openTag(FormActionMode.EDIT, t)"
+            @delete="deleteTag"
+          />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
 
     <section v-else class="section_status">
       <div class="section_status_list">
@@ -114,7 +120,7 @@ import { useStore } from "../../../store";
 import { storeToRefs } from "pinia";
 import { useToast } from "primevue/usetoast";
 import { useLifecyclesStore } from "../store/lifecycle";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { FormActionMode, DialogOptions } from "../../../types/component";
 import { Lifecycle, Status, StatusTransition, LifecycleTag } from "../types";
 import SharedServices from "../services";
@@ -177,7 +183,7 @@ const openStatus = (action: FormActionMode, status: Status) => {
 
 const deleteStatus = async (status: Status) => {
   const exist = transitions.value.find(
-    (t) => t.statusId === status.id || t.statusToId === status.id
+    (t) => t.statusId === status.id || t.statusToId === status.id,
   );
   if (exist) {
     toast.add({
@@ -194,7 +200,7 @@ const deleteStatus = async (status: Status) => {
 
 const onStatusSubmit = async (
   status: Status,
-  tagChanges: { assign: string[]; remove: string[] }
+  tagChanges: { assign: string[]; remove: string[] },
 ) => {
   let success = false;
 
@@ -224,7 +230,7 @@ const onStatusSubmit = async (
 // StatusTransition
 const openStatusTransition = (
   action: FormActionMode,
-  transition: StatusTransition
+  transition: StatusTransition,
 ) => {
   if (formMode.value === FormActionMode.CREATE) return;
 

@@ -6,101 +6,118 @@
       @submit="submitForm"
     />
 
-    <TabView v-if="reference">
-      <TabPanel header="Documentació">
-        <FileEntityPicker
-          title="Documentació"
-          entity="referenceMaps"
-          :id="reference.id"
-          :key="reference.id"
-        />
-      </TabPanel>
-      <TabPanel
-        header="Rutes de fabricació"
-        v-if="formMode === FormActionMode.EDIT"
-      >
-        <DataTable
-          :value="workmasterStore.workmasters"
-          tableStyle="min-width: 100%"
-          scrollable
-          scrollHeight="80vh"
-          sort-field="reference.code"
-          :sort-order="1"
-          @row-click="editWorkmaster"
-          :loading="workmasterLoading"
+    <Tabs v-if="reference" value="0">
+      <TabList>
+        <Tab value="0">Documentació</Tab>
+        <Tab value="1" v-if="formMode === FormActionMode.EDIT"
+          >Rutes de fabricació</Tab
         >
-          <template #header>
-            <div
-              class="flex flex-wrap align-items-center justify-content-between gap-2"
-            >
-              <div>
-                <label class="block text-900">Rutes de fabricació</label>
-              </div>
-              <div class="datatable-buttons">
-                <Button
-                  :icon="PrimeIcons.PLUS"
-                  rounded
-                  raised
-                  :loading="creatingWorkmaster"
-                  @click="createWorkmaster"
-                />
-              </div>
-            </div>
-          </template>
-          <!-- ...resto de columnas sin cambios... -->
-          <Column
-            field="baseQuantity"
-            header="Quantitat Base"
-            style="width: 10%"
-          ></Column>
-          <Column field="machineCost" header="Cost màquina" style="width: 10%">
-            <template #body="slotProps">
-              {{ formatCurrency(slotProps.data.machineCost) }}
-            </template>
-          </Column>
-          <Column field="operatorCost" header="Cost operari" style="width: 10%">
-            <template #body="slotProps">
-              {{ formatCurrency(slotProps.data.operatorCost) }}
-            </template>
-          </Column>
-          <Column
-            field="materialCost"
-            header="Cost material"
-            style="width: 10%"
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <FileEntityPicker
+            title="Documentació"
+            entity="referenceMaps"
+            :id="reference.id"
+            :key="reference.id"
+          />
+        </TabPanel>
+        <TabPanel value="1" v-if="formMode === FormActionMode.EDIT">
+          <DataTable
+            :value="workmasterStore.workmasters"
+            tableStyle="min-width: 100%"
+            scrollable
+            scrollHeight="flex"
+            sort-field="reference.code"
+            :sort-order="1"
+            @row-click="editWorkmaster"
+            :loading="workmasterLoading"
           >
-            <template #body="slotProps">
-              {{ formatCurrency(slotProps.data.materialCost) }}
+            <template #header>
+              <div
+                class="flex flex-wrap align-items-center justify-content-between gap-2"
+              >
+                <div>
+                  <label class="block text-900">Rutes de fabricació</label>
+                </div>
+                <div class="datatable-buttons">
+                  <Button
+                    :icon="PrimeIcons.PLUS"
+                    rounded
+                    raised
+                    :loading="creatingWorkmaster"
+                    @click="createWorkmaster"
+                  />
+                </div>
+              </div>
             </template>
-          </Column>
-          <Column field="externalCost" header="Cost extern" style="width: 10%">
-            <template #body="slotProps">
-              {{ formatCurrency(slotProps.data.externalCost) }}
-            </template>
-          </Column>
-          <Column header="Cost total" style="width: 10%">
-            <template #body="slotProps">
-              {{
-                formatCurrency(
-                  slotProps.data.machineCost +
-                    slotProps.data.operatorCost +
-                    slotProps.data.materialCost +
-                    slotProps.data.externalCost
-                )
-              }}
-            </template>
-          </Column>
-          <Column>
-            <template #body="slotProps">
-              <i
-                :class="PrimeIcons.TIMES"
-                class="grid_delete_column_button"
-                @click="deleteWorkmaster($event, slotProps.data)"
-              />
-            </template>
-          </Column>
-        </DataTable>
-      </TabPanel>
-    </TabView>
+            <!-- ...resto de columnas sin cambios... -->
+            <Column
+              field="baseQuantity"
+              header="Quantitat Base"
+              style="width: 10%"
+            ></Column>
+            <Column
+              field="machineCost"
+              header="Cost màquina"
+              style="width: 10%"
+            >
+              <template #body="slotProps">
+                {{ formatCurrency(slotProps.data.machineCost) }}
+              </template>
+            </Column>
+            <Column
+              field="operatorCost"
+              header="Cost operari"
+              style="width: 10%"
+            >
+              <template #body="slotProps">
+                {{ formatCurrency(slotProps.data.operatorCost) }}
+              </template>
+            </Column>
+            <Column
+              field="materialCost"
+              header="Cost material"
+              style="width: 10%"
+            >
+              <template #body="slotProps">
+                {{ formatCurrency(slotProps.data.materialCost) }}
+              </template>
+            </Column>
+            <Column
+              field="externalCost"
+              header="Cost extern"
+              style="width: 10%"
+            >
+              <template #body="slotProps">
+                {{ formatCurrency(slotProps.data.externalCost) }}
+              </template>
+            </Column>
+            <Column header="Cost total" style="width: 10%">
+              <template #body="slotProps">
+                {{
+                  formatCurrency(
+                    slotProps.data.machineCost +
+                      slotProps.data.operatorCost +
+                      slotProps.data.materialCost +
+                      slotProps.data.externalCost,
+                  )
+                }}
+              </template>
+            </Column>
+            <Column>
+              <template #body="slotProps">
+                <i
+                  :class="PrimeIcons.TIMES"
+                  class="grid_delete_column_button"
+                  @click="deleteWorkmaster($event, slotProps.data)"
+                />
+              </template>
+            </Column>
+          </DataTable>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   </div>
 </template>
 
@@ -109,7 +126,7 @@ import FormReference from "../components/FormReference.vue";
 import FileEntityPicker from "../../../components/FileEntityPicker.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { FormActionMode } from "../../../types/component";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
@@ -241,7 +258,7 @@ const createWorkmaster = async () => {
 
       if (workmasterStore.workmaster) {
         const created = await workmasterStore.create(
-          workmasterStore.workmaster
+          workmasterStore.workmaster,
         );
         if (created) {
           router.push({ path: `/workmaster/${newId}` });

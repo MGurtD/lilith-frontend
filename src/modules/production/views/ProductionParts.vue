@@ -4,11 +4,11 @@
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="79vh"
+    scrollHeight="flex"
     :sort-order="1"
     sort-field="date"
     paginator
-    :rows="25"
+    :rows="20"
   >
     <template #header>
       <div
@@ -20,13 +20,13 @@
           </div>
           <div class="filter-field">
             <label>Màquina</label>
-            <Dropdown
+            <Select
               v-model="filter.workcenterId"
               :show-clear="true"
               :filter="true"
               :options="
                 plantModelStore.workcenters?.sort((a, b) =>
-                  a.description.localeCompare(b.description)
+                  a.description.localeCompare(b.description),
                 )
               "
               optionValue="id"
@@ -36,7 +36,7 @@
           </div>
           <div class="filter-field">
             <label>Operari</label>
-            <Dropdown
+            <Select
               v-model="filter.operatorId"
               :show-clear="true"
               :filter="true"
@@ -55,7 +55,7 @@
           </div>
           <div class="filter-field">
             <label>OF</label>
-            <Dropdown
+            <Select
               v-model="filter.workorderId"
               :show-clear="true"
               :filter="true"
@@ -127,7 +127,8 @@
       <template #body="slotProps">
         {{
           formatCurrency(
-            (slotProps.data.operatorHourCost / 60) * slotProps.data.operatorTime
+            (slotProps.data.operatorHourCost / 60) *
+              slotProps.data.operatorTime,
           )
         }}
       </template>
@@ -137,7 +138,7 @@
         {{
           formatCurrency(
             (slotProps.data.machineHourCost / 60) *
-              slotProps.data.workcenterTime
+              slotProps.data.workcenterTime,
           )
         }}
       </template>
@@ -189,7 +190,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useConfirm } from "primevue/useconfirm";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { ProductionPart } from "../types";
 import {
@@ -226,7 +227,7 @@ const filter = ref({
 const filterData = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -235,7 +236,7 @@ const filterData = async () => {
       endTime,
       filter.value.workcenterId,
       filter.value.operatorId,
-      filter.value.workorderId
+      filter.value.workorderId,
     );
     await workOrderStore.fetchFiltered(startTime, endTime);
   } else {
@@ -321,7 +322,7 @@ const totalOperatorTime = computed(() => {
   if (productionPartStore.productionParts) {
     return productionPartStore.productionParts.reduce(
       (acc, productionPart) => acc + productionPart.operatorTime,
-      0
+      0,
     );
   }
 });
@@ -329,7 +330,7 @@ const totalWorkcenterTime = computed(() => {
   if (productionPartStore.productionParts) {
     return productionPartStore.productionParts.reduce(
       (acc, productionPart) => acc + productionPart.workcenterTime,
-      0
+      0,
     );
   }
 });
@@ -337,7 +338,7 @@ const totalProductionQuantity = computed(() => {
   if (productionPartStore.productionParts) {
     return productionPartStore.productionParts.reduce(
       (acc, productionPart) => acc + productionPart.quantity,
-      0
+      0,
     );
   }
 });
@@ -349,7 +350,7 @@ const totalPersonalCost = computed(() => {
     return calculatedProductionParts.value.reduce(
       (acc, productionPart) =>
         acc + (productionPart.personalCost ? productionPart.personalCost : 0),
-      0
+      0,
     );
   }
 });
@@ -362,7 +363,7 @@ const totalWorkcenterCost = computed(() => {
       (acc, productionPart) =>
         acc +
         (productionPart.workcenterCost ? productionPart.workcenterCost : 0),
-      0
+      0,
     );
   }
 });
@@ -392,7 +393,7 @@ const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
     productionPart.workOrderPhaseDetail
   ) {
     const statusDesc = plantModelStore.getMachineStatusNameById(
-      productionPart.workOrderPhaseDetail.machineStatusId
+      productionPart.workOrderPhaseDetail.machineStatusId,
     );
 
     return `${productionPart.workOrder.code} - ${productionPart.workOrderPhase.code} (${productionPart.workOrderPhase.description}) - ${statusDesc}`;
@@ -400,7 +401,7 @@ const getWorkOrderDetailedName = (productionPart: ProductionPart) => {
 };
 
 const getWorkCenterCost = (
-  productionPart: ProductionPart
+  productionPart: ProductionPart,
 ): number | undefined => {
   const cost =
     (productionPart.machineHourCost * productionPart.workcenterTime) / 60;
@@ -408,7 +409,7 @@ const getWorkCenterCost = (
 };
 
 const getPersonalCost = (
-  productionPart: ProductionPart
+  productionPart: ProductionPart,
 ): number | undefined => {
   const cost =
     (productionPart.operatorHourCost * productionPart.operatorTime) / 60;

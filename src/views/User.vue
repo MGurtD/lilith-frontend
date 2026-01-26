@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../store";
 import { useToast } from "primevue/usetoast";

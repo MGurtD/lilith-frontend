@@ -32,7 +32,7 @@
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";

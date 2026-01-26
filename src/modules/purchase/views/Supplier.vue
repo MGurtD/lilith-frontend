@@ -1,46 +1,50 @@
 <template>
-  <TabView>
-    <TabPanel>
-      <template #header>
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">
         <i :class="PrimeIcons.BUILDING" class="mr-2"></i>
         <span>Proveïdor</span>
-      </template>
-      <FormSupplier @submit="submitForm" />
-    </TabPanel>
-    <TabPanel v-if="formMode === FormActionMode.EDIT">
-      <template #header>
+      </Tab>
+      <Tab value="1" v-if="formMode === FormActionMode.EDIT">
         <i :class="PrimeIcons.TAG" class="mr-2"></i>
         <span>Referencies</span>
-      </template>
-      <TableSupplierReferences
-        v-if="supplier && supplierStore.supplierReferences"
-        title="Referències"
-        :formActionMode="formMode"
-        :supplier-id="supplier.id"
-        :supplier-references="supplierStore.supplierReferences"
-        @create="addReference"
-        @update="editReference"
-        @delete="removeReference"
-      />
-    </TabPanel>
-    <TabPanel v-if="formMode === FormActionMode.EDIT">
-      <template #header>
+      </Tab>
+      <Tab value="2" v-if="formMode === FormActionMode.EDIT">
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
-      </template>
-      <SupplierContacts
-        @create="addContact"
-        @update="editContact"
-        @delete="removeContact"
-      />
-    </TabPanel>
-  </TabView>
+      </Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <FormSupplier @submit="submitForm" />
+      </TabPanel>
+      <TabPanel value="1" v-if="formMode === FormActionMode.EDIT">
+        <TableSupplierReferences
+          v-if="supplier && supplierStore.supplierReferences"
+          title="Referències"
+          :formActionMode="formMode"
+          :supplier-id="supplier.id"
+          :supplier-references="supplierStore.supplierReferences"
+          @create="addReference"
+          @update="editReference"
+          @delete="removeReference"
+        />
+      </TabPanel>
+      <TabPanel value="2" v-if="formMode === FormActionMode.EDIT">
+        <SupplierContacts
+          @create="addContact"
+          @update="editContact"
+          @delete="removeContact"
+        />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useSuppliersStore } from "../store/suppliers";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 import FormSupplier from "../components/FormSupplier.vue";
 import { storeToRefs } from "pinia";

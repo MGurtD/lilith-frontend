@@ -8,9 +8,8 @@
     </div>
     <div class="mt-1">
       <label class="block text-900 mb-2">Format</label>
-      <Dropdown
+      <Select
         v-model="props.reference.referenceFormatId"
-        editable
         :options="referenceStore.referenceFormats"
         optionValue="id"
         optionLabel="description"
@@ -19,9 +18,8 @@
     </div>
     <div class="mt-1">
       <label class="block text-900 mb-2">Impost</label>
-      <Dropdown
+      <Select
         v-model="props.reference.taxId"
-        editable
         :options="taxesStore.taxes"
         optionValue="id"
         optionLabel="name"

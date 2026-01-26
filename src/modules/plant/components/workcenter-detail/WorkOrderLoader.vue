@@ -141,7 +141,7 @@
             <label for="activity-dropdown" class="dropdown-label">
               Activitat a carregar
             </label>
-            <Dropdown
+            <Select
               id="activity-dropdown"
               v-model="selectedDetailId"
               :options="selectedPhase?.details || []"
@@ -197,7 +197,7 @@
                   </span>
                 </div>
               </template>
-            </Dropdown>
+            </Select>
           </div>
           <Button
             :icon="PrimeIcons.COG"
@@ -215,7 +215,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkOrderPhaseDetailed } from "../../../production/types";
 import { WorkOrderPhaseService } from "../../../production/services/workorder.service";
 import { useToast } from "primevue/usetoast";
@@ -436,8 +436,8 @@ onMounted(() => {
 }
 
 .bottom-panel {
-  background: var(--surface-50);
-  border-top: 2px solid var(--surface-border);
+  background: var(--p-surface-50);
+  border-top: 2px solid var(--p-surface-border);
   padding: 1.25rem 1.5rem;
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
@@ -473,7 +473,7 @@ onMounted(() => {
 }
 
 .activity-check-icon {
-  color: var(--green-600);
+  color: var(--p-green-600);
   font-size: 1rem;
 }
 
@@ -484,7 +484,7 @@ onMounted(() => {
 }
 
 .option-icon {
-  color: var(--primary-color);
+  color: var(--p-primary-color);
   font-size: 1rem;
 }
 
@@ -499,8 +499,8 @@ onMounted(() => {
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
-  background: var(--blue-100);
-  color: var(--blue-700);
+  background: var(--p-blue-100);
+  color: var(--p-blue-700);
   border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 500;

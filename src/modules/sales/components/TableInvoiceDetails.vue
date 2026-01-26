@@ -3,7 +3,7 @@
     class="p-datatable-sm"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="62vh"
+    scrollHeight="flex"
     :value="groupedDetails"
     rowGroupMode="subheader"
     groupRowsBy="deliveryNoteNumber"
@@ -67,7 +67,7 @@
 import LinkReference from "../../shared/components/LinkReference.vue";
 import { computed, onMounted } from "vue";
 import { DeliveryNote, SalesInvoiceDetail } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import { useReferenceStore } from "../../shared/store/reference";
 import { formatDate, formatCurrency } from "../../../utils/functions";
@@ -107,7 +107,7 @@ const groupedDetails = computed(() => {
     .filter((d) => d.deliveryNoteDetailId)
     .map((d) => {
       const deliveryNote = props.deliveryNotes?.find(
-        (dn) => dn.id === d.deliveryNoteDetail?.deliveryNoteId
+        (dn) => dn.id === d.deliveryNoteDetail?.deliveryNoteId,
       );
 
       const deliveredDate =
@@ -117,7 +117,7 @@ const groupedDetails = computed(() => {
 
       if (referenceStore.references) {
         const reference = referenceStore.references!.find(
-          (r: Reference) => r.id === d.deliveryNoteDetail?.referenceId
+          (r: Reference) => r.id === d.deliveryNoteDetail?.referenceId,
         );
         if (reference) d.reference = reference;
       }
@@ -167,7 +167,7 @@ const onDeleteRow = (event: any, SalesInvoiceDetail: any) => {
 const onGroupDeleteRow = (event: any, clickedDeliveryNote: any) => {
   if (!props.deliveryNotes) return;
   const deliveryNote = props.deliveryNotes.find(
-    (o) => o.id === clickedDeliveryNote.deliveryNoteId
+    (o) => o.id === clickedDeliveryNote.deliveryNoteId,
   );
   if (!deliveryNote) return;
 

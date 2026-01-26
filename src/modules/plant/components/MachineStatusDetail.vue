@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { MachineStatus, MachineStatusReason } from "../../production/types";
 import {
   normalizeColor,

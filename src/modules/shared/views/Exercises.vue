@@ -1,6 +1,7 @@
 <template>
   <DataTable
-    :value="exerciseStore.exercises"
+    :value="exercises"
+    dataKey="id"
     tableStyle="min-width: 100%"
     @row-click="editExercise"
   >
@@ -39,10 +40,11 @@
 </template>
 <script setup lang="ts">
 import { v4 as uuidv4 } from "uuid";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";
+import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
 import { useExerciseStore } from "../store/exercise";
 import { formatDate } from "../../../utils/functions";
@@ -50,6 +52,7 @@ import { formatDate } from "../../../utils/functions";
 const router = useRouter();
 const store = useStore();
 const exerciseStore = useExerciseStore();
+const { exercises } = storeToRefs(exerciseStore);
 
 onMounted(async () => {
   await exerciseStore.fetchAll();
@@ -67,7 +70,7 @@ const createButtonClick = () => {
 const editExercise = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/exercise/${row.data.id}` });

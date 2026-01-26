@@ -3,17 +3,17 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       :options="referenceStore.referenceCategories"
       placeholder="Selecciona..."
       optionValue="code"
       optionLabel="description"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">

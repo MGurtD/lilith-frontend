@@ -3,7 +3,7 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     :metaKeySelection="false"
     :value="filteredDeliveryNotes"
     selectionMode="multiple"
@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { DeliveryNote } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { formatDate } from "../../../utils/functions";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 
@@ -83,7 +83,7 @@ const filteredDeliveryNotes = computed(() => {
 
   if (props.deliveryNotes) {
     filtered = props.deliveryNotes.filter((o) =>
-      o.number.toString().includes(codeToFilter.value)
+      o.number.toString().includes(codeToFilter.value),
     );
   }
 
@@ -92,7 +92,7 @@ const filteredDeliveryNotes = computed(() => {
 
 const getStatusNameById = (statusId: string) => {
   const status = lifecycleStore.lifecycle?.statuses.find(
-    (s) => s.id === statusId
+    (s) => s.id === statusId,
   );
   return status ? status.name : "";
 };

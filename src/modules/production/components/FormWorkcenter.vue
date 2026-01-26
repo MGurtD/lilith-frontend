@@ -37,9 +37,8 @@
     <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Tipus</label>
-        <Dropdown
+        <Select
           v-model="workcenter.workcenterTypeId"
-          editable
           :options="plantModelStore.workcenterTypes"
           optionValue="id"
           optionLabel="name"
@@ -51,9 +50,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Area</label>
-        <Dropdown
+        <Select
           v-model="workcenter.areaId"
-          editable
           :options="plantModelStore.areas"
           optionValue="id"
           optionLabel="name"
@@ -65,9 +63,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Torn</label>
-        <Dropdown
+        <Select
           v-model="workcenter.shiftId"
-          editable
           :options="shiftStore.shifts"
           optionValue="id"
           optionLabel="name"

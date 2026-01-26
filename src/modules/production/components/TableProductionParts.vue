@@ -4,7 +4,7 @@
     class="p-datatable-sm"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="40vh"
+    scrollHeight="flex"
     stripedRows
     :rowHover="true"
   >
@@ -61,7 +61,7 @@ import { usePlantModelStore } from "../store/plantmodel";
 import { useProductionPartStore } from "../store/productionpart";
 import { formatDateTime } from "../../../utils/functions";
 import { ProductionPart } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const productionPartStore = useProductionPartStore();
 const plantModelStore = usePlantModelStore();
@@ -71,7 +71,7 @@ const getWorkOrderPhaseName = (productionPart: ProductionPart) => {
 
   if (productionPart.workOrderPhase && productionPart.workOrderPhaseDetail) {
     const statusDesc = plantModelStore.getMachineStatusNameById(
-      productionPart.workOrderPhaseDetail.machineStatusId
+      productionPart.workOrderPhaseDetail.machineStatusId,
     );
 
     return `(${productionPart.workOrderPhase.code}) ${productionPart.workOrderPhase.description} - ${statusDesc}`;

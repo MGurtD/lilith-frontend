@@ -16,9 +16,8 @@
         <label class="block text-900 mb-2">{{
           $t("forms.user.roleLabel")
         }}</label>
-        <Dropdown
+        <Select
           v-model="user.roleId"
-          editable
           :options="roles"
           optionValue="id"
           optionLabel="name"
@@ -30,7 +29,7 @@
         <label class="block text-900 mb-2">{{
           $t("forms.user.profileLabel")
         }}</label>
-        <Dropdown
+        <Select
           v-model="user.profileId"
           :options="profiles"
           optionValue="id"

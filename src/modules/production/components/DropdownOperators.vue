@@ -3,7 +3,7 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       filter
       :options="plantModelStore.operators"
@@ -11,7 +11,7 @@
       :optionLabel="formatLabel"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #option="{ option }">
@@ -19,7 +19,7 @@
           {{ formatLabel(option) }}
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">

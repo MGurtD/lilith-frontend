@@ -4,7 +4,7 @@
     :value="stockStore.stocks"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     paginator
     :rows="20"
     :rowsPerPageOptions="[20, 50]"
@@ -43,7 +43,7 @@ import { useStockStore } from "../store/stock";
 import { useReferenceStore } from "../../shared/store/reference";
 
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const store = useStore();
 

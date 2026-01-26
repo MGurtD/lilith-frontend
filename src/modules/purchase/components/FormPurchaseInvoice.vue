@@ -10,9 +10,8 @@
         />
         <div>
           <label class="block text-900 mb-2">Exercici</label>
-          <Dropdown
+          <Select
             v-model="purchaseInvoice.exerciceId"
-            editable
             :options="purchaseMasterData.masterData.exercises"
             optionValue="id"
             optionLabel="name"
@@ -24,9 +23,8 @@
         </div>
         <div>
           <label class="block text-900 mb-2">Sèrie</label>
-          <Dropdown
+          <Select
             v-model="purchaseInvoice.purchaseInvoiceSerieId"
-            editable
             :options="purchaseMasterData.masterData.series"
             optionValue="id"
             optionLabel="name"
@@ -51,9 +49,8 @@
       <section class="four-columns">
         <div class="mt-1">
           <label class="block text-900 mb-2">Proveïdor</label>
-          <Dropdown
+          <Select
             v-model="purchaseInvoice.supplierId"
-            editable
             :options="purchaseMasterData.masterData.suppliers"
             optionValue="id"
             optionLabel="comercialName"
@@ -73,7 +70,7 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Data Factura</label>
-          <Calendar
+          <DatePicker
             id="purchaseInvoiceDate"
             v-model="purchaseInvoice.purchaseInvoiceDate"
             @date-select="calcAmounts()"
@@ -81,9 +78,8 @@
         </div>
         <div class="mt-1">
           <label class="block text-900 mb-2">Forma de pagament</label>
-          <Dropdown
+          <Select
             v-model="purchaseInvoice.paymentMethodId"
-            editable
             :options="purchaseMasterData.masterData.paymentMethods"
             optionValue="id"
             optionLabel="name"
@@ -237,7 +233,7 @@ const submitForm = async () => {
 
 const setSupplierPaymentMethod = () => {
   const supplier = purchaseMasterData.masterData.suppliers?.find(
-    (s) => s.id === purchaseInvoice.value?.supplierId
+    (s) => s.id === purchaseInvoice.value?.supplierId,
   );
   if (supplier) {
     purchaseInvoice.value!.paymentMethodId = supplier.paymentMethodId;
@@ -265,12 +261,12 @@ const calcAmounts = async () => {
 
     if (purchaseInvoice.value.transportAmount) {
       transportAmount = parseFloat(
-        purchaseInvoice.value.transportAmount.toFixed(2)
+        purchaseInvoice.value.transportAmount.toFixed(2),
       );
     }
     if (purchaseInvoice.value.discountPercentage) {
       discountPercentage = parseFloat(
-        purchaseInvoice.value.discountPercentage.toFixed(2)
+        purchaseInvoice.value.discountPercentage.toFixed(2),
       );
     }
     if (purchaseInvoice.value.extraTaxPercentatge) {
@@ -296,13 +292,13 @@ const calcAmounts = async () => {
 
     const invoice = Object.assign({}, purchaseInvoice.value);
     invoice.purchaseInvoiceDate = convertDateTimeToJSON(
-      invoice.purchaseInvoiceDate
+      invoice.purchaseInvoiceDate,
     );
 
     // Calcular venciments
     purchaseInvoice.value.purchaseInvoiceDueDates =
       (await purchaseStore.GetDueDates(
-        invoice
+        invoice,
       )) as Array<PurchaseInvoiceDueDate>;
   }
 };
@@ -311,7 +307,7 @@ const getBaseAmountFromImports = (): number => {
   let baseAmount = 0;
   if (purchaseInvoice.value) {
     purchaseInvoice.value.purchaseInvoiceImports.forEach(
-      (i) => (baseAmount += i.baseAmount!)
+      (i) => (baseAmount += i.baseAmount!),
     );
   }
   return baseAmount;
@@ -321,7 +317,7 @@ const getTaxAmountFromImports = (): number => {
   let taxAmount = 0;
   if (purchaseInvoice.value) {
     purchaseInvoice.value.purchaseInvoiceImports.forEach(
-      (i) => (taxAmount += i.taxAmount)
+      (i) => (taxAmount += i.taxAmount),
     );
   }
   return taxAmount;

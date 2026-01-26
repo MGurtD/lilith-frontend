@@ -21,7 +21,7 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Data inici</label>
-        <Calendar
+        <DatePicker
           v-model="exercise.startDate"
           dateFormat="dd/mm/yy"
           :class="{
@@ -31,7 +31,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data fi</label>
-        <Calendar
+        <DatePicker
           v-model="exercise.endDate"
           dateFormat="dd/mm/yy"
           :class="{
@@ -151,7 +151,7 @@ const schema = Yup.object().shape({
     .required("La data final es obligatoria")
     .min(
       Yup.ref("startDate"),
-      "La data final de l'exercici ha de ser posterior a l'inici"
+      "La data final de l'exercici ha de ser posterior a l'inici",
     ),
 });
 const validation = ref({

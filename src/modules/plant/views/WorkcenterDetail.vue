@@ -10,32 +10,36 @@
 
         <!-- Right panel - Tabs -->
         <section class="tabs-panel">
-          <TabView v-model:activeIndex="activeTab">
-            <!-- Available Phases Tab -->
-            <TabPanel>
-              <template #header>
+          <Tabs v-model:value="activeTab">
+            <TabList>
+              <Tab value="0">
                 <div class="flex align-items-center gap-2">
                   <i :class="PrimeIcons.CALENDAR"></i>
                   <span class="font-bold">Fases disponibles</span>
                 </div>
-              </template>
-              <WorkcenterWorkOrderSelector
-                :workcenterTypeId="workcenter.config.workcenterTypeId"
-                @workorder-selected="handleWorkOrderSelected"
-              />
-            </TabPanel>
-
-            <!-- Documentation Tab -->
-            <TabPanel>
-              <template #header>
+              </Tab>
+              <Tab value="1">
                 <div class="flex align-items-center gap-2">
                   <i :class="PrimeIcons.FILE"></i>
                   <span class="font-bold">Documentació</span>
                 </div>
-              </template>
-              <WorkcenterDocumentation :workcenter="workcenter" />
-            </TabPanel>
-          </TabView>
+              </Tab>
+            </TabList>
+            <TabPanels>
+              <!-- Available Phases Tab -->
+              <TabPanel value="0">
+                <WorkcenterWorkOrderSelector
+                  :workcenterTypeId="workcenter.config.workcenterTypeId"
+                  @workorder-selected="handleWorkOrderSelected"
+                />
+              </TabPanel>
+
+              <!-- Documentation Tab -->
+              <TabPanel value="1">
+                <WorkcenterDocumentation :workcenter="workcenter" />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </section>
       </div>
     </main>
@@ -116,7 +120,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../../../store";
 import {
   usePlantWorkcenterStore,
@@ -150,7 +154,7 @@ const dataStore = usePlantDataStore();
 const { connect } = useWebSocketConnection();
 
 const id = route.params.id as string;
-const activeTab = ref(0);
+const activeTab = ref("0");
 const statusSelectorVisible = ref(false);
 const workOrderLoaderVisible = ref(false);
 const workOrderUnloaderVisible = ref(false);
@@ -215,7 +219,7 @@ onMounted(async () => {
 
   // 4. Establir pestanya activa segons si hi ha fase carregada
   // Si hi ha fase carregada -> Documentació (tab 1), si no -> Fases disponibles (tab 0)
-  activeTab.value = hasLoadedPhase.value ? 1 : 0;
+  activeTab.value = hasLoadedPhase.value ? "1" : "0";
 
   // 5. Connectar WebSocket específic del workcenter
   workcenterStore.connectToWorkcenter(id);
@@ -436,16 +440,16 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
 }
 
 .realtime-panel {
-  background: var(--surface-0);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-surface-border);
   border-radius: var(--border-radius);
   overflow-y: auto;
   height: 100%;
 }
 
 .tabs-panel {
-  background: var(--surface-0);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-surface-border);
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
@@ -453,21 +457,21 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
   overflow: hidden;
 }
 
-.tabs-panel :deep(.p-tabview) {
+.tabs-panel :deep(.p-tabs) {
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.tabs-panel :deep(.p-tabview-panels) {
+.tabs-panel :deep(.p-tabpanels) {
   flex: 1;
   overflow-y: auto;
 }
 
 .touch-panel {
-  background: var(--surface-50);
-  border-top: 1px solid var(--surface-border);
+  background: var(--p-surface-50);
+  border-top: 1px solid var(--p-surface-border);
   padding: 0.75rem 1.5rem;
 }
 

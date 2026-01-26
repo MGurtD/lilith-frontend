@@ -3,9 +3,9 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     paginator
-    :rows="12"
+    :rows="20"
     @row-click="editRow"
   >
     <template #header>
@@ -130,7 +130,7 @@ import BaseInput from "../../../components/BaseInput.vue";
 import { computed, ref } from "vue";
 import { useReferenceStore } from "../store/reference";
 
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { Reference } from "../types";
 import { useReferenceTypeStore } from "../store/referenceType";
@@ -178,13 +178,13 @@ const filteredData = computed(() => {
   // Customer filter
   if (filter.value.customerId!.length > 0) {
     filteredReferences = filteredReferences.filter(
-      (r) => r.customerId === filter.value.customerId
+      (r) => r.customerId === filter.value.customerId,
     );
   }
   // Code filter
   if (filter.value.code.length > 0) {
     filteredReferences = filteredReferences.filter((r) =>
-      r.code.toLowerCase().includes(filter.value.code.toLowerCase())
+      r.code.toLowerCase().includes(filter.value.code.toLowerCase()),
     );
   }
 
@@ -198,7 +198,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);
@@ -217,7 +217,7 @@ const getReferenceTypeDensity = (referenceTypeId: string) => {
 
 const getFormatDescription = (formatId: string) => {
   const format = referenceStore.referenceFormats?.find(
-    (f) => f.id === formatId
+    (f) => f.id === formatId,
   );
   if (format) return format.description;
   else return "";

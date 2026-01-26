@@ -12,7 +12,6 @@
       v-if="workmaster && workmaster.phases"
       :workmaster="workmaster"
       :workmasterPhases="workmaster.phases"
-      :scroll-height="67"
       @add="addWorkMasterPhase"
       @edit="editWorkMasterPhase"
       @delete="deleteWorkMasterPhase"
@@ -29,7 +28,7 @@ import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../store/workmaster";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkMaster, WorkMasterPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useToast } from "primevue/usetoast";
@@ -53,7 +52,7 @@ onMounted(async () => {
   pageTitle = `Ruta de fabricació`;
   if (workmaster.value) {
     pageTitle = `${pageTitle} ${referenceStore.getFullName(
-      workmaster.value.reference!
+      workmaster.value.reference!,
     )}`;
   }
 

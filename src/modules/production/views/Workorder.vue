@@ -9,84 +9,95 @@
     ></FormWorkorder>
   </header>
   <main class="main">
-    <TabView>
-      <TabPanel header="Fases">
-        <TableWorkorderPhases
-          v-if="workorder && workorder.phases"
-          :workorder="workorder"
-          :workorderPhases="workorder.phases"
-          @add="addWorkOrderPhase"
-          @edit="editWorkOrderPhase"
-          @delete="deleteWorkOrderPhase"
-        ></TableWorkorderPhases>
-      </TabPanel>
-      <TabPanel header="Hores">
-        <TableProductionParts
-          v-if="productionPartStore.productionParts"
-          :productionParts="productionPartStore.productionParts"
-          @delete="deleteProductionPart"
-        >
-          <template #header>
-            <div
-              class="flex flex-wrap align-items-center justify-content-between gap-2"
+    <div v-if="workorder !== undefined">
+      <Tabs v-model:value="activeTab" :key="workorder.id">
+        <TabList>
+          <Tab value="0">Fases</Tab>
+          <Tab value="1">Hores</Tab>
+          <Tab value="2">Costs</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel value="0">
+            <TableWorkorderPhases
+              v-if="workorder.phases"
+              :workorder="workorder"
+              :workorderPhases="workorder.phases"
+              @add="addWorkOrderPhase"
+              @edit="editWorkOrderPhase"
+              @delete="deleteWorkOrderPhase"
+            ></TableWorkorderPhases>
+          </TabPanel>
+          <TabPanel value="1">
+            <TableProductionParts
+              v-if="productionPartStore.productionParts"
+              :productionParts="productionPartStore.productionParts"
+              @delete="deleteProductionPart"
             >
-              <span class="text-900 font-bold">Hores</span>
-              <Button
-                :icon="PrimeIcons.PLUS"
-                rounded
-                raised
-                @click="onProductionPartAddClick"
-              />
-            </div>
-          </template>
-        </TableProductionParts>
-      </TabPanel>
-      <TabPanel header="Costs" v-if="workorder">
-        <section class="four-columns">
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Cost Operari</label>
-            <span class="summary-field">{{
-              formatCurrency(workorder.operatorCost)
-            }}</span>
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Cost Máquina</label>
-            <span class="summary-field">{{
-              formatCurrency(workorder.machineCost)
-            }}</span>
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Cost Material</label>
-            <span class="summary-field">{{
-              formatCurrency(workorder.materialCost)
-            }}</span>
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Cost Total</label>
-            <span class="summary-field">{{
-              formatCurrency(
-                workorder.machineCost +
-                  workorder.materialCost +
-                  workorder.operatorCost
-              )
-            }}</span>
-          </div>
-        </section>
-        <section class="four-columns mt-4">
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Temps Operari</label>
-            <span class="summary-field"
-              >{{ workorder.operatorTime }} mins.</span
-            >
-          </div>
-          <div class="mt-1">
-            <label class="block text-900 mb-2">Temps Màquina</label>
-            <span class="summary-field">{{ workorder.machineTime }} mins.</span>
-          </div>
-          <div class="mt-1"></div>
-        </section>
-      </TabPanel>
-    </TabView>
+              <template #header>
+                <div
+                  class="flex flex-wrap align-items-center justify-content-between gap-2"
+                >
+                  <span class="text-900 font-bold">Hores</span>
+                  <Button
+                    :icon="PrimeIcons.PLUS"
+                    rounded
+                    raised
+                    @click="onProductionPartAddClick"
+                  />
+                </div>
+              </template>
+            </TableProductionParts>
+          </TabPanel>
+          <TabPanel value="2" v-if="workorder">
+            <section class="four-columns">
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Cost Operari</label>
+                <span class="summary-field">{{
+                  formatCurrency(workorder.operatorCost)
+                }}</span>
+              </div>
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Cost Máquina</label>
+                <span class="summary-field">{{
+                  formatCurrency(workorder.machineCost)
+                }}</span>
+              </div>
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Cost Material</label>
+                <span class="summary-field">{{
+                  formatCurrency(workorder.materialCost)
+                }}</span>
+              </div>
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Cost Total</label>
+                <span class="summary-field">{{
+                  formatCurrency(
+                    workorder.machineCost +
+                      workorder.materialCost +
+                      workorder.operatorCost,
+                  )
+                }}</span>
+              </div>
+            </section>
+            <section class="four-columns mt-4">
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Temps Operari</label>
+                <span class="summary-field"
+                  >{{ workorder.operatorTime }} mins.</span
+                >
+              </div>
+              <div class="mt-1">
+                <label class="block text-900 mb-2">Temps Màquina</label>
+                <span class="summary-field"
+                  >{{ workorder.machineTime }} mins.</span
+                >
+              </div>
+              <div class="mt-1"></div>
+            </section>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </div>
   </main>
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -114,13 +125,12 @@ import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkOrderStore } from "../store/workorder";
 import { useProductionPartStore } from "../store/productionpart";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { ProductionPart, WorkOrder, WorkOrderPhase } from "../types";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
 import {
   convertDateTimeToJSON,
-  formatDate,
   formatCurrency,
   getNewUuid,
   createBlobAndDownloadFile,
@@ -141,6 +151,7 @@ const plantModelStore = usePlantModelStore();
 const productionPartStore = useProductionPartStore();
 const { workorder } = storeToRefs(workorderStore);
 const id = ref("");
+const activeTab = ref("0");
 
 const dialogOptions = reactive({
   visible: false,
@@ -170,19 +181,6 @@ onMounted(async () => {
 
 const fetchWorkOrder = async () => {
   await workorderStore.fetchOne(id.value);
-  if (workorderStore.workorder) {
-    workorderStore.workorder.plannedDate = formatDate(
-      workorderStore.workorder.plannedDate
-    );
-    if (workorderStore.workorder.startTime)
-      workorderStore.workorder.startTime = formatDate(
-        workorderStore.workorder.startTime
-      );
-    if (workorderStore.workorder.endTime)
-      workorderStore.workorder.endTime = formatDate(
-        workorderStore.workorder.endTime
-      );
-  }
 };
 
 const loadViewData = async () => {
@@ -287,7 +285,7 @@ const deleteProductionPart = async (productionPart: ProductionPart) => {
 
 const printReport = async () => {
   const workOrderReport = await Services.WorkOrder.GetReportDataById(
-    workorder.value!.id
+    workorder.value!.id,
   );
 
   if (workOrderReport) {
@@ -297,7 +295,7 @@ const printReport = async () => {
     const report = await reportService.Download(
       workOrderReport,
       REPORTS.WorkOrder,
-      fileName
+      fileName,
     );
 
     if (report) {

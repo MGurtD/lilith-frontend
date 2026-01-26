@@ -6,25 +6,31 @@
   />
   <section class="mt-4">
     <!-- Afegir tab -->
-    <TabView>
-      <TabPanel header="Imatge">
-        <FileEntityPicker
-          title="Imatge de la màquina"
-          entity="WorkcenterPicture"
-          :max-files="1"
-          :id="route.params.id as string"
-        />
-      </TabPanel>
-      <TabPanel header="Percentatges">
-        <TableWorkcenterProfitPercentage
-          v-if="workcenter"
-          :workcenterProfitPercentages="workcenterProfitPercentages"
-          :workcenterId="workcenter.id"
-          @delete="deleteWorkcenterProfitPercentage"
-          @add="addWorkcenterProfitPercentage"
-        />
-      </TabPanel>
-    </TabView>
+    <Tabs value="0">
+      <TabList>
+        <Tab value="0">Imatge</Tab>
+        <Tab value="1">Percentatges</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <FileEntityPicker
+            title="Imatge de la màquina"
+            entity="WorkcenterPicture"
+            :max-files="1"
+            :id="route.params.id as string"
+          />
+        </TabPanel>
+        <TabPanel value="1">
+          <TableWorkcenterProfitPercentage
+            v-if="workcenter"
+            :workcenterProfitPercentages="workcenterProfitPercentages"
+            :workcenterId="workcenter.id"
+            @delete="deleteWorkcenterProfitPercentage"
+            @add="addWorkcenterProfitPercentage"
+          />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   </section>
 </template>
 <script setup lang="ts">
@@ -33,7 +39,7 @@ import FormWorkcenter from "../components/FormWorkcenter.vue";
 import TableWorkcenterProfitPercentage from "../components/TableWorkcenterProfitPercentage.vue";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 import { storeToRefs } from "pinia";
 import { Workcenter, WorkcenterProfitPercentage } from "../types";

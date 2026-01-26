@@ -9,7 +9,7 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCustomersStore } from "../store/customers";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 import FormCustomerType from "../components/FormCustomerType.vue";
 import { storeToRefs } from "pinia";

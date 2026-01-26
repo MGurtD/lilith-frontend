@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  ref,
-  watch,
-  nextTick,
-} from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMenusStore } from "../store/menus";
 import { useProfilesStore } from "../store/profiles";
@@ -52,7 +45,7 @@ const buildIndexes = (nodes: MenuItemNode[]) => {
     if (node.children?.length) {
       childrenMap.value.set(
         node.id,
-        node.children.map((c) => c.id)
+        node.children.map((c) => c.id),
       );
       node.children.forEach((c) => visit(c, node.id));
     } else {
@@ -174,7 +167,7 @@ const loading = computed(
     menusStore.treeLoading ||
     profilesStore.menuLoading ||
     menusStore.loading ||
-    profilesStore.saving
+    profilesStore.saving,
 );
 
 const saveSelection = () => {
@@ -191,29 +184,16 @@ const filteredRows = computed<RowItem[]>(() => {
   return rows.value.filter(
     (row) =>
       row.title.toLowerCase().includes(searchLower) ||
-      row.key.toLowerCase().includes(searchLower)
+      row.key.toLowerCase().includes(searchLower),
   );
 });
 
-// Dynamic height handling
 const rootEl = ref<HTMLElement | null>(null);
-const tableHeight = ref<string>("400px");
-const HEADER_OFFSET = 16; // extra padding/margin space inside card
-
-const computeHeight = () => {
-  if (!rootEl.value) return;
-  const rect = rootEl.value.getBoundingClientRect();
-  const vh = window.innerHeight;
-  const available = vh - rect.top - HEADER_OFFSET; // space until bottom
-  // Reserve a little space for card padding and potential shadows
-  const finalPx = Math.max(200, available - 8);
-  tableHeight.value = finalPx + "px";
-};
 
 onMounted(async () => {
   console.log(
     "ProfileMenuAssignment: Starting data load for profile",
-    props.profileId
+    props.profileId,
   );
 
   try {
@@ -222,7 +202,7 @@ onMounted(async () => {
     await menusStore.fetchHierarchy(true);
     console.log(
       "ProfileMenuAssignment: Menu hierarchy loaded, tree length:",
-      menusStore.tree.length
+      menusStore.tree.length,
     );
 
     // Step 2: Build UI structure from menu tree
@@ -232,19 +212,19 @@ onMounted(async () => {
 
     // Step 3: Load menu assignment for this profile (independent of parent)
     console.log(
-      "ProfileMenuAssignment: Loading menu assignment for profile..."
+      "ProfileMenuAssignment: Loading menu assignment for profile...",
     );
     await profilesStore.fetchMenuAssignment(props.profileId);
     console.log(
       "ProfileMenuAssignment: Menu assignment loaded:",
-      profilesStore.menuAssignment
+      profilesStore.menuAssignment,
     );
 
     // Step 4: Seed selection from loaded data
     seedSelectionFromStore();
     console.log(
       "ProfileMenuAssignment: Selection seeded, selected IDs:",
-      selectionIds.value.size
+      selectionIds.value.size,
     );
 
     // Step 5: Notify parent that data is loaded and ready
@@ -258,16 +238,7 @@ onMounted(async () => {
     emit("menu-assignment-loaded");
   }
 
-  // Setup UI dimensions (independent of data loading)
-  await nextTick();
-  computeHeight();
-  window.addEventListener("resize", computeHeight);
-
   console.log("ProfileMenuAssignment: Initialization complete");
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", computeHeight);
 });
 
 // NO WATCHERS - All data loading is handled in onMounted with proper async/await
@@ -278,7 +249,7 @@ onBeforeUnmount(() => {
   <div class="card profile-menu-assignment" ref="rootEl">
     <DataTable
       scrollable
-      :scrollHeight="tableHeight"
+      scrollHeight="flex"
       :value="filteredRows"
       v-model:selection="selectionRows"
       :loading="loading"

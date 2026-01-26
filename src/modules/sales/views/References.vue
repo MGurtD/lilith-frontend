@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useReferenceStore } from "../../../modules/shared/store/reference";
 import { onMounted, onUnmounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import TableReferences from "../components/TableReferences.vue";
 import { Reference } from "../../../modules/shared/types";
 import { useConfirm } from "primevue/useconfirm";
