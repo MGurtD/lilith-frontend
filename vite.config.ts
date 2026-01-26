@@ -91,6 +91,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
+        // Vite 6+ uses modern API by default, api option can be removed
+        // Keeping this explicitly for clarity
         api: "modern-compiler",
       },
     },
