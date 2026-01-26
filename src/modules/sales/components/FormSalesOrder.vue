@@ -43,7 +43,7 @@
           />
         </div>
         <div>
-          <SelectLifecycleStatusTransitions
+          <DropdownLifecycleStatusTransitions
             label="Estat"
             :statusId="salesOrder.statusId"
             v-model="salesOrder.statusId"

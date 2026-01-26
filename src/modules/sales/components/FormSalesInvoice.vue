@@ -13,7 +13,7 @@
         <DatePicker v-model="invoice.invoiceDate" dateFormat="dd/mm/yy" />
       </div>
       <div class="mt-2">
-        <SelectLifecycleStatusTransitions
+        <DropdownLifecycleStatusTransitions
           label="Estat"
           :statusId="invoice.statusId"
           v-model="invoice.statusId"

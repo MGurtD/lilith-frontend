@@ -47,12 +47,15 @@
           <div class="flex justify-content-end gap-2">
             <Button
               icon="pi pi-pencil"
-              class="p-button-rounded p-button-text p-button-plain"
+              text
+              rounded
               @click="onEdit(slotProps.data)"
             />
             <Button
               icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-plain p-button-danger"
+              text
+              rounded
+              severity="danger"
               @click="onDelete(slotProps.data)"
             />
           </div>

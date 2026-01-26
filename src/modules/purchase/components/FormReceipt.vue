@@ -38,7 +38,7 @@
       </section>
       <section class="three-columns">
         <div class="mt-1">
-          <SelectLifecycleStatusTransitions
+          <DropdownLifecycleStatusTransitions
             label="Estat"
             :statusId="receipt.statusId"
             v-model="receipt.statusId"

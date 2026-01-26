@@ -49,7 +49,8 @@
             <Button
               :icon="PrimeIcons.SIGN_OUT"
               label="Sortir"
-              class="w-full p-button-lg"
+              class="w-full"
+              size="large"
               @click="logoutOperator"
             />
           </div>
@@ -97,7 +98,8 @@
             <Button
               :icon="PrimeIcons.SIGN_OUT"
               label="Tancar sessió"
-              class="w-full p-button-lg"
+              class="w-full"
+              size="large"
               @click="logoutClick"
             />
           </div>
