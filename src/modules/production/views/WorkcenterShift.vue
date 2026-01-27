@@ -70,12 +70,12 @@
 
       <Column field="startTime" header="Inici" sortable>
         <template #body="slotProps">
-          {{ formatDateTimeUTC(slotProps.data.startTime) }}
+          {{ formatDateTimeUTCWithSeconds(slotProps.data.startTime) }}
         </template>
       </Column>
       <Column field="endTime" header="Fi" sortable>
         <template #body="slotProps">
-          {{ formatDateTimeUTC(slotProps.data.endTime) }}
+          {{ formatDateTimeUTCWithSeconds(slotProps.data.endTime) }}
         </template>
       </Column>
       <Column field="quantityOk" header="Quantitat OK" />
@@ -141,7 +141,10 @@ import type {
 } from "../types";
 import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
-import { formatCurrency, formatDateTimeUTC } from "../../../utils/functions";
+import {
+  formatCurrency,
+  formatDateTimeUTCWithSeconds,
+} from "../../../utils/functions";
 import { useStore } from "@/store";
 
 const store = useStore();
