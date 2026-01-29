@@ -13,7 +13,7 @@ export const convertDDMMYYYYToDate = (strDate: string): any => {
     return createDate(
       parseInt(strDateParts[0]),
       parseInt(strDateParts[1]),
-      parseInt(strDateParts[2])
+      parseInt(strDateParts[2]),
     );
   }
 };
@@ -21,7 +21,7 @@ export const convertDDMMYYYYToDate = (strDate: string): any => {
 export const createDate = (
   days: number,
   months: number,
-  years: number
+  years: number,
 ): Date => {
   let date = new Date();
   date.setDate(days);
@@ -33,7 +33,7 @@ export const createDate = (
 export const createDateFromNow = (
   daysToAdd: number,
   monthsToAdd: number,
-  yearsToAdd: number
+  yearsToAdd: number,
 ): Date => {
   let date = new Date();
   date.setDate(date.getDate() + daysToAdd);
@@ -46,6 +46,19 @@ export const formatTime = (date: Date | string): string => {
   if (!date) return "--:--";
   const d = new Date(date);
   return d.toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
+};
+
+/**
+ * Formats a duration in minutes as a human-readable string.
+ * Examples: 45 -> "45'", 90 -> "1h30'", 125 -> "2h5'"
+ */
+export const formatDuration = (minutes: number): string => {
+  if (minutes < 60) {
+    return `${Math.round(minutes)}m`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return `${hours}h ${mins}m`;
 };
 
 export const formatDate = (date: string | Date) => {
@@ -131,7 +144,7 @@ export const calculateDuration = (startTime: string | null): string => {
 export const createBlobAndDownloadFile = (
   name: string,
   data: any,
-  mimeType?: string
+  mimeType?: string,
 ) => {
   // Create blob with proper MIME type if provided
   const blob = mimeType
@@ -179,12 +192,12 @@ export function calculateTimeDifference(startDateString: string) {
 
   const hours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
   const minutes = Math.floor(
-    (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+    (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60),
   );
   const seconds = Math.floor((diffInMilliseconds % (1000 * 60)) / 1000);
 
   const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-    minutes
+    minutes,
   ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   return formattedTime;
 }
@@ -207,7 +220,7 @@ export function loadImage(blob: Blob): Promise<HTMLImageElement> {
  */
 export const normalizeColor = (
   color: string | undefined,
-  defaultColor: string = "6c757d"
+  defaultColor: string = "6c757d",
 ): string => {
   const baseColor = color || defaultColor;
   return baseColor.startsWith("#") ? baseColor : `#${baseColor}`;
@@ -279,7 +292,7 @@ export const getStatusCardStyle = (color: string | undefined) => {
  */
 export const getBorderTopStyle = (
   color: string | undefined,
-  defaultColor: string = "6c757d"
+  defaultColor: string = "6c757d",
 ) => {
   const baseColor = normalizeColor(color, defaultColor);
   const darkerColor = adjustBrightness(baseColor, -10);

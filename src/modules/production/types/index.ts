@@ -248,6 +248,17 @@ export interface WorkOrderPhaseDetail {
   comment: string;
 }
 
+export interface PhaseTimeMetrics {
+  phaseId: string;
+  machineStatusId: string;
+  operatorId?: string | null;
+  estimatedMachineTimeMinutes: number;
+  estimatedOperatorTimeMinutes: number;
+  actualMachineTimeMinutes: number;
+  actualOperatorTimeMinutes: number;
+  calculatedAt: string;
+}
+
 export interface WorkOrderPhaseBillOfMaterials {
   id: string;
   workOrderPhaseId: string;

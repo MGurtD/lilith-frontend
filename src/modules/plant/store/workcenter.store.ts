@@ -3,6 +3,7 @@ import {
   Workcenter,
   WorkOrderWithPhases,
   ValidatePreviousPhaseQuantityRequest,
+  PhaseTimeMetrics,
 } from "../../production/types";
 import {
   WorkcenterRealtime,
@@ -27,11 +28,13 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
     availableWorkOrdersLoading: false,
     workOrderReferenceDocuments: [] as File[],
     nextAvailablePhase: null as NextPhaseInfo | null,
+    phaseTimeMetrics: undefined as PhaseTimeMetrics | undefined,
     _realtimeHandler: null as
       | RealtimeHandler
       | WorkcenterRealtimeHandler
       | null,
     _lastLoadedPhaseIds: [] as string[],
+    _lastStatusId: undefined as string | undefined,
   }),
   getters: {
     workcenterView(): WorkcenterViewState | undefined {
@@ -49,7 +52,9 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
       }
       const handler = ActionsService.client.connectToWorkcenter(workcenterId);
       handler.onUpdate((data) => {
+        const previousStatusId = this._lastStatusId;
         this.workcenterRt = data;
+        this._lastStatusId = data.statusId;
 
         // Extract phase IDs from workorders array
         const phaseIds = (data.workorders || []).map(
@@ -57,22 +62,29 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         );
 
         // Check if phase IDs have changed
-        const hasChanged =
+        const phasesChanged =
           phaseIds.length !== this._lastLoadedPhaseIds.length ||
           phaseIds.some(
             (id: string, idx: number) => id !== this._lastLoadedPhaseIds[idx],
           );
 
-        if (hasChanged) {
+        // Check if status ID has changed
+        const statusChanged = data.statusId !== previousStatusId;
+
+        if (phasesChanged) {
           // Clear immediately if empty
           if (phaseIds.length === 0) {
             this._lastLoadedPhaseIds = [];
             this.loadedWorkOrdersPhases = [];
             this.workOrderReferenceDocuments = [];
+            this.phaseTimeMetrics = undefined;
           } else {
             // Fetch new data when phase IDs have changed
             this.fetchLoadedWorkOrders(phaseIds);
           }
+        } else if (statusChanged && phaseIds.length > 0) {
+          // Status changed but phases didn't - just refresh time metrics
+          this.fetchPhaseTimeMetrics();
         }
       });
       this._realtimeHandler = handler;
@@ -117,6 +129,7 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         this.loadedWorkOrdersPhases = [];
         this._lastLoadedPhaseIds = [];
         this.workOrderReferenceDocuments = [];
+        this.phaseTimeMetrics = undefined;
         return;
       }
 
@@ -134,13 +147,48 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
               firstWorkOrder.salesReferenceId,
             );
           }
+          // Carregar les mètriques de temps de la primera fase
+          await this.fetchPhaseTimeMetrics();
         } else {
           this.workOrderReferenceDocuments = [];
+          this.phaseTimeMetrics = undefined;
         }
       } catch (error) {
         console.error("Error fetching loaded work orders:", error);
         this.loadedWorkOrdersPhases = [];
         this.workOrderReferenceDocuments = [];
+        this.phaseTimeMetrics = undefined;
+      }
+    },
+    async fetchPhaseTimeMetrics() {
+      // Obtenir la primera fase carregada i el seu estat de màquina actual
+      if (
+        !this.loadedWorkOrdersPhases.length ||
+        !this.workcenterRt?.workorders?.length ||
+        !this.workcenterRt?.statusId
+      ) {
+        this.phaseTimeMetrics = undefined;
+        return;
+      }
+
+      const activeWorkOrder = this.workcenterRt.workorders[0];
+      const phaseId = activeWorkOrder.workOrderPhaseId;
+      const machineStatusId = this.workcenterRt.statusId;
+
+      // Obtenir el primer operari fitxat (si n'hi ha)
+      const operatorId = this.workcenterRt.operators?.[0]?.operatorId;
+
+      try {
+        const metrics =
+          await ProductionServices.WorkOrderPhase.GetPhaseTimeMetrics(
+            phaseId,
+            machineStatusId,
+            operatorId,
+          );
+        this.phaseTimeMetrics = metrics;
+      } catch (error) {
+        console.error("Error fetching phase time metrics:", error);
+        this.phaseTimeMetrics = undefined;
       }
     },
     disconnectWebSocket() {
