@@ -17,7 +17,11 @@
       </div>
     </template>
     <Column rowReorder headerStyle="width: 3rem" :reorderableColumn="false" />
-    <Column field="code" header="Codi"></Column>
+    <Column field="code" header="Codi">
+      <template #body="slotProps">
+        <LinkWorkorder :id="slotProps.data.id" :code="slotProps.data.code" />
+      </template>
+    </Column>
     <Column header="Estat">
       <template #body="slotProps">
         {{ slotProps.data.status?.name }}
@@ -47,6 +51,7 @@
   </DataTable>
 </template>
 <script setup lang="ts">
+import LinkWorkorder from "../components/LinkWorkorder.vue";
 import { onMounted } from "vue";
 import { useWorkOrderStore } from "../store/workorder";
 import { PrimeIcons } from "@primevue/core/api";

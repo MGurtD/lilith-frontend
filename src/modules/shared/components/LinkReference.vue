@@ -12,7 +12,6 @@
   </span>
 </template>
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { useReferenceStore } from "../store/reference";
 import { useRouter } from "vue-router";
 

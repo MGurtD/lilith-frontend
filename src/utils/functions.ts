@@ -48,6 +48,19 @@ export const formatTime = (date: Date | string): string => {
   return d.toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
+/**
+ * Formats a duration in minutes as a human-readable string.
+ * Examples: 45 -> "45'", 90 -> "1h30'", 125 -> "2h5'"
+ */
+export const formatDuration = (minutes: number): string => {
+  if (minutes < 60) {
+    return `${Math.round(minutes)}m`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return `${hours}h ${mins}m`;
+};
+
 export const formatDate = (date: string | Date) => {
   const formatter = new Intl.DateTimeFormat("es-ES", {
     year: "numeric",

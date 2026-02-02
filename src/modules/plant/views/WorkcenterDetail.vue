@@ -18,10 +18,16 @@
                   <span class="font-bold">Fases disponibles</span>
                 </div>
               </Tab>
-              <Tab value="1">
+              <Tab v-if="hasLoadedPhase" value="1">
                 <div class="flex align-items-center gap-2">
                   <i :class="PrimeIcons.FILE"></i>
                   <span class="font-bold">Documentació</span>
+                </div>
+              </Tab>
+              <Tab v-if="hasLoadedPhase" value="2">
+                <div class="flex align-items-center gap-2">
+                  <i :class="PrimeIcons.COMMENTS"></i>
+                  <span class="font-bold">Comentaris</span>
                 </div>
               </Tab>
             </TabList>
@@ -35,8 +41,15 @@
               </TabPanel>
 
               <!-- Documentation Tab -->
-              <TabPanel value="1">
+              <TabPanel v-if="hasLoadedPhase" value="1">
                 <WorkcenterDocumentation :workcenter="workcenter" />
+              </TabPanel>
+
+              <!-- Comments Tab -->
+              <TabPanel v-if="hasLoadedPhase" value="2">
+                <WorkcenterComments
+                  :loadedWorkOrders="workcenterStore.loadedWorkOrdersPhases"
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -46,38 +59,85 @@
 
     <!-- Bottom panel - Touch device buttons -->
     <footer class="touch-panel">
-      <div class="touch-buttons">
-        <Button
-          v-if="!isOperatorClockedIn"
-          :icon="PrimeIcons.SIGN_IN"
-          label="Fitxar entrada"
-          severity="secondary"
-          class="touch-button"
-          @click="handleOperatorClockIn"
-        />
-        <Button
-          v-if="isOperatorClockedIn"
-          :icon="PrimeIcons.SIGN_OUT"
-          label="Fitxar sortida"
-          severity="secondary"
-          class="touch-button"
-          @click="handleOperatorClockOut"
-        />
-        <Button
-          :icon="PrimeIcons.REFRESH"
-          label="Canviar estat"
-          severity="secondary"
-          class="touch-button"
-          @click="handleMachineStatusChange"
-        />
-        <Button
-          v-if="hasLoadedPhase"
-          :icon="PrimeIcons.STOP"
-          label="Finalitzar fase"
-          severity="secondary"
-          class="touch-button"
-          @click="handleWorkOrderPhaseClose"
-        />
+      <!-- Operator Group -->
+      <div class="action-group operator-group">
+        <span class="group-label">Operari</span>
+        <div class="group-buttons">
+          <Button
+            v-if="!isOperatorClockedIn"
+            :icon="PrimeIcons.SIGN_IN"
+            label="Entrar"
+            severity="primary"
+            class="touch-button"
+            @click="handleOperatorClockIn"
+          />
+          <Button
+            v-else
+            :icon="PrimeIcons.SIGN_OUT"
+            label="Sortir"
+            severity="primary"
+            class="touch-button"
+            @click="handleOperatorClockOut"
+          />
+        </div>
+      </div>
+
+      <!-- Machine Status Group (always visible, dynamic buttons only when phase loaded) -->
+      <div class="action-group activity-group">
+        <span class="group-label">Estat màquina</span>
+        <div class="group-buttons">
+          <!-- Dynamic activity buttons from phase details (only when phase loaded) -->
+          <template v-if="hasLoadedPhase">
+            <Button
+              v-for="detail in phaseActivityButtons"
+              :key="detail.machineStatusId"
+              :label="detail.machineStatusName"
+              :icon="detail.machineStatusIcon"
+              :style="{
+                '--btn-bg': normalizeColor(detail.machineStatusColor),
+                '--btn-color': getContrastColor(detail.machineStatusColor),
+              }"
+              class="touch-button activity-button"
+              @click="handleActivityChange(detail.machineStatusId!)"
+            />
+          </template>
+          <!-- Close machine button (Parada) - always visible, disabled when machine is closed -->
+          <Button
+            v-if="closedStatus"
+            :icon="closedStatus.icon"
+            :label="closedStatus.name"
+            :disabled="isMachineClosed"
+            :style="{
+              '--btn-bg': normalizeColor(closedStatus.color),
+              '--btn-color': getContrastColor(closedStatus.color),
+            }"
+            class="touch-button activity-button"
+            @click="handleCloseMachine"
+          />
+          <!-- Other statuses - always visible -->
+          <Button
+            :icon="PrimeIcons.PLUS"
+            label="Altres"
+            severity="primary"
+            class="touch-button"
+            @click="handleMachineStatusChange"
+          />
+        </div>
+      </div>
+
+      <!-- Phase Group (only if phase is loaded) -->
+      <div class="action-group phase-group">
+        <span class="group-label">Fase</span>
+        <div class="group-buttons">
+          <Button
+            :icon="PrimeIcons.CHECK_CIRCLE"
+            label="Finalitzar"
+            severity="primary"
+            class="touch-button"
+            @click="handleWorkOrderPhaseClose"
+            :disabled="!hasLoadedPhase"
+          />
+        </div>
       </div>
     </footer>
 
@@ -85,6 +145,7 @@
     <MachineStatusSelector
       v-model:visible="statusSelectorVisible"
       :statuses="dataStore.machineStatuses"
+      :excludeIds="excludeStatusIds"
       @status-changed="onStatusChanged"
     />
 
@@ -129,6 +190,7 @@ import {
 } from "../store";
 import WorkcenterRealtimePanel from "../components/workcenter-detail/WorkcenterRealtimePanel.vue";
 import WorkcenterDocumentation from "../components/workcenter-detail/WorkcenterDocumentation.vue";
+import WorkcenterComments from "../components/workcenter-detail/WorkcenterComments.vue";
 import WorkcenterWorkOrderSelector from "../components/workcenter-detail/WorkcenterWorkOrderSelector.vue";
 import WorkOrderLoader from "../components/workcenter-detail/WorkOrderLoader.vue";
 import WorkOrderUnloader from "../components/workcenter-detail/WorkOrderUnloader.vue";
@@ -144,6 +206,7 @@ import {
   UnloadWorkOrderPhaseRequest,
 } from "../types";
 import actionsService from "../services/actions.service";
+import { normalizeColor, isColorLight } from "@/utils/functions";
 
 const route = useRoute();
 const toast = useToast();
@@ -193,6 +256,62 @@ const hasLoadedPhase = computed(() => {
     workcenter.value.realtime.workorders.length > 0
   );
 });
+
+// Computed para detectar si la máquina está en estado Closed (parada)
+const isMachineClosed = computed(() => {
+  return workcenter.value?.realtime?.statusClosed === true;
+});
+
+// Computed para obtener el estado Closed desde el store de datos
+const closedStatus = computed(() => {
+  return dataStore.machineStatuses.find((s) => s.closed === true);
+});
+
+// Computed para obtener la fase actualmente cargada
+const currentLoadedPhase = computed(() => {
+  return workcenterStore.loadedWorkOrdersPhases?.[0]?.phases?.[0];
+});
+
+// Computed para obtener los botones de actividad (excluyendo estado actual)
+const phaseActivityButtons = computed(() => {
+  const details = currentLoadedPhase.value?.details ?? [];
+  const currentStatusId = workcenter.value?.realtime?.statusId;
+  return details
+    .filter((d) => d.machineStatusId !== currentStatusId)
+    .sort((a, b) => a.order - b.order);
+});
+
+// Computed para obtener los IDs de estados a excluir del selector "Altres"
+// Excluye: estado actual, estado "Parada" (closed), y estados dinámicos de la fase
+const excludeStatusIds = computed(() => {
+  const ids: string[] = [];
+
+  // Excluir estado actual de la máquina
+  if (workcenter.value?.realtime?.statusId) {
+    ids.push(workcenter.value.realtime.statusId);
+  }
+
+  // Excluir estado "Parada" (closed) - ya tiene su propio botón
+  if (closedStatus.value) {
+    ids.push(closedStatus.value.id);
+  }
+
+  // Excluir estados dinámicos de la fase (ya tienen sus propios botones)
+  const details = currentLoadedPhase.value?.details ?? [];
+  for (const detail of details) {
+    if (detail.machineStatusId) {
+      ids.push(detail.machineStatusId);
+    }
+  }
+
+  return ids;
+});
+
+// Utilidad para calcular color de contraste (texto blanco o negro) - usa isColorLight de functions.ts
+const getContrastColor = (hexColor: string): string => {
+  const normalized = normalizeColor(hexColor);
+  return isColorLight(normalized) ? "#000000" : "#ffffff";
+};
 
 onMounted(async () => {
   // 1. Carregar dades del workcenter
@@ -267,6 +386,52 @@ const handleOperatorClockOut = async () => {
 
 const handleMachineStatusChange = async () => {
   statusSelectorVisible.value = true;
+};
+
+// Handler para cerrar la máquina (cambiar a estado Closed directamente)
+const handleCloseMachine = async () => {
+  if (!closedStatus.value) {
+    toast.add({
+      severity: "error",
+      summary: "No s'ha trobat l'estat de màquina tancada",
+      life: 4000,
+    });
+    return;
+  }
+  const result = await workcenterStore.changeMachineStatus(
+    closedStatus.value.id,
+  );
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Màquina tancada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al tancar la màquina",
+      life: 4000,
+    });
+  }
+};
+
+// Handler para cambiar actividad (botones dinámicos de fase)
+const handleActivityChange = async (statusId: string) => {
+  const result = await workcenterStore.changeMachineStatus(statusId);
+  if (result) {
+    toast.add({
+      severity: "success",
+      summary: "Activitat canviada correctament",
+      life: 4000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error al canviar l'activitat",
+      life: 4000,
+    });
+  }
 };
 
 const onStatusChanged = async (request: ChangeMachineStatusRequest) => {
@@ -473,12 +638,48 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
   background: var(--p-surface-50);
   border-top: 1px solid var(--p-surface-border);
   padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
-.touch-buttons {
+.action-group {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-group.operator-group {
+  align-items: flex-start;
+}
+
+.action-group.phase-group {
+  align-items: flex-end;
+}
+
+.group-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-text-muted-color);
+}
+
+.group-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   justify-content: center;
+}
+
+.group-separator {
+  width: 1px;
+  align-self: stretch;
+  background: var(--p-surface-border);
+  margin: 0.5rem 0;
 }
 
 .touch-button {
@@ -491,9 +692,30 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
   font-size: 1.3rem;
 }
 
+.activity-button {
+  background-color: var(--btn-bg) !important;
+  color: var(--btn-color) !important;
+  border-color: var(--btn-bg) !important;
+}
+
+.activity-button:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+
 @media (max-width: 1200px) {
   .content-layout {
     grid-template-columns: 300px 1fr;
+  }
+
+  .touch-panel {
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .touch-button {
+    min-width: 130px;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
   }
 }
 
@@ -506,13 +728,32 @@ const handlePhaseUnloaded = async (data: UnloadWorkOrderPhaseRequest) => {
     display: none;
   }
 
-  .touch-buttons {
-    flex-wrap: wrap;
+  .touch-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+
+  .group-separator {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+
+  .action-group {
+    width: 100%;
+  }
+
+  .group-buttons {
+    width: 100%;
+    flex-direction: column;
   }
 
   .touch-button {
-    flex: 1 1 calc(50% - 0.5rem);
-    min-width: 120px;
+    width: 100%;
+    min-width: unset;
+    justify-content: center;
   }
 }
 </style>
