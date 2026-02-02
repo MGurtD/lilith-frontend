@@ -54,7 +54,8 @@ const progressColor = computed(() => {
 
 const textColor = computed(() => {
   const pct = actualPercentage.value;
-  // White text for colored backgrounds (green/red), dark for yellow
+  // Dark text for gray/yellow backgrounds, white for green/red
+  if (pct < 50) return "#1f2937"; // Gray/partial green background -> dark text
   if (pct < 90) return "#ffffff"; // Green background -> white text
   if (pct <= 110) return "#1f2937"; // Yellow background -> dark text
   return "#ffffff"; // Red background -> white text

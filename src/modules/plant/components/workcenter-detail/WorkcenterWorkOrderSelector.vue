@@ -3,7 +3,8 @@
     <DataTable
       :value="workOrders"
       :loading="loading"
-      responsiveLayout="scroll"
+      scrollable
+      scrollHeight="flex"
       stripedRows
       v-model:selectionKeys="selectedKey"
       selectionMode="single"
@@ -11,29 +12,28 @@
       @row-select="onRowSelect"
     >
       <!-- Code -->
-      <Column field="workOrderCode" header="Codi" :sortable="true">
+      <Column field="workOrderCode" header="Codi">
         <template #body="slotProps">
           <span class="font-bold">{{ slotProps.data.workOrderCode }}</span>
         </template>
       </Column>
 
       <!-- Customer Name -->
-      <Column field="customerName" header="Client" :sortable="true">
+      <Column field="customerName" header="Client">
         <template #body="slotProps">
-          <span class="font-bold">{{ slotProps.data.customerName }}</span>
+          <span>{{ slotProps.data.customerName }}</span>
         </template>
       </Column>
 
       <!-- Reference -->
-      <Column
-        field="salesReferenceDisplay"
-        header="Referència"
-        :sortable="true"
-      >
+      <Column field="salesReferenceDisplay" header="Referència">
         <template #body="slotProps">
-          <span class="font-bold">{{
-            slotProps.data.salesReferenceDisplay
-          }}</span>
+          <span
+            class="reference-text"
+            :title="slotProps.data.salesReferenceDisplay"
+          >
+            {{ slotProps.data.salesReferenceDisplay }}
+          </span>
         </template>
       </Column>
 
@@ -41,12 +41,11 @@
       <Column
         field="plannedQuantity"
         header="Quantitat"
-        :sortable="true"
         style="min-width: 100px; text-align: right"
       />
 
       <!-- Planned Date -->
-      <Column header="Data Planificada" :sortable="true">
+      <Column header="Planificada">
         <template #body="slotProps">
           <span v-if="slotProps.data.plannedDate">
             {{ formatDate(slotProps.data.plannedDate) }}
@@ -55,7 +54,7 @@
       </Column>
 
       <!-- Start Time -->
-      <Column header="Inici" :sortable="true">
+      <Column header="Iniciada">
         <template #body="slotProps">
           <span v-if="slotProps.data.startTime">
             {{ formatDate(slotProps.data.startTime) }}
@@ -64,11 +63,11 @@
       </Column>
 
       <!-- Work Order Status -->
-      <Column header="Estat OF" :sortable="true">
+      <Column header="Estat">
         <template #body="slotProps">
           <Tag
             :value="slotProps.data.workOrderStatus"
-            severity="secondary"
+            severity="info"
             rounded
           />
         </template>
@@ -78,7 +77,6 @@
       <Column
         field="priority"
         header="Prioritat"
-        :sortable="true"
         style="min-width: 100px; text-align: center"
       />
 
@@ -172,5 +170,27 @@ onMounted(async () => {
 .no-data p {
   margin: 0;
   font-size: 1rem;
+}
+
+/* Reference text truncation for smaller screens */
+.reference-text {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hide priority column on tablets and smaller devices */
+@media screen and (max-width: 1024px) {
+  .reference-text {
+    max-width: 150px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .reference-text {
+    max-width: 100px;
+  }
 }
 </style>

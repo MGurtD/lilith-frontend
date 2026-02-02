@@ -209,10 +209,9 @@ watch(
 
 <style scoped>
 .realtime-panel-content {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   overflow-y: auto;
 }
 

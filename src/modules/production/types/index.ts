@@ -481,6 +481,7 @@ export interface WorkOrderWithPhases {
   workOrderStatus: string;
   priority: number;
   phases: PlannedPhase[];
+  comment?: string;
 }
 
 /**
@@ -499,112 +500,32 @@ export interface PlannedPhase {
   quantityKo: number;
   startTime?: Date | string | null;
   preferredWorkcenterName: string;
+  comment?: string;
+  /** Phase operation details for activity buttons */
+  details?: PhaseDetailForButtons[];
 }
 
 /**
- * Detailed phase information including work order context,
- * phase details, and bill of materials.
- * Used for Step 2 of work order selection process.
+ * Simplified phase detail for plant module activity buttons.
+ * Contains only the information needed for dynamic status buttons.
  */
-export interface WorkOrderPhaseDetailed {
-  workOrderId: string;
-  workOrderCode: string;
-  salesReferenceDisplay: string;
-  plannedQuantity: number;
-  phaseId: string;
-  phaseCode: string;
-  phaseDescription: string;
-  phaseStatus: string;
-  startTime?: Date | string | null;
-  endTime?: Date | string | null;
-  preferredWorkcenterName: string;
-  workcenterTypeId: string;
-  quantityOk: number;
-  quantityKo: number;
-  isExternalWork: boolean;
-
-  details: PhaseDetailItem[];
-  billOfMaterials: BillOfMaterialsItem[];
-}
-
-/**
- * Individual operation detail within a phase.
- * Represents a specific machine status and time estimate.
- */
-export interface PhaseDetailItem {
-  comment: string;
+export interface PhaseDetailForButtons {
+  /** Machine status ID */
   machineStatusId?: string;
+  /** Machine status name (display text for button) */
   machineStatusName: string;
+  /** Machine status color (hex code for button background) */
+  machineStatusColor: string;
+  /** Machine status icon (PrimeIcons class for button icon) */
+  machineStatusIcon: string;
+  /** Display order for buttons */
+  order: number;
+  /** Estimated machine time in minutes */
   estimatedTime: number;
+  /** Estimated operator time in minutes */
   estimatedOperatorTime: number;
-  isCycleTime: boolean;
-}
-
-/**
- * Material component required for a phase.
- * References product/material catalog.
- */
-export interface BillOfMaterialsItem {
-  referenceCode: string;
-  referenceDescription: string;
-  quantity: number;
-}
-
-export interface WorkOrderPhaseDisplay {
-  // Work Order Info
-  workOrderId: string;
-  workOrderCode: string;
-  customerName: string;
-
-  // Phase Info
-  phaseId: string;
-  phaseCode: string;
-  phaseDescription: string;
-  phaseDisplay: string;
-
-  // Reference (Product) Info
-  salesReferenceCode: string;
-  salesReferenceDescription: string;
-  salesReferenceDisplay: string;
-
-  // Production
-  plannedQuantity: number;
-  plannedDate: Date | string;
-  phaseStatus: string;
-  priority: number; // Added for consistency with backend
-}
-
-/**
- * Hierarchical DTO for work orders with their planned phases.
- * Used for TreeTable display in plant module.
- */
-export interface WorkOrderWithPhases {
-  workOrderId: string;
-  workOrderCode: string;
-  customerName: string;
-  salesReferenceId: string;
-  salesReferenceDisplay: string;
-  plannedQuantity: number;
-  plannedDate: Date | string;
-  startTime?: Date | string | null;
-  workOrderStatus: string;
-  priority: number;
-  phases: PlannedPhase[];
-}
-
-/**
- * Individual phase within a work order.
- * Child node in TreeTable structure.
- */
-export interface PlannedPhase {
-  phaseId: string;
-  phaseCode: string;
-  phaseDescription: string;
-  phaseDisplay: string;
-  phaseStatusId: string;
-  phaseStatus: string;
-  startTime?: Date | string | null;
-  preferredWorkcenterName: string;
+  /** Detail comment */
+  comment?: string;
 }
 
 /**
@@ -625,7 +546,11 @@ export interface WorkOrderPhaseDetailed {
   endTime?: Date | string | null;
   preferredWorkcenterName: string;
   workcenterTypeId: string;
+  quantityOk: number;
+  quantityKo: number;
   isExternalWork: boolean;
+  comment?: string;
+
   details: PhaseDetailItem[];
   billOfMaterials: BillOfMaterialsItem[];
 }
