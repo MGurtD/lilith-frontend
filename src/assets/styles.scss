@@ -28,10 +28,6 @@ html {
   --loaded-row-border: var(--p-green-600);
 }
 
-body {
-  font-family: var(--p-font-family);
-}
-
 .two-columns {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

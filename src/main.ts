@@ -60,6 +60,7 @@ import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
 import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
+import ProgressBar from "primevue/progressbar";
 import { globalToast } from "@/utils/global-toast";
 
 // Lara Blue preset (matches lara-light-blue from v3)
@@ -138,6 +139,7 @@ app
   .component("TabList", TabList)
   .component("Tab", Tab)
   .component("TabPanels", TabPanels)
-  .component("TabPanel", TabPanel);
+  .component("TabPanel", TabPanel)
+  .component("ProgressBar", ProgressBar);
 
 app.mount("#app");

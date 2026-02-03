@@ -127,6 +127,7 @@ interface Props {
   visible: boolean;
   statuses: MachineStatus[];
   workOrderPhaseId?: string;
+  excludeIds?: string[];
 }
 
 const props = defineProps<Props>();
@@ -154,10 +155,11 @@ const dialogTitle = computed(() => {
   return `Seleccionar motiu - ${selectedStatus.value?.name}`;
 });
 
-// Filter active statuses and sort by preferred
+// Filter active statuses, exclude specified IDs, and sort by preferred
 const availableStatuses = computed(() => {
+  const excludeSet = new Set(props.excludeIds ?? []);
   return props.statuses
-    .filter((s) => !s.disabled)
+    .filter((s) => !s.disabled && !excludeSet.has(s.id))
     .sort((a, b) => {
       // Preferred first
       if (a.preferred && !b.preferred) return -1;
@@ -288,7 +290,7 @@ watch(
     if (newValue) {
       resetSelection();
     }
-  }
+  },
 );
 </script>
 

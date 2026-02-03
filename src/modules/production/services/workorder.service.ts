@@ -9,6 +9,7 @@ import {
   DetailedWorkOrder,
   WorkOrderOrder,
   ValidatePreviousPhaseQuantityRequest,
+  PhaseTimeMetrics,
 } from "../types";
 import BaseService from "../../../api/base.service";
 import { NextPhaseInfo } from "../../plant/types";
@@ -158,6 +159,22 @@ export class WorkOrderPhaseService extends BaseService<WorkOrderPhase> {
     );
     if (response.status === 200) {
       return response.data as NextPhaseInfo;
+    }
+    return undefined;
+  }
+
+  async GetPhaseTimeMetrics(
+    phaseId: string,
+    machineStatusId: string,
+    operatorId?: string,
+  ): Promise<PhaseTimeMetrics | undefined> {
+    let url = `/WorkOrder/Phase/${phaseId}/TimeMetrics?machineStatusId=${machineStatusId}`;
+    if (operatorId) {
+      url += `&operatorId=${operatorId}`;
+    }
+    const response = await this.apiClient.get(url);
+    if (response.status === 200) {
+      return response.data as PhaseTimeMetrics;
     }
     return undefined;
   }
