@@ -303,8 +303,8 @@ const onUnload = async (closePhase: boolean) => {
       workcenterId: formData.workcenterId,
       workOrderPhaseId: formData.workOrderPhaseId,
       workOrderStatusId: statusId,
-      counterOk: formData.counterOk,
-      counterKo: formData.counterKo,
+      quantityOk: formData.counterOk,
+      quantityKo: formData.counterKo,
     };
 
     // Add next phase if selected

@@ -81,8 +81,8 @@ export interface UnloadWorkOrderPhaseRequest {
   workcenterId: string;
   workOrderPhaseId: string;
   workOrderStatusId: string;
-  counterOk: number;
-  counterKo: number;
+  quantityOk: number;
+  quantityKo: number;
   nextWorkOrderPhaseId?: string;
 }
 
