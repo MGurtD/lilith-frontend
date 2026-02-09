@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { FormValidation } from "../../utils/form-validator";
 import type { ProfileDetail } from "../../types/profile";
 
 const props = defineProps<{
-  modelValue: Partial<ProfileDetail>;
+  initialData: Partial<ProfileDetail>;
   submitting?: boolean;
   readonlySystem?: boolean;
 }>();
+
 const emit = defineEmits<{
-  (e: "update:modelValue", value: Partial<ProfileDetail>): void;
-  (e: "submit"): void;
+  (e: "submit", data: Partial<ProfileDetail>): void;
 }>();
 
 const { t } = useI18n();
@@ -22,20 +22,14 @@ const schema = yup.object({
 });
 const validator = new FormValidation(schema as any);
 
-const form = ref<Partial<ProfileDetail>>({ ...props.modelValue });
+// Estado local independiente - copia única al montar
+const form = ref<Partial<ProfileDetail>>({});
 const errors = ref<Record<string, string[]>>({});
 
-watch(
-  () => props.modelValue,
-  (v) => {
-    form.value = { ...v };
-  }
-);
-watch(
-  () => form.value,
-  (v) => emit("update:modelValue", v),
-  { deep: true }
-);
+onMounted(() => {
+  // Copia snapshot de los datos iniciales (sin reactividad al padre)
+  form.value = { ...props.initialData };
+});
 
 const validate = () => {
   const r = validator.validate(form.value);
@@ -45,7 +39,8 @@ const validate = () => {
 
 const submit = () => {
   if (!validate()) return;
-  emit("submit");
+  // Emitir copia de los datos al guardar
+  emit("submit", { ...form.value });
 };
 </script>
 <template>

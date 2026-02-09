@@ -40,8 +40,6 @@ export const useProfilesStore = defineStore("profiles", {
       this.loading = true;
       try {
         this.current = (await AppProfileService.Get(id)) ?? null;
-        // Removed automatic fetchMenuAssignment call - caller must explicitly load menu data
-        // This follows single responsibility principle and prevents hidden nested API calls
         if (!this.current) {
           this.menuAssignment = null;
         }
@@ -100,7 +98,7 @@ export const useProfilesStore = defineStore("profiles", {
       this.menuLoading = true;
       try {
         this.menuAssignment = (await AppProfileService.GetMenuAssignment(
-          profileId
+          profileId,
         )) ?? { menuItemIds: [], defaultMenuItemId: null };
       } finally {
         this.menuLoading = false;
@@ -127,7 +125,7 @@ export const useProfilesStore = defineStore("profiles", {
       try {
         return await AppProfileService.UpdateMenuAssignment(
           this.current.id,
-          this.menuAssignment
+          this.menuAssignment,
         );
       } finally {
         this.menuLoading = false;
