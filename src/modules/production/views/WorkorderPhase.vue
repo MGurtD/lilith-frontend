@@ -12,6 +12,7 @@
       <TabList>
         <Tab value="0">Pasos</Tab>
         <Tab value="1">Materials</Tab>
+        <Tab value="2">Comentaris</Tab>
       </TabList>
       <TabPanels>
         <TabPanel value="0">
@@ -31,6 +32,30 @@
             @edit="onEditBomItem"
             @delete="onDeleteBomItem"
           ></TableWorkOrderPhaseBillOfMaterials>
+        </TabPanel>
+        <TabPanel value="2">
+          <div class="phase-comment-panel">
+            <Card>
+              <template #title>
+                <div class="comment-header">
+                  <i :class="PrimeIcons.COMMENT" class="comment-icon"></i>
+                  <span>Comentari de Fase</span>
+                </div>
+              </template>
+              <template #content>
+                <div v-if="workorderPhase.comment && workorderPhase.comment.trim()" class="comment-content">
+                  <p class="comment-text">{{ workorderPhase.comment }}</p>
+                </div>
+                <div v-else class="empty-comment">
+                  <i :class="PrimeIcons.INFO_CIRCLE" class="empty-icon"></i>
+                  <p class="empty-text">Aquesta fase no té cap comentari</p>
+                  <small class="empty-subtext">
+                    Els comentaris es poden afegir des del mòdul de planta durant la fabricació
+                  </small>
+                </div>
+              </template>
+            </Card>
+          </div>
         </TabPanel>
       </TabPanels>
     </Tabs>
@@ -226,3 +251,75 @@ const onWorkmasterPhasBomItemSubmit = async (
   }
 };
 </script>
+
+<style scoped lang="scss">
+.phase-comment-panel {
+  padding: 1rem;
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .comment-icon {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+  }
+
+  .comment-content {
+    .comment-text {
+      margin: 0;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 1rem;
+    }
+  }
+
+  .empty-comment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--text-color-secondary);
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-color);
+    }
+
+    .empty-subtext {
+      font-size: 0.9rem;
+      max-width: 400px;
+      line-height: 1.4;
+    }
+  }
+
+  :deep(.p-card) {
+    border-left: 4px solid var(--primary-color);
+  }
+
+  :deep(.p-card-body) {
+    padding: 1.5rem;
+  }
+
+  :deep(.p-card-title) {
+    font-size: 1.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--surface-border);
+    margin-bottom: 1rem;
+  }
+}
+</style>
+

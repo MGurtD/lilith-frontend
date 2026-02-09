@@ -327,5 +327,40 @@ export const usePlantWorkcenterStore = defineStore("plantWorkcenterStore", {
         return { valid: false, error: "Error de connexió amb el servidor" };
       }
     },
+    async updatePhaseComment(
+      phaseId: string,
+      comment: string,
+    ): Promise<boolean> {
+      try {
+        // Fetch the full phase entity (backend requires full object for update)
+        const phase = await ProductionServices.WorkOrderPhase.getById(phaseId);
+        if (!phase) {
+          console.error("Phase not found:", phaseId);
+          return false;
+        }
+
+        // Update only the comment field
+        phase.comment = comment;
+
+        // Call update endpoint (BaseService.update requires id and model)
+        const success = await ProductionServices.WorkOrderPhase.update(
+          phaseId,
+          phase,
+        );
+
+        if (success) {
+          // Refresh loaded work orders to get updated comment
+          const phaseIds = this._lastLoadedPhaseIds;
+          if (phaseIds.length > 0) {
+            await this.fetchLoadedWorkOrders(phaseIds);
+          }
+        }
+
+        return success;
+      } catch (error) {
+        console.error("Error updating phase comment:", error);
+        return false;
+      }
+    },
   },
 });

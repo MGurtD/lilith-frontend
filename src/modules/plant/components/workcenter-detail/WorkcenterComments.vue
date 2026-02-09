@@ -26,16 +26,28 @@
       </Card>
 
       <!-- Phase Level Comment -->
-      <Card v-if="phaseComment" class="comment-card phase-card">
+      <Card v-if="phaseComment || currentPhase" class="comment-card phase-card">
         <template #title>
           <div class="card-header">
             <i :class="PrimeIcons.COG" class="header-icon"></i>
             <span>Fase</span>
             <Tag severity="success" :value="phaseDisplay" class="code-tag" />
+            <Button
+              v-if="currentPhase"
+              :icon="PrimeIcons.PENCIL"
+              label="Editar"
+              size="small"
+              text
+              class="edit-button"
+              @click="openEditDialog"
+            />
           </div>
         </template>
         <template #content>
-          <p class="comment-text">{{ phaseComment }}</p>
+          <p v-if="phaseComment" class="comment-text">{{ phaseComment }}</p>
+          <p v-else class="empty-comment-text">
+            Aquesta fase no té cap comentari. Fes clic a "Editar" per afegir-ne un.
+          </p>
         </template>
       </Card>
 
@@ -71,18 +83,31 @@
         </template>
       </Card>
     </div>
+
+    <!-- Comment Editor Dialog -->
+    <WorkcenterCommentEditor
+      v-model:visible="showEditDialog"
+      :phaseId="currentPhase?.phaseId"
+      :phaseCode="currentPhase?.phaseCode"
+      :initialComment="phaseComment"
+      @comment-saved="handleCommentSaved"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { PrimeIcons } from "@primevue/core/api";
 import type { WorkOrderWithPhases } from "../../../production/types";
 import { normalizeColor, isColorLight } from "@/utils/functions";
+import WorkcenterCommentEditor from "./WorkcenterCommentEditor.vue";
 
 const props = defineProps<{
   loadedWorkOrders: WorkOrderWithPhases[];
 }>();
+
+// Dialog state
+const showEditDialog = ref(false);
 
 // Get the first loaded work order (if any)
 const currentWorkOrder = computed(() => props.loadedWorkOrders?.[0]);
@@ -114,14 +139,26 @@ const detailComments = computed(() => {
   );
 });
 
-// Check if there are any comments at any level
+// Check if there are any comments at any level (or if phase exists for editing)
 const hasAnyComments = computed(() => {
   return (
     workOrderComment.value !== "" ||
     phaseComment.value !== "" ||
-    detailComments.value.length > 0
+    detailComments.value.length > 0 ||
+    !!currentPhase.value // Show phase card even if empty so edit button is visible
   );
 });
+
+// Open edit dialog
+const openEditDialog = () => {
+  showEditDialog.value = true;
+};
+
+// Handle comment saved
+const handleCommentSaved = () => {
+  // Dialog will close automatically
+  // Store refresh is handled in the dialog component via store action
+};
 
 // Utility for contrast color
 const getContrastColor = (hexColor: string): string => {
@@ -207,6 +244,10 @@ const getContrastColor = (hexColor: string): string => {
   .code-tag {
     margin-left: auto;
   }
+
+  .edit-button {
+    margin-left: 0.5rem;
+  }
 }
 
 .comment-text {
@@ -214,6 +255,13 @@ const getContrastColor = (hexColor: string): string => {
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.empty-comment-text {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-color-secondary);
+  font-style: italic;
 }
 
 /* Work Order Card */
