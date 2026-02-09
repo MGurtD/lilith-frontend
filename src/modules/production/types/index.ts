@@ -227,6 +227,7 @@ export interface WorkOrderPhase {
   externalWorkCost: number;
   transportCost: number;
   statusId: string;
+  comment?: string;
   startTime: any;
   endTime: any;
   quantityOk: number;

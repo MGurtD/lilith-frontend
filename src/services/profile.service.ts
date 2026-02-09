@@ -16,7 +16,7 @@ export class ProfileService extends BaseService<any> {
   async GetUserMenu(userId: string): Promise<UserMenuResponse | undefined> {
     try {
       const response = await this.apiClient.get(
-        `${this.resource}/user/${userId}/menu`
+        `${this.resource}/user/${userId}/menu`,
       );
       if (response.status === 200) return response.data as UserMenuResponse;
     } catch (err) {
@@ -41,7 +41,7 @@ export class ProfileService extends BaseService<any> {
   }
 
   async Create(
-    payload: CreateProfileRequest
+    payload: CreateProfileRequest,
   ): Promise<ProfileDetail | undefined> {
     try {
       const response = await this.apiClient.post(this.resource, payload);
@@ -53,7 +53,7 @@ export class ProfileService extends BaseService<any> {
     try {
       const response = await this.apiClient.put(
         `${this.resource}/${id}`,
-        payload
+        payload,
       );
       return response.status === 200;
     } catch {
@@ -71,11 +71,11 @@ export class ProfileService extends BaseService<any> {
   }
 
   async GetMenuAssignment(
-    profileId: string
+    profileId: string,
   ): Promise<ProfileMenuAssignmentRequest | undefined> {
     try {
       const response = await this.apiClient.get(
-        `${this.resource}/${profileId}/menu`
+        `${this.resource}/${profileId}/menu`,
       );
       if (response.status === 200)
         return response.data as ProfileMenuAssignmentRequest;
@@ -88,12 +88,12 @@ export class ProfileService extends BaseService<any> {
 
   async UpdateMenuAssignment(
     profileId: string,
-    payload: ProfileMenuAssignmentRequest
+    payload: ProfileMenuAssignmentRequest,
   ): Promise<boolean> {
     try {
       const response = await this.apiClient.post(
         `${this.resource}/${profileId}/menu`,
-        payload
+        payload,
       );
       return response.status === 200 || response.status === 204;
     } catch {
@@ -105,7 +105,7 @@ export class ProfileService extends BaseService<any> {
     try {
       const response = await this.apiClient.post(
         `${this.resource}/user/${userId}/profile`,
-        { profileId }
+        { profileId },
       );
       return response.status === 204;
     } catch (err) {
