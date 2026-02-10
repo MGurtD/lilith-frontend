@@ -14,9 +14,8 @@
         <div class="mt-1">
           <label class="block text-900 mb-2">Client</label>
           <div style="display: flex; align-items: center; gap: 0.5rem">
-            <Dropdown
+            <Select
               v-model="deliveryNote.customerId"
-              editable
               :options="customerStore.customers"
               optionValue="id"
               optionLabel="comercialName"
@@ -55,7 +54,7 @@
         </div>
         <div class="mt-2">
           <label class="block text-900 mb-2">Data Entrega</label>
-          <Calendar
+          <DatePicker
             v-model="deliveryNote.deliveryDate"
             dateFormat="dd/mm/yy"
             class="mt-2"
@@ -134,7 +133,7 @@ const submitForm = async () => {
   if (validation.value.result) {
     if (props.deliveryNote.deliveryDate) {
       props.deliveryNote.deliveryDate = convertDateTimeToJSON(
-        props.deliveryNote.deliveryDate
+        props.deliveryNote.deliveryDate,
       );
     }
     emit("submit", props.deliveryNote);

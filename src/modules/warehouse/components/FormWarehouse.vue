@@ -29,9 +29,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Local</label>
-        <Dropdown
+        <Select
           v-model="warehouse.siteId"
-          editable
           :options="plantmodelStore.sites"
           optionValue="id"
           optionLabel="name"
@@ -45,9 +44,8 @@
     <section class="three-columns">
       <div>
         <label class="block text-900 mb-2">Ubicació predeterminada</label>
-        <Dropdown
+        <Select
           v-model="warehouse.defaultLocationId"
-          editable
           :options="warehouse.locations"
           optionValue="id"
           optionLabel="name"

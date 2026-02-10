@@ -1,234 +1,238 @@
 <template>
-  <TabView v-model:activeIndex="activeTab">
-    <TabPanel header="Referència">
-      <form v-if="detail">
-        <section class="three-columns">
-          <div class="mb-2">
-            <DropdownReference
-              label="Referència"
-              v-model="detail.referenceId"
-              :customerId="header.customerId"
-              :fullName="true"
-              @update:modelValue="getReferenceInfo()"
-            ></DropdownReference>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2"
-              label="Preu"
-              v-model="referencePrice"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div class="mb-2">
-            <DropdownWorkmasters
-              label="Ruta de fabricació"
-              v-model="detail.workMasterId"
-              :referenceId="detail.referenceId"
-              @update:modelValue="getWorkmasterCost(false)"
-            ></DropdownWorkmasters>
-          </div>
-        </section>
+  <Tabs v-model:value="activeTab">
+    <TabList>
+      <Tab value="0">Referència</Tab>
+      <Tab value="1">Marges</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <form v-if="detail">
+          <section class="three-columns">
+            <div class="mb-2">
+              <DropdownReference
+                label="Referència"
+                v-model="detail.referenceId"
+                :customerId="header.customerId"
+                :fullName="true"
+                @update:modelValue="getReferenceInfo()"
+              ></DropdownReference>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2"
+                label="Preu"
+                v-model="referencePrice"
+                :type="BaseInputType.CURRENCY"
+                disabled
+              ></BaseInput>
+            </div>
+            <div class="mb-2">
+              <DropdownWorkmasters
+                label="Ruta de fabricació"
+                v-model="detail.workMasterId"
+                :referenceId="detail.referenceId"
+                @update:modelValue="getWorkmasterCost(false)"
+              ></DropdownWorkmasters>
+            </div>
+          </section>
 
-        <section class="seven-columns">
-          <div>
+          <section class="seven-columns">
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Producció"
+                v-model="detail.productionCost"
+                :type="BaseInputType.CURRENCY"
+                disabled
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="% Benefici Producció"
+                v-model="detail.productionProfit"
+                :type="BaseInputType.NUMERIC"
+                :decimals="2"
+                @update:modelValue="updateImports()"
+                :class="{
+                  'p-invalid': validation.errors.profit,
+                }"
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Material"
+                v-model="detail.materialCost"
+                :type="BaseInputType.CURRENCY"
+                disabled
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="% Benefici Material"
+                v-model="detail.materialProfit"
+                :type="BaseInputType.NUMERIC"
+                :decimals="2"
+                @update:modelValue="updateImports()"
+                :class="{
+                  'p-invalid': validation.errors.profit,
+                }"
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Servei"
+                v-model="detail.serviceCost"
+                :type="BaseInputType.CURRENCY"
+                @update:modelValue="updateCosts()"
+                :disabled="detail.workMasterId === null"
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Transport "
+                v-model="detail.transportCost"
+                :type="BaseInputType.CURRENCY"
+                @update:modelValue="updateCosts()"
+                :disabled="detail.workMasterId === null"
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="% Benefici Externs"
+                v-model="detail.externalProfit"
+                :type="BaseInputType.NUMERIC"
+                :decimals="2"
+                @update:modelValue="updateImports()"
+                :class="{
+                  'p-invalid': validation.errors.profit,
+                }"
+              ></BaseInput>
+            </div>
+          </section>
+          <section class="seven-columns">
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Quantitat"
+                v-model="detail.quantity"
+                :type="BaseInputType.NUMERIC"
+                :class="{
+                  'p-invalid': validation.errors.quantity,
+                }"
+                @update:modelValue="updateQuantity()"
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Unitari"
+                v-model="detail.unitCost"
+                :type="BaseInputType.CURRENCY"
+                disabled
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Cost Total"
+                v-model="detail.totalCost"
+                :type="BaseInputType.CURRENCY"
+                disabled
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="% Benefici"
+                v-model="detail.profit"
+                :type="BaseInputType.NUMERIC"
+                :class="{
+                  'p-invalid': validation.errors.profit,
+                }"
+                disabled
+              ></BaseInput>
+            </div>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="% Descompte"
+                v-model="detail.discount"
+                :type="BaseInputType.NUMERIC"
+                :decimals="2"
+                @update:modelValue="updateImports()"
+                :class="{
+                  'p-invalid': validation.errors.discount,
+                }"
+              ></BaseInput>
+            </div>
             <BaseInput
               class="mb-2 budgetordercostinput"
-              label="Cost Producció"
-              v-model="detail.productionCost"
+              label="Preu Unitari"
+              v-model="detail.unitPrice"
               :type="BaseInputType.CURRENCY"
-              disabled
+              @update:modelValue="updateUnitPrice()"
             ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="% Benefici Producció"
-              v-model="detail.productionProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Cost Material"
-              v-model="detail.materialCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="% Benefici Material"
-              v-model="detail.materialProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Cost Servei"
-              v-model="detail.serviceCost"
-              :type="BaseInputType.CURRENCY"
-              @update:modelValue="updateCosts()"
-              :disabled="detail.workMasterId === null"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Cost Transport "
-              v-model="detail.transportCost"
-              :type="BaseInputType.CURRENCY"
-              @update:modelValue="updateCosts()"
-              :disabled="detail.workMasterId === null"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="% Benefici Externs"
-              v-model="detail.externalProfit"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-            ></BaseInput>
-          </div>
-        </section>
-        <section class="seven-columns">
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Quantitat"
-              v-model="detail.quantity"
-              :type="BaseInputType.NUMERIC"
-              :class="{
-                'p-invalid': validation.errors.quantity,
-              }"
-              @update:modelValue="updateQuantity()"
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Cost Unitari"
-              v-model="detail.unitCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Cost Total"
-              v-model="detail.totalCost"
-              :type="BaseInputType.CURRENCY"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="% Benefici"
-              v-model="detail.profit"
-              :type="BaseInputType.NUMERIC"
-              :class="{
-                'p-invalid': validation.errors.profit,
-              }"
-              disabled
-            ></BaseInput>
-          </div>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="% Descompte"
-              v-model="detail.discount"
-              :type="BaseInputType.NUMERIC"
-              :decimals="2"
-              @update:modelValue="updateImports()"
-              :class="{
-                'p-invalid': validation.errors.discount,
-              }"
-            ></BaseInput>
-          </div>
-          <BaseInput
-            class="mb-2 budgetordercostinput"
-            label="Preu Unitari"
-            v-model="detail.unitPrice"
-            :type="BaseInputType.CURRENCY"
-            @update:modelValue="updateUnitPrice()"
-          ></BaseInput>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Total"
-              v-model="detail.amount"
-              disabled
-              :type="BaseInputType.CURRENCY"
-              :class="{
-                'p-invalid': validation.errors.amount,
-              }"
-            ></BaseInput>
-          </div>
-        </section>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Total"
+                v-model="detail.amount"
+                disabled
+                :type="BaseInputType.CURRENCY"
+                :class="{
+                  'p-invalid': validation.errors.amount,
+                }"
+              ></BaseInput>
+            </div>
+          </section>
 
-        <section>
-          <div>
-            <BaseInput
-              class="mb-2 budgetordercostinput"
-              label="Descripció"
-              v-model="detail.description"
-              :type="BaseInputType.TEXT"
-              :class="{
-                'p-invalid': validation.errors.description,
-              }"
-            ></BaseInput>
-          </div>
-        </section>
-        <section class="mt-2">
-          <div>
-            <label class="block text-900 mb-2">Notes Internes</label>
-            <textarea
-              label="Notes Internes"
-              class="w-full p-inputtext p-component"
-              rows="3"
-              cols="30"
-              placeholder="Notes internes"
-              v-model="detail.userNotes"
-            ></textarea>
-          </div>
-        </section>
-        <Button
-          :disabled="readonly"
-          :label="textActionButton"
-          @click="submitForm"
-          style="float: right"
+          <section>
+            <div>
+              <BaseInput
+                class="mb-2 budgetordercostinput"
+                label="Descripció"
+                v-model="detail.description"
+                :type="BaseInputType.TEXT"
+                :class="{
+                  'p-invalid': validation.errors.description,
+                }"
+              ></BaseInput>
+            </div>
+          </section>
+          <section class="mt-2">
+            <div>
+              <label class="block text-900 mb-2">Notes Internes</label>
+              <Textarea
+                class="w-full"
+                rows="3"
+                placeholder="Notes internes"
+                v-model="detail.userNotes"
+              />
+            </div>
+          </section>
+          <Button
+            :disabled="readonly"
+            :label="textActionButton"
+            @click="submitForm"
+            style="float: right"
+          />
+        </form>
+      </TabPanel>
+      <TabPanel value="1">
+        <TableWorkmasterProfit
+          :workMasterId="detail.workMasterId"
+          :quantity="detail.quantity"
+          @updateProfitAverage="copyProfitAverage"
         />
-      </form>
-    </TabPanel>
-    <TabPanel header="Marges">
-      <TableWorkmasterProfit
-        :workMasterId="detail.workMasterId"
-        :quantity="detail.quantity"
-        @updateProfitAverage="copyProfitAverage"
-      />
-    </TabPanel>
-  </TabView>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 <script setup lang="ts">
 import DropdownReference from "../../shared/components/DropdownReference.vue";
@@ -267,9 +271,9 @@ const copyProfitAverage = (profitAverage: number) => {
   props.detail.productionProfit = profitAverage;
   updateImports();
 
-  activeTab.value = 0;
+  activeTab.value = "0";
 };
-const activeTab = ref(0);
+const activeTab = ref("0");
 
 const emit = defineEmits<{
   (e: "submit", detail: BudgetDetail | SalesOrderDetail): void;
@@ -304,7 +308,7 @@ onMounted(async () => {
         "regularització inicial 'productionCost', 'productionProfit' i 'externalProfit'",
         detail.value.productionCost,
         detail.value.productionProfit,
-        detail.value.externalProfit
+        detail.value.externalProfit,
       );
     }
   }
@@ -314,7 +318,7 @@ const referencePrice = ref(0);
 
 const getReferenceInfo = () => {
   const reference = referenceStore.references!.find(
-    (r) => r.id === detail.value.referenceId
+    (r) => r.id === detail.value.referenceId,
   );
   if (reference) {
     detail.value.description = reference.description;
@@ -345,7 +349,7 @@ const getWorkmasterCost = async (blockExternalCosts: boolean) => {
   if (detail.value.workMasterId) {
     const costsResponse = await workmasterStore.getCosts(
       detail.value.workMasterId,
-      detail.value.quantity
+      detail.value.quantity,
     );
 
     if (costsResponse.result && costsResponse.content) {
@@ -408,7 +412,7 @@ const updateImports = () => {
   // no cost, get price from reference
   if (detail.value.unitPrice === 0) {
     const reference = referenceStore.references!.find(
-      (r) => r.id === detail.value.referenceId
+      (r) => r.id === detail.value.referenceId,
     );
     detail.value.unitPrice = reference?.price || 0;
   }
@@ -421,16 +425,16 @@ const updateImports = () => {
   ) {
     console.log(
       "production",
-      detail.value.productionCost * (1 + detail.value.productionProfit / 100)
+      detail.value.productionCost * (1 + detail.value.productionProfit / 100),
     );
     console.log(
       "material",
-      detail.value.materialCost * (1 + detail.value.materialProfit / 100)
+      detail.value.materialCost * (1 + detail.value.materialProfit / 100),
     );
     console.log(
       "external",
       (detail.value.transportCost + detail.value.serviceCost) *
-        (1 + detail.value.externalProfit / 100)
+        (1 + detail.value.externalProfit / 100),
     );
 
     detail.value.unitPrice =
@@ -446,7 +450,7 @@ const updateImports = () => {
     if (detail.value.unitCost > 0) {
       detail.value.profit = _.round(
         (detail.value.unitPrice * 100) / detail.value.unitCost - 100,
-        2
+        2,
       );
     }
 
@@ -461,14 +465,14 @@ const updateImports = () => {
   detail.value.unitPrice = _.round(detail.value.unitPrice, 2);
   detail.value.amount = _.round(
     detail.value.unitPrice * detail.value.quantity,
-    2
+    2,
   );
 };
 
 const updateUnitPrice = () => {
   detail.value.amount = _.round(
     detail.value.unitPrice * detail.value.quantity,
-    2
+    2,
   );
 };
 

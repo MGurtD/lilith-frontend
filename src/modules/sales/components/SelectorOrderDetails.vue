@@ -3,7 +3,7 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="70vh"
+    scrollHeight="flex"
     :value="filteredOrders"
     selectionMode="multiple"
     v-model:selection="selectedDetails"
@@ -54,7 +54,7 @@ import { computed, ref } from "vue";
 import { InvoiceableOrderDetail, SalesOrderDetail } from "../types";
 import { formatDate } from "../../../utils/functions";
 import _ from "lodash";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const selectedDetails = ref([] as Array<InvoiceableOrderDetail>);
 
@@ -70,7 +70,7 @@ const selectedOrder = ref("");
 const filteredOrders = computed(() => {
   if (selectedOrder.value.length === 0) return props.details;
   return props.details?.filter((d) =>
-    d.salesOrderNumber.toString().includes(selectedOrder.value)
+    d.salesOrderNumber.toString().includes(selectedOrder.value),
   );
 });
 

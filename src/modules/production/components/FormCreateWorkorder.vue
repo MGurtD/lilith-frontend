@@ -2,10 +2,9 @@
   <form v-if="createWorkOrderDto">
     <div>
       <label class="block text-900 mb-2">Ruta</label>
-      <Dropdown
+      <Select
         v-model="createWorkOrderDto.workMasterId"
         filter
-        editable
         :options="
           filteredWorkMasters
             ? filteredWorkMasters
@@ -26,7 +25,7 @@
     </div>
     <div>
       <label class="block text-900 mb-2">Data Prevista</label>
-      <Calendar
+      <DatePicker
         v-model="createWorkOrderDto.plannedDate"
         dateFormat="dd/mm/yy"
         class="mt-2"
@@ -80,7 +79,7 @@ onMounted(() => {
 const formatWorkMasterLabel = (workMaster: WorkMaster) => {
   const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
   let modeName = workMasterStore.workmasterModes.find(
-    (mode) => mode.id === workMaster.mode
+    (mode) => mode.id === workMaster.mode,
   )?.value;
 
   return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;

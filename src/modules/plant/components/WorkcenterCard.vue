@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { computed } from "vue";
 import { WorkcenterViewState, WorkcenterRealtime } from "../types";
 import {
@@ -152,8 +152,8 @@ const badgeStyle = computed(() => {
   if (!statusColor) {
     // Default: yellow (idle)
     return {
-      backgroundColor: "var(--yellow-100)",
-      color: "var(--yellow-800)",
+      backgroundColor: "var(--p-yellow-100)",
+      color: "var(--p-yellow-800)",
     };
   }
 
@@ -179,7 +179,7 @@ const handleClick = () => {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid var(--surface-border);
+  border: 2px solid var(--p-surface-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
 }
@@ -187,7 +187,7 @@ const handleClick = () => {
 .workcenter-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  border-color: var(--primary-400);
+  border-color: var(--p-primary-400);
 }
 
 .workcenter-card__status {
@@ -202,7 +202,7 @@ const handleClick = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--p-surface-border);
   gap: 0.2rem;
 }
 
@@ -214,7 +214,7 @@ const handleClick = () => {
 
 .workcenter-card__icon {
   font-size: 1.25rem;
-  color: var(--primary-600);
+  color: var(--p-primary-600);
 }
 
 .workcenter-card__title h3 {
@@ -248,7 +248,7 @@ const handleClick = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   border-radius: 6px;
   transition: background 0.2s ease;
   overflow: hidden;
@@ -256,7 +256,7 @@ const handleClick = () => {
 }
 
 .workcenter-card__stat:hover {
-  background: var(--surface-100);
+  background: var(--p-surface-100);
 }
 
 .stat__label {
@@ -271,7 +271,7 @@ const handleClick = () => {
 
 .stat__label i {
   font-size: 0.9rem;
-  color: var(--primary-500);
+  color: var(--p-primary-500);
 }
 
 .stat__value {
@@ -289,7 +289,15 @@ const handleClick = () => {
 .stat__value--time {
   font-family: "Courier New", monospace;
   font-size: 1rem;
-  color: var(--primary-600);
+  color: var(--p-primary-600);
+}
+
+.stat__value--phase {
+  /* Hereda truncate de .stat__value */
+}
+
+.stat__value--reference {
+  /* Hereda truncate de .stat__value */
 }
 
 .stat__value--phase {

@@ -24,7 +24,7 @@ export const useSalesOrderStore = defineStore({
       return created;
     },
     async CreateFromBudget(
-      budget: Budget
+      budget: Budget,
     ): Promise<GenericResponse<SalesOrderHeader>> {
       budget.date = convertDateTimeToJSON(budget.date);
       if (budget.acceptanceDate) {
@@ -35,7 +35,17 @@ export const useSalesOrderStore = defineStore({
       return response;
     },
     async GetById(id: string) {
-      this.salesOrder = await SalesServices.SalesOrder.getById(id);
+      const data = await SalesServices.SalesOrder.getById(id);
+      if (data) {
+        // Convert ISO date strings to Date objects for PrimeVue 4 DatePicker
+        if (data.date) {
+          data.date = new Date(data.date) as any;
+        }
+        if (data.expectedDate) {
+          data.expectedDate = new Date(data.expectedDate) as any;
+        }
+      }
+      this.salesOrder = data;
     },
     async GetDetailsById(id: string) {
       const updatedOrder = await SalesServices.SalesOrder.getById(id);
@@ -46,37 +56,35 @@ export const useSalesOrderStore = defineStore({
       startTime: string,
       endTime: string,
       customerId?: string,
-      statusId?: string
+      statusId?: string,
     ) {
       if (customerId) {
         this.salesOrders =
           await SalesServices.SalesOrder.GetBetweenDatesAndCustomer(
             startTime,
             endTime,
-            customerId
+            customerId,
           );
       } else {
         this.salesOrders = await SalesServices.SalesOrder.GetBetweenDates(
           startTime,
-          endTime
+          endTime,
         );
       }
 
       if (statusId && this.salesOrders) {
         this.salesOrders = this.salesOrders.filter(
-          (b) => b.statusId === statusId
+          (b) => b.statusId === statusId,
         );
       }
     },
     async GetByDeliveryNote(deliveryNoteId: string) {
-      this.salesOrders = await SalesServices.SalesOrder.GetByDeliveryNote(
-        deliveryNoteId
-      );
+      this.salesOrders =
+        await SalesServices.SalesOrder.GetByDeliveryNote(deliveryNoteId);
     },
     async GetToDeliver(customerId: string) {
-      this.salesOrdersToDeliver = await SalesServices.SalesOrder.GetToDeliver(
-        customerId
-      );
+      this.salesOrdersToDeliver =
+        await SalesServices.SalesOrder.GetToDeliver(customerId);
     },
     async Update(id: string, salesOrder: SalesOrderHeader) {
       const updated = await SalesServices.SalesOrder.update(id, salesOrder);

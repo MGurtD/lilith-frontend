@@ -88,9 +88,9 @@ onUnmounted(() => {
 <style scoped>
 .phase-item {
   padding: 1rem;
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   border-radius: var(--border-radius);
-  border-left: 3px solid var(--blue-500);
+  border-left: 3px solid var(--p-blue-500);
 }
 
 .phase-content {
@@ -144,7 +144,7 @@ onUnmounted(() => {
 
 .duration {
   font-weight: 600;
-  color: var(--blue-600);
+  color: var(--p-blue-600);
   font-size: 0.9rem;
 }
 
@@ -211,10 +211,10 @@ onUnmounted(() => {
 }
 
 .counter-ok {
-  color: var(--green-600);
+  color: var(--p-green-600);
 }
 
 .counter-ko {
-  color: var(--red-600);
+  color: var(--p-red-600);
 }
 </style>

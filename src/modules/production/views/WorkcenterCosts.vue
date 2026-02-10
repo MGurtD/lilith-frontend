@@ -3,12 +3,12 @@
     :value="filteredData"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sort-field="workcenterName"
     :sort-order="1"
     @row-click="editRow"
     paginator
-    :rows="12"
+    :rows="20"
   >
     <template #header>
       <div
@@ -17,9 +17,8 @@
         <div class="datatable-filter">
           <div class="filter-field">
             <label class="block text-900 mb-2">Màquina</label>
-            <Dropdown
+            <Select
               v-model="filter.workcenterId"
-              editable
               :options="plantmodelStore.workcenters"
               optionValue="id"
               optionLabel="name"
@@ -87,7 +86,7 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { usePlantModelStore } from "../store/plantmodel";
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkcenterCost } from "../types";
 import { formatCurrency } from "../../../utils/functions";
@@ -145,7 +144,7 @@ const filteredData = computed(() => {
 
   if (filter.value.workcenterId) {
     results = results.filter(
-      (wc) => wc.workcenterId === filter.value.workcenterId
+      (wc) => wc.workcenterId === filter.value.workcenterId,
     );
   }
 
@@ -170,7 +169,7 @@ const getWorkcenterById = (id: string) => {
 
 const getMachineStatusById = (id: string) => {
   const machineStatus = plantmodelStore.machineStatuses?.find(
-    (st) => st.id === id
+    (st) => st.id === id,
   );
   if (machineStatus) {
     return machineStatus.name;
@@ -184,7 +183,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/workcentercost/${row.data.id}` });
@@ -200,7 +199,7 @@ const deleteButton = (event: any, workcentercost: WorkcenterCost) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       const deleted = await plantmodelStore.deleteWorkcenterCost(
-        workcentercost.id
+        workcentercost.id,
       );
 
       if (deleted) {

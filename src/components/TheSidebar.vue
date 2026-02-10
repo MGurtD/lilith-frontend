@@ -52,13 +52,13 @@ function t(text: string) {
 
 <style scoped>
 .v-sidebar-menu {
-  background-color: var(--blue-900);
+  background-color: var(--p-blue-900);
   width: var(--side-bar-width);
 }
 
 .v-sidebar-menu .vsm--header {
   text-align: left;
-  border-bottom: 1px solid var(--surface-400);
+  border-bottom: 1px solid var(--p-surface-400);
 }
 
 .brand {
@@ -67,7 +67,7 @@ function t(text: string) {
   gap: 0.65rem;
   background: transparent;
   border: none;
-  color: var(--surface-0);
+  color: var(--p-surface-0);
   font-weight: 600;
   font-size: 1.4rem;
   letter-spacing: 0.5px;
@@ -91,7 +91,7 @@ function t(text: string) {
 
 .sidebar-footer {
   padding: 0.65rem 0.85rem;
-  color: var(--surface-300);
+  color: var(--p-surface-300);
   display: flex;
   justify-content: center;
   font-size: 0.7rem;

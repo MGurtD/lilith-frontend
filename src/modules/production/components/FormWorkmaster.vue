@@ -24,7 +24,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Mode</label>
-        <Dropdown
+        <Select
           v-model="workmaster.mode"
           :options="workmasterStore.workmasterModes"
           optionLabel="value"

@@ -2,13 +2,13 @@
   <DataTable
     :value="workorders"
     tableStyle="min-width: 100%"
-    class="p-datatable-sm small-datatable clickable-rows"
+    class="clickable-rows"
     scrollable
-    scrollHeight="76vh"
+    scrollHeight="flex"
     sort-mode="multiple"
     @row-click="onEditRow"
     paginator
-    :rows="25"
+    :rows="20"
     stripedRows
     :rowHover="true"
   >
@@ -25,7 +25,7 @@
       <template #body="slotProps">
         {{
           customersStore.getCustomerNameById(
-            slotProps.data.reference.customerId
+            slotProps.data.reference.customerId,
           )
         }}
       </template>
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { WorkOrder } from "../types";
 import { formatDate } from "../../../utils/functions";
@@ -88,7 +88,7 @@ const lifecycleStore = useLifecyclesStore();
 const onEditRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     emit("edit", row.data);

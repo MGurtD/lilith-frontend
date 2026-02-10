@@ -12,7 +12,7 @@ import TableMaterials from "../components/TableMaterials.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { Reference } from "../../../modules/shared/types";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";

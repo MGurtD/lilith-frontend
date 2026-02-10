@@ -8,7 +8,7 @@
     </div>
     <div class="dashboard-filter-field">
       <label class="block text-900">Concepte:</label>
-      <Dropdown
+      <Select
         id="consolidatedBy"
         v-model="filter.consolidatedBy"
         :options="optionValues"
@@ -18,7 +18,7 @@
         class="w-full"
         @change="filterDashboard"
       >
-      </Dropdown>
+      </Select>
     </div>
     <Button
       class="grid_add_row_button"
@@ -26,21 +26,27 @@
       @click="clearFilter"
     />
   </div>
-  <TabView>
-    <TabPanel header="Grafics">
-      <div class="dashboard-container">
-        <Chart
-          type="bar"
-          :data="chartData"
-          :options="chartOptions"
-          class="w-full h-[70rem]"
-        />
-      </div>
-    </TabPanel>
-    <TabPanel header="Data">
-      <TableProductionCosts :costs="costs" />
-    </TabPanel>
-  </TabView>
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">Grafics</Tab>
+      <Tab value="1">Data</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <div class="dashboard-container">
+          <Chart
+            type="bar"
+            :data="chartData"
+            :options="chartOptions"
+            class="w-full h-[70rem]"
+          />
+        </div>
+      </TabPanel>
+      <TabPanel value="1">
+        <TableProductionCosts :costs="costs" />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 
 <script setup lang="ts">
@@ -50,7 +56,7 @@ import { useProductionCostDashboardStore } from "../store/productioncostdashboar
 import { formatDateForQueryParameter } from "../../../utils/functions";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { usePlantModelStore } from "../store/plantmodel";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import TableProductionCosts from "../components/TableProductionCosts.vue";
 import { ProductionCostDashboardGrouped } from "../types";
@@ -61,7 +67,7 @@ const productionCostStore = useProductionCostDashboardStore();
 const plantModelStore = usePlantModelStore();
 const exercicesStore = useExerciseStore();
 const productionCostDashboardService = new ProductionCostDashboardService(
-  "/ProductionCost"
+  "/ProductionCost",
 );
 
 const filter = ref({
@@ -102,7 +108,7 @@ onMounted(async () => {
 const filterDashboard = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -112,7 +118,7 @@ const filterDashboard = async () => {
       dataResponse =
         await productionCostDashboardService.GroupedByMonthAndOperator(
           startTime,
-          endTime
+          endTime,
         );
     }
     if (filter.value.consolidatedBy == "workcentertype") {
@@ -120,7 +126,7 @@ const filterDashboard = async () => {
       dataResponse =
         await productionCostDashboardService.GetGroupedByMonthAndWorkcenterType(
           startTime,
-          endTime
+          endTime,
         );
     }
 
@@ -135,10 +141,10 @@ const chartOptions = ref();
 
 const setChartData = () => {
   const workcenterTypes = plantModelStore.workcenterTypes!.map(
-    (type) => type.name
+    (type) => type.name,
   );
   const operatorNames = plantModelStore.operators!.map(
-    (operator) => operator.name + " " + operator.surname
+    (operator) => operator.name + " " + operator.surname,
   );
   const monthNames = [
     "Gener",
@@ -180,7 +186,7 @@ const setChartData = () => {
   });
 
   const labels = Object.keys(groupedByMonth).sort(
-    (a, b) => parseInt(a) - parseInt(b)
+    (a, b) => parseInt(a) - parseInt(b),
   );
 
   if (filter.value.consolidatedBy == "operator") {
@@ -212,10 +218,10 @@ const setChartOptions = () => {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue("--p-text-color");
   const textColorSecondary = documentStyle.getPropertyValue(
-    "--p-text-muted-color"
+    "--p-text-muted-color",
   );
   const surfaceBorder = documentStyle.getPropertyValue(
-    "--p-content-border-color"
+    "--p-content-border-color",
   );
 
   return {

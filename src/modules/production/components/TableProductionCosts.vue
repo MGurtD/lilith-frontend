@@ -3,7 +3,7 @@
     :value="props.costs"
     tableStyle="min-width: 100%"
     paginator
-    :rows="18"
+    :rows="20"
     class="p-datatable-sm"
     sortMode="multiple"
     stripedRows

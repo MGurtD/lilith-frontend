@@ -12,7 +12,6 @@
   </span>
 </template>
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { useReferenceStore } from "../store/reference";
 import { useRouter } from "vue-router";
 
@@ -47,7 +46,7 @@ const navegateToReference = () => {
 <style scoped>
 .link {
   text-decoration: none; /* Elimina la subrayado predeterminado */
-  color: var(--blue-800); /* Color del texto */
+  color: var(--p-blue-800); /* Color del texto */
   font-weight: bold; /* Fuente en negrita */
   font-size: 0.9rem;
   transition: color 0.3s; /* Agrega una transición suave al color del texto */
@@ -55,7 +54,7 @@ const navegateToReference = () => {
 
 .link:hover {
   color: var(
-    --blue-600
+    --p-blue-600
   ); /* Cambia el color del texto al pasar el mouse sobre el enlace */
   cursor: pointer;
 }

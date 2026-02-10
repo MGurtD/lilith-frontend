@@ -105,7 +105,7 @@ import { useSuppliersStore } from "../store/suppliers";
 import FormSupplierReference from "./FormSupplierReference.vue";
 import { SupplierReference } from "../types";
 import { formatCurrency } from "../../../utils/functions";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { FormActionMode } from "../../../types/component";

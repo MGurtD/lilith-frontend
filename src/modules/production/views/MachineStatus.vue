@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from "vue";
 import { useRoute } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 import { storeToRefs } from "pinia";
 import { MachineStatus, MachineStatusReason } from "../types";

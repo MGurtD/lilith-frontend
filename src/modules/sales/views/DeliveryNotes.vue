@@ -4,10 +4,10 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sortMode="single"
     paginator
-    :rows="12"
+    :rows="20"
     @row-click="editRow"
   >
     <template #header>
@@ -113,7 +113,7 @@ import { useStore } from "../../../store";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useCustomersStore } from "../store/customers";
 import { useLifecyclesStore } from "../../shared/store/lifecycle";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   formatDateForQueryParameter,
@@ -196,7 +196,7 @@ const getUserFilter = () => {
 const setCurrentYear = () => {
   const year = new Date().getFullYear().toString();
   const currentExercise = sharedDataStore.exercises?.find(
-    (e) => e.name === year
+    (e) => e.name === year,
   );
 
   if (currentExercise) {
@@ -231,14 +231,14 @@ const createButtonClick = () => {
 const filterData = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await deliveryNoteStore.GetFiltered(
       startTime,
       endTime,
-      filter.value.customerId
+      filter.value.customerId,
     );
   } else {
     toast.add({
@@ -273,7 +273,7 @@ const createDeliveryNote = async () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/deliverynote/${row.data.id}` });

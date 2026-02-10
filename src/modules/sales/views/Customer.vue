@@ -1,45 +1,49 @@
 <template>
-  <TabView>
-    <TabPanel>
-      <template #header>
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">
         <i :class="PrimeIcons.WALLET" class="mr-2"></i>
         <span>Client</span>
-      </template>
-      <FormCustomer @submit="submitForm" />
-    </TabPanel>
-    <TabPanel v-if="formMode === FormActionMode.EDIT">
-      <template #header>
+      </Tab>
+      <Tab value="1" v-if="formMode === FormActionMode.EDIT">
         <i :class="PrimeIcons.USERS" class="mr-2"></i>
         <span>Contactes</span>
-      </template>
-      <CustomerContacts
-        @create="addContact"
-        @update="editContact"
-        @delete="removeContact"
-      />
-    </TabPanel>
-    <TabPanel v-if="formMode === FormActionMode.EDIT">
-      <template #header>
+      </Tab>
+      <Tab value="2" v-if="formMode === FormActionMode.EDIT">
         <i :class="PrimeIcons.ENVELOPE" class="mr-2"></i>
         <span>Adreces</span>
-      </template>
-      <CustomerAddresses
-        @create="addAddress"
-        @update="editAddress"
-        @delete="removeAddress"
-      />
-    </TabPanel>
-    <TabPanel v-if="formMode === FormActionMode.EDIT">
-      <template #header>
+      </Tab>
+      <Tab value="3" v-if="formMode === FormActionMode.EDIT">
         <i :class="PrimeIcons.CHART_PIE" class="mr-2"></i>
         <span>Estadístiques</span>
-      </template>
-      <FormCustomerStatistics
-        :budgets="budgets ?? []"
-        :salesInvoices="invoices ?? []"
-      />
-    </TabPanel>
-  </TabView>
+      </Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <FormCustomer @submit="submitForm" />
+      </TabPanel>
+      <TabPanel value="1" v-if="formMode === FormActionMode.EDIT">
+        <CustomerContacts
+          @create="addContact"
+          @update="editContact"
+          @delete="removeContact"
+        />
+      </TabPanel>
+      <TabPanel value="2" v-if="formMode === FormActionMode.EDIT">
+        <CustomerAddresses
+          @create="addAddress"
+          @update="editAddress"
+          @delete="removeAddress"
+        />
+      </TabPanel>
+      <TabPanel value="3" v-if="formMode === FormActionMode.EDIT">
+        <FormCustomerStatistics
+          :budgets="budgets ?? []"
+          :salesInvoices="invoices ?? []"
+        />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -48,7 +52,7 @@ import { Customer, CustomerAddress, CustomerContact } from "../types";
 import { storeToRefs } from "pinia";
 import { useStore } from "../../../store";
 import { useCustomersStore } from "../store/customers";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { FormActionMode } from "../../../types/component";
 import FormCustomer from "../components/FormCustomer.vue";
@@ -83,14 +87,14 @@ const loadView = async () => {
     await budgetStore.GetFiltered(
       formatDateForQueryParameter(starttime),
       formatDateForQueryParameter(endtime),
-      route.params.id as string
+      route.params.id as string,
     );
 
     await salesInvoiceStore.GetFiltered(
       formatDateForQueryParameter(starttime),
       formatDateForQueryParameter(endtime),
       "",
-      route.params.id as string
+      route.params.id as string,
     );
   }
 

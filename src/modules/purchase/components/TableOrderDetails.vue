@@ -95,7 +95,7 @@
 import LinkReference from "../../shared/components/LinkReference.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { PurchaseOrderDetail } from "../types";
 import { formatCurrency, formatDate } from "../../../utils/functions";
@@ -126,7 +126,7 @@ watch(
     if (newValue) {
       await mergeDetailsWithReceptions();
     }
-  }
+  },
 );
 
 onMounted(async () => {
@@ -138,7 +138,7 @@ onMounted(async () => {
   await mergeDetailsWithReceptions();
 
   lifecycle.value = await sharedServices.Lifecycle.getByName(
-    "PurchaseOrderDetail"
+    "PurchaseOrderDetail",
   );
 });
 
@@ -148,7 +148,7 @@ const mergeDetailsWithReceptions = async () => {
       return {
         ...d,
         receptions: orderStore.receptions?.filter(
-          (r) => r.purchaseOrderDetailId === d.id
+          (r) => r.purchaseOrderDetailId === d.id,
         ),
       };
     }) || [];
@@ -164,7 +164,7 @@ const onEditRow = (row: DataTableRowClickEvent) => {
   try {
     if (
       !(row.originalEvent.target as any).className.includes(
-        "grid_delete_column_button"
+        "grid_delete_column_button",
       )
     ) {
       emit("edit", row.data);
@@ -188,7 +188,7 @@ const navegateToReference = (id: string) => {
 }
 .link {
   text-decoration: none; /* Elimina la subrayado predeterminado */
-  color: var(--blue-800); /* Color del texto */
+  color: var(--p-blue-800); /* Color del texto */
   font-weight: bold; /* Fuente en negrita */
   font-size: 0.9rem;
   transition: color 0.3s; /* Agrega una transición suave al color del texto */
@@ -196,7 +196,7 @@ const navegateToReference = (id: string) => {
 
 .link:hover {
   color: var(
-    --blue-600
+    --p-blue-600
   ); /* Cambia el color del texto al pasar el mouse sobre el enlace */
   cursor: pointer;
 }

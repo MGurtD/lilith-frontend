@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const props = defineProps<{
   modelValue?: string | null;
@@ -128,8 +128,8 @@ onBeforeUnmount(() => {
   top: 110%;
   left: 0;
   width: 100%;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
   border-radius: 6px;
   padding: 6px;
   z-index: 1000;
@@ -153,11 +153,11 @@ onBeforeUnmount(() => {
   font-size: 1.1rem;
 }
 .icon-item.active {
-  background: var(--primary-color);
-  color: var(--primary-color-text);
+  background: var(--p-primary-color);
+  color: var(--p-primary-color-text);
 }
 .icon-item:hover {
-  border-color: var(--primary-color);
+  border-color: var(--p-primary-color);
 }
 .icon-item.none {
   font-size: 0.65rem;

@@ -8,15 +8,17 @@
     </div>
     <div class="dashboard-filter-field">
       <label>Tipus</label>
-      <Dropdown
-        :options="['Despesa', 'Compra']"
+      <Select
+        :options="['Compra', 'Despesa']"
         v-model="filter.type"
         @change="filterDashboard(true)"
       />
     </div>
     <div class="dashboard-filter-field">
       <label>Detall</label>
-      <Dropdown
+      <Select
+        showClear
+        filter
         :options="pieChartData?.labels"
         v-model="filter.typeDetail"
         @change="filterDashboard(false)"
@@ -35,59 +37,63 @@
     />
   </div>
 
-  <TabView v-model:activeIndex="selectedTabIndex">
-    <TabPanel>
-      <template #header>
+  <Tabs v-model:value="selectedTabIndex">
+    <TabList>
+      <Tab value="0">
         <i :class="PrimeIcons.CHART_BAR" class="mr-2"></i>
         <span>Gràfics</span>
-      </template>
-      <div class="dashboard-container">
-        <section class="dashboard-item">
-          <header class="dashboard-item-header">
-            Agrupat despeses mensual
-          </header>
-          <div class="dashboard-item-chart">
-            <Chart
-              v-if="chartData"
-              type="bar"
-              :data="chartData"
-              :options="chartOptions"
-            />
-          </div>
-        </section>
-        <section class="dashboard-item">
-          <header class="dashboard-item-header">
-            Gràfic de despeses per tipologia
-          </header>
-          <div class="dashboard-item-chart">
-            <Chart
-              v-if="pieChartData"
-              type="pie"
-              :data="pieChartData"
-              :options="pieChartOptions"
-            />
-          </div>
-        </section>
-      </div>
-    </TabPanel>
-    <TabPanel>
-      <template #header>
+      </Tab>
+      <Tab value="1">
         <i :class="PrimeIcons.LIST" class="mr-2"></i>
         <span>Llistat</span>
-      </template>
-      <TableConsolidatedExpenses
-        scrollable
-        scrollHeight="80vh"
-        :expenses="consolidatedExpenses"
-      />
-    </TabPanel>
-  </TabView>
+      </Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <div class="dashboard-container">
+          <section class="dashboard-item">
+            <header class="dashboard-item-header">
+              Agrupat despeses mensual
+            </header>
+            <div class="dashboard-item-chart">
+              <Chart
+                v-if="chartData"
+                type="bar"
+                :data="chartData"
+                :options="chartOptions"
+              />
+            </div>
+          </section>
+          <section class="dashboard-item">
+            <header class="dashboard-item-header">
+              Gràfic de despeses per tipologia
+            </header>
+            <div class="dashboard-item-chart">
+              <Chart
+                v-if="pieChartData"
+                type="pie"
+                :data="pieChartData"
+                :options="pieChartOptions"
+              />
+            </div>
+          </section>
+        </div>
+      </TabPanel>
+      <TabPanel value="1">
+        <TableConsolidatedExpenses
+          scrollable
+          scrollHeight="flex"
+          :expenses="consolidatedExpenses"
+        />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import Chart from "primevue/chart";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../../../store";
 import { useSharedDataStore } from "../../shared/store/masterData";
 import _ from "lodash";
@@ -102,7 +108,7 @@ import { ChartOptions } from "../../../types/component";
 
 const store = useStore();
 const sharedDataStore = useSharedDataStore();
-const selectedTabIndex = ref(0);
+const selectedTabIndex = ref("0");
 
 const filter = ref({
   dates: undefined as Array<Date> | undefined,
@@ -159,7 +165,7 @@ const totalAmount = computed((): number => {
 const filterDashboard = async (clearDetail: boolean) => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -169,29 +175,32 @@ const filterDashboard = async (clearDetail: boolean) => {
       startTime,
       endTime,
       filter.value.type,
-      filter.value.typeDetail
+      filter.value.typeDetail,
     );
     if (dataResponse) consolidatedExpenses.value = dataResponse;
 
     chartData.value = transformConsolidatedExpensesToChartOptions(
       consolidatedExpenses.value,
-      "monthPaymentKey"
+      "monthPaymentKey",
     );
     pieChartData.value = transformConsolidatedExpensesToChartOptions(
       consolidatedExpenses.value,
-      "typeDetail"
+      "typeDetail",
     );
   }
 };
 
 const transformConsolidatedExpensesToChartOptions = (
   expenses: Array<ConsolidatedExpense>,
-  fieldToGroup: string
+  fieldToGroup: string,
 ): ChartOptions => {
   const options = {} as ChartOptions;
 
   const groupedData = _.groupBy(expenses, fieldToGroup);
-  options.labels = Object.keys(groupedData);
+  const sortedKeys = Object.keys(groupedData).sort((a, b) =>
+    a.localeCompare(b, "ca", { sensitivity: "base" }),
+  );
+  options.labels = sortedKeys;
 
   const chartColors = getChartColors(options.labels.length);
   options.datasets = [
@@ -204,7 +213,7 @@ const transformConsolidatedExpensesToChartOptions = (
     },
   ];
 
-  Object.keys(groupedData).forEach((key) => {
+  sortedKeys.forEach((key) => {
     let totalAmount = 0;
     groupedData[key].forEach((mov) => {
       totalAmount += mov.amount;
@@ -220,15 +229,15 @@ const getChartColors = (numberOfColors: number): Array<string> => {
   const documentStyle = getComputedStyle(document.body);
 
   const colors = [
-    documentStyle.getPropertyValue("--blue-400"),
-    documentStyle.getPropertyValue("--green-400"),
-    documentStyle.getPropertyValue("--yellow-400"),
-    documentStyle.getPropertyValue("--cyan-400"),
-    documentStyle.getPropertyValue("--pink-400"),
-    documentStyle.getPropertyValue("--indigo-400"),
-    documentStyle.getPropertyValue("--orange-400"),
-    documentStyle.getPropertyValue("--purple-400"),
-    documentStyle.getPropertyValue("--red-400"),
+    documentStyle.getPropertyValue("--p-blue-400"),
+    documentStyle.getPropertyValue("--p-green-400"),
+    documentStyle.getPropertyValue("--p-yellow-400"),
+    documentStyle.getPropertyValue("--p-cyan-400"),
+    documentStyle.getPropertyValue("--p-pink-400"),
+    documentStyle.getPropertyValue("--p-indigo-400"),
+    documentStyle.getPropertyValue("--p-orange-400"),
+    documentStyle.getPropertyValue("--p-purple-400"),
+    documentStyle.getPropertyValue("--p-red-400"),
   ];
 
   const colorsToReturn = [];

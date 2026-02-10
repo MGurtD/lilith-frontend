@@ -60,64 +60,70 @@
       </div>
     </div>
   </div>
-  <TabView>
-    <TabPanel :header="t('analytics.cashflow.tabs.chart') || 'Gràfics'">
-      <div class="dashboard-container">
-        <div class="chart-area">
-          <Chart
-            type="line"
-            :data="chartData"
-            :options="chartOptions"
-            class="w-full"
-            style="height: 100%"
-          />
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">{{ t("analytics.cashflow.tabs.chart") || "Gràfics" }}</Tab>
+      <Tab value="1">{{ t("analytics.cashflow.tabs.data") || "Dades" }}</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <div class="dashboard-container">
+          <div class="chart-area">
+            <Chart
+              type="line"
+              :data="chartData"
+              :options="chartOptions"
+              class="w-full"
+              style="height: 100%"
+            />
+          </div>
         </div>
-      </div>
-    </TabPanel>
-    <TabPanel :header="t('analytics.cashflow.tabs.data') || 'Dades'">
-      <DataTable
-        :value="totals"
-        class="small-datatable"
-        tableStyle="min-width: 100%"
-        scrollable
-        :scrollHeight="`calc(100vh - var(--top-panel-height) - 10rem)`"
-        paginator
-        sortField="date"
-        :sortOrder="1"
-        :rows="12"
-      >
-        <Column
-          field="date"
-          :header="t('common.date') || 'Data'"
-          style="width: 15%"
-          sortable
+      </TabPanel>
+      <TabPanel value="1">
+        <DataTable
+          :value="totals"
+          class="small-datatable"
+          tableStyle="min-width: 100%"
+          scrollable
+          scrollHeight="flex"
+          paginator
+          sortField="date"
+          :sortOrder="1"
+          :rows="20"
         >
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.date) }}
-          </template>
-        </Column>
-        <Column :header="t('common.type') || 'Tipus'" field="type" />
-        <Column :header="t('common.detail') || 'Detall'" field="detail" />
-        <Column
-          :header="t('common.description') || 'Descripció'"
-          field="description"
-        />
-        <Column :header="t('common.total') || 'Total'" field="total">
-          <template #body="slotProps">
-            <span
-              :class="
-                slotProps.data.source === 'income'
-                  ? 'text-green-600 font-semibold'
-                  : 'text-red-500 font-semibold'
-              "
-            >
-              {{ formatCurrency(slotProps.data.total) }}
-            </span>
-          </template>
-        </Column>
-      </DataTable>
-    </TabPanel>
-  </TabView>
+          <Column
+            field="date"
+            :header="t('common.date') || 'Data'"
+            style="width: 15%"
+            sortable
+          >
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.date) }}
+            </template>
+          </Column>
+          <Column :header="t('common.type') || 'Tipus'" field="type" />
+          <Column :header="t('common.detail') || 'Detall'" field="detail" />
+          <Column
+            :header="t('common.description') || 'Descripció'"
+            field="description"
+          />
+          <Column :header="t('common.total') || 'Total'" field="total">
+            <template #body="slotProps">
+              <span
+                :class="
+                  slotProps.data.source === 'income'
+                    ? 'text-green-600 font-semibold'
+                    : 'text-red-500 font-semibold'
+                "
+              >
+                {{ formatCurrency(slotProps.data.total) }}
+              </span>
+            </template>
+          </Column>
+        </DataTable>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from "vue";
@@ -132,7 +138,7 @@ import {
 } from "../../../utils/functions";
 import { useExerciseStore } from "../../shared/store/exercise";
 
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 
 import { ConsolidatedIncomes } from "../../sales/types";
@@ -185,7 +191,7 @@ const filterDashboard = async () => {
   totals.value = [];
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
@@ -253,7 +259,7 @@ const setChartData = () => {
 
   expenses.value.forEach((expense) => {
     const yearMonth = `${expense.yearPaymentDate}-${String(
-      expense.monthPaymentDate
+      expense.monthPaymentDate,
     ).padStart(2, "0")}`;
     expensesGroupedByYearMonth[yearMonth] =
       (expensesGroupedByYearMonth[yearMonth] || 0) + expense.amount;
@@ -326,10 +332,10 @@ const setChartOptions = () => {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue("--p-text-color");
   const textColorSecondary = documentStyle.getPropertyValue(
-    "--p-text-muted-color"
+    "--p-text-muted-color",
   );
   const surfaceBorder = documentStyle.getPropertyValue(
-    "--p-content-border-color"
+    "--p-content-border-color",
   );
 
   return {
@@ -393,21 +399,21 @@ const setChartOptions = () => {
 
 // Derived metrics for KPIs
 const totalIncomes = computed(() =>
-  incomes.value.reduce((acc, i) => acc + (i?.amount || 0), 0)
+  incomes.value.reduce((acc, i) => acc + (i?.amount || 0), 0),
 );
 const totalExpenses = computed(() =>
-  expenses.value.reduce((acc, e) => acc + (e?.amount || 0), 0)
+  expenses.value.reduce((acc, e) => acc + (e?.amount || 0), 0),
 );
 const netTotal = computed(() => totalIncomes.value - totalExpenses.value);
 const allMonths = computed(() => {
   const set = new Set<string>();
   incomes.value.forEach((i) =>
-    set.add(`${i.year}-${String(i.month).padStart(2, "0")}`)
+    set.add(`${i.year}-${String(i.month).padStart(2, "0")}`),
   );
   expenses.value.forEach((e) =>
     set.add(
-      `${e.yearPaymentDate}-${String(e.monthPaymentDate).padStart(2, "0")}`
-    )
+      `${e.yearPaymentDate}-${String(e.monthPaymentDate).padStart(2, "0")}`,
+    ),
   );
   return Array.from(set).sort();
 });
@@ -424,13 +430,13 @@ const avgMonthlyNet = computed(() => {
   expenses.value.forEach((e) => {
     const m = `${e.yearPaymentDate}-${String(e.monthPaymentDate).padStart(
       2,
-      "0"
+      "0",
     )}`;
     exp[m] = (exp[m] || 0) + e.amount;
   });
   const sumNet = months.reduce(
     (acc, m) => acc + ((inc[m] || 0) - (exp[m] || 0)),
-    0
+    0,
   );
   return sumNet / months.length;
 });
@@ -585,7 +591,7 @@ watch([incomes, expenses], () => {
   border: 1px solid var(--p-content-border-color);
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  background: var(--p-content-background, var(--surface-card, #fff));
+  background: var(--p-content-background, var(--p-surface-card, #fff));
 }
 .kpi-label {
   font-size: 0.85rem;

@@ -31,7 +31,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data Prevista</label>
-        <Calendar
+        <DatePicker
           v-model="workorder.plannedDate"
           dateFormat="dd/mm/yy"
           class="mt-2"
@@ -54,7 +54,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data Inici</label>
-        <Calendar
+        <DatePicker
           v-model="workorder.startTime"
           dateFormat="dd/mm/yy"
           class="mt-2"
@@ -62,7 +62,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data Fi</label>
-        <Calendar
+        <DatePicker
           v-model="workorder.endTime"
           dateFormat="dd/mm/yy"
           class="mt-2"
@@ -99,7 +99,7 @@ import { useToast } from "primevue/usetoast";
 import BaseInput from "../../../components/BaseInput.vue";
 import { BaseInputType } from "../../../types/component";
 import DropdownLifecycleStatusTransitions from "../../shared/components/DropdownLifecycleStatusTransitions.vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 
 const props = defineProps<{
   workorder: WorkOrder;

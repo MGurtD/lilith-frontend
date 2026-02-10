@@ -11,9 +11,8 @@
       ></BaseInput>
       <div class="mb-4">
         <label class="block text-900 mb-2">Color</label>
-        <Dropdown
+        <Select
           v-model="status.color"
-          editable
           :options="colors"
           optionValue="id"
           optionLabel="value"
@@ -105,7 +104,7 @@ const emit = defineEmits<{
   (
     e: "submit",
     status: Status,
-    tagChanges: { assign: string[]; remove: string[] }
+    tagChanges: { assign: string[]; remove: string[] },
   ): void;
 }>();
 
@@ -116,7 +115,7 @@ const initialTagIds = ref<string[]>([]);
 onMounted(async () => {
   // Load tags associated with the status
   const statusTags = await SharedServices.Lifecycle.getTagsByStatus(
-    props.status.id
+    props.status.id,
   );
   if (statusTags) {
     props.status.lifecycleTags = statusTags;
@@ -125,7 +124,7 @@ onMounted(async () => {
   // Load available tags from lifecycle
   if (props.status.lifecycleId) {
     const tags = await SharedServices.Lifecycle.getTagsByLifecycle(
-      props.status.lifecycleId
+      props.status.lifecycleId,
     );
     if (tags) {
       availableTags.value = tags;
@@ -158,10 +157,10 @@ const submitForm = async () => {
   if (validation.value.result) {
     // Calculate tag changes
     const tagsToAssign = selectedTagIds.value.filter(
-      (id) => !initialTagIds.value.includes(id)
+      (id) => !initialTagIds.value.includes(id),
     );
     const tagsToRemove = initialTagIds.value.filter(
-      (id) => !selectedTagIds.value.includes(id)
+      (id) => !selectedTagIds.value.includes(id),
     );
 
     emit("submit", props.status, {

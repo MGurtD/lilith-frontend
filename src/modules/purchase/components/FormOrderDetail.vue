@@ -19,7 +19,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data prevista</label>
-        <Calendar
+        <DatePicker
           label="Data prevista"
           v-model="detail.expectedReceiptDate"
           dateFormat="dd/mm/yy"
@@ -117,7 +117,7 @@ watch(
     if (newValue) {
       calculateAmount();
     }
-  }
+  },
 );
 
 const getReferenceInfo = async (id: string | null) => {
@@ -128,7 +128,7 @@ const getReferenceInfo = async (id: string | null) => {
   var supplierReference =
     await PurchaseServices.Supplier.getSupplierReferenceBySupplierIdAndReferenceId(
       props.order.supplierId,
-      id
+      id,
     );
   if (supplierReference) {
     props.detail.unitPrice = supplierReference.supplierPrice;
@@ -153,7 +153,7 @@ function addDays(days: number) {
 
 const calculateAmount = () => {
   const reference = referenceStore.references!.find(
-    (r) => r.id == props.detail.referenceId
+    (r) => r.id == props.detail.referenceId,
   );
   if (reference) {
     if (reference.categoryName == "Service") {

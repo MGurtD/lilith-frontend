@@ -8,7 +8,6 @@ import {
   ReceiptOrderDetailGroup,
 } from "../types";
 import Services from "../services";
-import { formatDate } from "../../../utils/functions";
 
 export const useOrderStore = defineStore({
   id: "purchaseOrders",
@@ -37,26 +36,31 @@ export const useOrderStore = defineStore({
       startDate: string,
       endDate: string,
       supplierId?: string,
-      statusId?: string
+      statusId?: string,
     ) {
       this.orders = await Services.Order.getBetweenDates(
         startDate,
         endDate,
         supplierId,
-        statusId
+        statusId,
       );
     },
     async fetchAll() {
       this.orders = await Services.Order.getAll();
     },
     async fetchOne(id: string) {
-      this.order = await Services.Order.getById(id);
-      if (this.order) this.order.date = formatDate(this.order.date!);
+      const data = await Services.Order.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.date) {
+          data.date = new Date(data.date) as any;
+        }
+      }
+      this.order = data;
     },
     async fetchOrdersToReceiptBySupplier(supplierId: string) {
-      this.ordersToReceipt = await Services.Order.getOrdersToReciptBySupplierId(
-        supplierId
-      );
+      this.ordersToReceipt =
+        await Services.Order.getOrdersToReciptBySupplierId(supplierId);
     },
     async create(createRequest: CreatePurchaseDocumentRequest) {
       const result = await Services.Order.create(createRequest);

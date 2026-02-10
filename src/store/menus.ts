@@ -43,7 +43,7 @@ export const useMenusStore = defineStore("menus", {
       }
     },
     async fetchHierarchy(force = false) {
-      if (this.tree.length && !force) return; // cache unless force
+      if (this.tree.length && !force) return;
       this.treeLoading = true;
       try {
         const data = await getMenuItemsHierarchy();
@@ -120,7 +120,7 @@ export const useMenusStore = defineStore("menus", {
       let order = 0;
       for (const id of orderedIds) {
         const m = this.items.find(
-          (i) => i.id === id && i.parentId === parentId
+          (i) => i.id === id && i.parentId === parentId,
         );
         if (m) m.sortOrder = order++;
       }

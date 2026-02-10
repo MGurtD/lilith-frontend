@@ -3,13 +3,12 @@
     <section class="three-columns mt-2">
       <div>
         <label class="block text-900 mb-2">Màquina</label>
-        <Dropdown
+        <Select
           v-model="productionPart.workcenterId"
-          editable
           :filter="true"
           :options="
             plantModelStore.workcenters?.sort((a, b) =>
-              a.description.localeCompare(b.description)
+              a.description.localeCompare(b.description),
             )
           "
           optionValue="id"
@@ -20,9 +19,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Operari</label>
-        <Dropdown
+        <Select
           v-model="productionPart.operatorId"
-          editable
           :filter="true"
           :options="
             plantModelStore.operators
@@ -42,7 +40,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data Tíquet</label>
-        <Calendar v-model="productionPart.date" dateFormat="dd/mm/yy" />
+        <DatePicker v-model="productionPart.date" dateFormat="dd/mm/yy" />
       </div>
     </section>
     <section class="mt-2">
@@ -50,9 +48,8 @@
         <label class="block text-900 mb-2"
           >Ordre Fabricació | Fase | Activitat</label
         >
-        <Dropdown
+        <Select
           v-model="selectedDetailedWorkOrder"
-          editable
           :filter="true"
           :options="
             workOrderStore.detailedWorkOrders

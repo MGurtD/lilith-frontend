@@ -3,7 +3,7 @@
     class="p-datatable-sm"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     dataKey="reference.id"
     v-model:expandedRows="expandedRows"
     :value="filteredOrders"
@@ -101,7 +101,7 @@ import {
   ReceiptOrderDetail,
   ReceiptOrderDetailGroup,
 } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { formatDate, getNewUuid } from "../../../utils/functions";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useToast } from "primevue/usetoast";
@@ -129,7 +129,7 @@ const filteredOrders = computed(() => {
     try {
       // Filter orders by reference full name
       filtered = props.groupedOrderDetails.filter((group) =>
-        group.reference.code.includes(filterReference.value)
+        group.reference.code.includes(filterReference.value),
       );
     } catch (error) {
       console.error("Error filtering orders", error);
@@ -148,7 +148,7 @@ const expandAll = () => {
       acc[p.reference.id] = true;
       return acc;
     },
-    {}
+    {},
   );
 };
 
@@ -206,11 +206,11 @@ const onSelectedClick = () => {
 
   // Filtrar els detalls seleccionats per cada grup
   const clonedGroupedOrderDetails = JSON.parse(
-    JSON.stringify(props.groupedOrderDetails)
+    JSON.stringify(props.groupedOrderDetails),
   ) as Array<ReceiptOrderDetailGroup>;
   const groupsWithSelectedDetails = clonedGroupedOrderDetails.map((group) => {
     group.details = selectedOrderDetails.value.filter((selectedDetail) =>
-      group.details.some((detail) => detail.id === selectedDetail.id)
+      group.details.some((detail) => detail.id === selectedDetail.id),
     );
     return group;
   });
@@ -228,7 +228,7 @@ const onSelectedClick = () => {
       console.log(
         "Detail price",
         detail.pendingQuantity,
-        (group.price / totalQuantity) * detail.pendingQuantity
+        (group.price / totalQuantity) * detail.pendingQuantity,
       );
 
       receptionsRequest.receptions.push({

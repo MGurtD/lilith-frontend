@@ -49,7 +49,7 @@
 import { onMounted, ref } from "vue";
 import { UserService } from "../services/user.service";
 import { useStore } from "../store";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import BooleanColumn from "../components/tables/BooleanColumn.vue";
 import { useRouter } from "vue-router";
 import { DataTableRowClickEvent } from "primevue/datatable";

@@ -3,7 +3,7 @@
     :value="referenceTypeStore.referenceTypes"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sort-mode="single"
     sort-field="name"
     :sort-order="1"
@@ -55,7 +55,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -84,7 +84,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/referencetype/${row.data.id}` });
@@ -100,7 +100,7 @@ const deleteButton = (event: any, rawmaterialtype: ReferenceType) => {
     rejectIcon: "pi pi-times",
     accept: async () => {
       const deleted = await referenceTypeStore.deleteReferenceType(
-        rawmaterialtype.id
+        rawmaterialtype.id,
       );
 
       if (deleted) {

@@ -7,121 +7,142 @@
       @click="submitForm"
     />
   </div>
-  <TabView>
-    <TabPanel header="Factura" v-if="purchaseInvoice">
-      <FormPurchaseInvoice
-        ref="purchaseInvoiceForm"
-        :purchaseInvoice="purchaseInvoice"
-        @submit="onInvoiceSubmit"
-      />
-      <TabView>
-        <TabPanel header="Imports">
-          <TablePurchaseInvoiceImports
-            :purchase-invoice-imports="purchaseInvoice.purchaseInvoiceImports"
-            @add="(imp: PurchaseInvoiceImport) => openInvoiceImportForm(FormActionMode.CREATE, imp)"
-            @edit="(imp: PurchaseInvoiceImport) => openInvoiceImportForm(FormActionMode.EDIT, imp)"
-            @delete="deleteInvoiceImport"
-          />
-        </TabPanel>
-        <TabPanel header="Venciments">
-          <DataTable
-            :value="
-              isDueDateEditing
-                ? editingDueDates
-                : purchaseInvoice.purchaseInvoiceDueDates
-            "
-            class="p-datatable-sm"
-            tableStyle="min-width: 100%"
-            scrollable
-            scrollHeight="40vh"
-            sortField="dueDate"
-            :sortOrder="1"
-          >
-            <Column
-              field="dueDate"
-              header="Venciment"
-              style="width: 50%"
-              sortable
-            >
-              <template #body="slotProps">
-                {{ formatDate(slotProps.data.dueDate) }}
-              </template>
-            </Column>
-            <Column field="amount" header="Import" style="width: 50%">
-              <template #body="slotProps">
-                <template v-if="isDueDateEditing">
-                  <InputNumber
-                    v-model="slotProps.data.amount"
-                    :minFractionDigits="2"
-                    :maxFractionDigits="2"
-                    inputClass="w-full"
-                    :disabled="loadingDueDates"
-                  />
-                </template>
-                <template v-else> {{ slotProps.data.amount }} € </template>
-              </template>
-              <template v-if="isDueDateEditing" #footer>
-                <div
-                  class="flex justify-content-between align-items-center w-full"
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">Factura</Tab>
+      <Tab value="1">Fitxers</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0" v-if="purchaseInvoice">
+        <FormPurchaseInvoice
+          ref="purchaseInvoiceForm"
+          :purchaseInvoice="purchaseInvoice"
+          @submit="onInvoiceSubmit"
+        />
+        <Tabs value="0">
+          <TabList>
+            <Tab value="0">Imports</Tab>
+            <Tab value="1">Venciments</Tab>
+            <Tab value="2">Albarans</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel value="0">
+              <TablePurchaseInvoiceImports
+                :purchase-invoice-imports="
+                  purchaseInvoice.purchaseInvoiceImports
+                "
+                @add="
+                  (imp: PurchaseInvoiceImport) =>
+                    openInvoiceImportForm(FormActionMode.CREATE, imp)
+                "
+                @edit="
+                  (imp: PurchaseInvoiceImport) =>
+                    openInvoiceImportForm(FormActionMode.EDIT, imp)
+                "
+                @delete="deleteInvoiceImport"
+              />
+            </TabPanel>
+            <TabPanel value="1">
+              <DataTable
+                :value="
+                  isDueDateEditing
+                    ? editingDueDates
+                    : purchaseInvoice.purchaseInvoiceDueDates
+                "
+                class="p-datatable-sm"
+                tableStyle="min-width: 100%"
+                scrollable
+                scrollHeight="flex"
+                sortField="dueDate"
+                :sortOrder="1"
+              >
+                <Column
+                  field="dueDate"
+                  header="Venciment"
+                  style="width: 50%"
+                  sortable
                 >
-                  <div class="flex flex-column gap-1 text-left">
-                    <div class="font-semibold">
-                      Total venciments:
-                      {{ formatCurrency(editedDueDatesTotal) }}
-                    </div>
+                  <template #body="slotProps">
+                    {{ formatDate(slotProps.data.dueDate) }}
+                  </template>
+                </Column>
+                <Column field="amount" header="Import" style="width: 50%">
+                  <template #body="slotProps">
+                    <template v-if="isDueDateEditing">
+                      <InputNumber
+                        v-model="slotProps.data.amount"
+                        :minFractionDigits="2"
+                        :maxFractionDigits="2"
+                        inputClass="w-full"
+                        :disabled="loadingDueDates"
+                      />
+                    </template>
+                    <template v-else> {{ slotProps.data.amount }} € </template>
+                  </template>
+                  <template v-if="isDueDateEditing" #footer>
                     <div
-                      v-if="purchaseInvoice"
-                      :class="[
-                        'text-sm',
-                        dueDatesDifference === 0
-                          ? 'text-green-500'
-                          : 'text-red-500',
-                      ]"
+                      class="flex justify-content-between align-items-center w-full"
                     >
-                      Diferència: {{ formatCurrency(dueDatesDifference) }}
+                      <div class="flex flex-column gap-1 text-left">
+                        <div class="font-semibold">
+                          Total venciments:
+                          {{ formatCurrency(editedDueDatesTotal) }}
+                        </div>
+                        <div
+                          v-if="purchaseInvoice"
+                          :class="[
+                            'text-sm',
+                            dueDatesDifference === 0
+                              ? 'text-green-500'
+                              : 'text-red-500',
+                          ]"
+                        >
+                          Diferència: {{ formatCurrency(dueDatesDifference) }}
+                        </div>
+                      </div>
+                      <div class="flex gap-2">
+                        <Button
+                          label="Cancel·lar"
+                          icon="pi pi-times"
+                          severity="danger"
+                          size="small"
+                          :disabled="loadingDueDates"
+                          @click="cancelEditDueDates"
+                        />
+                        <Button
+                          label="Guardar"
+                          icon="pi pi-check"
+                          severity="success"
+                          size="small"
+                          :loading="loadingDueDates"
+                          @click="confirmEditDueDates"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-2">
-                    <Button
-                      label="Cancel·lar"
-                      icon="pi pi-times"
-                      severity="danger"
-                      size="small"
-                      :disabled="loadingDueDates"
-                      @click="cancelEditDueDates"
-                    />
-                    <Button
-                      label="Guardar"
-                      icon="pi pi-check"
-                      severity="success"
-                      size="small"
-                      :loading="loadingDueDates"
-                      @click="confirmEditDueDates"
-                    />
-                  </div>
-                </div>
-              </template>
-            </Column>
-          </DataTable>
-        </TabPanel>
-        <TabPanel header="Albarans">
-          <TableReceipts
-            :receipts="receiptsStore.receipts"
-            @add="onReceiptAdd"
-            @delete="onReceiptDelete"
-          />
-        </TabPanel>
-      </TabView>
-    </TabPanel>
-    <TabPanel header="Fitxers">
-      <FileEntityPicker
-        v-if="purchaseInvoice"
-        title="Factures"
-        entity="PurchaseInvoice"
-        :id="(route.params.id as string)"
-      />
-    </TabPanel>
-  </TabView>
+                  </template>
+                </Column>
+              </DataTable>
+            </TabPanel>
+            <TabPanel value="2">
+              <TableReceipts
+                :receipts="receiptsStore.receipts"
+                @add="onReceiptAdd"
+                @delete="onReceiptDelete"
+              />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </TabPanel>
+      <TabPanel value="1">
+        <FileEntityPicker
+          v-if="purchaseInvoice"
+          title="Factures"
+          entity="PurchaseInvoice"
+          :id="route.params.id as string"
+        />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 
   <Dialog
     :closable="true"
@@ -151,7 +172,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { usePurchaseInvoiceStore } from "../store/purchaseInvoices";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import SplitButton from "primevue/splitbutton";
 import type { MenuItem } from "primevue/menuitem";
 import { PurchaseInvoice, PurchaseInvoiceImport, Receipt } from "../types";
@@ -199,7 +220,7 @@ const dialogTitle = computed(() => {
 const isDialogVisible = ref(false);
 const formInvoiceMode = ref(FormActionMode.EDIT);
 const selectedInvoiceImport = ref(
-  undefined as undefined | PurchaseInvoiceImport
+  undefined as undefined | PurchaseInvoiceImport,
 );
 
 // Due dates edit mode
@@ -209,8 +230,8 @@ const loadingDueDates = ref(false);
 const editedDueDatesTotal = computed(() =>
   round(
     editingDueDates.value.reduce((acc, d) => acc + (d.amount || 0), 0),
-    2
-  )
+    2,
+  ),
 );
 const dueDatesDifference = computed(() => {
   if (!purchaseInvoice.value) return 0;
@@ -251,7 +272,7 @@ const loadView = async () => {
     pageTitle = `Factura de compra: ${purchaseInvoice.value.number}`;
 
     purchaseInvoice.value.purchaseInvoiceDate = new Date(
-      purchaseInvoice.value.purchaseInvoiceDate
+      purchaseInvoice.value.purchaseInvoiceDate,
     );
   }
   // Get associated receipts
@@ -267,17 +288,17 @@ const loadView = async () => {
 const setDefaultValues = () => {
   if (purchaseInvoice.value) {
     const currentExercice = purchaseMasterDataStore.masterData.exercises?.find(
-      (e) => e.name === new Date().getFullYear().toString()
+      (e) => e.name === new Date().getFullYear().toString(),
     );
     if (currentExercice) purchaseInvoice.value.exerciceId = currentExercice.id;
 
     const serie = purchaseMasterDataStore.masterData.series?.find(
-      (s) => s.name === "Nacional"
+      (s) => s.name === "Nacional",
     );
     if (serie) purchaseInvoice.value.purchaseInvoiceSerieId = serie.id;
 
     const status = lifecycleStore.lifecycle?.statuses?.find(
-      (s) => s.name === "Nova"
+      (s) => s.name === "Nova",
     );
     if (status) purchaseInvoice.value.statusId = status.id;
   }
@@ -295,7 +316,7 @@ const submitForm = () => {
 // Invoice imports
 const openInvoiceImportForm = (
   formMode: FormActionMode,
-  invoiceImport: PurchaseInvoiceImport
+  invoiceImport: PurchaseInvoiceImport,
 ) => {
   if (formMode === FormActionMode.CREATE) {
     invoiceImport.id = getNewUuid();
@@ -312,7 +333,7 @@ const onInvoiceSubmit = async (invoice: PurchaseInvoice) => {
   let message = "";
 
   invoice.purchaseInvoiceDate = convertDateTimeToJSON(
-    invoice.purchaseInvoiceDate
+    invoice.purchaseInvoiceDate,
   );
 
   if (formMode.value === FormActionMode.CREATE) {
@@ -357,7 +378,7 @@ const deleteInvoiceImport = async (invoiceImport: PurchaseInvoiceImport) => {
   }
 
   const afterImports = purchaseInvoice.value!.purchaseInvoiceImports.filter(
-    (i) => i.id !== invoiceImport.id
+    (i) => i.id !== invoiceImport.id,
   );
   purchaseInvoice.value!.purchaseInvoiceImports = afterImports;
 
@@ -374,7 +395,7 @@ const onReceiptAdd = async () => {
   if (!purchaseInvoice.value) return;
 
   await receiptsStore.fetchInvoiceableBySupplier(
-    purchaseInvoice.value.supplierId
+    purchaseInvoice.value.supplierId,
   );
   isDialogVisible.value = true;
 };
@@ -389,7 +410,7 @@ const onReceiptsSelected = async (receipts: Array<Receipt>) => {
 
   for (let i = 0; i < receipts.length; i++) {
     promises.push(
-      receiptsStore.associateInvoice(receipts[i], purchaseInvoice.value!.id)
+      receiptsStore.associateInvoice(receipts[i], purchaseInvoice.value!.id),
     );
   }
 
@@ -410,7 +431,7 @@ const startEditDueDates = () => {
   if (!purchaseInvoice.value) return;
   // Deep clone to avoid mutating original until confirm
   editingDueDates.value = cloneDeep(
-    purchaseInvoice.value.purchaseInvoiceDueDates
+    purchaseInvoice.value.purchaseInvoiceDueDates,
   );
   isDueDateEditing.value = true;
 };
@@ -420,7 +441,7 @@ const confirmEditDueDates = async () => {
   const invoiceTotal = round(purchaseInvoice.value.netAmount, 2);
   const dueTotal = round(
     editingDueDates.value.reduce((acc, d) => acc + d.amount, 0),
-    2
+    2,
   );
 
   if (dueTotal !== 0 && dueTotal !== invoiceTotal) {

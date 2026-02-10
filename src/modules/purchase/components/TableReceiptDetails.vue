@@ -51,7 +51,7 @@
   </DataTable>
 </template>
 <script setup lang="ts">
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { ReceiptDetail } from "../types";
 import { formatCurrency } from "../../../utils/functions";

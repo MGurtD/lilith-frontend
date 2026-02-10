@@ -31,21 +31,28 @@ export const useProductionPartStore = defineStore("productionParts", {
         await Services.ProductionPart.GetByWorkOrderId(workOrderId);
     },
     async fetchOne(id: string) {
-      this.productionPart = await Services.ProductionPart.getById(id);
+      const data = await Services.ProductionPart.getById(id);
+      if (data) {
+        // Convert ISO date string to Date object for PrimeVue 4 DatePicker
+        if (data.date) {
+          data.date = new Date(data.date) as any;
+        }
+      }
+      this.productionPart = data;
     },
     async fetchFiltered(
       startTime: string,
       endTime: string,
       workcenterid: string,
       operatorid: string,
-      workorderid: string
+      workorderid: string,
     ) {
       this.productionParts = await Services.ProductionPart.GetBetweenDates(
         startTime,
         endTime,
         workcenterid,
         operatorid,
-        workorderid
+        workorderid,
       );
     },
     async create(model: ProductionPart) {

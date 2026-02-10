@@ -35,6 +35,7 @@ const CostDashboard = () => import("./views/CostDashboard.vue");
 
 const WorkcenterShift = () => import("./views/WorkcenterShift.vue");
 const WorkorderPlanning = () => import("./views/WorkorderPlanning.vue");
+const WorkcenterSaturation = () => import("./views/WorkcenterSaturation.vue");
 
 export default [
   {
@@ -181,5 +182,10 @@ export default [
     path: "/workorderplanning",
     name: "workorderplanning",
     component: WorkorderPlanning,
+  },
+  {
+    path: "/workcentersaturation",
+    name: "workcentersaturation",
+    component: WorkcenterSaturation,
   },
 ] as Array<RouteRecordRaw>;

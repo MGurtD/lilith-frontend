@@ -4,7 +4,7 @@
       class="p-datatable-sm"
       tableStyle="min-width:100%"
       scrollable
-      scrollHeight="75vh"
+      scrollHeight="flex"
       sortField="movementDate"
       :sortOrder="1"
       :value="stockMovementStore.stockMovements"
@@ -89,7 +89,7 @@ import { useStockMovementStore } from "../store/stockMovement";
 import { useReferenceStore } from "../../shared/store/reference";
 import { useExerciseStore } from "../../shared/store/exercise";
 import { onMounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { Exercise } from "../../shared/types";
 import {
   formatDateForQueryParameter,
@@ -138,14 +138,14 @@ const cleanFilter = () => {
 const filterMovements = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await stockMovementStore.getBetweenDates(
       startTime,
       endTime,
-      filter.value.locationId
+      filter.value.locationId,
     );
   } else {
     toast.add({

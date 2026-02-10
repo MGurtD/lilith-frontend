@@ -13,9 +13,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Estat</label>
-        <Dropdown
+        <Select
           v-model="detail.machineStatusId"
-          editable
           :options="plantModelStore.machineStatuses"
           optionValue="id"
           optionLabel="description"

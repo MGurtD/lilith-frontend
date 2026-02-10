@@ -1,104 +1,100 @@
 <template>
-  <div>
-    <DataTable
-      class="p-datatable-sm small-datatable"
-      tableStyle="min-width: 100%"
-      scrollable
-      scrollHeight="80vh"
-      sortMode="multiple"
-      :paginator="receiptsStore.receipts && receiptsStore.receipts.length > 20"
-      :rows="20"
-      :value="receiptsStore.receipts"
-      @row-click="editReceipt"
-    >
-      <template #header>
-        <div
-          class="flex flex-wrap align-items-center justify-content-between gap-2"
-        >
-          <div class="datatable-filter">
-            <div class="filter-field">
-              <ExerciseDatePicker
-                :exercises="exerciseStore.exercises"
-                @range-selected="filterReceipts"
-              />
-            </div>
-            <div class="filter-field">
-              <label class="block text-900 mb-2">Proveïdor</label>
-              <Dropdown
-                v-model="filter.supplierId"
-                editable
-                :options="suppliersStore.suppliers"
-                optionValue="id"
-                optionLabel="comercialName"
-                class="w-full"
-              />
-            </div>
+  <DataTable
+    class="small-datatable"
+    tableStyle="min-width: 100%"
+    scrollable
+    scrollHeight="flex"
+    paginator
+    :rows="20"
+    :value="receiptsStore.receipts"
+    @row-click="editReceipt"
+  >
+    <template #header>
+      <div
+        class="flex flex-wrap align-items-center justify-content-between gap-2"
+      >
+        <div class="datatable-filter">
+          <div class="filter-field">
+            <ExerciseDatePicker
+              :exercises="exerciseStore.exercises"
+              @range-selected="filterReceipts"
+            />
           </div>
-          <div class="datatable-buttons">
-            <Button
-              class="datatable-button mr-2"
-              :icon="PrimeIcons.FILTER"
-              rounded
-              raised
-              @click="filterReceipts"
-            />
-            <Button
-              class="datatable-button mr-2"
-              :icon="PrimeIcons.FILTER_SLASH"
-              rounded
-              raised
-              @click="cleanFilter"
-            />
-            <Button
-              :icon="PrimeIcons.PLUS"
-              rounded
-              raised
-              @click="createButtonClick"
+          <div class="filter-field">
+            <label class="block text-900 mb-2">Proveïdor</label>
+            <Select
+              v-model="filter.supplierId"
+              :options="suppliersStore.suppliers"
+              optionValue="id"
+              optionLabel="comercialName"
+              class="w-full"
             />
           </div>
         </div>
-      </template>
-      <Column
-        field="number"
-        header="Número"
-        :sortable="true"
-        style="width: 10%"
-      ></Column>
-      <Column header="Data" field="date" sortable style="width: 10%">
-        <template #body="slotProps">
-          {{ formatDate(slotProps.data.date) }}
-        </template>
-      </Column>
-      <Column header="Proveïdor" style="width: 15%">
-        <template #body="slotProps">
-          {{ getSupplierNameById(slotProps.data.supplierId) }}
-        </template>
-      </Column>
-      <Column
-        header="Número Albarà"
-        style="width: 15%"
-        field="supplierNumber"
-      ></Column>
-      <Column header="Estat" style="width: 15%">
-        <template #body="slotProps">
-          {{ getStatusNameById(slotProps.data.statusId) }}
-        </template>
-      </Column>
-      <Column style="width: 5%">
-        <template #body="slotProps">
-          <i
-            v-if="
-              lifecycleStore.lifecycle?.initialStatusId ===
-              slotProps.data.statusId
-            "
-            :class="PrimeIcons.TIMES"
-            class="grid_delete_column_button"
-            @click="deleteReceipt($event, slotProps.data)"
+        <div class="datatable-buttons">
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER"
+            rounded
+            raised
+            @click="filterReceipts"
           />
-        </template>
-      </Column>
-    </DataTable>
-  </div>
+          <Button
+            class="datatable-button mr-2"
+            :icon="PrimeIcons.FILTER_SLASH"
+            rounded
+            raised
+            @click="cleanFilter"
+          />
+          <Button
+            :icon="PrimeIcons.PLUS"
+            rounded
+            raised
+            @click="createButtonClick"
+          />
+        </div>
+      </div>
+    </template>
+    <Column
+      field="number"
+      header="Número"
+      :sortable="true"
+      style="width: 10%"
+    ></Column>
+    <Column header="Data" field="date" sortable style="width: 10%">
+      <template #body="slotProps">
+        {{ formatDate(slotProps.data.date) }}
+      </template>
+    </Column>
+    <Column header="Proveïdor" style="width: 15%">
+      <template #body="slotProps">
+        {{ getSupplierNameById(slotProps.data.supplierId) }}
+      </template>
+    </Column>
+    <Column
+      header="Número Albarà"
+      style="width: 15%"
+      field="supplierNumber"
+    ></Column>
+    <Column header="Estat" style="width: 15%">
+      <template #body="slotProps">
+        {{ getStatusNameById(slotProps.data.statusId) }}
+      </template>
+    </Column>
+    <Column style="width: 5%">
+      <template #body="slotProps">
+        <i
+          v-if="
+            lifecycleStore.lifecycle?.initialStatusId ===
+            slotProps.data.statusId
+          "
+          :class="PrimeIcons.TIMES"
+          class="grid_delete_column_button"
+          @click="deleteReceipt($event, slotProps.data)"
+        />
+      </template>
+    </Column>
+  </DataTable>
 
   <Dialog
     v-model:visible="dialogOptions.visible"
@@ -124,7 +120,7 @@ import { useReceiptsStore } from "../store/receipt";
 import { useSuppliersStore } from "../store/suppliers";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import { onMounted, reactive, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DialogOptions } from "../../../types/component";
 import {
   formatDateForQueryParameter,
@@ -192,14 +188,14 @@ const cleanFilter = () => {
 const filterReceipts = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await receiptsStore.fetchFiltered(
       startTime,
       endTime,
-      filter.value.supplierId
+      filter.value.supplierId,
     );
   } else {
     toast.add({
@@ -243,7 +239,7 @@ const createReceipt = async () => {
 const editReceipt = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/receipts/${row.data.id}` });

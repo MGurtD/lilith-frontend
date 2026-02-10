@@ -3,7 +3,7 @@
     class="small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="75vh"
+    scrollHeight="flex"
     :metaKeySelection="false"
     :value="filteredOrders"
     selectionMode="multiple"
@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { SalesOrderHeader } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { formatDate } from "../../../utils/functions";
 
 const selectedOrders = ref([] as Array<SalesOrderHeader>);
@@ -79,7 +79,7 @@ const filteredOrders = computed(() => {
     filtered = props.orders.filter(
       (o) =>
         o.number.includes(selectedOrder.value) ||
-        o.customerNumber.includes(selectedOrder.value)
+        o.customerNumber.includes(selectedOrder.value),
     );
   }
 

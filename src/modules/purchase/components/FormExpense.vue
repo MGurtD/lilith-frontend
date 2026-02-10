@@ -3,9 +3,8 @@
     <section class="four-columns">
       <div class="mt-2">
         <label class="block text-900 mb-2">Tipus</label>
-        <Dropdown
+        <Select
           v-model="expense.expenseTypeId"
-          editable
           :options="expenseStore.expenseTypes"
           optionValue="id"
           optionLabel="name"
@@ -17,7 +16,7 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Data Alta</label>
-        <Calendar
+        <DatePicker
           id="creationDate"
           v-model="expense.creationDate"
           :class="{
@@ -27,7 +26,7 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Data Pagament</label>
-        <Calendar
+        <DatePicker
           id="paymentDate"
           v-model="expense.paymentDate"
           :class="{
@@ -54,10 +53,9 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Freqüència</label>
-        <Dropdown
+        <Select
           v-model="expense.frecuency"
           :disabled="!expense.recurring"
-          editable
           :options="frecuencies"
           optionValue="id"
           optionLabel="name"
@@ -77,7 +75,7 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Data fi</label>
-        <Calendar
+        <DatePicker
           id="endDate"
           v-model="expense.endDate"
           :disabled="!expense.recurring"
@@ -152,11 +150,11 @@ const submitForm = async () => {
   validate();
   if (validation.value.result) {
     props.expense.creationDate = convertDateTimeToJSON(
-      props.expense.creationDate
+      props.expense.creationDate,
     );
     props.expense.endDate = convertDateTimeToJSON(props.expense.endDate);
     props.expense.paymentDate = convertDateTimeToJSON(
-      props.expense.paymentDate
+      props.expense.paymentDate,
     );
 
     emit("submit", expense.value as Expense);

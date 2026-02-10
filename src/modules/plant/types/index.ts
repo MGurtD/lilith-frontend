@@ -81,8 +81,8 @@ export interface UnloadWorkOrderPhaseRequest {
   workcenterId: string;
   workOrderPhaseId: string;
   workOrderStatusId: string;
-  counterOk: number;
-  counterKo: number;
+  quantityOk: number;
+  quantityKo: number;
   nextWorkOrderPhaseId?: string;
 }
 
@@ -97,6 +97,13 @@ export interface OperatorResponse {
 export interface WorkOrderPhaseRequest {
   workcenterId: string;
   workOrderPhaseId: string;
+}
+
+// Next phase info for auto-loading
+export interface NextPhaseInfo {
+  phaseId: string;
+  phaseCode: string;
+  phaseDescription: string;
 }
 
 export interface WorkOrderPhaseResponse {

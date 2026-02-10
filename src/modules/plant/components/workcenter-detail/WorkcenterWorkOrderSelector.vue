@@ -3,36 +3,37 @@
     <DataTable
       :value="workOrders"
       :loading="loading"
-      responsiveLayout="scroll"
+      scrollable
+      scrollHeight="flex"
       stripedRows
       v-model:selectionKeys="selectedKey"
       selectionMode="single"
+      :rowClass="getRowClass"
       @row-select="onRowSelect"
     >
       <!-- Code -->
-      <Column field="workOrderCode" header="Codi" :sortable="true">
+      <Column field="workOrderCode" header="Codi">
         <template #body="slotProps">
           <span class="font-bold">{{ slotProps.data.workOrderCode }}</span>
         </template>
       </Column>
 
       <!-- Customer Name -->
-      <Column field="customerName" header="Client" :sortable="true">
+      <Column field="customerName" header="Client">
         <template #body="slotProps">
-          <span class="font-bold">{{ slotProps.data.customerName }}</span>
+          <span>{{ slotProps.data.customerName }}</span>
         </template>
       </Column>
 
       <!-- Reference -->
-      <Column
-        field="salesReferenceDisplay"
-        header="Referència"
-        :sortable="true"
-      >
+      <Column field="salesReferenceDisplay" header="Referència">
         <template #body="slotProps">
-          <span class="font-bold">{{
-            slotProps.data.salesReferenceDisplay
-          }}</span>
+          <span
+            class="reference-text"
+            :title="slotProps.data.salesReferenceDisplay"
+          >
+            {{ slotProps.data.salesReferenceDisplay }}
+          </span>
         </template>
       </Column>
 
@@ -45,7 +46,7 @@
       />
 
       <!-- Planned Date -->
-      <Column header="Data Planificada" :sortable="true">
+      <Column header="Planificada">
         <template #body="slotProps">
           <span v-if="slotProps.data.plannedDate">
             {{ formatDate(slotProps.data.plannedDate) }}
@@ -54,7 +55,7 @@
       </Column>
 
       <!-- Start Time -->
-      <Column header="Inici" :sortable="true">
+      <Column header="Iniciada">
         <template #body="slotProps">
           <span v-if="slotProps.data.startTime">
             {{ formatDate(slotProps.data.startTime) }}
@@ -63,11 +64,11 @@
       </Column>
 
       <!-- Work Order Status -->
-      <Column header="Estat OF" :sortable="true">
+      <Column header="Estat">
         <template #body="slotProps">
           <Tag
             :value="slotProps.data.workOrderStatus"
-            severity="secondary"
+            severity="info"
             rounded
           />
         </template>
@@ -77,7 +78,6 @@
       <Column
         field="priority"
         header="Prioritat"
-        :sortable="true"
         style="min-width: 100px; text-align: center"
       />
 
@@ -97,7 +97,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkOrderWithPhases } from "../../../production/types";
 import { usePlantWorkcenterStore } from "../../store";
 import { formatDate } from "../../../../utils/functions";
@@ -113,13 +113,26 @@ const emit = defineEmits<{
 }>();
 
 const workcenterStore = usePlantWorkcenterStore();
-const { availableWorkOrders, availableWorkOrdersLoading } =
+const { availableWorkOrders, availableWorkOrdersLoading, workcenterRt } =
   storeToRefs(workcenterStore);
 
 const selectedKey = ref();
 
 const workOrders = computed(() => availableWorkOrders.value);
 const loading = computed(() => availableWorkOrdersLoading.value);
+
+// Set of loaded work order codes for quick lookup
+const loadedWorkOrderCodes = computed(() => {
+  if (!workcenterRt.value?.workorders) return new Set<string>();
+  return new Set(workcenterRt.value.workorders.map((wo) => wo.workOrderCode));
+});
+
+const getRowClass = (data: WorkOrderWithPhases) => {
+  if (loadedWorkOrderCodes.value.has(data.workOrderCode)) {
+    return "loaded-workorder-row";
+  }
+  return "";
+};
 
 const onRowSelect = (event: any) => {
   emit("workorder-selected", event.data);
@@ -133,6 +146,11 @@ onMounted(async () => {
 <style scoped>
 .phase-selector {
   width: 100%;
+}
+
+.phase-selector :deep(.loaded-workorder-row) {
+  background: var(--loaded-row-bg) !important;
+  border-left: 4px solid var(--loaded-row-border) !important;
 }
 
 .no-data {
@@ -153,5 +171,27 @@ onMounted(async () => {
 .no-data p {
   margin: 0;
   font-size: 1rem;
+}
+
+/* Reference text truncation for smaller screens */
+.reference-text {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hide priority column on tablets and smaller devices */
+@media screen and (max-width: 1024px) {
+  .reference-text {
+    max-width: 150px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .reference-text {
+    max-width: 100px;
+  }
 }
 </style>

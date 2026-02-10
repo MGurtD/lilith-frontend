@@ -9,64 +9,70 @@
 
   <FormBudget class="mt-3 mb-3" ref="budgetForm" @submit="onBudgetSubmit" />
 
-  <TabView>
-    <TabPanel header="Detall">
-      <TableBudgetDetails
-        v-if="budget && budget.details"
-        :budget="budget"
-        :details="budget.details"
-        @edit="
-          (det: BudgetDetail) =>
-            openBudgetDetailDialog(FormActionMode.EDIT, det)
-        "
-        @delete="deleteSalesOrderDetails"
-      >
-        <template #header>
-          <div
-            class="flex flex-wrap align-items-center justify-content-between gap-2"
-          >
-            <span class="text-l text-900 font-bold">Linies del pressupost</span>
-            <section v-if="!budgetStore.order">
-              <Button
-                :size="'small'"
-                label="Afegir línea"
-                @click="
-                  openBudgetDetailDialog(FormActionMode.CREATE, {} as any)
-                "
-                class="mr-2"
-              />
-            </section>
+  <Tabs value="0">
+    <TabList>
+      <Tab value="0">Detall</Tab>
+      <Tab value="1">Notes</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel value="0">
+        <TableBudgetDetails
+          v-if="budget && budget.details"
+          :budget="budget"
+          :details="budget.details"
+          @edit="
+            (det: BudgetDetail) =>
+              openBudgetDetailDialog(FormActionMode.EDIT, det)
+          "
+          @delete="deleteSalesOrderDetails"
+        >
+          <template #header>
+            <div
+              class="flex flex-wrap align-items-center justify-content-between gap-2"
+            >
+              <span class="text-l text-900 font-bold"
+                >Linies del pressupost</span
+              >
+              <section v-if="!budgetStore.order">
+                <Button
+                  :size="'small'"
+                  label="Afegir línea"
+                  @click="
+                    openBudgetDetailDialog(FormActionMode.CREATE, {} as any)
+                  "
+                  class="mr-2"
+                />
+              </section>
+            </div>
+          </template>
+        </TableBudgetDetails>
+      </TabPanel>
+      <TabPanel value="1">
+        <section v-if="budget" class="mt-2">
+          <div>
+            <label class="block text-900 mb-2">Notes Internes</label>
+            <Textarea
+              class="w-full"
+              rows="3"
+              placeholder="Notes internes"
+              v-model="budget.userNotes"
+            />
           </div>
-        </template>
-      </TableBudgetDetails>
-    </TabPanel>
-    <TabPanel header="Notes">
-      <section v-if="budget" class="mt-2">
-        <div>
-          <label class="block text-900 mb-2">Notes Internes</label>
-          <textarea
-            label="Notes Internes"
-            class="w-full p-inputtext p-component"
-            rows="3"
-            cols="30"
-            placeholder="Notes internes"
-            v-model="budget.userNotes"
-          ></textarea>
-        </div>
-      </section>
-      <section v-if="budget" class="mt-2">
-        <div>
-          <BaseInput
-            :type="BaseInputType.TEXT"
-            label="Notes automàtiques"
-            id="notes"
-            v-model="budget.notes"
-            disabled
-          />
-        </div>
-      </section>
-    </TabPanel>
-  </TabView>
+        </section>
+        <section v-if="budget" class="mt-2">
+          <div>
+            <BaseInput
+              :type="BaseInputType.TEXT"
+              label="Notes automàtiques"
+              id="notes"
+              v-model="budget.notes"
+              disabled
+            />
+          </div>
+        </section>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 
   <Dialog
     :closable="true"
@@ -91,7 +97,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { storeToRefs } from "pinia";
 import { Budget, BudgetDetail, SalesOrderDetail } from "../types";
 import { useStore } from "../../../store";
@@ -204,11 +210,11 @@ const submitForm = () => {
 
 const openBudgetDetailDialog = (
   formMode: FormActionMode,
-  detail: BudgetDetail
+  detail: BudgetDetail,
 ) => {
   if (formMode === FormActionMode.CREATE) {
     const budgetExercise = exerciseStore.exercises?.find(
-      (e) => e.id === budget.value!.exerciseId
+      (e) => e.id === budget.value!.exerciseId,
     );
 
     detail = {
@@ -260,7 +266,7 @@ const onBudgetSubmit = async (budget: Budget) => {
 };
 
 const onBudgetDetailSubmit = async (
-  detail: BudgetDetail | SalesOrderDetail
+  detail: BudgetDetail | SalesOrderDetail,
 ) => {
   detail = detail as BudgetDetail;
 
@@ -319,7 +325,7 @@ const createSalesOrder = async () => {
 
 const printInvoice = async () => {
   const budgetReport = await Services.Budget.GetReportDataById(
-    budget.value!.id
+    budget.value!.id,
   );
 
   if (budgetReport) {
@@ -329,7 +335,7 @@ const printInvoice = async () => {
     const report = await reportService.Download(
       budgetReport,
       REPORTS.Budget,
-      fileName
+      fileName,
     );
 
     if (report) {

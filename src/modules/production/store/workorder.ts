@@ -69,21 +69,39 @@ export const useWorkOrderStore = defineStore("workorder", {
       endTime: string,
       statusId?: string,
       referenceId?: string,
-      customerId?: string
+      customerId?: string,
     ) {
       this.workorders = await Services.WorkOrder.GetBetweenDatesAndStatus(
         startTime,
         endTime,
         statusId,
         referenceId,
-        customerId
+        customerId,
       );
     },
     async fetchAll() {
       this.workorders = await Services.WorkOrder.getAll();
     },
     async fetchOne(id: string) {
-      this.workorder = await Services.WorkOrder.getById(id);
+      try {
+        const data = await Services.WorkOrder.getById(id);
+        if (data) {
+          // Convert ISO date strings to Date objects for DatePicker compatibility
+          if (data.plannedDate) {
+            data.plannedDate = new Date(data.plannedDate) as any;
+          }
+          if (data.startTime) {
+            data.startTime = new Date(data.startTime) as any;
+          }
+          if (data.endTime) {
+            data.endTime = new Date(data.endTime) as any;
+          }
+        }
+        this.workorder = data;
+      } catch (error) {
+        console.error("Error in fetchOne:", error);
+        throw error;
+      }
     },
     async fetchBySalesOrder(salesOrderId: string) {
       this.workorders =
@@ -102,11 +120,11 @@ export const useWorkOrderStore = defineStore("workorder", {
     },
     async createAndUpdateSalesOrderDetail(
       model: CreateWorkOrderDto,
-      detailId: string
+      detailId: string,
     ) {
       const result = await Services.WorkOrder.CreateFromSalesOrderDetail(
         model,
-        detailId
+        detailId,
       );
       if (result) await this.fetchOne(result.content!.id);
       return result;
@@ -134,7 +152,7 @@ export const useWorkOrderStore = defineStore("workorder", {
       this.workorderPhases =
         await Services.WorkOrderPhase.getExternalWorkOrderPhases(
           startTime,
-          endTime
+          endTime,
         );
     },
     async createPhase(model: WorkOrderPhase) {
@@ -179,7 +197,7 @@ export const useWorkOrderStore = defineStore("workorder", {
     async updatePhaseBomItem(id: string, model: WorkOrderPhaseBillOfMaterials) {
       const result = await Services.WorkOrderPhaseBillOfMaterials.update(
         id,
-        model
+        model,
       );
       if (result) await this.fetchPhaseById(model.workOrderPhaseId);
       return result;
@@ -204,7 +222,7 @@ export const useWorkOrderStore = defineStore("workorder", {
           return detailedWorkOrders; // Devuelve las órdenes de trabajo detalladas
         } else {
           console.error(
-            `No se encontraron órdenes de trabajo detalladas para el ID: ${id}`
+            `No se encontraron órdenes de trabajo detalladas para el ID: ${id}`,
           );
           return undefined;
         }

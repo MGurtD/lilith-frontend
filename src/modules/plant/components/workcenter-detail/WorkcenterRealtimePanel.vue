@@ -24,6 +24,13 @@
         :reason="currentReason"
         :startTime="workcenter.realtime?.statusStartTime"
       />
+      <TimeProgressBar
+        v-if="workcenterStore.phaseTimeMetrics"
+        :estimatedMinutes="
+          workcenterStore.phaseTimeMetrics.estimatedMachineTimeMinutes
+        "
+        :actualMinutes="actualMachineTimeMinutes"
+      />
     </Panel>
 
     <!-- Current Work Order Section -->
@@ -62,6 +69,13 @@
           :key="operator.operatorId"
           :operator="operator"
         />
+        <TimeProgressBar
+          v-if="workcenterStore.phaseTimeMetrics?.operatorId"
+          :estimatedMinutes="
+            workcenterStore.phaseTimeMetrics.estimatedOperatorTimeMinutes
+          "
+          :actualMinutes="actualOperatorTimeMinutes"
+        />
       </div>
       <div v-else class="no-data">
         <p>No hi ha operaris fitxats</p>
@@ -71,11 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { WorkcenterViewState } from "../../types";
 import OperatorDetail from "./OperatorDetail.vue";
 import WorkOrderPhaseDetail from "./WorkOrderPhaseDetail.vue";
 import MachineStatusDetail from "../MachineStatusDetail.vue";
+import TimeProgressBar from "./TimeProgressBar.vue";
 import { usePlantWorkcenterStore, usePlantDataStore } from "../../store";
 
 interface Props {
@@ -86,10 +101,14 @@ const props = defineProps<Props>();
 const workcenterStore = usePlantWorkcenterStore();
 const dataStore = usePlantDataStore();
 
+// Timer for updating elapsed time every second
+let timeUpdateInterval: ReturnType<typeof setInterval> | undefined;
+const elapsedSeconds = ref(0);
+
 const currentStatus = computed(() => {
   if (!props.workcenter.realtime?.statusId) return undefined;
   return dataStore.machineStatuses.find(
-    (s) => s.id === props.workcenter.realtime?.statusId
+    (s) => s.id === props.workcenter.realtime?.statusId,
   );
 });
 
@@ -97,24 +116,37 @@ const currentReason = computed(() => {
   if (!props.workcenter.realtime?.statusReasonId || !currentStatus.value)
     return undefined;
   return currentStatus.value.reasons?.find(
-    (r) => r.id === props.workcenter.realtime?.statusReasonId
+    (r) => r.id === props.workcenter.realtime?.statusReasonId,
   );
+});
+
+// Time progress computed properties
+const actualMachineTimeMinutes = computed(() => {
+  const baseMinutes =
+    workcenterStore.phaseTimeMetrics?.actualMachineTimeMinutes ?? 0;
+  return baseMinutes + elapsedSeconds.value / 60;
+});
+
+const actualOperatorTimeMinutes = computed(() => {
+  const baseMinutes =
+    workcenterStore.phaseTimeMetrics?.actualOperatorTimeMinutes ?? 0;
+  return baseMinutes + elapsedSeconds.value / 60;
 });
 
 // Computed para mostrar datos de la orden de fabricación cargada
 const currentWorkOrderData = computed(() => {
   // Usar la primera orden de trabajo cargada desde el WebSocket
   if (
-    workcenterStore.loadedWorkOrders &&
-    workcenterStore.loadedWorkOrders.length > 0 &&
+    workcenterStore.loadedWorkOrdersPhases &&
+    workcenterStore.loadedWorkOrdersPhases.length > 0 &&
     props.workcenter.realtime?.workorders &&
     props.workcenter.realtime.workorders.length > 0
   ) {
-    const wo = workcenterStore.loadedWorkOrders[0];
+    const wo = workcenterStore.loadedWorkOrdersPhases[0];
     const activeWorkOrder = props.workcenter.realtime.workorders[0];
     // Find the current phase from the loaded work order
     const currentPhase = wo.phases.find(
-      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId
+      (p) => p.phaseId === activeWorkOrder.workOrderPhaseId,
     );
 
     return {
@@ -132,16 +164,54 @@ const currentWorkOrderData = computed(() => {
   return null;
 });
 
-onMounted(() => {});
-onUnmounted(() => {});
+// Start/stop timer based on metrics availability
+const startTimeUpdateInterval = () => {
+  if (timeUpdateInterval) return;
+  elapsedSeconds.value = 0;
+  timeUpdateInterval = setInterval(() => {
+    elapsedSeconds.value++;
+  }, 1000);
+};
+
+const stopTimeUpdateInterval = () => {
+  if (timeUpdateInterval) {
+    clearInterval(timeUpdateInterval);
+    timeUpdateInterval = undefined;
+  }
+  elapsedSeconds.value = 0;
+};
+
+onMounted(() => {
+  // Start timer if metrics are already available
+  if (workcenterStore.phaseTimeMetrics) {
+    startTimeUpdateInterval();
+  }
+});
+
+onUnmounted(() => {
+  stopTimeUpdateInterval();
+});
+
+// Watch for metrics changes to start/stop timer and reset elapsed time
+watch(
+  () => workcenterStore.phaseTimeMetrics,
+  (newMetrics) => {
+    if (newMetrics) {
+      // Reset and restart timer when new metrics are loaded
+      elapsedSeconds.value = 0;
+      startTimeUpdateInterval();
+    } else {
+      stopTimeUpdateInterval();
+    }
+  },
+);
 </script>
 
 <style scoped>
 .realtime-panel-content {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   overflow-y: auto;
 }
 
@@ -150,7 +220,7 @@ onUnmounted(() => {});
 }
 
 .panel-section :deep(.p-panel-header) {
-  background: var(--surface-50);
+  background: var(--p-surface-50);
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
@@ -211,13 +281,13 @@ onUnmounted(() => {});
 }
 
 .counter-ok {
-  color: var(--green-600);
+  color: var(--p-green-600);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .counter-ko {
-  color: var(--red-600);
+  color: var(--p-red-600);
   font-weight: 700;
   font-size: 1.1rem;
 }

@@ -5,6 +5,7 @@ Vue 3 SPA for Lilith ERP - manufacturing management platform with domain-driven 
 ## Quick Start Reference
 
 **Stack**: Vue 3 (Composition API) + TypeScript + Vite + Pinia + PrimeVue + Axios  
+**Package Manager**: pnpm (v10+) - Fast, disk-efficient package manager  
 **Structure**: Domain modules in `src/modules/<domain>/` with `routes.ts`, `store/`, `services/`, `views/`, `components/`, `types/`  
 **State**: Pinia stores (`use<Entity>Store`) with CRUD actions calling service layer  
 **Services**: Extend `BaseService<T>` from `src/api/base.service.ts`, wrap Axios calls  
@@ -17,16 +18,16 @@ Vue 3 SPA for Lilith ERP - manufacturing management platform with domain-driven 
 ## Dev Workflow
 
 ```bash
-npm install              # Install dependencies
-npm run dev              # Start dev server (port 8100)
-npm run typecheck        # Type check without build
-npm run build            # Production build to dist/
-npm run build-development # Dev mode build to dist-test/
-npm run preview          # Preview production build
+pnpm install              # Install dependencies
+pnpm run dev              # Start dev server (port 8100)
+pnpm run typecheck        # Type check without build
+pnpm run build            # Production build to dist/
+pnpm run build-development # Dev mode build to dist-test/
+pnpm run preview          # Preview production build
 ```
 
 **Environment**: Use `.env` files with `VITE_` prefix (e.g., `VITE_API_BASE_URL`, `VITE_REPORTS_BASE_URL`)  
-**Docker**: Expects pre-built `dist/` - run `npm run build` before `docker build`  
+**Docker**: Expects pre-built `dist/` - run `pnpm run build` before `docker build`  
 **PWA**: Enabled via `vite-plugin-pwa` with auto-update strategy
 
 ## Architecture Overview
@@ -63,10 +64,10 @@ export class WorkOrderService extends BaseService<WorkOrder> {
   async GetBetweenDatesAndStatus(
     start: string,
     end: string,
-    statusId?: string
+    statusId?: string,
   ) {
     const response = await this.apiClient.get(
-      `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`
+      `${this.resource}/betweenDates?startTime=${start}&endTime=${end}&statusId=${statusId}`,
     );
     return response.data;
   }
@@ -444,7 +445,7 @@ if (!appStore.exercisePicker.dates) {
 await store.fetchFiltered(
   formatDateForQueryParameter(appStore.exercisePicker.dates[0]),
   formatDateForQueryParameter(appStore.exercisePicker.dates[1]),
-  statusId
+  statusId,
 );
 ```
 
@@ -645,7 +646,7 @@ const downloadReport = async (id: string) => {
   const blob = await new ReportService().Download(
     data,
     REPORTS.ORDER,
-    "comanda.pdf"
+    "comanda.pdf",
   );
 
   if (!blob) {
@@ -710,6 +711,13 @@ Add new utilities only if:
 ### Code Quality Standards
 
 Generated code should:
+
+- Type-check (no implicit `any`)
+- Avoid unused imports
+- Functions < ~40 lines (split if larger)
+- Use early returns for validation failures
+- Null/undefined guard nested access
+
 - Type-check (no implicit `any`)
 - Avoid unused imports
 - Functions < ~40 lines (split if larger)

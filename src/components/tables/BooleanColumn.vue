@@ -19,9 +19,9 @@ defineProps<{
 
 <style scoped>
 .true-icon {
-  color: var(--green-700);
+  color: var(--p-green-700);
 }
 .false-icon {
-  color: var(--red-700);
+  color: var(--p-red-700);
 }
 </style>

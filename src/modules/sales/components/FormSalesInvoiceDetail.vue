@@ -6,9 +6,8 @@
       </div>
       <div class="mt-2">
         <label class="block text-900 mb-2">Impost</label>
-        <Dropdown
+        <Select
           v-model="invoiceDetail.taxId"
-          editable
           :options="sharedData.taxes"
           optionValue="id"
           optionLabel="name"
@@ -83,11 +82,7 @@ const sharedData = useSharedDataStore();
 const calcAmount = () => {
   const detail = props.invoiceDetail;
 
-  if (
-    detail.quantity &&
-    detail.quantity > 0 &&
-    detail.unitPrice
-  ) {
+  if (detail.quantity && detail.quantity > 0 && detail.unitPrice) {
     props.invoiceDetail.unitCost = detail.unitPrice;
     props.invoiceDetail.amount = round(detail.quantity * detail.unitPrice, 2);
     props.invoiceDetail.totalCost = props.invoiceDetail.amount;

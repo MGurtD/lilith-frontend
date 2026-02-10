@@ -8,7 +8,7 @@
       :rows="20"
       tableStyle="min-width: 100%"
       scrollable
-      scrollHeight="80vh"
+      scrollHeight="flex"
       sortMode="multiple"
     >
       <template #header>
@@ -18,7 +18,7 @@
           <div class="flex flex-wrap gap-3 flex-1 align-items-end">
             <div style="min-width: 300px">
               <label class="block text-900 mb-2">Període</label>
-              <Calendar
+              <DatePicker
                 v-model="filter.dates"
                 selectionMode="range"
                 dateFormat="dd/mm/yy"
@@ -27,7 +27,7 @@
             </div>
             <div style="min-width: 200px">
               <label class="block text-900 mb-2">Grup</label>
-              <Dropdown
+              <Select
                 v-model="filter.groupBy"
                 :options="groupByOptions"
                 optionLabel="label"
@@ -37,7 +37,7 @@
             </div>
             <div style="min-width: 200px">
               <label class="block text-900 mb-2">Grup per temps</label>
-              <Dropdown
+              <Select
                 v-model="filter.timeGroupBy"
                 :options="timeGroupByOptions"
                 optionLabel="label"
@@ -70,12 +70,12 @@
 
       <Column field="startTime" header="Inici" sortable>
         <template #body="slotProps">
-          {{ formatDateTimeUTC(slotProps.data.startTime) }}
+          {{ formatDateTimeUTCWithSeconds(slotProps.data.startTime) }}
         </template>
       </Column>
       <Column field="endTime" header="Fi" sortable>
         <template #body="slotProps">
-          {{ formatDateTimeUTC(slotProps.data.endTime) }}
+          {{ formatDateTimeUTCWithSeconds(slotProps.data.endTime) }}
         </template>
       </Column>
       <Column field="quantityOk" header="Quantitat OK" />
@@ -139,9 +139,12 @@ import type {
   WorkcenterShiftHistorical,
   WorkcenterShiftRequest,
 } from "../types";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
-import { formatCurrency, formatDateTimeUTC } from "../../../utils/functions";
+import {
+  formatCurrency,
+  formatDateTimeUTCWithSeconds,
+} from "../../../utils/functions";
 import { useStore } from "@/store";
 
 const store = useStore();

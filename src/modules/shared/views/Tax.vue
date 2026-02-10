@@ -10,7 +10,7 @@ import { useTaxesStore } from "../store/tax";
 import { storeToRefs } from "pinia";
 
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { FormActionMode } from "../../../types/component";
 import FormTax from "../components/FormTax.vue";
 

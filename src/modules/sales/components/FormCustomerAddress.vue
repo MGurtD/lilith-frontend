@@ -23,9 +23,8 @@
     <section class="three-columns mb-2">
       <div>
         <label class="block text-900 mb-2">País</label>
-        <Dropdown
+        <Select
           v-model="address.country"
-          editable
           :options="['Espanya']"
           class="w-full"
           :class="{
@@ -35,9 +34,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Província</label>
-        <Dropdown
+        <Select
           v-model="address.region"
-          editable
           :options="spanishGeo.regions"
           optionValue="nm"
           optionLabel="nm"
@@ -50,9 +48,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Municipi</label>
-        <Dropdown
+        <Select
           v-model="address.city"
-          editable
           :options="spanishGeo.getTownsByRegionName(address.region)"
           optionValue="nm"
           optionLabel="nm"

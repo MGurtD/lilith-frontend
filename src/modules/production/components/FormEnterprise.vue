@@ -21,7 +21,7 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Seu per defecte</label>
-        <Dropdown
+        <Select
           v-model="enterprise.defaultSiteId"
           :options="filteredSites"
           optionLabel="name"
@@ -68,7 +68,7 @@ const toast = useToast();
 const plantStore = usePlantModelStore();
 const { sites } = storeToRefs(plantStore);
 const filteredSites = computed(() =>
-  (sites.value || []).filter((s) => s.enterpriseId === props.enterprise.id)
+  (sites.value || []).filter((s) => s.enterpriseId === props.enterprise.id),
 );
 
 onMounted(async () => {

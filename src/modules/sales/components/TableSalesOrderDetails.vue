@@ -126,7 +126,7 @@
 import LinkReference from "../../shared/components/LinkReference.vue";
 import { computed, onMounted, ref } from "vue";
 import FormCreateWorkorder from "../../production/components/FormCreateWorkorder.vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
   SalesOrderHeader,
@@ -140,7 +140,6 @@ import {
 } from "../../production/types";
 import { DialogOptions } from "../../../types/component";
 import { useConfirm } from "primevue/useconfirm";
-import { useReferenceStore } from "../../shared/store/reference";
 import { useWorkMasterStore } from "../../production/store/workmaster";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import {
@@ -164,7 +163,6 @@ const emit = defineEmits<{
 }>();
 
 const confirm = useConfirm();
-const referenceStore = useReferenceStore();
 const workMasterStore = useWorkMasterStore();
 const workOrderStore = useWorkOrderStore();
 
@@ -235,8 +233,8 @@ const onWorkOrderCreateClick = (salesOrderDetail: SalesOrderDetail) => {
     salesOrderDetail.referenceId
   );
   // Clear form data
-  createWorkOrderDto.value.workMasterId = "";
-  if (referenceActiveWorkMasters.value.length > 0) {
+  createWorkOrderDto.value.workMasterId = salesOrderDetail.workMasterId || "";
+  if (createWorkOrderDto.value.workMasterId === "") {
     createWorkOrderDto.value.workMasterId =
       referenceActiveWorkMasters.value[0].id;
   }

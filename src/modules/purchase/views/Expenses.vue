@@ -4,7 +4,7 @@
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     sortMode="multiple"
     @row-click="editExpense"
   >
@@ -21,9 +21,8 @@
           </div>
           <div class="filter-field">
             <label class="block text-900 mb-2">Tipus</label>
-            <Dropdown
+            <Select
               v-model="filter.expenseTypeId"
-              editable
               :options="expenseStore.expenseTypes"
               optionValue="id"
               optionLabel="name"
@@ -109,7 +108,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useExpenseStore } from "../store/expense";
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import ExerciseDatePicker from "../../../components/ExerciseDatePicker.vue";
 import { DataTableRowClickEvent } from "primevue/datatable";
 import {
@@ -183,14 +182,14 @@ onUnmounted(() => {
 const filterExpense = async () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
 
     await expenseStore.fetchExpenses(
       startTime,
       endTime,
-      filter.value.expenseTypeId
+      filter.value.expenseTypeId,
     );
   }
 };
@@ -220,7 +219,7 @@ const createButtonClick = () => {
 const editExpense = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/expense/${row.data.id}` });

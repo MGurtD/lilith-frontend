@@ -3,9 +3,8 @@
     <section class="mt-2">
       <div>
         <label class="block text-900 mb-2">Fase | Activitat</label>
-        <Dropdown
+        <Select
           v-model="selectedDetailedWorkOrder"
-          editable
           :filter="true"
           :options="
             workOrderStore.detailedWorkOrders
@@ -33,13 +32,12 @@
     <section class="three-columns mt-2">
       <div>
         <label class="block text-900 mb-2">Màquina</label>
-        <Dropdown
+        <Select
           v-model="productionPart.workcenterId"
-          editable
           :filter="true"
           :options="
             filteredWorkcenters?.sort((a, b) =>
-              a.description.localeCompare(b.description)
+              a.description.localeCompare(b.description),
             )
           "
           optionValue="id"
@@ -50,9 +48,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Operari</label>
-        <Dropdown
+        <Select
           v-model="productionPart.operatorId"
-          editable
           :filter="true"
           :options="
             plantModelStore.operators
@@ -72,7 +69,7 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Data Tíquet</label>
-        <Calendar v-model="productionPart.date" dateFormat="dd/mm/yy" />
+        <DatePicker v-model="productionPart.date" dateFormat="dd/mm/yy" />
       </div>
     </section>
     <section class="three-columns mt-2">
@@ -138,11 +135,11 @@ const filteredWorkcenters = computed(() => {
   if (!props.productionPart.workOrderPhaseId) return [];
 
   const phase = workOrderStore.workorder?.phases?.find(
-    (p) => p.id === props.productionPart.workOrderPhaseId
+    (p) => p.id === props.productionPart.workOrderPhaseId,
   );
   if (phase) {
     return plantModelStore.workcenters?.filter(
-      (w) => w.workcenterTypeId === phase.workcenterTypeId
+      (w) => w.workcenterTypeId === phase.workcenterTypeId,
     );
   } else {
     return plantModelStore.workcenters;

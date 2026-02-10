@@ -1,284 +1,98 @@
 <script setup lang="ts">
-import {
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  ref,
-  watch,
-  nextTick,
-} from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useMenusStore } from "../store/menus";
-import { useProfilesStore } from "../store/profiles";
-import type { MenuItemNode } from "../types/menuitem";
+import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+import { useProfileMenuSelectionStore } from "../store/profile-menu-selection";
+import { useStore } from "../store";
 
 const props = defineProps<{ profileId: string }>();
 
 const { t } = useI18n();
-const menusStore = useMenusStore();
-const profilesStore = useProfilesStore();
-
-const emit = defineEmits<{
-  (e: "menu-selection-change", ids: string[]): void;
-  (e: "menu-assignment-loaded"): void;
-  (e: "save"): void;
-}>();
-
-interface RowItem {
-  id: string;
-  key: string;
-  title: string;
-  route?: string | null;
-  sortOrder: number;
-  icon?: string | null;
-  level: number;
-  parentId: string | null;
-  hasChildren: boolean;
-}
-
-const parentMap = ref<Map<string, string | null>>(new Map());
-const childrenMap = ref<Map<string, string[]>>(new Map());
-const rows = ref<RowItem[]>([]);
-
-const buildIndexes = (nodes: MenuItemNode[]) => {
-  parentMap.value = new Map();
-  childrenMap.value = new Map();
-  const visit = (node: MenuItemNode, parentId: string | null) => {
-    parentMap.value.set(node.id, parentId);
-    if (!childrenMap.value.has(parentId || "__root__")) {
-      childrenMap.value.set(parentId || "__root__", []);
-    }
-    childrenMap.value.get(parentId || "__root__")!.push(node.id);
-    if (node.children?.length) {
-      childrenMap.value.set(
-        node.id,
-        node.children.map((c) => c.id)
-      );
-      node.children.forEach((c) => visit(c, node.id));
-    } else {
-      childrenMap.value.set(node.id, []);
-    }
-  };
-  nodes.forEach((n) => visit(n, null));
-};
-
-const buildRows = (nodes: MenuItemNode[]) => {
-  const result: RowItem[] = [];
-  const walk = (node: MenuItemNode, parentId: string | null, level: number) => {
-    result.push({
-      id: node.id,
-      key: node.key,
-      title: node.title,
-      route: node.route ?? null,
-      sortOrder: node.sortOrder,
-      icon: node.icon ?? null,
-      level,
-      parentId,
-      hasChildren: !!node.children?.length,
-    });
-    node.children?.forEach((c) => walk(c, node.id, level + 1));
-  };
-  nodes.forEach((n) => walk(n, null, 0));
-  rows.value = result;
-};
-
-// Selection using DataTable pattern
-const selectionRows = ref<RowItem[]>([]);
-const selectionIds = ref<Set<string>>(new Set());
-
-const syncSelectionRows = () => {
-  selectionRows.value = rows.value.filter((r) => selectionIds.value.has(r.id));
-};
-
-const seedSelectionFromStore = () => {
-  const ids = new Set<string>(profilesStore.menuAssignment?.menuItemIds ?? []);
-  // ensure ancestors visible as selected
-  const withAncestors = new Set<string>(ids);
-  for (const id of ids) {
-    let p = parentMap.value.get(id) ?? null;
-    while (p) {
-      withAncestors.add(p);
-      p = parentMap.value.get(p) ?? null;
-    }
-  }
-  selectionIds.value = withAncestors;
-  syncSelectionRows();
-};
-
-const getDescendants = (id: string): string[] => {
-  const res: string[] = [];
-  const stack: string[] = [...(childrenMap.value.get(id) ?? [])];
-  while (stack.length) {
-    const cid = stack.pop()!;
-    res.push(cid);
-    const kids = childrenMap.value.get(cid) ?? [];
-    if (kids.length) stack.push(...kids);
-  }
-  return res;
-};
-
-const getAncestors = (id: string): string[] => {
-  const res: string[] = [];
-  let p = parentMap.value.get(id) ?? null;
-  while (p) {
-    res.push(p);
-    p = parentMap.value.get(p) ?? null;
-  }
-  return res;
-};
-
-const addWithDependencies = (id: string) => {
-  selectionIds.value.add(id);
-  getDescendants(id).forEach((d) => selectionIds.value.add(d));
-  getAncestors(id).forEach((a) => selectionIds.value.add(a));
-};
-
-const removeWithDependencies = (id: string) => {
-  selectionIds.value.delete(id);
-  getDescendants(id).forEach((d) => selectionIds.value.delete(d));
-  // remove ancestors that have no selected descendants
-  for (const a of getAncestors(id)) {
-    const anyBelow = getDescendants(a).some((d) => selectionIds.value.has(d));
-    if (!anyBelow) selectionIds.value.delete(a);
-  }
-};
-
-const onRowSelect = (e: any) => {
-  const row: RowItem = e.data;
-  addWithDependencies(row.id);
-  syncSelectionRows();
-  emit("menu-selection-change", Array.from(selectionIds.value));
-};
-
-const onRowUnselect = (e: any) => {
-  const row: RowItem = e.data;
-  removeWithDependencies(row.id);
-  syncSelectionRows();
-  emit("menu-selection-change", Array.from(selectionIds.value));
-};
-
-const onSelectAll = () => {
-  selectionIds.value = new Set(rows.value.map((r) => r.id));
-  syncSelectionRows();
-  emit("menu-selection-change", Array.from(selectionIds.value));
-};
-
-const onUnselectAll = () => {
-  selectionIds.value.clear();
-  syncSelectionRows();
-  emit("menu-selection-change", Array.from(selectionIds.value));
-};
-
-const loading = computed(
-  () =>
-    menusStore.treeLoading ||
-    profilesStore.menuLoading ||
-    menusStore.loading ||
-    profilesStore.saving
-);
-
-const saveSelection = () => {
-  emit("save");
-};
+const toast = useToast();
+const confirm = useConfirm();
+const selectionStore = useProfileMenuSelectionStore();
+const appStore = useStore();
 
 // Search filter
 const searchFilter = ref("");
 
-const filteredRows = computed<RowItem[]>(() => {
-  if (!searchFilter.value) return rows.value;
+// Computed properties derivadas del store (sin estado local)
+const loading = computed(() => selectionStore.loading);
+
+const filteredRows = computed(() => {
+  if (!searchFilter.value) return selectionStore.rows;
 
   const searchLower = searchFilter.value.toLowerCase();
-  return rows.value.filter(
+  return selectionStore.rows.filter(
     (row) =>
       row.title.toLowerCase().includes(searchLower) ||
-      row.key.toLowerCase().includes(searchLower)
+      row.key.toLowerCase().includes(searchLower),
   );
 });
 
-// Dynamic height handling
-const rootEl = ref<HTMLElement | null>(null);
-const tableHeight = ref<string>("400px");
-const HEADER_OFFSET = 16; // extra padding/margin space inside card
+// DataTable necesita v-model bidireccional, usamos computed con getter/setter
+const selectionRows = computed({
+  get: () => selectionStore.selectedRows,
+  set: () => {
+    // El setter es llamado por DataTable pero no hace nada -
+    // La selección real se maneja via eventos row-select/row-unselect
+  },
+});
 
-const computeHeight = () => {
-  if (!rootEl.value) return;
-  const rect = rootEl.value.getBoundingClientRect();
-  const vh = window.innerHeight;
-  const available = vh - rect.top - HEADER_OFFSET; // space until bottom
-  // Reserve a little space for card padding and potential shadows
-  const finalPx = Math.max(200, available - 8);
-  tableHeight.value = finalPx + "px";
+// Event handlers - llaman directamente acciones del store
+const onRowSelect = (e: any) => {
+  selectionStore.toggle(e.data.id, true);
+};
+
+const onRowUnselect = (e: any) => {
+  selectionStore.toggle(e.data.id, false);
+};
+
+const onSelectAll = () => {
+  selectionStore.selectAll();
+};
+
+const onUnselectAll = () => {
+  selectionStore.unselectAll();
+};
+
+const saveSelection = () => {
+  confirm.require({
+    message:
+      (t("profiles.confirmAssignMenus") as string) ||
+      "Confirmes desar la selecció de menús?",
+    header: (t("common.confirm") as string) || "Confirmació",
+    icon: "pi pi-exclamation-triangle",
+    accept: async () => {
+      const ok = await selectionStore.save();
+
+      toast.add({
+        severity: ok ? "success" : "error",
+        summary: ok
+          ? (t("common.saved") as string) || "Desat correctament"
+          : (t("common.error") as string) || "Error en el procés",
+        life: ok ? 2500 : 4000,
+      });
+
+      // Si el perfil modificado es el del usuario actual, recargar menús
+      if (ok && appStore.user?.profileId === props.profileId) {
+        await appStore.loadUserMenus(appStore.user);
+      }
+    },
+  });
 };
 
 onMounted(async () => {
-  console.log(
-    "ProfileMenuAssignment: Starting data load for profile",
-    props.profileId
-  );
-
-  try {
-    // Step 1: Load menu hierarchy (await properly, no promise chains)
-    console.log("ProfileMenuAssignment: Loading menu hierarchy...");
-    await menusStore.fetchHierarchy(true);
-    console.log(
-      "ProfileMenuAssignment: Menu hierarchy loaded, tree length:",
-      menusStore.tree.length
-    );
-
-    // Step 2: Build UI structure from menu tree
-    buildIndexes(menusStore.tree);
-    buildRows(menusStore.tree);
-    console.log("ProfileMenuAssignment: Rows built:", rows.value.length);
-
-    // Step 3: Load menu assignment for this profile (independent of parent)
-    console.log(
-      "ProfileMenuAssignment: Loading menu assignment for profile..."
-    );
-    await profilesStore.fetchMenuAssignment(props.profileId);
-    console.log(
-      "ProfileMenuAssignment: Menu assignment loaded:",
-      profilesStore.menuAssignment
-    );
-
-    // Step 4: Seed selection from loaded data
-    seedSelectionFromStore();
-    console.log(
-      "ProfileMenuAssignment: Selection seeded, selected IDs:",
-      selectionIds.value.size
-    );
-
-    // Step 5: Notify parent that data is loaded and ready
-    emit("menu-assignment-loaded");
-    console.log("ProfileMenuAssignment: Emitted menu-assignment-loaded event");
-  } catch (err) {
-    console.error("ProfileMenuAssignment: Error during data load:", err);
-    // Initialize empty rows so UI doesn't break
-    rows.value = [];
-    // Still emit the event so parent can initialize with empty data
-    emit("menu-assignment-loaded");
-  }
-
-  // Setup UI dimensions (independent of data loading)
-  await nextTick();
-  computeHeight();
-  window.addEventListener("resize", computeHeight);
-
-  console.log("ProfileMenuAssignment: Initialization complete");
+  await selectionStore.load(props.profileId);
 });
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", computeHeight);
-});
-
-// NO WATCHERS - All data loading is handled in onMounted with proper async/await
-// This prevents reactivity-based deadlocks and makes the flow transparent
 </script>
 
 <template>
-  <div class="card profile-menu-assignment" ref="rootEl">
+  <div class="card profile-menu-assignment">
     <DataTable
       scrollable
-      :scrollHeight="tableHeight"
+      scrollHeight="flex"
       :value="filteredRows"
       v-model:selection="selectionRows"
       :loading="loading"

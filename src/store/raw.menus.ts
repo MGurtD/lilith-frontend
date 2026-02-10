@@ -1,4 +1,4 @@
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { User } from "../types";
 
 export const applicationMenus = [

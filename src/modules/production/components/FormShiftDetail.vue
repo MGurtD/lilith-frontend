@@ -1,14 +1,14 @@
 <template>
   <form v-if="shiftdetail">
     <section class="three-columns">
-      <Calendar
+      <DatePicker
         class="mb-2"
         label="Inici Torn:"
         v-model="shiftdetail.startTime"
         timeOnly
         hourFormat="24"
       />
-      <Calendar
+      <DatePicker
         class="mb-2"
         label="Fi Torn:"
         v-model="shiftdetail.endTime"

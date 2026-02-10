@@ -41,9 +41,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">Tipus d'operari</label>
-        <Dropdown
+        <Select
           v-model="operator.operatorTypeId"
-          editable
           :options="plantModelStore.operatorTypes"
           optionValue="id"
           optionLabel="name"

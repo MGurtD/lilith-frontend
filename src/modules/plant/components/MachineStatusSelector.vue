@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { MachineStatus, MachineStatusReason } from "../../production/types";
 import { ChangeMachineStatusRequest } from "../types";
 import {
@@ -127,6 +127,7 @@ interface Props {
   visible: boolean;
   statuses: MachineStatus[];
   workOrderPhaseId?: string;
+  excludeIds?: string[];
 }
 
 const props = defineProps<Props>();
@@ -154,10 +155,11 @@ const dialogTitle = computed(() => {
   return `Seleccionar motiu - ${selectedStatus.value?.name}`;
 });
 
-// Filter active statuses and sort by preferred
+// Filter active statuses, exclude specified IDs, and sort by preferred
 const availableStatuses = computed(() => {
+  const excludeSet = new Set(props.excludeIds ?? []);
   return props.statuses
-    .filter((s) => !s.disabled)
+    .filter((s) => !s.disabled && !excludeSet.has(s.id))
     .sort((a, b) => {
       // Preferred first
       if (a.preferred && !b.preferred) return -1;
@@ -288,7 +290,7 @@ watch(
     if (newValue) {
       resetSelection();
     }
-  }
+  },
 );
 </script>
 
@@ -393,22 +395,22 @@ watch(
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: var(--surface-0);
-  border: 2px solid var(--surface-border);
+  background: var(--p-surface-0);
+  border: 2px solid var(--p-surface-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .reason-item:hover {
-  background: var(--surface-hover);
-  border-color: var(--primary-color);
+  background: var(--p-surface-hover);
+  border-color: var(--p-primary-color);
 }
 
 .reason-item--selected {
-  background: var(--primary-50);
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-100);
+  background: var(--p-primary-50);
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px var(--p-primary-100);
 }
 
 .reason-item__icon {
@@ -448,7 +450,7 @@ watch(
 
 .reason-item__check {
   font-size: 1.5rem;
-  color: var(--primary-color);
+  color: var(--p-primary-color);
   flex-shrink: 0;
   animation: checkPop 0.3s ease;
 }
@@ -504,16 +506,16 @@ watch(
 }
 
 .reason-list::-webkit-scrollbar-track {
-  background: var(--surface-100);
+  background: var(--p-surface-100);
   border-radius: 4px;
 }
 
 .reason-list::-webkit-scrollbar-thumb {
-  background: var(--surface-400);
+  background: var(--p-surface-400);
   border-radius: 4px;
 }
 
 .reason-list::-webkit-scrollbar-thumb:hover {
-  background: var(--surface-500);
+  background: var(--p-surface-500);
 }
 </style>

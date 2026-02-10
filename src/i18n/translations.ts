@@ -165,6 +165,7 @@ const messages = {
         title: "Integració de Factures a Verifactu",
         filters: {
           toDate: "Data factura fins",
+          selectToDate: "Selecciona una data",
         },
         actions: {
           search: "Cercar",
@@ -386,6 +387,44 @@ const messages = {
         instructions: "Escaneja el codi o introdueix-lo manualment",
       },
     },
+    fileViewer: {
+      toolbar: {
+        zoomOut: "Allunyar (Ctrl + -)",
+        zoomIn: "Apropar (Ctrl + +)",
+        resetZoom: "Restablir zoom (Ctrl + 0)",
+        fullscreen: "Pantalla completa",
+        exitFullscreen: "Sortir de pantalla completa",
+        downloadImage: "Descarregar imatge",
+        downloadFile: "Descarregar fitxer",
+      },
+      loading: {
+        image: "Carregant imatge...",
+      },
+      error: {
+        loadImage: "No s'ha pogut carregar la imatge",
+        retry: "Tornar a intentar",
+        fullscreen: "No s'ha pogut canviar el mode de pantalla",
+        download: "No s'ha pogut descarregar el fitxer",
+      },
+      noFile: {
+        selectFile: "Selecciona un fitxer per visualitzar",
+        selectDocument: "Selecciona un document per visualitzar",
+      },
+      unsupported: {
+        title: "Fitxer",
+        message:
+          "Aquest tipus de fitxer no es pot previsualitzar directament al navegador. Pots descarregar-lo per obrir-lo amb l'aplicació corresponent.",
+        downloadButton: "Descarregar fitxer",
+        noExtension: "Sense extensió",
+        unknown: "Desconegut",
+      },
+      toast: {
+        downloadSuccess: "Descàrrega completada",
+        downloadError: "Error de descàrrega",
+        loadError: "Error de càrrega",
+        fullscreenError: "Error de pantalla completa",
+      },
+    },
     login: {
       welcome: "Benvingut a Temges",
       subtitle: "Inicia sessió per continuar",
@@ -508,6 +547,7 @@ const messages = {
         title: "Integración de Facturas en Verifactu",
         filters: {
           toDate: "Fecha factura hasta",
+          selectToDate: "Selecciona una fecha",
         },
         actions: {
           integrateSelected: "Integrar Pendientes",
@@ -694,6 +734,44 @@ const messages = {
         instructions: "Escanea el código o introdúcelo manualmente",
       },
     },
+    fileViewer: {
+      toolbar: {
+        zoomOut: "Alejar (Ctrl + -)",
+        zoomIn: "Acercar (Ctrl + +)",
+        resetZoom: "Restablecer zoom (Ctrl + 0)",
+        fullscreen: "Pantalla completa",
+        exitFullscreen: "Salir de pantalla completa",
+        downloadImage: "Descargar imagen",
+        downloadFile: "Descargar archivo",
+      },
+      loading: {
+        image: "Cargando imagen...",
+      },
+      error: {
+        loadImage: "No se pudo cargar la imagen",
+        retry: "Reintentar",
+        fullscreen: "No se pudo cambiar el modo de pantalla",
+        download: "No se pudo descargar el archivo",
+      },
+      noFile: {
+        selectFile: "Selecciona un archivo para visualizar",
+        selectDocument: "Selecciona un documento para visualizar",
+      },
+      unsupported: {
+        title: "Archivo",
+        message:
+          "Este tipo de archivo no se puede previsualizar directamente en el navegador. Puedes descargarlo para abrirlo con la aplicación correspondiente.",
+        downloadButton: "Descargar archivo",
+        noExtension: "Sin extensión",
+        unknown: "Desconocido",
+      },
+      toast: {
+        downloadSuccess: "Descarga completada",
+        downloadError: "Error de descarga",
+        loadError: "Error de carga",
+        fullscreenError: "Error de pantalla completa",
+      },
+    },
     login: {
       loginTitle: "Benvingut a Temges",
       username: "Nom d'usuari",
@@ -840,6 +918,7 @@ const messages = {
         title: "Invoice Integration to Verifactu",
         filters: {
           toDate: "To invoice date",
+          selectToDate: "Select a date",
         },
         actions: {
           integrateSelected: "Integrate remaining",
@@ -987,6 +1066,44 @@ const messages = {
         errorTitle: "Operator not found",
         errorDetail: "Please enter a valid operator code",
         instructions: "Scan the code or enter it manually",
+      },
+    },
+    fileViewer: {
+      toolbar: {
+        zoomOut: "Zoom out (Ctrl + -)",
+        zoomIn: "Zoom in (Ctrl + +)",
+        resetZoom: "Reset zoom (Ctrl + 0)",
+        fullscreen: "Fullscreen",
+        exitFullscreen: "Exit fullscreen",
+        downloadImage: "Download image",
+        downloadFile: "Download file",
+      },
+      loading: {
+        image: "Loading image...",
+      },
+      error: {
+        loadImage: "Failed to load image",
+        retry: "Try again",
+        fullscreen: "Failed to change screen mode",
+        download: "Failed to download file",
+      },
+      noFile: {
+        selectFile: "Select a file to view",
+        selectDocument: "Select a document to view",
+      },
+      unsupported: {
+        title: "File",
+        message:
+          "This file type cannot be previewed directly in the browser. You can download it to open with the corresponding application.",
+        downloadButton: "Download file",
+        noExtension: "No extension",
+        unknown: "Unknown",
+      },
+      toast: {
+        downloadSuccess: "Download completed",
+        downloadError: "Download error",
+        loadError: "Load error",
+        fullscreenError: "Fullscreen error",
       },
     },
     login: {

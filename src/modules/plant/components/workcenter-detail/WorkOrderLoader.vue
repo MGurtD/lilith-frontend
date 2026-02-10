@@ -61,28 +61,27 @@
         <!-- Phase Code -->
         <Column
           field="phaseCode"
-          header="Codi Fase"
+          header="Codi"
           :sortable="true"
-          style="min-width: 120px"
+          style="max-width: 50px"
         />
 
         <!-- Phase Description -->
         <Column
           field="phaseDescription"
           header="Descripció"
-          :sortable="true"
           style="min-width: 200px"
         />
 
         <!-- Phase Status -->
-        <Column header="Estat" :sortable="true" style="min-width: 150px">
+        <Column header="Estat" style="min-width: 150px">
           <template #body="slotProps">
             <Tag :value="slotProps.data.phaseStatus" severity="info" rounded />
           </template>
         </Column>
 
         <!-- Start Time -->
-        <Column header="Inici" :sortable="true" style="min-width: 150px">
+        <Column header="Inici" style="min-width: 150px">
           <template #body="slotProps">
             <span v-if="slotProps.data.startTime">
               {{ formatDateTime(slotProps.data.startTime) }}
@@ -91,7 +90,7 @@
         </Column>
 
         <!-- End Time -->
-        <Column header="Fi" :sortable="true" style="min-width: 150px">
+        <Column header="Fi" style="min-width: 150px">
           <template #body="slotProps">
             <span v-if="slotProps.data.endTime">
               {{ formatDateTime(slotProps.data.endTime) }}
@@ -103,9 +102,15 @@
         <Column
           field="preferredWorkcenterName"
           header="Màquina Preferida"
-          :sortable="true"
           style="min-width: 180px"
         />
+
+        <Column header="Quant.">
+          <template #body="slotProps">
+            <span class="quantity-ok">{{ slotProps.data.quantityOk }}</span> /
+            <span class="quantity-ko">{{ slotProps.data.quantityKo }}</span>
+          </template>
+        </Column>
 
         <template #empty>
           <div class="no-data">
@@ -116,25 +121,18 @@
       </DataTable>
 
       <!-- Warning message when there are loaded work orders -->
-      <div
+      <InfoPanel
         v-if="hasLoadedWorkOrders && phases.length > 0"
-        class="warning-message"
-      >
-        <i :class="PrimeIcons.EXCLAMATION_TRIANGLE"></i>
-        <p>
-          No es pot carregar una nova ordre mentre hi hagi fases en procés a la
-          màquina. Finalitza les fases carregades abans de carregar-ne una de
-          nova.
-        </p>
-      </div>
+        severity="warn"
+        text="No es pot carregar una nova ordre mentre hi hagi fases en procés a la màquina. Finalitza les fases carregades abans de carregar-ne una de nova."
+      />
 
       <!-- No Valid Phases Message (only when no loaded work orders) -->
-      <div v-else-if="phases.length == 0" class="warning-message">
-        <i :class="PrimeIcons.EXCLAMATION_TRIANGLE" style="font-size: 2rem"></i>
-        <p>
-          No hi ha fases disponibles per carregar en aquest centre de treball
-        </p>
-      </div>
+      <InfoPanel
+        v-else-if="phases.length == 0"
+        severity="warn"
+        text="No hi ha fases disponibles per carregar en aquest centre de treball"
+      />
 
       <!-- Bottom Panel with Dropdown and Button -->
       <div class="bottom-panel" v-if="!hasLoadedWorkOrders">
@@ -143,7 +141,7 @@
             <label for="activity-dropdown" class="dropdown-label">
               Activitat a carregar
             </label>
-            <Dropdown
+            <Select
               id="activity-dropdown"
               v-model="selectedDetailId"
               :options="selectedPhase?.details || []"
@@ -199,7 +197,7 @@
                   </span>
                 </div>
               </template>
-            </Dropdown>
+            </Select>
           </div>
           <Button
             :icon="PrimeIcons.COG"
@@ -217,7 +215,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { WorkOrderPhaseDetailed } from "../../../production/types";
 import { WorkOrderPhaseService } from "../../../production/services/workorder.service";
 import { useToast } from "primevue/usetoast";
@@ -242,7 +240,7 @@ const emit = defineEmits<{
       workOrderId: string;
       workOrderPhaseId: string;
       machineStatusId: string;
-    }
+    },
   ): void;
 }>();
 
@@ -257,7 +255,7 @@ const selectedPhaseId = ref<string>("");
 
 // Check if there are loaded work orders in the workcenter
 const hasLoadedWorkOrders = computed(() => {
-  return workcenterStore.loadedWorkOrders.length > 0;
+  return workcenterStore.loadedWorkOrdersPhases.length > 0;
 });
 
 // Auto-select first phase with endTime = null and matching workcenterTypeId
@@ -266,7 +264,7 @@ const autoSelectedPhase = computed(() => {
   const validPhases = phases.value
     .filter(
       (phase) =>
-        !phase.endTime && phase.workcenterTypeId === props.workcenterTypeId
+        !phase.endTime && phase.workcenterTypeId === props.workcenterTypeId,
     )
     .sort((a, b) => a.phaseCode.localeCompare(b.phaseCode));
 
@@ -288,14 +286,14 @@ const hasValidPhases = computed(() => {
 
 const getSelectedActivityName = (machineStatusId: string): string => {
   const activity = selectedPhase.value?.details.find(
-    (d) => d.machineStatusId === machineStatusId
+    (d) => d.machineStatusId === machineStatusId,
   );
   return activity?.machineStatusName || "";
 };
 
 const getSelectedActivityDetail = (machineStatusId: string) => {
   return selectedPhase.value?.details.find(
-    (d) => d.machineStatusId === machineStatusId
+    (d) => d.machineStatusId === machineStatusId,
   );
 };
 
@@ -349,7 +347,7 @@ const loadPhases = async () => {
   selectedPhaseId.value = ""; // Reset phase selection
   try {
     const result = await phaseService.GetWorkOrderPhasesDetailed(
-      props.workOrderId
+      props.workOrderId,
     );
     if (result) {
       phases.value = result;
@@ -380,7 +378,7 @@ watch(
     if (props.visible && props.workOrderId) {
       loadPhases();
     }
-  }
+  },
 );
 
 watch(
@@ -389,7 +387,7 @@ watch(
     if (newValue && props.workOrderId) {
       loadPhases();
     }
-  }
+  },
 );
 
 onMounted(() => {
@@ -409,8 +407,8 @@ onMounted(() => {
 }
 
 .dialog-content :deep(.selected-phase-row) {
-  background: var(--green-100) !important;
-  border-left: 4px solid var(--green-600) !important;
+  background: var(--loaded-row-bg) !important;
+  border-left: 4px solid var(--loaded-row-border) !important;
 }
 
 .dialog-content :deep(.p-datatable-tbody > tr > td .p-button) {
@@ -437,34 +435,9 @@ onMounted(() => {
   font-size: 1rem;
 }
 
-.warning-message {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  background: var(--orange-50);
-  border: 2px solid var(--orange-300);
-  border-radius: var(--border-radius);
-  color: var(--orange-900);
-  margin-bottom: 1rem;
-}
-
-.warning-message i {
-  color: var(--orange-600);
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.warning-message p {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
 .bottom-panel {
-  background: var(--surface-50);
-  border-top: 2px solid var(--surface-border);
+  background: var(--p-surface-50);
+  border-top: 2px solid var(--p-surface-border);
   padding: 1.25rem 1.5rem;
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
@@ -500,7 +473,7 @@ onMounted(() => {
 }
 
 .activity-check-icon {
-  color: var(--green-600);
+  color: var(--p-green-600);
   font-size: 1rem;
 }
 
@@ -511,7 +484,7 @@ onMounted(() => {
 }
 
 .option-icon {
-  color: var(--primary-color);
+  color: var(--p-primary-color);
   font-size: 1rem;
 }
 
@@ -526,8 +499,8 @@ onMounted(() => {
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
-  background: var(--blue-100);
-  color: var(--blue-700);
+  background: var(--p-blue-100);
+  color: var(--p-blue-700);
   border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 500;

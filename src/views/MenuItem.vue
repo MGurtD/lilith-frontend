@@ -10,7 +10,7 @@ import {
 } from "../services/menuitem.service";
 import FormMenuItem from "../components/forms/FormMenuItem.vue";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useStore } from "../store";
 
 const route = useRoute();

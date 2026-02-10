@@ -30,9 +30,8 @@
     <section class="four-columns mb-2">
       <div>
         <label class="block text-900 mb-2">Tipus de màquina</label>
-        <Dropdown
+        <Select
           v-model="phase.workcenterTypeId"
-          editable
           :options="plantModelStore.workcenterTypes"
           optionValue="id"
           optionLabel="name"
@@ -45,9 +44,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Màquina preferida</label>
-        <Dropdown
+        <Select
           v-model="phase.preferredWorkcenterId"
-          editable
           :options="preferredWorkcenters"
           optionValue="id"
           optionLabel="description"
@@ -69,9 +67,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Tipus d'operari</label>
-        <Dropdown
+        <Select
           v-model="phase.operatorTypeId"
-          editable
           :options="plantModelStore.operatorTypes"
           optionValue="id"
           optionLabel="description"
@@ -94,9 +91,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Servei</label>
-        <Dropdown
+        <Select
           v-model="phase.serviceReferenceId"
-          editable
           :options="serviceReferences"
           optionValue="id"
           :optionLabel="(r) => r.code + ' - ' + r.description"
@@ -161,7 +157,7 @@ onMounted(async () => {
   serviceReferences.value =
     await referencesStore.getReferencesByModuleAndCategory(
       "purchase",
-      ReferenceCategoryEnum.SERVICE
+      ReferenceCategoryEnum.SERVICE,
     );
 });
 
@@ -180,7 +176,7 @@ const preferredWorkcenters = computed(() => {
 const onServiceReferenceChanged = () => {
   if (serviceReferences.value) {
     const selectedReference = serviceReferences.value.find(
-      (r) => r.id === props.phase.serviceReferenceId
+      (r) => r.id === props.phase.serviceReferenceId,
     );
     if (selectedReference) {
       props.phase.externalWorkCost = selectedReference.price;
@@ -192,20 +188,20 @@ const onServiceReferenceChanged = () => {
 const workcenterTypeUpdated = () => {
   props.phase.preferredWorkcenterId = null;
   let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-    (wt) => wt.id === props.phase.workcenterTypeId
+    (wt) => wt.id === props.phase.workcenterTypeId,
   );
   props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
 };
 
 const workcenterUpdated = () => {
   let selectedWorkcenter = plantModelStore.workcenters?.find(
-    (wt) => wt.id === props.phase.preferredWorkcenterId
+    (wt) => wt.id === props.phase.preferredWorkcenterId,
   );
   if (selectedWorkcenter!.profitPercentage > 0) {
     props.phase.profitPercentage = selectedWorkcenter!.profitPercentage;
   } else {
     let selectedWorkcenterType = plantModelStore.workcenterTypes?.find(
-      (wt) => wt.id === props.phase.workcenterTypeId
+      (wt) => wt.id === props.phase.workcenterTypeId,
     );
     props.phase.profitPercentage = selectedWorkcenterType!.profitPercentage;
   }

@@ -3,7 +3,7 @@
     :value="warehouseStore.warehouses"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="80vh"
+    scrollHeight="flex"
     @row-click="editRow"
   >
     <template #header>
@@ -44,7 +44,7 @@ import { useStore } from "../../../store";
 import { useWarehouseStore } from "../store/warehouse";
 import { usePlantModelStore } from "../../production/store/plantmodel";
 import { onMounted } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { DataTableRowClickEvent } from "primevue/datatable";
@@ -74,7 +74,7 @@ const createButtonClick = () => {
 const editRow = (row: DataTableRowClickEvent) => {
   if (
     !(row.originalEvent.target as any).className.includes(
-      "grid_delete_column_button"
+      "grid_delete_column_button",
     )
   ) {
     router.push({ path: `/warehouse/${row.data.id}` });

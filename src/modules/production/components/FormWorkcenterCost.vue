@@ -3,9 +3,8 @@
     <section class="four-columns">
       <div>
         <label class="block text-900 mb-2">Màquina</label>
-        <Dropdown
+        <Select
           v-model="workcentercost.workcenterId"
-          editable
           :options="plantModelStore.workcenters"
           optionValue="id"
           optionLabel="name"
@@ -17,9 +16,8 @@
       </div>
       <div>
         <label class="block text-900 mb-2">Estat de màquina</label>
-        <Dropdown
+        <Select
           v-model="workcentercost.machineStatusId"
-          editable
           :options="plantModelStore.machineStatuses"
           optionValue="id"
           optionLabel="name"

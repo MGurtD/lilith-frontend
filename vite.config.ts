@@ -43,6 +43,9 @@ export default defineConfig({
         navigateFallback: null,
         navigateFallbackDenylist: [/^\/api/],
 
+        // Excluir explícitamente /api de cualquier caching
+        globIgnores: ["**/api/**"],
+
         runtimeCaching: [
           // Eliminada completamente la regla de API - que el navegador las maneje directamente
           {
@@ -71,6 +74,10 @@ export default defineConfig({
           },
         ],
 
+        // Forzar saltar waiting y tomar control inmediato
+        skipWaiting: true,
+        clientsClaim: true,
+
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
       },
@@ -86,6 +93,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Vite 6+ uses modern API by default, api option can be removed
+        // Keeping this explicitly for clarity
+        api: "modern-compiler",
+      },
     },
   },
 });

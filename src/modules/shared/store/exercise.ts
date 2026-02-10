@@ -6,7 +6,7 @@ export const useExerciseStore = defineStore({
   id: "exercise",
   state: () => ({
     exercise: undefined as Exercise | undefined,
-    exercises: undefined as Array<Exercise> | undefined,
+    exercises: [] as Array<Exercise>,
   }),
   getters: {},
   actions: {
@@ -24,23 +24,35 @@ export const useExerciseStore = defineStore({
     },
 
     async fetchAll() {
-      this.exercises = await Services.Exercice.getAll();
+      this.exercises = (await Services.Exercice.getAll()) ?? [];
     },
     async fetchActive() {
-      this.exercises = await Services.Exercice.getAll();
-      this.exercises = this.exercises?.filter((e) => !e.disabled);
+      const all = (await Services.Exercice.getAll()) ?? [];
+      this.exercises = all.filter((e) => !e.disabled);
     },
     async fetchOne(id: string) {
-      this.exercise = await Services.Exercice.getById(id);
+      const data = await Services.Exercice.getById(id);
+      if (data) {
+        // Convert ISO date strings to Date objects for PrimeVue 4 DatePicker
+        if (data.startDate) {
+          data.startDate = new Date(data.startDate) as any;
+        }
+        if (data.endDate) {
+          data.endDate = new Date(data.endDate) as any;
+        }
+      }
+      this.exercise = data;
     },
     async create(model: Exercise) {
       const result = await Services.Exercice.create(model);
-      if (result) await this.fetchAll();
+      // Note: fetchAll() removed to prevent race condition with navigation
+      // The list view will fetch fresh data on mount
       return result;
     },
     async update(id: string, model: Exercise) {
       const result = await Services.Exercice.update(id, model);
-      if (result) await this.fetchAll();
+      // Note: fetchAll() removed to prevent race condition with navigation
+      // The list view will fetch fresh data on mount
       return result;
     },
     async delete(id: string) {

@@ -54,7 +54,7 @@ import TableOrderDetails from "../components/TableOrderDetails.vue";
 import FormOrderDetail from "../components/FormOrderDetail.vue";
 import { onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { PurchaseOrderDetail } from "../types";
 import { GenericResponse } from "../../../types";
 import { ReferenceCategoryEnum } from "../../shared/types";

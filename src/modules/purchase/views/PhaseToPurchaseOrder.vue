@@ -4,11 +4,11 @@
     class="p-datatable-sm small-datatable"
     tableStyle="min-width: 100%"
     scrollable
-    scrollHeight="79vh"
+    scrollHeight="flex"
     :sort-order="1"
     sort-field="date"
     paginator
-    :rows="25"
+    :rows="20"
     dataKey="id"
     ><template #header>
       <div
@@ -64,7 +64,7 @@
     </Column>
     <Column header="Proveïdor">
       <template #body="slotProps">
-        <Dropdown
+        <Select
           v-model="selectedSuppliers[slotProps.data.id]"
           :options="suppliersByReference[slotProps.data.id]"
           placeholder="Selecciona..."
@@ -75,7 +75,7 @@
           @change="(event) => selectPhase(slotProps.data, event.value)"
           showClear
         >
-        </Dropdown>
+        </Select>
       </template>
     </Column>
   </DataTable>
@@ -85,7 +85,7 @@
 import { useRouter } from "vue-router";
 import { useStore } from "../../../store";
 import { useToast } from "primevue/usetoast";
-import { PrimeIcons } from "primevue/api";
+import { PrimeIcons } from "@primevue/core/api";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useWorkOrderStore } from "../../production/store/workorder";
 import { SupplierService } from "../services/suppliers.service";
@@ -127,7 +127,7 @@ const mostrarToastInfo = (summary: string, detail: string) => {
 const obtenirDates = () => {
   if (store.exercisePicker.dates) {
     const startTime = formatDateForQueryParameter(
-      store.exercisePicker.dates[0]
+      store.exercisePicker.dates[0],
     );
     const endTime = formatDateForQueryParameter(store.exercisePicker.dates[1]);
     return [startTime, endTime];
@@ -142,21 +142,21 @@ const selectPhase = (phase: WorkOrderPhase, selectedSupplierId: string) => {
     selectedPhases.value.push(phase);
   } else {
     selectedPhases.value = selectedPhases.value.filter(
-      (p, ind) => p.id !== phase.id
+      (p, ind) => p.id !== phase.id,
     );
   }
 };
 
 const updatePhase = (phaseId: string, selectedSupplierId: string) => {
   const phaseIndex = workOrderStore.workorderPhases?.findIndex(
-    (phase) => phase.id === phaseId
+    (phase) => phase.id === phaseId,
   );
 
   if (phaseIndex !== -1) {
     supplierMapping.value[phaseId] = selectedSupplierId;
   } else {
     const selectedPhase = purchaseOrders.value.find(
-      (phase) => phase.phaseId === phaseId
+      (phase) => phase.phaseId === phaseId,
     );
 
     if (selectedPhase) {
@@ -198,7 +198,7 @@ const fetchSuppliersForPhase = async (phase: WorkOrderPhase) => {
   try {
     phaseLoading.value[phase.id] = true;
     const suppliers = await supplierService.getSuppliersReferenceById(
-      phase.serviceReferenceId
+      phase.serviceReferenceId,
     );
     if (suppliers === null) {
       // fallback: load all suppliers once if not yet
@@ -234,7 +234,7 @@ onUnmounted(() => {
 const getUserFilter = () => {
   const userFilter = userFilterStore.getFilter(
     "ExternalPhasesToPurhcaseOrders",
-    ""
+    "",
   );
   if (userFilter) {
     if (userFilter.exercisePicker) {
@@ -274,7 +274,7 @@ const sendData = async () => {
   if (selectedPhases.value.length == 0) {
     mostrarToastInfo(
       "OFs no seleccionades",
-      "Has de seleccionar una OF com a mínim"
+      "Has de seleccionar una OF com a mínim",
     );
     return;
   }

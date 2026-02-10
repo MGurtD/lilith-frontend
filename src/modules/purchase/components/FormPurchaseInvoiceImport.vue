@@ -13,9 +13,8 @@
       ></BaseInput>
       <div>
         <label class="block text-900 mb-2">IVA</label>
-        <Dropdown
+        <Select
           v-model="invoiceImport.taxId"
-          editable
           :options="purchaseMasterData.masterData.taxes"
           optionValue="id"
           optionLabel="name"
@@ -78,7 +77,7 @@ const textActionButton = computed(() => {
 
 const calcAmounts = () => {
   const tax = purchaseMasterData.masterData.taxes!.find(
-    (t) => t.id === props.invoiceImport.taxId
+    (t) => t.id === props.invoiceImport.taxId,
   );
 
   if (tax && isNumber(props.invoiceImport.baseAmount)) {

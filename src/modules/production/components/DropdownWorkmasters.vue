@@ -3,7 +3,7 @@
     <label v-if="label.length > 0" class="block text-900 mb-2">{{
       label
     }}</label>
-    <Dropdown
+    <Select
       showClear
       filter
       :options="
@@ -15,7 +15,7 @@
       :optionLabel="formatWorkMasterLabel"
       class="w-full"
       v-bind="$attrs"
-      v-bind:model-value="(modelValue as string)"
+      v-bind:model-value="modelValue as string"
       @change="emit('update:modelValue', $event.value)"
     >
       <template #option="slotProps">
@@ -23,7 +23,7 @@
           {{ formatWorkMasterLabel(slotProps.option) }}
         </div>
       </template>
-    </Dropdown>
+    </Select>
   </div>
 </template>
 <script setup lang="ts">
@@ -37,7 +37,7 @@ const workmasterStore = useWorkMasterStore();
 const formatWorkMasterLabel = (workMaster: WorkMaster) => {
   const referenceName = referenceStore.getShortNameById(workMaster.referenceId);
   let modeName = workmasterStore.workmasterModes.find(
-    (mode) => mode.id === workMaster.mode
+    (mode) => mode.id === workMaster.mode,
   )?.value;
 
   return `${referenceName}  (Base = ${workMaster.baseQuantity} )  ${modeName}`;
