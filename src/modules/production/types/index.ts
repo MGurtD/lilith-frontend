@@ -567,6 +567,7 @@ export interface PhaseDetailItem {
   estimatedTime: number;
   estimatedOperatorTime: number;
   isCycleTime: boolean;
+  order: number;
 }
 
 /**
