@@ -299,4 +299,12 @@ const handleClick = () => {
 .stat__value--reference {
   /* Hereda truncate de .stat__value */
 }
+
+.stat__value--phase {
+  /* Hereda truncate de .stat__value */
+}
+
+.stat__value--reference {
+  /* Hereda truncate de .stat__value */
+}
 </style>

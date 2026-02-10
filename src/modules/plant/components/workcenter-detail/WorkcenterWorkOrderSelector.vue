@@ -41,6 +41,7 @@
       <Column
         field="plannedQuantity"
         header="Quantitat"
+        :sortable="true"
         style="min-width: 100px; text-align: right"
       />
 
