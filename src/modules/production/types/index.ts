@@ -284,6 +284,13 @@ export interface ValidatePreviousPhaseQuantityRequest {
   quantity: number;
 }
 
+export interface UpdatePhaseQuantitiesRequest {
+  workcenterId: string;
+  workOrderPhaseId: string;
+  quantityOk: number;
+  quantityKo: number;
+}
+
 export interface ProductionPart {
   id: string;
   workOrderId: string;

@@ -130,6 +130,14 @@
         <span class="group-label">Fase</span>
         <div class="group-buttons">
           <Button
+            :icon="PrimeIcons.PLUS"
+            label="Afegir qtt."
+            severity="primary"
+            class="touch-button"
+            @click="phaseQuantitiesVisible = true"
+            :disabled="!hasLoadedPhase"
+          />
+          <Button
             :icon="PrimeIcons.CHECK_CIRCLE"
             label="Finalitzar"
             severity="primary"
@@ -176,6 +184,11 @@
       :showNextPhaseOption="unloadShowNextPhaseOption"
       @phase-unloaded="handlePhaseUnloaded"
     />
+
+    <!-- Phase Quantities Dialog -->
+    <WorkOrderPhaseQuantities
+      v-model:visible="phaseQuantitiesVisible"
+    />
   </div>
 </template>
 
@@ -196,6 +209,7 @@ import WorkcenterComments from "../components/workcenter-detail/WorkcenterCommen
 import WorkcenterWorkOrderSelector from "../components/workcenter-detail/WorkcenterWorkOrderSelector.vue";
 import WorkOrderLoader from "../components/workcenter-detail/WorkOrderLoader.vue";
 import WorkOrderUnloader from "../components/workcenter-detail/WorkOrderUnloader.vue";
+import WorkOrderPhaseQuantities from "../components/workcenter-detail/WorkOrderPhaseQuantities.vue";
 import MachineStatusSelector from "../components/MachineStatusSelector.vue";
 import { WorkOrderWithPhases } from "../../production/types";
 import {
@@ -223,6 +237,7 @@ const activeTab = ref("0");
 const statusSelectorVisible = ref(false);
 const workOrderLoaderVisible = ref(false);
 const workOrderUnloaderVisible = ref(false);
+const phaseQuantitiesVisible = ref(false);
 const selectedWorkOrderData = ref({
   workOrderId: "",
   workOrderCode: "",
