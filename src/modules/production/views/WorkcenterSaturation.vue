@@ -95,8 +95,11 @@
     >
       <DataTable
         :value="selectedDetails"
-        sortField="estimatedTime"
-        :sortOrder="-1"
+        sortMode="multiple"
+        :multiSortMeta="[
+          { field: 'workOrderPriority', order: 1 },
+          { field: 'workOrderPlannedDate', order: 1 },
+        ]"
         stripedRows
         class="p-datatable-sm"
         :paginator="selectedDetails && selectedDetails.length > 10"
@@ -106,30 +109,50 @@
           field="workOrderCode"
           header="Ordre Treball"
           sortable
-          style="width: 15%"
+          style="width: 12%"
         ></Column>
+        <Column
+          field="workOrderPriority"
+          header="Prioritat"
+          sortable
+          style="width: 8%"
+        ></Column>
+        <Column
+          field="workOrderPlannedDate"
+          header="Data Plan."
+          sortable
+          style="width: 12%"
+        >
+          <template #body="slotProps">
+            {{
+              new Date(slotProps.data.workOrderPlannedDate).toLocaleDateString(
+                "ca-ES",
+              )
+            }}
+          </template>
+        </Column>
         <Column
           field="phaseCode"
           header="Codi Fase"
           sortable
-          style="width: 10%"
+          style="width: 8%"
         ></Column>
         <Column
           field="phaseDescription"
           header="Descripció Fase"
-          style="width: 35%"
+          style="width: 25%"
         ></Column>
         <Column
           field="plannedQuantity"
           header="Quantitat"
           sortable
-          style="width: 15%"
+          style="width: 10%"
         ></Column>
         <Column
           field="estimatedTime"
           header="Temps Estimat"
           sortable
-          style="width: 25%"
+          style="width: 15%"
         >
           <template #body="slotProps">
             {{ formatTime(slotProps.data.estimatedTime) }}

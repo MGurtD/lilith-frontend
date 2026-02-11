@@ -587,6 +587,8 @@ export interface WorkcenterProfitPercentage {
 }
 export interface WorkcenterTypeSaturation {
   workOrderCode: string;
+  workOrderPriority: number;
+  workOrderPlannedDate: string;
   plannedQuantity: number;
   phaseCode: string;
   phaseDescription: string;
