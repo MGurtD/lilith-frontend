@@ -55,7 +55,7 @@ const emit = defineEmits<{
 }>();
 
 onMounted(async () => {
-  if (!exerciseStore.exercises) {
+  if (!exerciseStore.exercises?.length) {
     await exerciseStore.fetchActive();
   }
 

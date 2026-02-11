@@ -310,7 +310,7 @@ onMounted(async () => {
   });
 
   // Load necessary data
-  if (!exerciseStore.exercises) await exerciseStore.fetchActive();
+  if (!exerciseStore.exercises?.length) await exerciseStore.fetchActive();
   if (!plantModelStore.workcenterTypes)
     await plantModelStore.fetchWorkcenterTypes();
   if (!plantModelStore.workcenters) await plantModelStore.fetchWorkcenters();

@@ -27,8 +27,6 @@ export const usePurchaseMasterDataStore = defineStore({
     async fetchMasterData() {
       this.masterData.series =
         await PurchaseServices.PurchaseInvoiceSerie.getActive();
-      this.masterData.series =
-        await PurchaseServices.PurchaseInvoiceSerie.getActive();
       this.masterData.suppliers = await PurchaseServices.Supplier.getActive();
       this.masterData.paymentMethods =
         await SharedServices.PaymentMethod.getActive();

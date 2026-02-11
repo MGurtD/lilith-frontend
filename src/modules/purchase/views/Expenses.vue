@@ -163,7 +163,7 @@ onMounted(async () => {
   });
 
   await expenseStore.fetchExpenseTypes();
-  if (!exerciseStore.exercises) {
+  if (!exerciseStore.exercises?.length) {
     await exerciseStore.fetchActive();
   }
   setCurrentYear();

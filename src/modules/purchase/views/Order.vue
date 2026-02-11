@@ -102,7 +102,7 @@ const loadView = async () => {
   await orderStore.fetchOne(route.params.id as string);
 
   if (!lifecycleStore.lifecycle) lifecycleStore.fetchOneByName("PurchaseOrder");
-  if (!exerciseStore.exercises) exerciseStore.fetchActive();
+  if (!exerciseStore.exercises?.length) exerciseStore.fetchActive();
   if (!suppliersStore.suppliers) suppliersStore.fetchSuppliers();
   if (!referenceTypeStore.referenceTypes) referenceTypeStore.fetchActive();
   if (!referenceStore.references || referenceStore.module !== "purchase")
@@ -229,7 +229,7 @@ const removeDetail = async (detail: PurchaseOrderDetail) => {
 };
 
 const showResponseErrorToast = (
-  response: GenericResponse<PurchaseOrderDetail>
+  response: GenericResponse<PurchaseOrderDetail>,
 ) => {
   toast.add({
     severity: "error",
@@ -249,7 +249,7 @@ const printInvoice = async () => {
     const report = await reportService.Download(
       orderReport,
       REPORTS.PurchaseOrder,
-      fileName
+      fileName,
     );
 
     if (report) {
