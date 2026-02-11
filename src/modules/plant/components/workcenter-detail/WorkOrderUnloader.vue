@@ -133,13 +133,19 @@
               :binary="true"
               inputId="loadNextPhase"
             />
-            <label for="loadNextPhase" class="option-label">
-              <span class="option-title">Carregar fase següent</span>
-              <span class="option-description">
-                {{ nextAvailablePhase.phaseCode }} -
-                {{ nextAvailablePhase.phaseDescription }}
-              </span>
-            </label>
+            <div class="option-content">
+              <label for="loadNextPhase" class="option-label">
+                <span class="option-title">
+                  Carregar fase {{ nextAvailablePhase.phaseCode }} - {{ nextAvailablePhase.phaseDescription }}
+                </span>
+              </label>
+              <SelectWorkOrderPhaseDetail
+                v-if="formData.loadNextPhase && nextPhaseDetails.length > 0"
+                v-model="formData.selectedNextMachineStatusId"
+                :details="nextPhaseDetails"
+                class="mt-2"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -183,6 +189,7 @@ import { PrimeIcons } from "@primevue/core/api";
 import { useToast } from "primevue/usetoast";
 import { UnloadWorkOrderPhaseRequest } from "../../types";
 import { usePlantWorkcenterStore } from "../../store";
+import SelectWorkOrderPhaseDetail from "./SelectWorkOrderPhaseDetail.vue";
 
 interface Props {
   visible: boolean;
@@ -206,6 +213,7 @@ const loadedWorkOrder = computed(
 );
 const loadedPhase = computed(() => loadedWorkOrder.value?.phases?.[0]);
 const nextAvailablePhase = computed(() => workcenterStore.nextAvailablePhase);
+const nextPhaseDetails = computed(() => nextAvailablePhase.value?.details ?? []);
 
 // Validation state
 const isValidating = ref(false);
@@ -218,6 +226,7 @@ interface FormData {
   counterOk: number;
   counterKo: number;
   loadNextPhase: boolean;
+  selectedNextMachineStatusId: string;
 }
 
 const formData = reactive<FormData>({
@@ -226,6 +235,7 @@ const formData = reactive<FormData>({
   counterOk: 0,
   counterKo: 0,
   loadNextPhase: false,
+  selectedNextMachineStatusId: "",
 });
 
 // Computed: Form validation (always valid if counters >= 0)
@@ -252,6 +262,7 @@ const resetForm = () => {
   formData.counterOk = 0;
   formData.counterKo = 0;
   formData.loadNextPhase = false;
+  formData.selectedNextMachineStatusId = "";
 };
 
 const onCancel = () => {
@@ -311,11 +322,25 @@ const onUnload = async (closePhase: boolean) => {
 
     // Add next phase if selected
     if (formData.loadNextPhase && nextAvailablePhase.value) {
+      // Validate activity selection when next phase has details
+      if (nextPhaseDetails.value.length > 0 && !formData.selectedNextMachineStatusId) {
+        toast.add({
+          severity: "warn",
+          summary: "Activitat requerida",
+          detail: "Selecciona una activitat per a la fase següent",
+          life: 4000,
+        });
+        return;
+      }
       request.nextWorkOrderPhaseId = nextAvailablePhase.value.phaseId;
+      // Use selected activity as the machine status for the next phase
+      if (formData.selectedNextMachineStatusId) {
+        request.nextMachineStatusId = formData.selectedNextMachineStatusId;
+      }
     }
 
-    // Include next machine status if provided
-    if (props.nextMachineStatusId) {
+    // Include next machine status if provided and not already set by activity selection
+    if (props.nextMachineStatusId && !request.nextMachineStatusId) {
       request.nextMachineStatusId = props.nextMachineStatusId;
     }
 
@@ -432,11 +457,11 @@ const onUnload = async (closePhase: boolean) => {
   padding: 0.75rem;
   background: var(--p-surface-50);
   border-radius: 6px;
-  transition: background-color 0.2s;
 }
 
-.option-item:hover {
-  background: var(--p-surface-100);
+.option-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .option-label {

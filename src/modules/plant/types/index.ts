@@ -105,6 +105,7 @@ export interface NextPhaseInfo {
   phaseId: string;
   phaseCode: string;
   phaseDescription: string;
+  details: import("../../production/types").PhaseDetailItem[];
 }
 
 export interface WorkOrderPhaseResponse {

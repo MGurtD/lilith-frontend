@@ -4,7 +4,7 @@
     :options="sortedDetails"
     optionLabel="machineStatusName"
     optionValue="machineStatusId"
-    placeholder="Selecciona una activitat..."
+    placeholder="Selecciona un estat..."
     class="w-full"
   >
     <template #value="slotProps">
