@@ -1,6 +1,6 @@
 <template>
   <form>
-    <div class="mt-2">
+    <div class="mb-2">
       <label class="block text-900 mb-2">Client</label>
       <DropdownCustomers
         label=""
@@ -8,7 +8,7 @@
         v-model="createRequest.customerId"
       />
     </div>
-    <div class="mt-2">
+    <div class="mb-2">
       <label class="block text-900 mb-2">Exercici</label>
       <Select
         class="w-full"
@@ -18,12 +18,12 @@
         optionLabel="name"
       />
     </div>
-    <div class="mt-2">
+    <div class="mb-2">
       <label class="block text-900 mb-2">Data</label>
       <DatePicker v-model="createRequest.date" />
     </div>
 
-    <footer class="mt-2">
+    <footer class="mt-4">
       <Button label="Crear" @click="onSubmit" style="float: right" />
     </footer>
   </form>

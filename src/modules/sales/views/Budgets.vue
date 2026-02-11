@@ -114,6 +114,7 @@
     :header="dialogOptions.title"
     :closable="dialogOptions.closable"
     :modal="dialogOptions.modal"
+    :style="{ width: '80vw', maxWidth: '425px' }"
   >
     <FormCreateOrderOrInvoice
       :create-request="createRequest"
