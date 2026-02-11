@@ -121,7 +121,7 @@
       </div>
 
       <!-- Options Section -->
-      <div v-if="nextAvailablePhase" class="options-section">
+      <div v-if="props.showNextPhaseOption !== false && nextAvailablePhase" class="options-section">
         <h4 class="section-title">
           <i :class="PrimeIcons.COG" class="mr-2"></i>
           Opcions
@@ -186,6 +186,8 @@ import { usePlantWorkcenterStore } from "../../store";
 
 interface Props {
   visible: boolean;
+  nextMachineStatusId?: string;
+  showNextPhaseOption?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -310,6 +312,11 @@ const onUnload = async (closePhase: boolean) => {
     // Add next phase if selected
     if (formData.loadNextPhase && nextAvailablePhase.value) {
       request.nextWorkOrderPhaseId = nextAvailablePhase.value.phaseId;
+    }
+
+    // Include next machine status if provided
+    if (props.nextMachineStatusId) {
+      request.nextMachineStatusId = props.nextMachineStatusId;
     }
 
     emit("phase-unloaded", request);

@@ -84,6 +84,7 @@ export interface UnloadWorkOrderPhaseRequest {
   quantityOk: number;
   quantityKo: number;
   nextWorkOrderPhaseId?: string;
+  nextMachineStatusId?: string;
 }
 
 export interface OperatorResponse {
