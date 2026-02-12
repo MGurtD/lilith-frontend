@@ -153,6 +153,7 @@ import { BaseInputType } from "../../../types/component";
 import { usePlantModelStore } from "../store/plantmodel";
 import { useReferenceStore } from "../../shared/store/reference";
 import { Reference, ReferenceCategoryEnum } from "../../shared/types";
+import { useExerciseStore } from "../../shared/store/exercise";
 
 const props = defineProps<{
   workmaster: WorkMaster;
@@ -167,6 +168,7 @@ const emit = defineEmits<{
 const workcenterProfitPercentages = ref([] as WorkcenterProfitPercentage[]);
 
 onMounted(async () => {
+  await exerciseStore.fetchActive();
   serviceReferences.value =
     await referencesStore.getReferencesByModuleAndCategory(
       "purchase",
@@ -177,8 +179,23 @@ onMounted(async () => {
 const toast = useToast();
 const plantModelStore = usePlantModelStore();
 const referencesStore = useReferenceStore();
+const exerciseStore = useExerciseStore();
 
 const serviceReferences = ref(undefined as undefined | Reference[]);
+const currentExercise = computed(() => {
+  const now = new Date();
+  // Assegura't que els exercicis estiguin carregats
+  if (!exerciseStore.exercises) return undefined;
+
+  return exerciseStore.exercises.find(
+    (e) =>
+      !e.disabled && new Date(e.startDate) <= now && new Date(e.endDate) >= now,
+  );
+});
+
+const externalProfit = computed(() => {
+  return currentExercise.value?.externalProfit || 0;
+});
 
 const preferredWorkcenters = computed(() => {
   return props.phase.workcenterTypeId
@@ -235,10 +252,12 @@ const isExternalWorkChanged = async () => {
     props.phase.operatorTypeId = null;
     props.phase.workcenterTypeId = null;
     props.phase.preferredWorkcenterId = null;
+    props.phase.profitPercentage = externalProfit.value;
   } else {
     props.phase.externalWorkCost = 0;
     props.phase.transportCost = 0;
     props.phase.serviceReferenceId = null;
+    props.phase.profitPercentage = 0;
   }
 };
 
